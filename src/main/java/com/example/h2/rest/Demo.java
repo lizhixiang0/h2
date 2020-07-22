@@ -4,10 +4,8 @@ import com.example.h2.bean.TestConverter;
 import com.example.h2.kfk.message.UpdateApkFileMessage;
 import com.example.h2.kfk.producer.AbstractKafkaGateway;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Date;
@@ -21,6 +19,12 @@ public class Demo {
     @Autowired
     AbstractKafkaGateway abstractKafkaGateway;
 
+
+    @GetMapping("/testRestTemplate")
+    @ResponseBody
+    public String dds(){
+        return "fuck";
+    }
 
     @GetMapping("/hello")
     @ResponseBody
