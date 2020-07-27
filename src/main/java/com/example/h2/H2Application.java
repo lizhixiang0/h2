@@ -20,7 +20,7 @@ import java.util.List;
 public class H2Application {
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(H2Application.class);
-        app.addListeners(new ApplicationPidFileWriter("app.pid"));
+        //app.addListeners(new ApplicationPidFileWriter("app.pid"));
         app.run(args);
     }
 }
