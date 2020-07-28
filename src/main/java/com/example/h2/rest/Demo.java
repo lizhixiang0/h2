@@ -3,6 +3,9 @@ package com.example.h2.rest;
 import com.example.h2.bean.TestConverter;
 import com.example.h2.kfk.message.UpdateApkFileMessage;
 import com.example.h2.kfk.producer.AbstractKafkaGateway;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,11 +19,11 @@ import java.util.Date;
  **/
 @Controller
 public class Demo {
+
     @Autowired
     AbstractKafkaGateway abstractKafkaGateway;
 
-
-    @GetMapping("/testRestTemplate")
+    @GetMapping("/RestTemplate")
     @ResponseBody
     public String dds(){
         return "fuck";
@@ -28,6 +31,7 @@ public class Demo {
 
     @GetMapping("/hello")
     @ResponseBody
+    @ApiResponses(value = {@ApiResponse(code = ApiConstants.HTTP_STATUS_OK,message = "success" ,response = TestConverter.class)})
     public TestConverter dd(){
         TestConverter testConverter = new TestConverter();
         testConverter.setDate(new Date());
