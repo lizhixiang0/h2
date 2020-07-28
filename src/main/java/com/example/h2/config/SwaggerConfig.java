@@ -22,7 +22,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  **/
 @Configuration
 @ConditionalOnProperty(name = "swagger.enabled", havingValue = "true")
-@EnableSwagger2
+@EnableSwagger2 //配置这个就可以直接访问swagger了   http://localhost:8084/swagger-ui.html
 public class SwaggerConfig {
 
 
@@ -45,7 +45,7 @@ public class SwaggerConfig {
                 .apiInfo(getApiInfo("APIs for Test"))
                 // 1、配置是否启用Swagger
                 .enable(!flag)
-                // 2、配置分组
+                // 2、配置分组，第一组
                 .groupName("Test-API")
                 // 3、配置扫描包
                 .select()
@@ -53,6 +53,21 @@ public class SwaggerConfig {
                 // 4、只扫描请求以/test开头的接口,这里用的ant()
                 .paths(PathSelectors.ant("/test/**"))
                 .build();
+    }
+    /**
+     * 第一组是test组，第二组是其他组(排除test)
+     * @return
+     */
+    @Bean
+    public Docket paxstoreApi() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .groupName("Other-api")
+                .select()
+                .apis(RequestHandlerSelectors.basePackage(basePackage()))
+                // 这个匹配规则比较特殊，test如果在类上就是/test.* , 在方法上就是/test/*
+                .paths(Predicates.and(Predicates.not(PathSelectors.regex("/test.*"))))
+                .build()
+                .apiInfo(getApiInfo("APIs for Others"));
     }
 
     /**
@@ -85,18 +100,5 @@ public class SwaggerConfig {
                 .build();
     }
 
-    /**
-     * 第一组是测试组，第二组是其他组
-     * @return
-     */
-    @Bean
-    public Docket paxstoreApi() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("Other-api")
-                .select()
-                .apis(RequestHandlerSelectors.basePackage(basePackage()))
-                .paths(Predicates.and(Predicates.not(PathSelectors.regex("/test/*"))))
-                .build()
-                .apiInfo(getApiInfo("APIs for Others"));
-    }
+
 }

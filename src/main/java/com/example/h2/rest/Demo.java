@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Date;
@@ -18,6 +19,7 @@ import java.util.Date;
  * @date 2020/06/28
  **/
 @Controller
+@RequestMapping("/api")
 public class Demo {
 
     @Autowired
@@ -31,7 +33,6 @@ public class Demo {
 
     @GetMapping("/hello")
     @ResponseBody
-    @ApiResponses(value = {@ApiResponse(code = ApiConstants.HTTP_STATUS_OK,message = "success" ,response = TestConverter.class)})
     public TestConverter dd(){
         TestConverter testConverter = new TestConverter();
         testConverter.setDate(new Date());
