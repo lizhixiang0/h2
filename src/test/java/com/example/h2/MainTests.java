@@ -15,7 +15,7 @@ public class MainTests {
 	ZfbAppConfigServiceImpl zfbAppConfigServiceImpl;
 
 	@Test
-	public void insertTest() throws Exception {
+	public void insertTest(){
 		//TODO: Test goes here...
 
 		ZfbAppConfig zfg = new ZfbAppConfig();
