@@ -61,6 +61,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedHeaders("*")
                 .allowedMethods("*");
     }
+
     @Bean
     public ExceptionToMessageResolver errorHandler(){
         return new ExceptionToMessageResolver();

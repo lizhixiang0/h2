@@ -13,6 +13,7 @@ import java.net.URISyntaxException;
 /**
  * @author lizx
  * @date 2020/06/24
+ * @description  flyway¼¯³É
  **/
 @Configuration
 @ComponentScan(basePackages = "com.example.h2")

@@ -2,6 +2,11 @@
 server:
     port: 8084
 
+application:
+  version: "@project.version@"
+
+swagger.enabled: true
+
 kafka:
   broker:
     hosts: 49.233.91.71:9092
