@@ -47,7 +47,7 @@ public class SwaggerConfig {
                 .enable(!flag)
                 // 2、配置分组，第一组
                 .groupName("Test-API")
-                // 3、配置扫描包
+                // 3、配置扫描包路径
                 .select()
                 .apis(RequestHandlerSelectors.basePackage(basePackage()))
                 // 4、只扫描请求以/test开头的接口,这里用的ant()
