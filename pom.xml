@@ -5,6 +5,10 @@
     <packaging>pom</packaging>
     <modules>
         <module>domain</module>
+        <module>dto</module>
+        <module>api</module>
+        <module>auth</module>
+        <module>mq</module>
     </modules>
     <!--    <packaging>pom</packaging>-->
     <parent>
