@@ -19,10 +19,12 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * @author admin
  * @author lizx
  * @date 2020/07/27
+ * @description http://localhost:8084/swagger-ui.html   这个直接打开浏览器可以看到api文档
+ *              http://localhost:8084/v2/api-docs?group=Test-API   这个swagger内置地址用来做转pdf
  **/
 @Configuration
 @ConditionalOnProperty(name = "swagger.enabled", havingValue = "true")
-@EnableSwagger2 //配置这个就可以直接访问swagger了   http://localhost:8084/swagger-ui.html
+@EnableSwagger2 //配置这个就可以直接访问swagger了
 public class SwaggerConfig {
 
 

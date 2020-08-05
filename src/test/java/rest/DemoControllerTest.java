@@ -32,6 +32,6 @@ public class DemoControllerTest {
 
     public void testBook() throws Exception {
         Assert.assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/testRestTemplate",String.class),
-                Matchers.containsString("fuck"));
+                Matchers.containsString("404"));
     }
 }

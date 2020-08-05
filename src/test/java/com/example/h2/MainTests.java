@@ -15,8 +15,6 @@ public class MainTests {
 	ZfbAppConfigServiceImpl zfbAppConfigServiceImpl;
 
 	@Test
-
-
 	public void insertTest() {
 
 		//TODO: Test goes here...
