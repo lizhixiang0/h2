@@ -8,9 +8,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
@@ -38,8 +36,8 @@ public class Demo {
         testConverter.setDate(new Date());
         return testConverter;
     }
-    @GetMapping("/test")
-    public TestConverter ddd(){
+    @PostMapping ("/test")
+    public TestConverter ddd( @RequestParam String s){
         TestConverter testConverter = new TestConverter();
         testConverter.setDate(new Date());
         return testConverter;
