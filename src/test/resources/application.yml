@@ -1,4 +1,4 @@
-#配置数据库连接地址,这里设置为没存模式
+#配置数据库连接地址,这里设置为内存模式
 spring.datasource.url: jdbc:h2:mem:zwt_feedback;MODE=MySQL;
 #配置数据库驱动
 spring.datasource.driver-class-name: org.h2.Driver

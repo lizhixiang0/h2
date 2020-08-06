@@ -9,9 +9,8 @@
         <module>api</module>
         <module>auth</module>
         <module>mq</module>
-        <module>consumer</module>
-        <module>producer</module>
     </modules>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -163,7 +162,7 @@
 <!--有了profile，你就可以为不同的环境定制构建。
 profile可以在pom.xml中配置，并给定一个id。
 然后你就可以在运行Maven的时候使用的命令行标记告诉Maven运行特定profile中的目标-->
-    <profiles>
+   <!-- <profiles>
         <profile>
             <id>generateThirdApiDoc</id>
             <build>
@@ -173,7 +172,7 @@ profile可以在pom.xml中配置，并给定一个id。
                         <artifactId>asciidoctor-maven-plugin</artifactId>
                         <version>1.5.3</version>
 
-                        <!--生成PDF -->
+                        &lt;!&ndash;生成PDF &ndash;&gt;
                         <dependencies>
                             <dependency>
                                 <groupId>org.asciidoctor</groupId>
@@ -192,7 +191,7 @@ profile可以在pom.xml中配置，并给定一个id。
                             </dependency>
                         </dependencies>
 
-                        <!--文档生成配置 -->
+                        &lt;!&ndash;文档生成配置 &ndash;&gt;
                         <configuration>
                             <sourceDirectory>${asciidoctor.input.directory}</sourceDirectory>
                             <sourceDocumentName>index.adoc</sourceDocumentName>
@@ -210,7 +209,7 @@ profile可以在pom.xml中配置，并给定一个id。
                             </attributes>
                             <skip>false</skip>
                         </configuration>
-                        <!--因为每次执行只能处理一个后端，所以对于每个想要的输出类型，都是独立分开执行 -->
+                        &lt;!&ndash;因为每次执行只能处理一个后端，所以对于每个想要的输出类型，都是独立分开执行 &ndash;&gt;
                         <executions>
                             <execution>
                                 <id>output-html</id>
@@ -242,7 +241,7 @@ profile可以在pom.xml中配置，并给定一个id。
                 </plugins>
             </build>
         </profile>
-    </profiles>
+    </profiles>-->
 
     <build>
         <plugins>
@@ -250,80 +249,6 @@ profile可以在pom.xml中配置，并给定一个id。
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <!--这个插件可以将swagger的API转换为ASCIIDOC,还有MARKDOWN和CONFLUENCE_MARKUP可选-->
-            <plugin>
-                <groupId>io.github.swagger2markup</groupId>
-                <artifactId>swagger2markup-maven-plugin</artifactId>
-                <version>1.2.0</version>
-                <configuration>
-                    <!--当前项目启动所用的端口-->
-                    <swaggerInput>http://localhost:8084/swagger-ui.html</swaggerInput>
-                    <outputDir>src/docs/asciidoc/generated</outputDir>
-                    <config>
-                        <swagger2markup.markupLanguage>ASCIIDOC</swagger2markup.markupLanguage>
-                    </config>
-                </configuration>
-            </plugin>
-            <!--这个插件将ASCIIDOC转换为HTML和PDF-->
-            <plugin>
-                    <groupId>org.asciidoctor</groupId>
-                    <artifactId>asciidoctor-maven-plugin</artifactId>
-                    <version>1.5.3</version>
-                    <!-- Include Asciidoctor PDF for pdf generation -->
-                <dependencies>
-                    <dependency>
-                        <groupId>org.asciidoctor</groupId>
-                        <artifactId>asciidoctorj-pdf</artifactId>
-                        <version>1.5.0-alpha.14</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.asciidoctor</groupId>
-                        <artifactId>asciidoctorj</artifactId>
-                        <version>1.5.6</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.jruby</groupId>
-                        <artifactId>jruby-complete</artifactId>
-                        <version>1.7.21</version>
-                    </dependency>
-                </dependencies>
-                    <!-- Configure generic document generation settings -->
-                    <configuration>
-                        <sourceDirectory>src/docs/asciidoc/generated</sourceDirectory>
-                        <sourceHighlighter>coderay</sourceHighlighter>
-                        <attributes>
-                            <toc>left</toc>
-                        </attributes>
-                    </configuration>
-                    <!-- Since each execution can only handle one backend, run
-                         separate executions for each desired output type -->
-                    <executions>
-                        <execution>
-                            <id>output-html</id>
-                            <phase>generate-resources</phase>
-                            <goals>
-                                <goal>process-asciidoc</goal>
-                            </goals>
-                            <configuration>
-                                <backend>html5</backend>
-                                <outputDirectory>src/docs/asciidoc/html</outputDirectory>
-                            </configuration>
-                        </execution>
-
-                        <execution>
-                            <id>output-pdf</id>
-                            <phase>generate-resources</phase>
-                            <goals>
-                                <goal>process-asciidoc</goal>
-                            </goals>
-                            <configuration>
-                                <backend>pdf</backend>
-                                <outputDirectory>src/docs/asciidoc/pdf</outputDirectory>
-                            </configuration>
-                        </execution>
-
-                    </executions>
-                </plugin>
         </plugins>
 
     </build>
