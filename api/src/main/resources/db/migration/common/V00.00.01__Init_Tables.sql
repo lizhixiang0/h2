@@ -12,3 +12,4 @@ CREATE TABLE `ac_apk_file` (
   `updated_by` int(11) NULL DEFAULT NULL COMMENT '更新者',
   PRIMARY KEY (`id`)
 );
+
