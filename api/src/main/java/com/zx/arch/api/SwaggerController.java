@@ -13,8 +13,7 @@ import java.util.Date;
  * @author lizx
  * @date 2020/08/06
  **/
-// Value:标题 tags:描述
-@Api( value="【SwaggerTest】",tags = "测试swagger")
+@Api(value="【标题】",tags = "描述")
 @Controller
 @RequestMapping("/test")
 public class SwaggerController {
@@ -22,9 +21,6 @@ public class SwaggerController {
     @PostMapping("/hello")
     @ResponseBody
     @ApiOperation(value="创建任务",notes = "注意id为必填项")
-    /*@ApiImplicitParams({
-            @ApiImplicitParam(name="mobile",value="手机号",required=true,paramType="form"),
-    })*/
     @ApiResponses(value = {@ApiResponse(code = ApiConstants.HTTP_STATUS_OK,message = "success")})
     public RestMessage test(@RequestBody @ApiParam(value = "Created user object", required = true) ScanTaskRequest scanTaskRequest){
         RestMessage restMessage = new RestMessage();
@@ -58,5 +54,5 @@ public class SwaggerController {
         return restMessage;
     }
     /*@RequestBody不能用@ApiImplicitParam注解没用。只能用@ApiParam*/
-    /*@ApiImplicitParam注解里name必须和参数名相同*/
+    /*@ApiImplicitParam注解里name必须和方法参数名相同*/
 }

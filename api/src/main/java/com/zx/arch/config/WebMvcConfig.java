@@ -2,14 +2,13 @@ package com.zx.arch.config;
 
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
-import com.zx.arch.exception.CustomHandlerExceptionResover;
+import com.zx.arch.exception.CustomHandlerExceptionResolver;
 import com.zx.arch.il8.AppScanApiLocaleResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -73,7 +72,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
      */
    @Override
     public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
-        exceptionResolvers.add(new CustomHandlerExceptionResover());
+        exceptionResolvers.add(new CustomHandlerExceptionResolver());
     }
 
     @Override
@@ -86,8 +85,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public CustomHandlerExceptionResover errorHandler(){
-        return new CustomHandlerExceptionResover();
+    public CustomHandlerExceptionResolver errorHandler(){
+        return new CustomHandlerExceptionResolver();
     }
 
     @Bean(name = "localeResolver")

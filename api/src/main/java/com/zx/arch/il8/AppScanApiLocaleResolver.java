@@ -12,7 +12,7 @@
 
 package com.zx.arch.il8;
 
-import com.zx.arch.spring.SystemConstants;
+import com.zx.arch.constants.SystemConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.i18n.AbstractLocaleResolver;

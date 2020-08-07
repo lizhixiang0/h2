@@ -10,6 +10,7 @@
         <module>mq</module>
         <module>common</module>
         <module>domain</module>
+        <module>jdk</module>
     </modules>
 
     <parent>
