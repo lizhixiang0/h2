@@ -8,10 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.core.KafkaTemplate;
 
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author admin
+ */
 public abstract class AbstractKafkaGateway {
     @Autowired
     @Qualifier("kryoKafkaTemplate")

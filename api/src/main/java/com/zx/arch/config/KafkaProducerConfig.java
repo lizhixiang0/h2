@@ -1,7 +1,4 @@
 package com.zx.arch.config;//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
 
 
 import com.zx.arch.kfk.message.DefaultMessageIdGenerator;

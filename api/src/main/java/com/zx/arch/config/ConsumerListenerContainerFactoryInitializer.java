@@ -1,4 +1,4 @@
-package com.zx.arch.config;//
+package com.zx.arch.config;
 
 import com.zx.arch.kfk.share.serializer.KryoObjDeserializer;
 import com.zx.arch.kfk.share.serializer.MsgSizeLoggedStringDeserializer;

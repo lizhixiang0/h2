@@ -1,5 +1,4 @@
-package com.zx.arch.kfk.share.serializer;//
-
+package com.zx.arch.kfk.share.serializer;
 
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;

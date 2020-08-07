@@ -160,10 +160,6 @@
         </dependency>
     </dependencies>
 
-<!--有了profile，你就可以为不同的环境定制构建。
-profile可以在pom.xml中配置，并给定一个id。
-然后你就可以在运行Maven的时候使用的命令行标记告诉Maven运行特定profile中的目标-->
-
     <build>
         <plugins>
             <!--引入了spring-boot-maven-plugin，打包时会去扫描项目main方法入口，也就是说必须在项目src/main/java/下创建一个spring-boot启动类-->

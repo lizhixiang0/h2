@@ -1,6 +1,5 @@
 package com.zx.arch.kfk.consumer;
 
-
 import com.zx.arch.kfk.message.UpdateApkFileMessage;
 import com.zx.arch.kfk.share.topic.TopicNames;
 import org.apache.kafka.clients.consumer.Consumer;
