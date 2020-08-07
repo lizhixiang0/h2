@@ -1,0 +1,48 @@
+server:
+  port: 8084
+
+application:
+  version: "@project.version@"
+
+swagger.enabled: true
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://49.233.91.71:3306/arch?allowMultiQueries=true&useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: 123456
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    validate-on-migrate: false
+    #问题一、这个目录必须一层一层创建，不然idea识别不出来
+    #问题二、文件必须是UTF-8编码，不然会报校验和错误
+    locations: classpath:db/migration/common,classpath:db/migration/mysql,classpath:db/migration/java
+
+kafka:
+  broker:
+    hosts: 49.233.91.71:9092
+  producer:
+    retries: 3
+    batch-size: 16384
+    linger-ms: 1
+    buffer-memory: 33554432
+    acks: 1
+  default:
+    partitions-num: 2
+    replication-factor: 3
+  consumer:
+    group-id: paxvas_app_scan
+    auto-commit: false
+    auto-commit-interval-ms: 100
+    session-timeout-ms: 30000
+    container-poll-timeout-ms: 3000
+    max-poll-records: 100
+    max-poll-interval-ms: 300000
+#  listener:
+#  #    #listner负责ack，每调用一次，立即commit
+#    ack-mode: manual_immediate
+  customization:
+    listener-ack:
+      app: MANUAL_IMMEDIATE

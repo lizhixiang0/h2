@@ -4,9 +4,14 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
     <modules>
+        <module>dto</module>
+        <module>api</module>
+        <module>auth</module>
+        <module>mq</module>
+        <module>common</module>
         <module>domain</module>
     </modules>
-    <!--    <packaging>pom</packaging>-->
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -158,167 +163,15 @@
 <!--有了profile，你就可以为不同的环境定制构建。
 profile可以在pom.xml中配置，并给定一个id。
 然后你就可以在运行Maven的时候使用的命令行标记告诉Maven运行特定profile中的目标-->
-    <profiles>
-        <profile>
-            <id>generateThirdApiDoc</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.asciidoctor</groupId>
-                        <artifactId>asciidoctor-maven-plugin</artifactId>
-                        <version>1.5.3</version>
-
-                        <!--生成PDF -->
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.asciidoctor</groupId>
-                                <artifactId>asciidoctorj-pdf</artifactId>
-                                <version>1.5.0-alpha.14</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.asciidoctor</groupId>
-                                <artifactId>asciidoctorj</artifactId>
-                                <version>1.5.6</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.jruby</groupId>
-                                <artifactId>jruby-complete</artifactId>
-                                <version>1.7.21</version>
-                            </dependency>
-                        </dependencies>
-
-                        <!--文档生成配置 -->
-                        <configuration>
-                            <sourceDirectory>${asciidoctor.input.directory}</sourceDirectory>
-                            <sourceDocumentName>index.adoc</sourceDocumentName>
-                            <attributes>
-                                <doctype>book</doctype>
-                                <toc>left</toc>
-                                <toclevels>3</toclevels>
-                                <numbered></numbered>
-                                <hardbreaks></hardbreaks>
-                                <sectlinks></sectlinks>
-                                <sectanchors></sectanchors>
-                                <stylesheet>doc_style.css</stylesheet>
-                                <generated>${generated.asciidoc.directory}</generated>
-
-                            </attributes>
-                            <skip>false</skip>
-                        </configuration>
-                        <!--因为每次执行只能处理一个后端，所以对于每个想要的输出类型，都是独立分开执行 -->
-                        <executions>
-                            <execution>
-                                <id>output-html</id>
-                                <phase>test</phase>
-                                <goals>
-                                    <goal>process-asciidoc</goal>
-                                </goals>
-                                <configuration>
-                                    <backend>html5</backend>
-                                    <embedAssets>true</embedAssets>
-                                    <title>PAXSTORE API for External System</title>
-                                    <outputDirectory>${asciidoctor.html.output.directory}</outputDirectory>
-                                </configuration>
-
-                            </execution>
-                            <execution>
-                                <id>output-pdf</id>
-                                <phase>test</phase>
-                                <goals>
-                                    <goal>process-asciidoc</goal>
-                                </goals>
-                                <configuration>
-                                    <backend>pdf</backend>
-                                    <outputDirectory>${asciidoctor.pdf.output.directory}</outputDirectory>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
     <build>
         <plugins>
-            <plugin>
+            <!--引入了spring-boot-maven-plugin，打包时会去扫描项目main方法入口，也就是说必须在项目src/main/java/下创建一个spring-boot启动类-->
+            <!--但是多模块一般不可能这样做，所以修改为普通的maven-plugin配置或者注释掉-->
+            <!--<plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            <!--这个插件可以将swagger的API转换为ASCIIDOC,还有MARKDOWN和CONFLUENCE_MARKUP可选-->
-            <plugin>
-                <groupId>io.github.swagger2markup</groupId>
-                <artifactId>swagger2markup-maven-plugin</artifactId>
-                <version>1.2.0</version>
-                <configuration>
-                    <!--当前项目启动所用的端口-->
-                    <swaggerInput>http://localhost:8084/swagger-ui.html</swaggerInput>
-                    <outputDir>src/docs/asciidoc/generated</outputDir>
-                    <config>
-                        <swagger2markup.markupLanguage>ASCIIDOC</swagger2markup.markupLanguage>
-                    </config>
-                </configuration>
-            </plugin>
-            <!--这个插件将ASCIIDOC转换为HTML和PDF-->
-            <plugin>
-                    <groupId>org.asciidoctor</groupId>
-                    <artifactId>asciidoctor-maven-plugin</artifactId>
-                    <version>1.5.3</version>
-                    <!-- Include Asciidoctor PDF for pdf generation -->
-                <dependencies>
-                    <dependency>
-                        <groupId>org.asciidoctor</groupId>
-                        <artifactId>asciidoctorj-pdf</artifactId>
-                        <version>1.5.0-alpha.14</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.asciidoctor</groupId>
-                        <artifactId>asciidoctorj</artifactId>
-                        <version>1.5.6</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.jruby</groupId>
-                        <artifactId>jruby-complete</artifactId>
-                        <version>1.7.21</version>
-                    </dependency>
-                </dependencies>
-                    <!-- Configure generic document generation settings -->
-                    <configuration>
-                        <sourceDirectory>src/docs/asciidoc/generated</sourceDirectory>
-                        <sourceHighlighter>coderay</sourceHighlighter>
-                        <attributes>
-                            <toc>left</toc>
-                        </attributes>
-                    </configuration>
-                    <!-- Since each execution can only handle one backend, run
-                         separate executions for each desired output type -->
-                    <executions>
-                        <execution>
-                            <id>output-html</id>
-                            <phase>generate-resources</phase>
-                            <goals>
-                                <goal>process-asciidoc</goal>
-                            </goals>
-                            <configuration>
-                                <backend>html5</backend>
-                                <outputDirectory>src/docs/asciidoc/html</outputDirectory>
-                            </configuration>
-                        </execution>
-
-                        <execution>
-                            <id>output-pdf</id>
-                            <phase>generate-resources</phase>
-                            <goals>
-                                <goal>process-asciidoc</goal>
-                            </goals>
-                            <configuration>
-                                <backend>pdf</backend>
-                                <outputDirectory>src/docs/asciidoc/pdf</outputDirectory>
-                            </configuration>
-                        </execution>
-
-                    </executions>
-                </plugin>
+            </plugin>-->
         </plugins>
 
     </build>
