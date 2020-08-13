@@ -3,6 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
+
     <modules>
         <module>dto</module>
         <module>api</module>
@@ -50,6 +51,7 @@
         </dependency>
 
         <!-- ********************* swagger导出PDF/HTML所需依赖 START ********************************* -->
+        <!--加scope:test就相当于 -Dmaven.test.skip ,除非执行的是测试类，不然跳过编译-->
         <dependency>
             <groupId>io.github.swagger2markup</groupId>
             <artifactId>swagger2markup</artifactId>
@@ -150,15 +152,27 @@
     </dependencies>
 
     <build>
-        <plugins>
-            <!--引入了spring-boot-maven-plugin，打包时会去扫描项目main方法入口，也就是说必须在项目src/main/java/下创建一个spring-boot启动类-->
-            <!--但是多模块一般不可能这样做，所以修改为普通的maven-plugin配置或者注释掉-->
-            <!--<plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>-->
-        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.7.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-project-info-reports-plugin</artifactId>
+                    <version>3.0.0</version>
+                </plugin>
+            </plugins>
 
+                <!--引入了spring-boot-maven-plugin，打包时会去扫描项目main方法入口，也就是说必须在项目src/main/java/下创建一个spring-boot启动类-->
+                <!--但是多模块一般不可能这样做，所以修改为普通的maven-plugin配置或者注释掉-->
+                <!--<plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                </plugin>-->
+        </pluginManagement>
     </build>
 
 </project>

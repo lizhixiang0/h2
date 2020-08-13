@@ -1,4 +1,4 @@
-package com.zx.arch.constants;
+package com.zx.arch.constant;
 
 public interface SystemConstants {
     /**
@@ -6,5 +6,5 @@ public interface SystemConstants {
      */
     String[] SUPPORT_LOCALES = new String[]{"en", "zh_CN", "jp"};
 
-    public static final String DEFAULT_LOCALE = "zh_CN";
+    String DEFAULT_LOCALE = "zh_CN";
 }
