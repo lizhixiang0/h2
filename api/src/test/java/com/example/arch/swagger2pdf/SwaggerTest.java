@@ -1,4 +1,4 @@
-package swagger2pdf;
+package com.example.arch.swagger2pdf;
 
 import com.zx.arch.H2Application;
 import io.github.swagger2markup.GroupBy;

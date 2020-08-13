@@ -1,1 +1,0 @@
-INSERT INTO `ac_engine` VALUES ('1', '1', 'pax-sc-engine', '·', '·', '·', 'c9f130ff954f7a61334897f9afbe27265a122dd8a508a4c3f3e6b513a77ac713', '', '', '', 'http://192.168.201.81:8000', null, null, null, null);

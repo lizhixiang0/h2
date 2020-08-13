@@ -1,4 +1,4 @@
-package rest;
+package com.example.arch.rest;
 
 import com.zx.arch.H2Application;
 import org.hamcrest.Matchers;
@@ -15,6 +15,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 /**
  * @author lizx
  * @date 2020/06/28
+ * @description  测试controller层
+ * @note  如果配置了test包里配置了application文件，那此处会以test包的为准
  **/
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -29,9 +31,8 @@ public class DemoControllerTest {
     private TestRestTemplate restTemplate;
 
     @Test
-
-    public void testBook() throws Exception {
-        Assert.assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/testRestTemplate",String.class),
-                Matchers.containsString("404"));
+    public void testBook(){
+        Assert.assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/api/test",String.class),
+                Matchers.containsString("s"));
     }
 }
