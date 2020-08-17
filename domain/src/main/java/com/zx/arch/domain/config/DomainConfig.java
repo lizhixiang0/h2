@@ -14,9 +14,8 @@ import org.springframework.context.annotation.Configuration;
  * @description 配置domain模块并且由启动类通过import导入项目
  * @Note    直接加@Configuration ,api模块的启动类识别不到！！没法import进去,需要先import，然后再@Configuration**/
 @Configuration
-@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 @ComponentScan(basePackages = "com.zx.arch.domain")
-//在配置类里加扫描注解的意思是将这个包下所有的都注解成Mapper
-@MapperScan("com.zx.arch.dao")
+//在配置类里加扫描注解的意思是将这个包下所有的都注解成Mapper,加了这个才能被api模块捕捉到
+@MapperScan("com.zx.arch.domain.dao")
 public class DomainConfig {
 }

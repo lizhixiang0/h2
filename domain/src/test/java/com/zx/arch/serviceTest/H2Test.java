@@ -1,9 +1,8 @@
-package com.example.arch.serviceTest;
+package com.zx.arch.serviceTest;
 
-import com.example.arch.config.DomainConfigTest;
 import com.zx.arch.domain.entity.User;
 import com.zx.arch.domain.service.impl.UserServiceImpl;
-import org.flywaydb.core.Flyway;
+import com.zx.arch.config.DomainConfigTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,7 +19,6 @@ public class H2Test {
 
     @Autowired
     UserServiceImpl userServiceImpl;
-
 
     @Test
     public void insertTest() {

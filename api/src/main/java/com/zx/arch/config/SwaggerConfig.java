@@ -1,4 +1,4 @@
-package com.zx.arch.domain.config;
+package com.zx.arch.config;
 
 import com.google.common.base.Predicates;
 import org.springframework.beans.factory.annotation.Value;

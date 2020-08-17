@@ -1,4 +1,4 @@
-package com.zx.arch.domain.config;
+package com.zx.arch.config;
 
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;

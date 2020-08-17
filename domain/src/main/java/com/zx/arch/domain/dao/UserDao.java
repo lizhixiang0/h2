@@ -1,13 +1,13 @@
 package com.zx.arch.domain.dao;
 
 import com.zx.arch.domain.entity.User;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 /**
  * @author lizx
  * @date 2020/08/13
  **/
-@Repository
 public interface UserDao{
     /**
      *

@@ -12,11 +12,13 @@ public interface InterfaceTest {
     default  void test(){
         System.out.println("jdk1.8之后，接口允许有默认方法,但是这个默认方法必须是对所有实现类都有价值");
     };
-}
 
-class Test01 implements  InterfaceTest{
-    public static void main(String[] args) {
-        InterfaceTest demoTest01 = new Test01();
-        demoTest01.test();
+    class Test01 implements  InterfaceTest{
+        public static void main(String[] args) {
+            InterfaceTest demoTest01 = new Test01();
+            demoTest01.test();
+        }
     }
 }
+
+

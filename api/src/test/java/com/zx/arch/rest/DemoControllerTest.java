@@ -1,4 +1,4 @@
-package com.example.arch.rest;
+package com.zx.arch.rest;
 
 import com.zx.arch.H2Application;
 import org.hamcrest.Matchers;

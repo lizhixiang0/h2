@@ -1,13 +1,10 @@
-package com.example.arch.config;
+package com.zx.arch.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import org.flywaydb.core.Flyway;
-import org.flywaydb.core.api.configuration.FluentConfiguration;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration;
-import org.springframework.boot.autoconfigure.flyway.FlywayConfigurationCustomizer;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -23,6 +20,7 @@ import java.net.URISyntaxException;
  **/
 @Configuration
 @ComponentScan(basePackages = "com.zx.arch.domain")
+//必须加这个采有用
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 @MapperScan("com.zx.arch.domain.dao")
 public class DomainConfigTest {
@@ -90,8 +88,6 @@ public class DomainConfigTest {
                 .locations(prefix+"/db/migration/common")
                 .load()
                 .migrate();
-
-        //
         return null;
     }
 }

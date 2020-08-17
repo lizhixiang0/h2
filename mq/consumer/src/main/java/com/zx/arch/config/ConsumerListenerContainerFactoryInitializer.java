@@ -1,4 +1,4 @@
-package com.zx.arch.domain.config;
+package com.zx.arch.config;
 
 
 import com.zx.arch.serializer.KryoObjDeserializer;
@@ -19,6 +19,7 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;

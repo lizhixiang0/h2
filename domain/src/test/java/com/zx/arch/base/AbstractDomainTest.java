@@ -1,6 +1,6 @@
-package com.example.arch.base;
+package com.zx.arch.base;
 
-import com.example.arch.config.DomainConfigTest;
+import com.zx.arch.config.DomainConfigTest;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -19,6 +19,5 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = { DomainConfigTest.class })
 @TestPropertySource("classpath:application.yml")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class })
 public class AbstractDomainTest extends AbstractTransactionalJUnit4SpringContextTests {
 }
