@@ -1,4 +1,4 @@
-package com.zx.arch.config;
+package com.zx.arch.domain.config;
 
 
 import com.zx.arch.serializer.KryoObjDeserializer;

@@ -1,4 +1,4 @@
-package com.zx.arch.entity;
+package com.zx.arch.domain.entity;
 
 import lombok.Data;
 

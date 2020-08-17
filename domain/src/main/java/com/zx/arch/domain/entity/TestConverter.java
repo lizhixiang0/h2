@@ -1,4 +1,4 @@
-package com.zx.arch.entity;
+package com.zx.arch.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package com.zx.arch.config;//
+package com.zx.arch.domain.config;//
 
 import com.zx.arch.message.DefaultMessageIdGenerator;
 import com.zx.arch.message.MessageIdGenerator;

@@ -1,10 +1,10 @@
 /**
  * 
  */
-package com.zx.arch.service;
+package com.zx.arch.domain.service;
 
 
-import com.zx.arch.entity.User;
+import com.zx.arch.domain.entity.User;
 
 public interface UserService {
 		int insert(User user);

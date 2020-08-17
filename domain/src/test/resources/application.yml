@@ -13,5 +13,5 @@ spring.datasource.password:
 
 mybatis:
 #  #  configuration-properties: classpath:mybatis/mybatis-config.xml
-    type-aliases-package: com.zx.arch.entity
-    mapper-locations: classpath:mapper/*Mapper.xml
+    type-aliases-package: com.zx.arch.domain.entity
+    mapper-locations: classpath:mappings/*Mapper.xml

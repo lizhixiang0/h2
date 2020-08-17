@@ -1,16 +1,16 @@
-/**
- * 
- */
-package com.zx.arch.service.impl;
+package com.zx.arch.domain.service.impl;
 
 
-import com.zx.arch.dao.UserDao;
-import com.zx.arch.entity.User;
-import com.zx.arch.service.UserService;
+import com.zx.arch.domain.dao.UserDao;
+import com.zx.arch.domain.entity.User;
+import com.zx.arch.domain.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+/**
+ * @author admin
+ */
 @Service
 public class UserServiceImpl implements UserService {
 

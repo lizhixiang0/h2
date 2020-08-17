@@ -1,16 +1,14 @@
-package com.zx.arch.dao;
+package com.zx.arch.domain.dao;
 
-import com.zx.arch.entity.User;
-import org.apache.ibatis.annotations.Mapper;
+import com.zx.arch.domain.entity.User;
 import org.springframework.stereotype.Repository;
 
 /**
  * @author lizx
  * @date 2020/08/13
  **/
-@Mapper
 @Repository
-public interface UserDao {
+public interface UserDao{
     /**
      *
      * @param user

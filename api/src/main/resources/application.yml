@@ -16,7 +16,7 @@ spring:
     enabled: true
     baseline-on-migrate: true
     validate-on-migrate: false
-    #问题一、这个目录必须一层一层创建，不然idea识别不出来
+    #问题一、不能直接输入db.migration，而正确的输入应该是db/migration。
     #问题二、文件必须是UTF-8编码，不然会报校验和错误
     locations: classpath:db/migration/common,classpath:db/migration/mysql,classpath:db/migration/java
 

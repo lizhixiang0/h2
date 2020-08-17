@@ -17,6 +17,7 @@ public class CommonController {
     @GetMapping("/test")
     @ResponseBody
     public String a(){
+
         return "s";
     }
 }

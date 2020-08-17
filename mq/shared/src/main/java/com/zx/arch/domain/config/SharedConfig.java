@@ -1,4 +1,4 @@
-package com.zx.arch.config;
+package com.zx.arch.domain.config;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
