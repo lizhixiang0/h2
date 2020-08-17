@@ -11,7 +11,10 @@ spring.datasource.password:
 #进行该配置后，每次启动程序，程序都会运行resources/db/data.sql文件，对数据库的数据操作。
 #spring.datasource.data: classpath:sql/data.sql
 
+# 关闭flyway的自动配置，手动配置才会生效。或者注入自定义flyway对象，也会使自动配置失效。
+spring.flyway:
+    enabled: false
+
+# 不配置会报错:Invalid bound statement (not found)
 mybatis:
-#  #  configuration-properties: classpath:mybatis/mybatis-config.xml
-    type-aliases-package: com.zx.arch.domain.entity
     mapper-locations: classpath:mappings/*Mapper.xml

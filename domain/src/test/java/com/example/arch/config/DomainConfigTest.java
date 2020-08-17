@@ -2,9 +2,12 @@ package com.example.arch.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import org.flywaydb.core.Flyway;
+import org.flywaydb.core.api.configuration.FluentConfiguration;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration;
+import org.springframework.boot.autoconfigure.flyway.FlywayConfigurationCustomizer;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -87,6 +90,8 @@ public class DomainConfigTest {
                 .locations(prefix+"/db/migration/common")
                 .load()
                 .migrate();
+
+        //
         return null;
     }
 }
