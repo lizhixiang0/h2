@@ -19,8 +19,9 @@ import java.net.URISyntaxException;
  * @date 2020/08/13
  **/
 @Configuration
-@ComponentScan(basePackages = "com.zx.arch.domain")
-//必须加这个采有用
+//不能扫描domain整个模块，domain下也有一个数据源配置，会冲突
+@ComponentScan(basePackages = "com.zx.arch.domain.service")
+//必须加这个，具体原因暂时不晓得
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 @MapperScan("com.zx.arch.domain.dao")
 public class DomainConfigTest {

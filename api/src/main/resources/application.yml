@@ -46,3 +46,6 @@ kafka:
   customization:
     listener-ack:
       app: MANUAL_IMMEDIATE
+
+mybatis:
+  mapper-locations: classpath:mappings/*Mapper.xml
