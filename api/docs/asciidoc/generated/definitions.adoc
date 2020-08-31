@@ -1,0 +1,37 @@
+
+[[_definitions]]
+== Definitions
+
+[[_restmessage]]
+=== RestMessage
+返回响应数据
+
+
+[options="header", cols=".^3a,.^11a,.^4a"]
+|===
+|Name|Description|Schema
+|**data** +
+__optional__|返回对象|object
+|**errCode** +
+__optional__|错误编号|integer (int32)
+|**message** +
+__optional__|错误信息|string
+|**success** +
+__optional__|是否成功|boolean
+|===
+
+
+[[_scantaskrequest]]
+=== ScanTaskRequest
+
+[options="header", cols=".^3a,.^4a"]
+|===
+|Name|Schema
+|**appId** +
+__optional__|integer (int64)
+|**id** +
+__optional__|integer (int64)
+|===
+
+
+

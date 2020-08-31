@@ -1,0 +1,137 @@
+
+[[_paths]]
+== Resources
+
+[[_cf9084b7770f9422dd60e4ef9c680097]]
+=== 描述
+Swagger Controller
+
+
+[[_testusingpost]]
+==== 创建任务
+....
+POST /test/hello
+....
+
+
+===== Description
+注意id为必填项
+
+
+===== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Body**|**scanTaskRequest** +
+__required__|Created user object|<<_scantaskrequest,ScanTaskRequest>>
+|===
+
+
+===== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|success|<<_restmessage,RestMessage>>
+|**201**|Created|No Content
+|**401**|Unauthorized|No Content
+|**403**|Forbidden|No Content
+|**404**|Not Found|No Content
+|===
+
+
+===== Consumes
+
+* `application/json`
+
+
+===== Produces
+
+* `\*/*`
+
+
+[[_test3usingput]]
+==== 测试@ApiImplicitParam注解
+....
+PUT /test/hello
+....
+
+
+===== Description
+putMapping一般用于修改
+
+
+===== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a,.^2a"]
+|===
+|Type|Name|Description|Schema|Default
+|**Header**|**name** +
+__required__|名字|string|`"head china cant solve"`
+|===
+
+
+===== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_restmessage,RestMessage>>
+|**201**|Created|No Content
+|**401**|Unauthorized|No Content
+|**403**|Forbidden|No Content
+|**404**|Not Found|No Content
+|===
+
+
+===== Consumes
+
+* `application/json`
+
+
+===== Produces
+
+* `\*/*`
+
+
+[[_test2usingget]]
+==== 说明方法的用途
+....
+GET /test/hello/{phone}
+....
+
+
+===== Description
+方法的备注说明
+
+
+===== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**phone** +
+__required__|phone|integer (int32)
+|===
+
+
+===== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|success|<<_restmessage,RestMessage>>
+|**400**|请求参数没填好|No Content
+|**401**|Unauthorized|No Content
+|**403**|Forbidden|No Content
+|**404**|请求路径没有或页面跳转路径不对|No Content
+|===
+
+
+===== Produces
+
+* `\*/*`
+
+
+
