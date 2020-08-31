@@ -6,20 +6,29 @@ import com.zx.arch.exception.GenericVasException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author admin
+ */
 @Configuration
 @ConfigurationProperties(
         prefix = "vas-common"
 )
+@Import({
+        PaxstoreProps.class
+})
 public class VasCommConfig implements InitializingBean {
     private static final Logger logger = LoggerFactory.getLogger(VasCommConfig.class);
     private Map<ServiceType, ServiceDeployInfo> serviceInfo;
+    @Autowired
     private PaxstoreProps paxstore;
     private ServiceType currentServiceType;
     private List<String> envListSupportNotification = new ArrayList();

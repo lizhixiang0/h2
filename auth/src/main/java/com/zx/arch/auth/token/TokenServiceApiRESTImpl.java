@@ -1,7 +1,6 @@
 package com.zx.arch.auth.token;
 
 import com.zx.arch.config.VasCommConfig;
-import com.zx.arch.constant.VasConstants;
 import com.zx.arch.constant.VasConstants.ServiceType;
 import com.zx.arch.exception.SdkException;
 import com.zx.arch.response.PaxstoreInstanceInfo;
@@ -10,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.NestedRuntimeException;
@@ -28,12 +28,21 @@ import java.util.Map;
 @Component
 public class TokenServiceApiRESTImpl extends AbstractTokenServiceApi implements ApplicationContextAware, InitializingBean {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    /**
+     * 本地缓存
+     */
     private VasSharedInfoStorage vasSharedInfoStorage;
+
     protected RestTemplate restTemplate;
-    protected VasConstants.ServiceType serviceType;
+
+    protected ServiceType serviceType;
+
     final String vasPlatformApiBaseUrl;
+
     protected String tokenSignKey;
+
     private VasCommConfig vasCommConfig;
+
     private ApplicationContext applicationContext;
 
     public TokenServiceApiRESTImpl(VasCommConfig vasCommConfig, VasSharedInfoStorage vasSharedInfoStorage) throws SdkException {
@@ -81,7 +90,7 @@ public class TokenServiceApiRESTImpl extends AbstractTokenServiceApi implements 
         PaxstoreInstanceInfo paxstoreInstanceInfo = null;
 
         try {
-            paxstoreInstanceInfo = (PaxstoreInstanceInfo)this.exchange("/api/int/paxstore/{envCode}", HttpMethod.GET, PaxstoreInstanceInfo.class, uriVariables);
+            paxstoreInstanceInfo = this.exchange("/api/int/paxstore/{envCode}", HttpMethod.GET, PaxstoreInstanceInfo.class, uriVariables);
         } catch (SdkException var5) {
             this.logger.error("Encounter error when get paxstore instance info from vas", var5);
         }
@@ -95,17 +104,18 @@ public class TokenServiceApiRESTImpl extends AbstractTokenServiceApi implements 
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet(){
         if (this.vasCommConfig.isCurrentServiceInSameIntranet(ServiceType.VAS_PLATFORM)) {
-            this.restTemplate = (RestTemplate)this.applicationContext.getBean("loadBalancedRestTemplate", RestTemplate.class);
+            //this.restTemplate = this.applicationContext.getBean("loadBalancedRestTemplate", RestTemplate.class);
+            this.restTemplate = this.applicationContext.getBean("restTemplate", RestTemplate.class);
         } else {
-            this.restTemplate = (RestTemplate)this.applicationContext.getBean("restTemplate", RestTemplate.class);
+            this.restTemplate = this.applicationContext.getBean("restTemplate", RestTemplate.class);
         }
 
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-
+        this.applicationContext = applicationContext;
     }
 }

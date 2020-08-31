@@ -1,6 +1,6 @@
 package com.zx.arch.consumer;
 
-import com.zx.arch.handle.ApkFileUpdateHandler;
+import com.zx.arch.handler.ApkFileUpdateHandler;
 import com.zx.arch.message.UpdateApkFileMessage;
 import com.zx.arch.topic.TopicNames;
 import org.apache.kafka.clients.consumer.Consumer;

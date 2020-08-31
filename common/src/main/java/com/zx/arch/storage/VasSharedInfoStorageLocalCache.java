@@ -1,9 +1,4 @@
-package com.zx.arch.storage;//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
-
-
+package com.zx.arch.storage;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 
@@ -11,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author admin
- * @description  Caffeine是使用Java8对Guava缓存的重写版本，在Spring Boot 2.0中将取代Guava。如果出现Caffeine，CaffeineCacheManager将会自动配置
+ * @description  使用caffeine进行本地缓存
  */
 public class VasSharedInfoStorageLocalCache implements VasSharedInfoStorage {
     Cache<String, Object> caffeineCache;

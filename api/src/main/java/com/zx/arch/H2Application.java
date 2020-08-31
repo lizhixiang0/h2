@@ -1,6 +1,7 @@
 package com.zx.arch;
 
 import com.zx.arch.auth.config.CustomSecurityConfig;
+import com.zx.arch.config.VasCommConfig;
 import com.zx.arch.domain.config.DomainConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,7 +13,7 @@ import org.springframework.context.annotation.Import;
 @SpringBootApplication
 @Import({
         DomainConfig.class,
-        CustomSecurityConfig.class
+        CustomSecurityConfig.class,
 })
 public class H2Application {
     public static void main(String[] args) {

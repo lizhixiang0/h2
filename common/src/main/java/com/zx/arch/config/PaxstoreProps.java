@@ -1,15 +1,11 @@
-package com.zx.arch.config;//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
-
-
+package com.zx.arch.config;
 
 import com.google.common.base.Preconditions;
 
 /**
  * @author admin
  */
+
 public class PaxstoreProps {
     private static final String VAS_API_PING_URL = "/v1/public/ping";
     private String authUrl;

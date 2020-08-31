@@ -93,4 +93,5 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public LocaleResolver localeResolver() {
         return new AppScanApiLocaleResolver();
     }
+
 }

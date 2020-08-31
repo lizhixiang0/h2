@@ -1,4 +1,4 @@
-package com.zx.arch.handle;
+package com.zx.arch.handler;
 
 import com.zx.arch.message.UpdateApkFileMessage;
 import org.springframework.stereotype.Component;

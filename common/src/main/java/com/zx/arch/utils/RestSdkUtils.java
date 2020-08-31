@@ -11,6 +11,9 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 
+/**
+ * @author admin
+ */
 public class RestSdkUtils {
     private static final Logger logger = LoggerFactory.getLogger(RestSdkUtils.class);
     private static final String URL_SPLIT = "/";

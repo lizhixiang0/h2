@@ -1,9 +1,9 @@
-package com.zx.arch.storage;//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
+package com.zx.arch.storage;
 
 
+/**
+ * @author admin
+ */
 public interface VasSharedInfoStorage {
     void clearAll();
 

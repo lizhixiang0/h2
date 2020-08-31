@@ -49,3 +49,17 @@ kafka:
 
 mybatis:
   mapper-locations: classpath:mappings/*Mapper.xml
+
+vas-common:
+  current-service-type: VAS_PLATFORM
+  service-info:
+    VAS_PLATFORM:
+      deploy-intranet: true
+      internet-url: http://www.paxdev.com:8080/platform
+      intranet-url: http://platform/platform
+      secret-key: S5YwsuB09fEDYKe35U6aqaE01X0UjJYj5QRcGiaYwKhsK01y
+  paxstore:
+    auth-url: http://%s:8082/passport
+    vas-api-url: http://%s:8084/p-market-vas
+    bypass-ssl-check: false
+    auth-code-process-url: http://www.paxdev.com:8080/platform/auth/code
