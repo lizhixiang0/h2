@@ -4,7 +4,6 @@ import com.zx.arch.domain.entity.User;
 import com.zx.arch.domain.service.impl.UserServiceImpl;
 import com.zx.arch.config.DomainConfigTest;
 import lombok.extern.java.Log;
-import org.checkerframework.checker.index.qual.LengthOf;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

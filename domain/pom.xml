@@ -12,6 +12,7 @@
     <artifactId>domain</artifactId>
 
     <dependencies>
+        <!--================================测试用======================================-->
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
@@ -22,6 +23,8 @@
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!--================================持久层专用======================================-->
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
@@ -32,6 +35,12 @@
             <artifactId>druid</artifactId>
             <version>1.1.6</version>
         </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus</artifactId>
+            <version>3.3.2</version>
+        </dependency>
+
     </dependencies>
 
 </project>

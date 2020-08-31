@@ -77,9 +77,9 @@ public class DomainConfig {
     @Bean
     public SqlSessionFactory sqlSessionFactory() throws Exception {
         SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
-        //配置数据源
+        //1、配置数据源
         sqlSessionFactory.setDataSource(datasource());
-        //设置映射文件地址
+        //2、设置映射文件地址
         sqlSessionFactory.setMapperLocations(
                 new PathMatchingResourcePatternResolver().getResources("classpath:mappings/*Mapper.xml"));
         return sqlSessionFactory.getObject();

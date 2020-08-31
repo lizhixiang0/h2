@@ -17,5 +17,30 @@
         <module>shared</module>
     </modules>
 
+    <dependencies>
+        <!--序列化器-->
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+            <version>4.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <!-- <version>2.2.2</version>-->
+            <!--这里长个记性，springboot会管理这个，我直接copy过来时是2.2.2,但是报错了,
+            后来交给springboot管理,他自己管理的版本是2.5.0-->
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>28.2-jre</version>
+        </dependency>
+    </dependencies>
 
 </project>
