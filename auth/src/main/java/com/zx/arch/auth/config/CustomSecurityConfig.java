@@ -76,8 +76,8 @@ public class CustomSecurityConfig extends WebSecurityConfigurerAdapter {
                 //除了上面三个之外都需要认证
                 .anyRequest().authenticated()
                 .and()
+                //jwt认证
                 .addFilterBefore(paxstoreApiAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-
     }
 
     @Autowired

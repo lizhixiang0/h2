@@ -73,9 +73,11 @@ public class TokenServiceApiRESTImpl extends AbstractTokenServiceApi implements 
         if(paxstoreInstanceInfo == null){
             //这个是我测试用的,没启动paxstore,直接自己创建了一个paxstroe实例
             paxstoreInstanceInfo = new PaxstoreInstanceInfo();
+            //必须获得密钥才可以对token进行验证
             paxstoreInstanceInfo.setApiSecretFromPaxstore("ApiSecretFromPaxstore");
             paxstoreInstanceInfo.setApiSecretToPaxstore("ApiSecretToPaxstore");
             paxstoreInstanceInfo.setEnvCode(envCode);
+            //调用方必须注册了本服务才认证通过
             Set<ServiceType> enabledServices = new HashSet<>();
             enabledServices.add(ServiceType.VAS_PLATFORM);
             paxstoreInstanceInfo.setEnabledServices(enabledServices);
