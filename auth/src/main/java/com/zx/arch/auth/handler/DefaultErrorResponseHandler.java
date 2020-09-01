@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.zx.arch.exception.AuthFailureException;
 import com.zx.arch.exception.GenericVasException;
 import com.zx.arch.auth.exception.ThirdpartyAuthenticationException;
 import com.zx.arch.auth.exception.VasAuthenticationException;
@@ -27,14 +28,15 @@ public class DefaultErrorResponseHandler implements ResponseHandler {
     public void handle(Throwable exception, HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (!(exception instanceof ThirdpartyAuthenticationException) && !(exception instanceof VasAuthenticationException)) {
             if (exception instanceof GenericVasException) {
-                ApiUtils.writeToHttpResponse(response, HttpStatus.BAD_REQUEST.value(), ((GenericVasException)exception).getMessage());
+                ApiUtils.writeToHttpResponse(response, HttpStatus.BAD_REQUEST, ((GenericVasException)exception).getErrorCode());
             } else {
                 logger.error("Encounter unknow exception", exception);
-                ApiUtils.writeToHttpResponse(response, HttpStatus.BAD_REQUEST.value(),"");
+                ApiUtils.writeToHttpResponse(response, HttpStatus.BAD_REQUEST, 999);
             }
         } else {
-            ApiUtils.writeToHttpResponse(response, HttpStatus.UNAUTHORIZED.value(), ((VasAuthenticationException)exception).getMessage());
+            ApiUtils.writeToHttpResponse(response, HttpStatus.UNAUTHORIZED, ((VasAuthenticationException)exception).getErrorCode());
         }
+
     }
 }
 

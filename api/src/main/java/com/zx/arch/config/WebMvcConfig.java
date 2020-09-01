@@ -2,7 +2,7 @@ package com.zx.arch.config;
 
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
-import com.zx.arch.exception.CustomHandlerExceptionResolver;
+import com.zx.arch.handler.CustomHandlerExceptionResolver;
 import com.zx.arch.il8.AppScanApiLocaleResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

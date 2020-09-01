@@ -14,12 +14,16 @@ public interface ErrorCodes {
     int UNKNOWN = 999;
     Map<String, String> CODE_MSG_MAPPING = new HashMap() {
         {
-            this.put(1, "Http Client Error");
-            this.put(2, "Server side error");
-            this.put(3, "Rest client error");
-            this.put(4, "Keystore or trust store parameter error");
-            this.put(5, "Http client init error");
-            this.put(6, "RestTemplate init error");
+            this.put(11, "Invalid parameter");
+            this.put(12, "Invalid parameter 'timestamp'");
+            this.put(13, "Authentication failed");
+            this.put(14, "Authentication failed");
+            this.put(15, "Authentication failed");
+            this.put(16, "Authentication failed");
+            this.put(17, "Auth failed");
+            this.put(18, "Auth failed");
+            this.put(19, "Vas Common Configuration Error");
+            this.put(99, "Unknow error");
         }
     };
 }

@@ -6,6 +6,9 @@ package com.zx.arch.auth.exception;//
 
 import com.zx.arch.exception.GenericVasException;
 
+/**
+ * @author admin
+ */
 public class VasAuthenticationException extends GenericVasException {
     public VasAuthenticationException(int errorCode) {
         super(errorCode);

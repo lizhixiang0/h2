@@ -106,8 +106,7 @@ public class TokenServiceApiRESTImpl extends AbstractTokenServiceApi implements 
     @Override
     public void afterPropertiesSet(){
         if (this.vasCommConfig.isCurrentServiceInSameIntranet(ServiceType.VAS_PLATFORM)) {
-            //this.restTemplate = this.applicationContext.getBean("loadBalancedRestTemplate", RestTemplate.class);
-            this.restTemplate = this.applicationContext.getBean("restTemplate", RestTemplate.class);
+            this.restTemplate = this.applicationContext.getBean("loadBalancedRestTemplate", RestTemplate.class);
         } else {
             this.restTemplate = this.applicationContext.getBean("restTemplate", RestTemplate.class);
         }

@@ -76,16 +76,10 @@ public class CustomSecurityConfig extends WebSecurityConfigurerAdapter {
                 //除了上面三个之外都需要认证
                 .anyRequest().authenticated()
                 .and()
-                // 添加JWT filter
-                //.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
                 .addFilterBefore(paxstoreApiAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
     }
 
-    /*@Bean
-    public JwtAuthenticationTokenFilter authenticationTokenFilterBean() throws Exception {
-        return new JwtAuthenticationTokenFilter();
-    }*/
     @Autowired
     private TokenServiceApi tokenServiceApi;
 
