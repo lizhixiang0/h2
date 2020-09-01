@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 
 /**
  * @author admin
+ * @认证不通过handler类
  */
 public class DefaultErrorResponseHandler implements ResponseHandler {
     private static final Logger logger = LoggerFactory.getLogger(DefaultErrorResponseHandler.class);

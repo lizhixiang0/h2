@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.NestedRuntimeException;
@@ -21,7 +20,10 @@ import org.springframework.web.client.RestTemplate;
 import com.zx.arch.storage.VasSharedInfoStorage;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+
 /**
  * @author admin
  */
@@ -57,6 +59,37 @@ public class TokenServiceApiRESTImpl extends AbstractTokenServiceApi implements 
         }
     }
 
+
+
+    @Override
+    protected PaxstoreInstanceInfo getPaxstoreInstanceInfo(String envCode) {
+        PaxstoreInstanceInfo paxstoreInstanceInfo = null;
+        if (this.vasSharedInfoStorage != null) {
+            //从本地vas缓存库中获取paxstore实例
+            paxstoreInstanceInfo = (PaxstoreInstanceInfo)this.vasSharedInfoStorage.get("pax-inc-", envCode);
+        }
+
+
+        if(paxstoreInstanceInfo == null){
+            //这个是我测试用的,没启动paxstore,直接自己创建了一个paxstroe实例
+            paxstoreInstanceInfo = new PaxstoreInstanceInfo();
+            paxstoreInstanceInfo.setApiSecretFromPaxstore("ApiSecretFromPaxstore");
+            paxstoreInstanceInfo.setApiSecretToPaxstore("ApiSecretToPaxstore");
+            paxstoreInstanceInfo.setEnvCode(envCode);
+            Set<ServiceType> enabledServices = new HashSet<>();
+            enabledServices.add(ServiceType.VAS_PLATFORM);
+            paxstoreInstanceInfo.setEnabledServices(enabledServices);
+        }
+        if (paxstoreInstanceInfo == null) {
+            //如果本地缓存库没有，就调用http请求到paxstore去获取，拿到后再存到本地缓存中
+            paxstoreInstanceInfo = this.getPaxstoreInstanceInfoFromVas(envCode);
+            if (paxstoreInstanceInfo != null && this.vasSharedInfoStorage != null) {
+                this.vasSharedInfoStorage.put("pax-inc-", envCode, paxstoreInstanceInfo);
+            }
+        }
+        return paxstoreInstanceInfo;
+    }
+
     protected <T> T exchange(String url, HttpMethod method, Class<T> responseType, Map<String, ?> uriVariables) throws SdkException {
         try {
             HttpHeaders requestHeaders = RestSdkUtils.prepareRequestHeader(this.tokenSignKey, this.getCurrentServiceType());
@@ -67,24 +100,13 @@ public class TokenServiceApiRESTImpl extends AbstractTokenServiceApi implements 
         }
     }
 
-    @Override
-    protected PaxstoreInstanceInfo getPaxstoreInstanceInfo(String envCode) {
-        PaxstoreInstanceInfo paxstoreInstanceInfo = null;
-        if (this.vasSharedInfoStorage != null) {
-            paxstoreInstanceInfo = (PaxstoreInstanceInfo)this.vasSharedInfoStorage.get("pax-inc-", envCode);
-        }
-
-        if (paxstoreInstanceInfo == null) {
-            paxstoreInstanceInfo = this.getPaxstoreInstanceInfoFromVas(envCode);
-            if (paxstoreInstanceInfo != null && this.vasSharedInfoStorage != null) {
-                this.vasSharedInfoStorage.put("pax-inc-", envCode, paxstoreInstanceInfo);
-            }
-        }
-
-        return paxstoreInstanceInfo;
-    }
-
+    /**
+     * 从paxstore获取对应的环境实例
+     * @param envCode
+     * @return
+     */
     private PaxstoreInstanceInfo getPaxstoreInstanceInfoFromVas(String envCode) {
+        //参数
         Map<String, String> uriVariables = new HashMap(1);
         uriVariables.put("envCode", envCode);
         PaxstoreInstanceInfo paxstoreInstanceInfo = null;

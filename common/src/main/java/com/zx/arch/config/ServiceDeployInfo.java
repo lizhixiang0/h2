@@ -1,60 +1,32 @@
-package com.zx.arch.config;//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
-
+package com.zx.arch.config;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 /**
  * @author admin
  */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ServiceDeployInfo implements Serializable {
     private static final long serialVersionUID = 4058952630475113653L;
+    /**
+     * 是否为内联模式
+     */
     private boolean deployIntranet;
+    /**
+     * 互联网地址
+     */
     private String internetUrl;
+    /**
+     * 内联网地址
+     */
     private String intranetUrl;
+    /**
+     * 密钥
+     */
     private String secretKey;
-
-    public ServiceDeployInfo() {
-    }
-
-    public ServiceDeployInfo(boolean deployIntranet, String internetUrl, String intranetUrl, String secretKey) {
-        this.deployIntranet = deployIntranet;
-        this.internetUrl = internetUrl;
-        this.intranetUrl = intranetUrl;
-        this.secretKey = secretKey;
-    }
-
-    public boolean isDeployIntranet() {
-        return this.deployIntranet;
-    }
-
-    public String getInternetUrl() {
-        return this.internetUrl;
-    }
-
-    public String getIntranetUrl() {
-        return this.intranetUrl;
-    }
-
-    public String getSecretKey() {
-        return this.secretKey;
-    }
-
-    public void setDeployIntranet(final boolean deployIntranet) {
-        this.deployIntranet = deployIntranet;
-    }
-
-    public void setInternetUrl(final String internetUrl) {
-        this.internetUrl = internetUrl;
-    }
-
-    public void setIntranetUrl(final String intranetUrl) {
-        this.intranetUrl = intranetUrl;
-    }
-
-    public void setSecretKey(final String secretKey) {
-        this.secretKey = secretKey;
-    }
 }

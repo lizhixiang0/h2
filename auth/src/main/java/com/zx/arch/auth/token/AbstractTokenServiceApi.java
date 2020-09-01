@@ -39,14 +39,20 @@ public abstract class AbstractTokenServiceApi implements TokenServiceApi {
 
     @Override
     public boolean validateAccessTokenFromPaxstore(String envCode, String token, boolean checkCurrentServiceEnabled) {
+        //验证两个参数非空非null
+        //String继承了CharSequence，但CharSequence的值是可读可写序列，而String的值是只读序列
         if (StringUtils.isAnyBlank(new CharSequence[]{envCode, token})) {
             return false;
         } else {
+            //根据env获取对应的paxstore实例
             PaxstoreInstanceInfo paxstoreInstanceInfo = this.getPaxstoreInstanceInfo(envCode);
+            //判断实例是否订阅此服务
             if (checkCurrentServiceEnabled && !paxstoreInstanceInfo.isServiceEnabled(this.getCurrentServiceType())) {
                 return false;
             } else {
+                //获取实例密钥
                 String secret = paxstoreInstanceInfo.getApiSecretToPaxstore();
+                //根据实例密钥，token、envcode判断token是否为paxstore发出
                 return StringUtils.isBlank(secret) ? false : JwtUtil.verifyTokenFromPaxstore(token, envCode, secret);
             }
         }
@@ -54,6 +60,10 @@ public abstract class AbstractTokenServiceApi implements TokenServiceApi {
 
     protected abstract PaxstoreInstanceInfo getPaxstoreInstanceInfo(String envCode);
 
+    /**
+     * 获取当前服务类型，这个配置在application中，通过Configuration赋值
+     * @return
+     */
     protected abstract ServiceType getCurrentServiceType();
 
     protected String getApiSecretIssuedByPaxstore(String envCode) {

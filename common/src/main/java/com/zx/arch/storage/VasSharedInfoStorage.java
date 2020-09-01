@@ -3,6 +3,7 @@ package com.zx.arch.storage;
 
 /**
  * @author admin
+ * @ VAS共享信息库
  */
 public interface VasSharedInfoStorage {
     void clearAll();

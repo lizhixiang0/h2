@@ -19,11 +19,21 @@ import java.util.Optional;
 
 public class JwtUtil {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
+    /**
+     * 默认token过期时间一个小时
+     */
     private static final long DEFAULT_TOKEN_EXPIRE_TIME = 3600000L;
 
     private JwtUtil() {
     }
 
+    /**
+     * 根据服务类型和密钥生成 访问paxstore的token
+     * @param serviceType
+     * @param secret
+     * @param expireInMillis
+     * @return
+     */
     public static String generateToken4Request2Paxstore(ServiceType serviceType, String secret, long expireInMillis) {
         try {
             Date date = new Date(System.currentTimeMillis() + expireInMillis);
@@ -36,9 +46,17 @@ public class JwtUtil {
     }
 
     public static String generateToken4Request2Paxstore(ServiceType serviceType, String secret) {
-        return generateToken4Request2Paxstore(serviceType, secret, 3600000L);
+        return generateToken4Request2Paxstore(serviceType, secret, DEFAULT_TOKEN_EXPIRE_TIME);
     }
 
+    /**
+     * 根据服务类型和密钥以及当前user生成 访问paxstore的token
+     * @param serviceType
+     * @param currentUser
+     * @param secret
+     * @param expireInMillis
+     * @return
+     */
     public static String generateToken4Request2Paxstore(ServiceType serviceType, String currentUser, String secret, long expireInMillis) {
         try {
             Date date = new Date(System.currentTimeMillis() + expireInMillis);
@@ -51,13 +69,15 @@ public class JwtUtil {
     }
 
     public static String generateToken4Request2Paxstore(ServiceType serviceType, String currentUser, String secret) {
-        return generateToken4Request2Paxstore(serviceType, currentUser, secret, 3600000L);
+        return generateToken4Request2Paxstore(serviceType, currentUser, secret, DEFAULT_TOKEN_EXPIRE_TIME);
     }
 
     public static boolean verifyTokenFromPaxstore(String token, String envCode, String secret) {
         try {
+            //构建密钥信息
             Algorithm algorithm = Algorithm.HMAC256(secret);
-            JWTVerifier verifier = JWT.require(algorithm).withClaim("envCode", envCode).build();
+            //通过密钥信息和签名的发布者的信息生成验证类
+            JWTVerifier verifier = JWT.require(algorithm).withClaim("serviceType", envCode).build();
             verifier.verify(token);
             return true;
         } catch (Exception var5) {
@@ -87,14 +107,26 @@ public class JwtUtil {
         }
     }
 
+    /**
+     * 生成vas内联令牌
+     * @param serviceType
+     * @param secret
+     * @param expireInMillis
+     * @return
+     */
     public static String generateVasInternalToken(ServiceType serviceType, String secret, long expireInMillis) {
         Map<String, String> claims = new HashMap(1);
         claims.put("serviceType", serviceType.getValue());
         return generateToken(claims, secret, expireInMillis);
     }
 
+
     public static String generateVasInternalToken(ServiceType serviceType, String secret) {
         return generateVasInternalToken(serviceType, secret, 3600000L);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(generateVasInternalToken(ServiceType.APP_SCAN,"ApiSecretToPaxstore"));
     }
 
     public static String generateToken(Map<String, String> claims, String secret, long expireInMillis) {

@@ -19,6 +19,7 @@ import java.util.Map;
  * @author admin
  */
 @Configuration
+//通过 @ConfigurationProperties 注解，可以获得配置文件里的属性并将其绑定到类的字段上
 @ConfigurationProperties(
         prefix = "vas-common"
 )
