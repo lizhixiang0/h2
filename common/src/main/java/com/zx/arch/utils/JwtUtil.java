@@ -125,6 +125,10 @@ public class JwtUtil {
         return generateVasInternalToken(serviceType, secret, 3600000L);
     }
 
+    /**
+     * 生成秘钥！！！这个secret是双方约定好的！
+     * @param args
+     */
     public static void main(String[] args) {
         System.out.println(generateVasInternalToken(ServiceType.APP_SCAN,"ApiSecretToPaxstore"));
     }
