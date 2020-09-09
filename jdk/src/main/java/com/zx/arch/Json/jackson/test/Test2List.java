@@ -6,12 +6,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zx.arch.Json.jackson.JsonUtils;
 import com.zx.arch.Json.jackson.entity.ManifestAnalyse;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 /**
  * @author lizx
  * @since 1.0.0
+ * @description 测试list类型的json字符串转化成java集合对象 {@link java.util.List}.
  **/
 public class Test2List {
     private static String KEY = "manifest_analysis";

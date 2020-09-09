@@ -8,6 +8,7 @@ import java.util.Map;
 /**
  * @author lizx
  * @since 1.0.0
+ * @description 测试json字符串转化成java对象 {@link java.lang.Object}
  * @note  注意这个json字符串的格式,稍微错了都会报错，就不要犯少逗号这种错了。
  **/
 public class Test2JavaObject {

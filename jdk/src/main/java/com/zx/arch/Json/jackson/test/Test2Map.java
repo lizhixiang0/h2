@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * @author lizx
  * @since 1.0.0
- * @description 将map类型的字符串转化成对象集合（Map）
+ * @description 将map类型的字符串转化成java集合对象 {@link java.util.Map}
  * @note 注意字符串必须要{} 包裹，不然会报错    not close json text, token : :
  **/
 public class Test2Map {
