@@ -19,7 +19,7 @@ public class LoadResourceByClass {
         path = String.format(IMAGE_PATH_FORMAT, IMAGE_NAME);
     }
 
-    private static void getImage() throws URISyntaxException {
+    private static void getImage() {
 
         System.out.println(LoadResourceByClass.class.getResource(path).getPath());
         System.out.println(EnumTest.class.getResource("").getPath());
@@ -30,8 +30,8 @@ public class LoadResourceByClass {
         ///D:/JetBrains/workspace/h2/jdk/target/classes/
     }
 
-    public static void main(String[] args) throws URISyntaxException {
+    public static void main(String[] args) {
         getImage();
-        //综上所述，要么class加载资源,要么path首字母必须加上 "/"
+        //综上所述，使用class加载资源,path的首字母必须加上 "/"
     }
 }
