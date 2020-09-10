@@ -22,7 +22,7 @@ public class LoadResourceByClass {
     private static void getImage() {
 
         System.out.println(LoadResourceByClass.class.getResource(path).getPath());
-        System.out.println(EnumTest.class.getResource("").getPath());
+        System.out.println(LoadResourceByClass.class.getResource("").getPath());
         System.out.println(LoadResourceByClass.class.getResource("/").getPath());
 
         ///D:/JetBrains/workspace/h2/jdk/target/classes/static/android.png
