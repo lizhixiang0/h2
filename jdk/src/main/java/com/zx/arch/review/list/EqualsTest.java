@@ -14,7 +14,7 @@ public class EqualsTest {
      * 2、equals 在objectl中调用了 "==",所以他比较的也是内存地址
      *   但是，string和基本类型包装类对这个进行了改写，变成了比较值。(即如果内存地址不相等，值相等也行)
      *
-     * 3、hashcode 并不进行什么比较，而是可以借他调用本地方法得出内存地址的散列值，不同的类可能会得到相同的散列值
+     * 3、hashcode 并不进行什么比较，而是可以借他调用本地方法得出内存地址的散列值（有区别于内存地址），不同的类可能会得到相同的散列值
      */
 
     /**
@@ -26,8 +26,8 @@ public class EqualsTest {
      *     这里分主要是为了适应HashMap和Set集合
 
      *    对于hashmap,要求它的key值不能重复，他是先判断key的hashcode，如果hashcode相等再去比较equals！
-     *    所以实际情况下，我们自定义一个类去作为hashmap的key,我们判断重复的标准是值相等！所以我们必定会去改写equals
-     *    此时，如果不改写hashcode，那么就算值相等的两个自定义对象，也会被hashmap认定为不相等，因为它先判断的是hashcode!
+     *    所以实际情况下，我们自定义一个类去作为HashMap的key,我们判断重复的标准是值相等！所以我们必定会去改写equals
+     *    此时，如果不改写hashcode，那么就算值相等的两个自定义对象，也会被hashmap认定为不相等，因为它默认先判断的是hashcode!
      *    这里可以再说明一下，为什么hashmap会选择先判断hashcode,是为了提高效率。
      *    所以得出结论，使用hashmap时如果我们用自定义对象作为key,必须改写equals方法，和hashcode。
      *
@@ -38,6 +38,4 @@ public class EqualsTest {
      *    所以首先必须改写hashcode方法让他判断值，值不相等时会去看equals方法，此时比较的是内存地址，
      *    所以得出结论，如果使用set集合，必须改写hashcode方法。
      */
-
-
 }

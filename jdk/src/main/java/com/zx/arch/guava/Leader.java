@@ -24,6 +24,7 @@ public interface Leader {
      */
     default void setLogs() {
         Basic_Utilities_logs.put("通过Optional来合理使用或者避免null", "http://ifeve.com/google-guava-using-and-avoiding-null/");
+        Basic_Utilities_logs.put("Preconditions类中提供了若干前置条件判断的实用方法","http://ifeve.com/google-guava-preconditions/");
     }
 
 
