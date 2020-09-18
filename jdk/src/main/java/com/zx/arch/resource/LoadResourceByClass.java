@@ -4,8 +4,9 @@ package com.zx.arch.resource;
  * @author lizx
  * @since 1.0.0
  * @description 通过当前类加载项目资源
- * @note 使用class加载path 路径最好以"/"开头,这样会到类路径的根路径下去找,通常情况下我们会把资源放在resource文件下 ！resource经过编译会跑到根路径下
- *        如果不以"/"开头，会默认到所用的class所在包下面找,基本找不到。
+ * @note 使用class加载path 路径最好以"/"开头,这样会到类路径的根路径下去找,通常情况下我们会把资源放在resource文件下 ！经过编译会跑到根路径即classes下
+ *       如果不以"/"开头，会默认到所用的class文件编译后所在包下面找,基本找不到。
+ *       另外如果我们把资源文件放在resource包下面的static文件里，那么获取时就必须加上static，如果直接放在resource则不需要
  **/
 public class LoadResourceByClass {
     private static final String IMAGE_PATH_FORMAT = "/static/%s.png";
