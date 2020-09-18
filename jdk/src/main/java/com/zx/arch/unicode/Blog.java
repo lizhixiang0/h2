@@ -70,7 +70,7 @@ public class Blog {
         }
         // 可以看到为三个字节 11010010 11110101 110000
         // 前两个代表汉字 ,后一个00110000 是ASCII一样，代表0  （UTF-8 中0也是00110000）
-        // 那么这个格式是如何确定？我猜测他就是两个字节一读，不过因为ASCII前面给省略了10个0
+        // 那么这个格式是如何确定？第一个字节大于127(即第一个bit为1 )，就判断为汉字，读两个字节
         // 二进制转化成16进制  D2F5   http://tools.jb51.net/table/gbk_table
         String test1=Integer.toHexString(Integer.parseInt("1101001011110101",2)).toUpperCase();
         System.out.println(test1);
@@ -79,6 +79,7 @@ public class Blog {
     public static void main(String[] args) throws IOException {
         a("utf-8");
         c();
+        // 补充: https://blog.csdn.net/longwen_zhi/article/details/79704687
     }
 
 }
