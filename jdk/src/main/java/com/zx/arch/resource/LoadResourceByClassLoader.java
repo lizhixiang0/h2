@@ -33,7 +33,7 @@ public class LoadResourceByClassLoader {
 
         /**
          * 2、纯jdk
-         * ClassLoader  通过ClassUtils获得应用加载类 即AppClassLoader
+         * 通过ClassUtils获得应用加载类 即AppClassLoader
          */
         ClassLoader classLoader = ClassUtils.getDefaultClassLoader();
         URL images = classLoader.getResource(path);

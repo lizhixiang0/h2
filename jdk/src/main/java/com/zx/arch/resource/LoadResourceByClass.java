@@ -1,9 +1,5 @@
 package com.zx.arch.resource;
 
-import com.zx.arch.review.EnumTest;
-
-import java.net.URISyntaxException;
-
 /**
  * @author lizx
  * @since 1.0.0

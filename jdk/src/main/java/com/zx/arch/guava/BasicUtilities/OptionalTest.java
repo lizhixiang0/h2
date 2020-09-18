@@ -32,7 +32,6 @@ public class OptionalTest {
         // 3、介绍orElse()   如果optional不为空，则直接返回optional中的对象；为null，则返回"s"这个默认值
         String  temp = possible.map(String::toString).orElse("S");
         System.out.println(temp);
-        //实战:https://blog.csdn.net/y_k_y/article/details/84633143
     }
 
     private static void c(){
@@ -46,5 +45,6 @@ public class OptionalTest {
 
     public static void main(String[] args) {
         // 两者区别:https://blog.csdn.net/qq_42105629/article/details/102458804
+        // 实战:https://blog.csdn.net/y_k_y/article/details/84633143
     }
 }
