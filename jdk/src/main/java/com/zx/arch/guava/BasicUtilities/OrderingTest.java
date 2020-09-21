@@ -12,6 +12,7 @@ import java.util.Collections;
 /**
  * @author lizx
  * @since 1.0.0
+ * @blog  "http://ifeve.com/google-guava-ordering/"
  * @note  guava 先创建排序器,然后可以调用相应的方法使用组合排序器！功能比原生的方法要丰富很多，最关键是还不用修改自定义类的代码！
  **/
 public class OrderingTest {
