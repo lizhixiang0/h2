@@ -3,6 +3,7 @@ package com.zx.arch.guava;
 import com.google.common.collect.Maps;
 import com.zx.arch.guava.BasicUtilities.ObjectsTest;
 import com.zx.arch.guava.BasicUtilities.OptionalTest;
+import com.zx.arch.guava.BasicUtilities.OrderingTest;
 import com.zx.arch.guava.BasicUtilities.PreconditionsTest;
 
 import java.util.HashMap;
@@ -29,6 +30,7 @@ public interface Leader {
         Basic_Utilities_logs.put("通过Optional来合理使用或者避免null", OptionalTest.class);
         Basic_Utilities_logs.put("Preconditions类中提供了若干前置条件判断的实用方法",PreconditionsTest.class);
         Basic_Utilities_logs.put("Guava改写了常见的Object方法",ObjectsTest.class);
+        Basic_Utilities_logs.put("Guava流畅的比较器", OrderingTest.class);
     }
 
 
