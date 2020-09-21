@@ -9,6 +9,8 @@ import java.util.HashMap;
 /**
  * @author lizx
  * @since 1.0.0
+ * @description  通过Optional来合理使用或者避免null
+ * @blog   "http://ifeve.com/google-guava-using-and-avoiding-null/"
  **/
 public class OptionalTest {
     private static HashMap map = Maps.newHashMap();

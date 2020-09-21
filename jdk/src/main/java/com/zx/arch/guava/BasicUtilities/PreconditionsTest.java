@@ -4,9 +4,10 @@ import static com.google.common.base.Preconditions.*;
 
 /**
  * @author lizx
- * @description 参数检查是一个项目中必须要考虑到的。参数检查前端要做，后端更要做。这决定了一个项目的健壮性和安全性。
- *              guava的Preconditions类可以简单，优雅的帮助我们实现参数检查。
  * @since 1.0.0
+ * @description 参数检查是一个项目中必须要考虑到的。参数检查前端要做，后端更要做。这决定了一个项目的健壮性和安全性。
+ *               guava的Preconditions类可以简单，优雅的帮助我们实现参数检查。
+ * @blog            "http://ifeve.com/google-guava-preconditions/"
  **/
 public class PreconditionsTest {
 
