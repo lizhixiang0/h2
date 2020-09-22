@@ -1,6 +1,8 @@
 package com.zx.arch.guava.BasicUtilities;
 
+
 import com.google.common.base.Objects;
+import lombok.Data;
 
 /**
  * @author lizx
@@ -8,7 +10,12 @@ import com.google.common.base.Objects;
  * @description   常见的Object方法改写
  * @blog          "http://ifeve.com/google-guava-commonobjectutilities/"
  **/
-public class ObjectsTest {
+@Data
+public class ObjectsTest implements Comparable<ObjectsTest>{
+    // 测试ComparisonChain
+    private String name;
+    private int age;
+
     /**
      * 1、Objects.equal()  避免元素为null报错
      */
@@ -18,20 +25,23 @@ public class ObjectsTest {
     }
 
     /**
-     * 用对象的所有字段作散列[hash]运算应当更简单
+     * 计算hashcode更加方便
      */
     private static void b(){
+        Integer temp1 = Objects.hashCode(null,2,3,4,5);
+        //注意：JDK7引入的Objects类提供了一样的方法Objects.hash(Object...)
+        Integer temp2 = java.util.Objects.hash(null,2,3,4,5);
+        //两者其实都是调用的Arrays.hashCode(values)
+        System.out.println(Objects.equal(temp1,temp2));
+    }
 
+    @Override
+    public int compareTo(ObjectsTest o) {
+        return 0;
     }
 
     public static void main(String[] args) {
-        int id = 1;
-        int timestamp = 100;
-        int hash = 5;
-        int hash1 = 67 * hash + (id ^ (id >>> 32));
-        int hash2 = 67 * hash + (timestamp ^ (timestamp >>> 32));
-
-        System.out.println(hash2);
-        System.out.println(hash1);
+        
     }
+
 }

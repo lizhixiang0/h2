@@ -5,14 +5,14 @@ import static com.google.common.base.Preconditions.*;
 /**
  * @author lizx
  * @since 1.0.0
- * @description ²ÎÊı¼ì²éÊÇÒ»¸öÏîÄ¿ÖĞ±ØĞëÒª¿¼ÂÇµ½µÄ¡£²ÎÊı¼ì²éÇ°¶ËÒª×ö£¬ºó¶Ë¸üÒª×ö¡£Õâ¾ö¶¨ÁËÒ»¸öÏîÄ¿µÄ½¡×³ĞÔºÍ°²È«ĞÔ¡£
- *               guavaµÄPreconditionsÀà¿ÉÒÔ¼òµ¥£¬ÓÅÑÅµÄ°ïÖúÎÒÃÇÊµÏÖ²ÎÊı¼ì²é¡£
+ * @description å‚æ•°æ£€æŸ¥æ˜¯ä¸€ä¸ªé¡¹ç›®ä¸­å¿…é¡»è¦è€ƒè™‘åˆ°çš„ã€‚å‚æ•°æ£€æŸ¥å‰ç«¯è¦åšï¼Œåç«¯æ›´è¦åšã€‚è¿™å†³å®šäº†ä¸€ä¸ªé¡¹ç›®çš„å¥å£®æ€§å’Œå®‰å…¨æ€§ã€‚
+ *               guavaçš„Preconditionsç±»å¯ä»¥ç®€å•ï¼Œä¼˜é›…çš„å¸®åŠ©æˆ‘ä»¬å®ç°å‚æ•°æ£€æŸ¥ã€‚
  * @blog            "http://ifeve.com/google-guava-preconditions/"
  **/
 public class PreconditionsTest {
 
     /**
-     * ×Ô¼º±àĞ´¹æÔò½øĞĞ²ÎÊıÅĞ¶Ï
+     * è‡ªå·±ç¼–å†™è§„åˆ™è¿›è¡Œå‚æ•°åˆ¤æ–­
      */
     private static void a(int a, int b) {
         // Exception in thread "main" java.lang.IllegalArgumentException: Expected a > b, but 2 > 1
@@ -20,47 +20,47 @@ public class PreconditionsTest {
     }
 
     /**
-     * ÅĞ¶Ï²ÎÊıÊÇ·ñÎªnull
+     * åˆ¤æ–­å‚æ•°æ˜¯å¦ä¸ºnull
      */
     private static void b(String a){
-        // ¼ì²évalueÊÇ·ñÎªnull£¬¸Ã·½·¨Ö±½Ó·µ»Øvalue ! Èç¹ûaÊÇnull ÔòÖ±½Ó±¨NPE
+        // æ£€æŸ¥valueæ˜¯å¦ä¸ºnullï¼Œè¯¥æ–¹æ³•ç›´æ¥è¿”å›value ! å¦‚æœaæ˜¯null åˆ™ç›´æ¥æŠ¥NPE
         a = checkNotNull(a);
     }
 
     /**
-     * ÅĞ¶Ï¶ÔÏó×´Ì¬
+     * åˆ¤æ–­å¯¹è±¡çŠ¶æ€
      */
     private static void c(boolean a){
-        // ·Çtrue±¨IllegalStateException
+        // étrueæŠ¥IllegalStateException
         checkState(a);
     }
 
     /**
-     * ¼ì²éindex×÷ÎªË÷ÒıÖµ¶ÔÄ³¸öÁĞ±í¡¢×Ö·û´®»òÊı×éÊÇ·ñÓĞĞ§¡£index>=0 && index<size  £¬³¬³ö·¶Î§±¨IndexOutOfBoundsException
-     * @param index  ĞèÒªÓÃµ½µÄË÷Òı
-     * @param size   ´«ÈëÁĞ±í¡¢×Ö·û´®»òÊı×éµÄ´óĞ¡
+     * æ£€æŸ¥indexä½œä¸ºç´¢å¼•å€¼å¯¹æŸä¸ªåˆ—è¡¨ã€å­—ç¬¦ä¸²æˆ–æ•°ç»„æ˜¯å¦æœ‰æ•ˆã€‚index>=0 && index<size  ï¼Œè¶…å‡ºèŒƒå›´æŠ¥IndexOutOfBoundsException
+     * @param index  éœ€è¦ç”¨åˆ°çš„ç´¢å¼•
+     * @param size   ä¼ å…¥åˆ—è¡¨ã€å­—ç¬¦ä¸²æˆ–æ•°ç»„çš„å¤§å°
      */
     private static void d(int index, int size){
         index = checkElementIndex(index,size);
 
-        // ¼ì²éindex×÷ÎªÎ»ÖÃÖµ¶ÔÄ³¸öÁĞ±í¡¢×Ö·û´®»òÊı×éÊÇ·ñÓĞĞ§¡£index>=0 && index<=size *
-        // ×¢ÒâºÍÕâ¸ö¾ø¶ÔµØÖ· Ö§³Öindex = size
-        // Ë÷ÒıÖµ³£ÓÃÀ´²éÕÒÁĞ±í¡¢×Ö·û´®»òÊı×éÖĞµÄÔªËØ ,Î»ÖÃÖµºÍÎ»ÖÃ·¶Î§³£ÓÃÀ´½ØÈ¡ÁĞ±í¡¢×Ö·û´®»òÊı×é
+        // æ£€æŸ¥indexä½œä¸ºä½ç½®å€¼å¯¹æŸä¸ªåˆ—è¡¨ã€å­—ç¬¦ä¸²æˆ–æ•°ç»„æ˜¯å¦æœ‰æ•ˆã€‚index>=0 && index<=size *
+        // æ³¨æ„å’Œè¿™ä¸ªç»å¯¹åœ°å€ æ”¯æŒindex = size
+        // ç´¢å¼•å€¼å¸¸ç”¨æ¥æŸ¥æ‰¾åˆ—è¡¨ã€å­—ç¬¦ä¸²æˆ–æ•°ç»„ä¸­çš„å…ƒç´  ,ä½ç½®å€¼å’Œä½ç½®èŒƒå›´å¸¸ç”¨æ¥æˆªå–åˆ—è¡¨ã€å­—ç¬¦ä¸²æˆ–æ•°ç»„
         index = checkPositionIndex(index, size);
     }
 
     /**
-     * ¼ì²é[start, end]±íÊ¾µÄÎ»ÖÃ·¶Î§¶ÔÄ³¸öÁĞ±í¡¢×Ö·û´®»òÊı×éÊÇ·ñÓĞĞ§*
+     * æ£€æŸ¥[start, end]è¡¨ç¤ºçš„ä½ç½®èŒƒå›´å¯¹æŸä¸ªåˆ—è¡¨ã€å­—ç¬¦ä¸²æˆ–æ•°ç»„æ˜¯å¦æœ‰æ•ˆ*
      * @param start
      * @param end
-     * @param size  ÁĞ±í¡¢×Ö·û´®»òÊı×éµÄ´óĞ¡
+     * @param size  åˆ—è¡¨ã€å­—ç¬¦ä¸²æˆ–æ•°ç»„çš„å¤§å°
      */
     private static void e(int start, int end, int size){
         checkPositionIndexes(start,end,size);
     }
 
     public static void main(String[] args) {
-        // ÊµÕ½ https://blog.csdn.net/qfycc92/article/details/44700869
-        // ×¢ÒâÄÄĞ©ÊÇÓĞ·µ»ØÖµ£¬ÕâĞ©¿ÉÒÔÎŞ·ì½ÓÈë´úÂë
+        // å®æˆ˜ https://blog.csdn.net/qfycc92/article/details/44700869
+        // æ³¨æ„å“ªäº›æ˜¯æœ‰è¿”å›å€¼ï¼Œè¿™äº›å¯ä»¥æ— ç¼æ¥å…¥ä»£ç 
     }
 }
