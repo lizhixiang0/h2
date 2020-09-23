@@ -3,6 +3,7 @@ package com.zx.arch.guava.BasicUtilities;
 
 import com.google.common.base.Objects;
 import lombok.Data;
+import org.springframework.util.ObjectUtils;
 
 /**
  * @author lizx
@@ -41,7 +42,13 @@ public class ObjectsTest implements Comparable<ObjectsTest>{
     }
 
     public static void main(String[] args) {
-        
+        // Guava的Objects类最好用的就是Objects.equal()
+        // org.springframework.util.ObjectUtils;也可以!
+        Integer a = null;
+        Integer b = 128;
+        Integer c = 128;
+        System.out.println(ObjectUtils.nullSafeEquals(a,b));
+        System.out.println(Objects.equal(a, b));
     }
 
 }

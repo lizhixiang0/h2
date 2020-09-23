@@ -8,6 +8,7 @@ import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * @author lizx
@@ -22,9 +23,10 @@ public class OrderingTest {
     static{
         list1.add(new PeopleOne("a",1));
         list1.add(new PeopleOne("b",2));
-        list2.add(new PeopleTwo("a",1));
-        list2.add(new PeopleTwo("b",2));
-       // list2.add(new PeopleTwo("b",null));
+        list2.add(new PeopleTwo("a",2));
+        list2.add(new PeopleTwo("b",1));
+        list2.add(new PeopleTwo("b",null));
+        //list2.add(null);
     }
     /**
      * 使用原生jdk对自定义类集合进行排序,一般没问题,但是如果出现null,则很恶心
@@ -45,11 +47,17 @@ public class OrderingTest {
         System.out.println(list2.get(0).getAge());
     }
 
+    /**
+     * 使用guava的排序,允许出现null情况,但是如果是采用自定义的排序规则，还是很难不好出现null 的情况
+     */
     private static void testGuavaOrder(){
-        // https://www.cnblogs.com/houzheng/p/10903403.html
         // https://blog.csdn.net/windrui/article/details/51558518
-        Ordering<PeopleTwo> ordering = Ordering.natural().nullsFirst().onResultOf(people -> people.getAge());
-        for (PeopleTwo p : ordering.sortedCopy(list2)) {
+        // 有三种方法来创建排序器
+        Ordering<PeopleTwo> orderingByNatural = Ordering.natural().nullsFirst().onResultOf(people -> people.getAge());
+        Ordering<PeopleTwo> orderingByString = Ordering.usingToString().nullsFirst().onResultOf(people -> people.toString());
+        Ordering<PeopleTwo> orderingByCustom = Ordering.from(Comparator.comparingInt(PeopleTwo::getAge));
+
+        for (PeopleTwo p : orderingByNatural.sortedCopy(list2)) {
             System.out.println(MoreObjects.toStringHelper(p)
                     .add("name", p.getName())
                     .add("age", p.getAge())
@@ -59,7 +67,6 @@ public class OrderingTest {
 
 
     public static void main(String[] args) {
-        testEssentialMethod();
         testGuavaOrder();
     }
 }
