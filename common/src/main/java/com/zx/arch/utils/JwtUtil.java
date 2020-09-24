@@ -127,10 +127,20 @@ public class JwtUtil {
 
     /**
      * 生成秘钥！！！这个secret是双方约定好的！
+     * header 头里需要带(格式一定要对！！)
+     * {
+     * Authorization:eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzZXJ2aWNlVHlwZSI6ImFwcF9zY2FuIiwiZXhwIjoxNjAwOTUwOTgwfQ.aOeTDp4e-o4DX0PHaQ3pr9dTpI7nl0_yW-7jtsZDvqo
+     * envCode:app_scan
+     * }
+     * 另外注意,RestServices这个IDEA插件不需要加双引号和逗号，我因为这个浪费很多时间,麻痹的。
+     *
      * @param args
      */
     public static void main(String[] args) {
-        System.out.println(generateVasInternalToken(ServiceType.APP_SCAN,"ApiSecretToPaxstore"));
+        System.out.println(
+                String.format("{\r\nAuthorization:%s\r\nenvCode:app_scan\r\n}",generateVasInternalToken(ServiceType.APP_SCAN,"ApiSecretToPaxstore"))
+
+                );
     }
 
     public static String generateToken(Map<String, String> claims, String secret, long expireInMillis) {
