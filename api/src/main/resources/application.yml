@@ -9,9 +9,10 @@ swagger.enabled: true
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://49.233.91.71:3306/arch?allowMultiQueries=true&useUnicode=true&characterEncoding=utf-8
+    # 问题一、必须加上serverTimezone=UTC，不然因为据库和系统时区差错而报错
+    url: "jdbc:mysql://localhost:3306/arch?serverTimezone=UTC&allowMultiQueries=true&useUnicode=true&characterEncoding=utf-8&useSSL=false"
     username: root
-    password: 123456
+    password: root
   flyway:
     enabled: true
     baseline-on-migrate: true
