@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.zx.arch.guava.BasicUtilities.*;
 import com.zx.arch.guava.collections.MultisetTest;
 import com.zx.arch.guava.collections.UnmodifiableListTest;
+import com.zx.arch.guava.collections.UtilsTest;
 
 import java.util.HashMap;
 
@@ -39,6 +40,8 @@ public interface Leader {
 
         Collections_logs.put("不可变集合", UnmodifiableListTest.class);
         Collections_logs.put("新的集合类型", MultisetTest.class);
+        Collections_logs.put("强大的集合工具类", UtilsTest.class);
+
 
     }
 
