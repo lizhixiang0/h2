@@ -36,7 +36,7 @@ public class DomainConfig {
     @Value("${spring.datasource.password}")
     private String password;
     /**
-     * 这里直接默认值，使用的德鲁伊连接池
+     * 下面的都用默认值，使用的德鲁伊连接池
      */
     @Value("${spring.datasource.jdbc.testSql: SELECT 'x' FROM DUAL}")
     private String testSQL;

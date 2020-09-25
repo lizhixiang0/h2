@@ -101,6 +101,4 @@ public class SwaggerConfig {
                         "\n- 500: The server encountered an unexpected condition which prevented it from fulfilling the request")
                 .build();
     }
-
-
 }
