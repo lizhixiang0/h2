@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * @author lizx
  * @since 1.0.0
- * @description Ê¹ÓÃArrayListÓĞÒ»Ğ©×¢Òâµã
+ * @description ä½¿ç”¨ArrayListæœ‰ä¸€äº›æ³¨æ„ç‚¹
  **/
 @Slf4j
 public class ArrayListTest {
@@ -25,49 +25,49 @@ public class ArrayListTest {
     }
 
     /**
-     *  ÔÚÆ½Ê±£¬ĞèÒªÈ¡³ö¼¯ºÏÖĞÒ»²¿·ÖÊı¾İÊ±¡£Í¨³£»áÊ¹ÓÃsubList,ËüÊÇarrayµÄÄÚ²¿Àà£¬Ò²¿ÉÒÔ¿´×öarrayµÄÓ³Éä£¨ÊÓÍ¼£©
+     *  åœ¨å¹³æ—¶ï¼Œéœ€è¦å–å‡ºé›†åˆä¸­ä¸€éƒ¨åˆ†æ•°æ®æ—¶ã€‚é€šå¸¸ä¼šä½¿ç”¨subList,å®ƒæ˜¯arrayçš„å†…éƒ¨ç±»ï¼Œä¹Ÿå¯ä»¥çœ‹åšarrayçš„æ˜ å°„ï¼ˆè§†å›¾ï¼‰
      */
     public static void a(){
         List subList = array.subList(0,2);
         System.out.println(subList.size());
-        //1¡¢ subListÉ¾³ıÒ»¸öÔªËØ,arrayÒ²ÉÙÁËÒ»¸öÔªËØ,ËùÒÔËµsublistÊÇarrayµÄÒ»¸öÊÓÍ¼
+        //1ã€ subListåˆ é™¤ä¸€ä¸ªå…ƒç´ ,arrayä¹Ÿå°‘äº†ä¸€ä¸ªå…ƒç´ ,æ‰€ä»¥è¯´sublistæ˜¯arrayçš„ä¸€ä¸ªè§†å›¾
         subList.remove(1);
         System.out.println(array.size());
 
-        //2¡¢subList×÷ÎªarrayµÄÄÚ²¿Àà,²»ÄÜ×ª»¯³ÉArrayList£¬Ç¿×ª»á±¨ClassCastException
+        //2ã€subListä½œä¸ºarrayçš„å†…éƒ¨ç±»,ä¸èƒ½è½¬åŒ–æˆArrayListï¼Œå¼ºè½¬ä¼šæŠ¥ClassCastException
         ArrayList arrayList = (ArrayList) subList;
 
-        //3¡¢ arrayĞŞ¸Äºó,subList±ØĞëÖØĞÂ½ØÈ¡,·ñÔò¶ÔsubListµÄÈÎºÎ²Ù×÷¶¼»á±¨java.util.ConcurrentModificationException
+        //3ã€ arrayä¿®æ”¹å,subListå¿…é¡»é‡æ–°æˆªå–,å¦åˆ™å¯¹subListçš„ä»»ä½•æ“ä½œéƒ½ä¼šæŠ¥java.util.ConcurrentModificationException
         array.add(6);
         subList.get(0);
     }
 
     /**
-     * Ê¹ÓÃ¼¯ºÏ×ªÊı×éµÄ·½·¨£¬±ØĞë´«ÈëÊı×éÀàĞÍºÍ´óĞ¡
+     * ä½¿ç”¨é›†åˆè½¬æ•°ç»„çš„æ–¹æ³•ï¼Œå¿…é¡»ä¼ å…¥æ•°ç»„ç±»å‹å’Œå¤§å°
      */
     public static void b(){
-        // 1¡¢toArray()ÎŞ²Î·½·¨ÓĞÎÊÌâ£¬×ª»¯ºóµÄÊÇObject[],Ç¿×ª³ÉĞèÒªµÄÀàĞÍ»á±¨ClassCastException
+        // 1ã€toArray()æ— å‚æ–¹æ³•æœ‰é—®é¢˜ï¼Œè½¬åŒ–åçš„æ˜¯Object[],å¼ºè½¬æˆéœ€è¦çš„ç±»å‹ä¼šæŠ¥ClassCastException
         Integer[] objects = (Integer[]) array.toArray();
 
-        // 2¡¢Ê¹ÓÃtoArray()ÓĞ²Î·½·¨,³ıÁËÒª´«ÈëÊı×éÀàĞÍ£¬´«ÈëµÄÊı×é´óĞ¡×îºÃºÍarrayÒ»ÖÂ£¬Èç¹ûĞ¡ÓÚÔòtoArray()ÄÚ²¿»áÖØĞÂ·ÖÅäµØÖ·
+        // 2ã€ä½¿ç”¨toArray()æœ‰å‚æ–¹æ³•,é™¤äº†è¦ä¼ å…¥æ•°ç»„ç±»å‹ï¼Œä¼ å…¥çš„æ•°ç»„å¤§å°æœ€å¥½å’Œarrayä¸€è‡´ï¼Œå¦‚æœå°äºåˆ™toArray()å†…éƒ¨ä¼šé‡æ–°åˆ†é…åœ°å€
         Integer[] integers = new Integer[array.size()+1];
         int temp = integers.hashCode();
         integers = array.toArray(integers);
         System.out.println(integers.hashCode()==temp);
-        // Èç¹û´óÓÚÔòÊı×éÀï¶à³öÀ´µÄÎ»ÖÃ¶¼»á±»ÖÃÎªnull ,Ò»°ã»áÒÔÎªÄ¬ÈÏÊÇ0,Õâ¸ö×¢ÒâÏÂ
+        // å¦‚æœå¤§äºåˆ™æ•°ç»„é‡Œå¤šå‡ºæ¥çš„ä½ç½®éƒ½ä¼šè¢«ç½®ä¸ºnull ,ä¸€èˆ¬ä¼šä»¥ä¸ºé»˜è®¤æ˜¯0,è¿™ä¸ªæ³¨æ„ä¸‹
         System.out.println(integers[array.size()]);
     }
 
     /**
-     * Ê¹ÓÃArrays·½·¨½«Êı×é×ª»¯³É¼¯ºÏÊ±ÓĞÒ»Ğ©×¢Òâµã
+     * ä½¿ç”¨Arraysæ–¹æ³•å°†æ•°ç»„è½¬åŒ–æˆé›†åˆæ—¶æœ‰ä¸€äº›æ³¨æ„ç‚¹
      */
     public static void c(){
         Integer[] integers = {1,2,3,4,5};
         List list = Arrays.asList(integers);
-        // 1¡¢asList()·µ»ØµÄÊÇArraysµÄÄÚ²¿Àà,Õâ¸öÄÚ²¿ÀàÖ»Ö§³Ö¶ÁÈ¡,ËùÒÔÖ»Ğèadd()»á±¨UnsupportedOperationException
+        // 1ã€asList()è¿”å›çš„æ˜¯Arraysçš„å†…éƒ¨ç±»,è¿™ä¸ªå†…éƒ¨ç±»åªæ”¯æŒè¯»å–,æ‰€ä»¥åªéœ€add()ä¼šæŠ¥UnsupportedOperationException
         list.add(6);
 
-        // 2¡¢ÁíÍâÕâ¸öÄÚ²¿ÀàÏàµ±ÓÚÒ»¸ö½Ó¿Ú,ÀàËÆÊÊÅäÆ÷£¬ºóÌ¨µÄÊı¾İ»¹ÊÇÊı×é
+        // 2ã€å¦å¤–è¿™ä¸ªå†…éƒ¨ç±»ç›¸å½“äºä¸€ä¸ªæ¥å£,ç±»ä¼¼é€‚é…å™¨ï¼Œåå°çš„æ•°æ®è¿˜æ˜¯æ•°ç»„
         integers[4] = 9;
         System.out.println(list.get(4));
 

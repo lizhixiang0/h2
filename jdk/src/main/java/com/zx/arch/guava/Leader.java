@@ -11,20 +11,20 @@ import java.util.HashMap;
 /**
  * @author lizx
  * @since 1.0.0
- * @description Guava¹¤³Ì°üº¬ÁËÈô¸É±»GoogleµÄ JavaÏîÄ¿¹ã·ºÒÀÀµ µÄºËĞÄ¿â
+ * @description Guavaå·¥ç¨‹åŒ…å«äº†è‹¥å¹²è¢«Googleçš„ Javaé¡¹ç›®å¹¿æ³›ä¾èµ– çš„æ ¸å¿ƒåº“
  **/
 public interface Leader {
     /**
-     * blogµØÖ·
+     * blogåœ°å€
      */
     String BLOG = "http://ifeve.com/google-guava/";
     /**
-     * 1¡¢»ù´¡¹¤¾ß°ü
+     * 1ã€åŸºç¡€å·¥å…·åŒ…
      */
     HashMap Basic_Utilities_logs = Maps.newHashMap();
 
     /**
-     * 2¡¢¼¯ºÏ¹¤¾ß°ü
+     * 2ã€é›†åˆå·¥å…·åŒ…
      */
     HashMap Collections_logs = Maps.newHashMap();
 
@@ -32,15 +32,15 @@ public interface Leader {
      * study log
      */
     default void setBasicLogs() {
-        Basic_Utilities_logs.put("Í¨¹ıOptionalÀ´ºÏÀíÊ¹ÓÃ»òÕß±ÜÃânull", OptionalTest.class);
-        Basic_Utilities_logs.put("PreconditionsÀàÖĞÌá¹©ÁËÈô¸ÉÇ°ÖÃÌõ¼şÅĞ¶ÏµÄÊµÓÃ·½·¨",PreconditionsTest.class);
-        Basic_Utilities_logs.put("Guava¸ÄĞ´ÁË³£¼ûµÄObject·½·¨",ObjectsTest.class);
-        Basic_Utilities_logs.put("GuavaÁ÷³©µÄ±È½ÏÆ÷", OrderingTest.class);
-        Basic_Utilities_logs.put("¼ò»¯Òì³£ºÍ´íÎóµÄ´«²¥Óë¼ì²é", ThrowableTest.class);
+        Basic_Utilities_logs.put("é€šè¿‡Optionalæ¥åˆç†ä½¿ç”¨æˆ–è€…é¿å…null", OptionalTest.class);
+        Basic_Utilities_logs.put("Preconditionsç±»ä¸­æä¾›äº†è‹¥å¹²å‰ç½®æ¡ä»¶åˆ¤æ–­çš„å®ç”¨æ–¹æ³•",PreconditionsTest.class);
+        Basic_Utilities_logs.put("Guavaæ”¹å†™äº†å¸¸è§çš„Objectæ–¹æ³•",ObjectsTest.class);
+        Basic_Utilities_logs.put("Guavaæµç•…çš„æ¯”è¾ƒå™¨", OrderingTest.class);
+        Basic_Utilities_logs.put("ç®€åŒ–å¼‚å¸¸å’Œé”™è¯¯çš„ä¼ æ’­ä¸æ£€æŸ¥", ThrowableTest.class);
 
-        Collections_logs.put("²»¿É±ä¼¯ºÏ", UnmodifiableListTest.class);
-        Collections_logs.put("ĞÂµÄ¼¯ºÏÀàĞÍ", MultisetTest.class);
-        Collections_logs.put("Ç¿´óµÄ¼¯ºÏ¹¤¾ßÀà", UtilsTest.class);
+        Collections_logs.put("ä¸å¯å˜é›†åˆ", UnmodifiableListTest.class);
+        Collections_logs.put("æ–°çš„é›†åˆç±»å‹", MultisetTest.class);
+        Collections_logs.put("å¼ºå¤§çš„é›†åˆå·¥å…·ç±»", UtilsTest.class);
 
 
     }
