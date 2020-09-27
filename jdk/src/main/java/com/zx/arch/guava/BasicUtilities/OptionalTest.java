@@ -37,7 +37,7 @@ public class OptionalTest {
     }
 
     private static void c(){
-        // 下面这个是Guava的Optional类 ,我们暂时用fromNullable()方法
+        // 下面这个是Guava的Optional类 ,我们暂时用fromNullable()方法,不会直接报错.
         Optional<String> possible = Optional.fromNullable("S");
         if(possible.isPresent()) {
             String temp = Optional.fromNullable(possible.get().toLowerCase()).or("d");
