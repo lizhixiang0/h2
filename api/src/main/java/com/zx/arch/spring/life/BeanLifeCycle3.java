@@ -13,7 +13,7 @@ import org.springframework.beans.factory.config.InstantiationAwareBeanPostProces
  *              即Construct实例化Bean之前（调用postProcessBeforeInstantiation方法）
  *              和Construct实例化Bean之后（调用postProcessAfterInstantiation方法）
  *
- *              另外补充的postProcessProperties()方法,可以在每个Bean注入属性之后 ,对其属性动手脚！
+ *              另外补充的postProcessProperties()方法,可以在任意Bean属性注入之后 ,再对其属性动手脚！
  *
  *
  *              这也是一个全局地图炮！共荣处理器！

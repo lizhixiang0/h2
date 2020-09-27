@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * @description 介绍bean的后置处理器
  * @note     简单理解:
  *               spring会自动从它的所有的bean定义中检测所有实现了BeanPostProcessor的bean,然后实例化这些bean
- *               之后实例化每一个bean时，都会
+ *               ，然后在执行这些bean的初始化前后,都会
  *               在bean的init初始化方法回调之前调用BeanPostProcessor的postProcessBeforeInitialization的方法！
  *               在bean实例的init初始化方法回调之后调用BeanPostProcessor的postProcessAfterInitialization的方法！
  *                 （类似bean的代理，应用BeanPostProcessor于随后创建的每一个bean实例）
