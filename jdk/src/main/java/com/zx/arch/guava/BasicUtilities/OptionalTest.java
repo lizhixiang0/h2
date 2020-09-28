@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 
 
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * @author lizx
@@ -48,5 +49,7 @@ public class OptionalTest {
     public static void main(String[] args) {
         // 两者区别:https://blog.csdn.net/qq_42105629/article/details/102458804
         // 实战:https://blog.csdn.net/y_k_y/article/details/84633143
+        // 如果只是说防止参数为null,Objects也提供了一个
+        Objects.requireNonNull(null);
     }
 }

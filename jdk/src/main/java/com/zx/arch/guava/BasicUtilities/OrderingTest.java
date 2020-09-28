@@ -31,26 +31,32 @@ public class OrderingTest {
     /**
      * 使用原生jdk对自定义类集合进行排序,一般没问题,但是如果出现null,则很恶心
      */
-    private static void testEssentialMethod(){
+    private static void a(){
         /**
-        *  如果自定义类已经实现了Comparable则直接排序
+        *  1、如果自定义类已经实现了Comparable则直接排序
+         *
         */
         Collections.sort(list1);
         System.out.println(list1.get(0).getAge());
 
         /**
-         * 如果没有实现排序规则则使用排序器
+         * 2、如果没有实现排序规则则使用排序器
          * 升序排的话就是第一个参数.compareTo(第二个参数);
          * 降序排的话就是第二个参数.compareTo(第一个参数);
          */
         Collections.sort(list2, (o1, o2) -> o2.getAge().compareTo(o1.getAge()));
         System.out.println(list2.get(0).getAge());
+
+        /*
+        * 3、JDK8之后提供了Stream操作，也支持排序
+            https://blog.csdn.net/l1028386804/article/details/56513205
+        * */
     }
 
     /**
      * 使用guava的排序,允许出现null情况,但是如果是采用自定义的排序规则，还是很难不好出现null 的情况
      */
-    private static void testGuavaOrder(){
+    private static void b(){
         // https://blog.csdn.net/windrui/article/details/51558518
         // 有三种方法来创建排序器
         Ordering<PeopleTwo> orderingByNatural = Ordering.natural().nullsFirst().onResultOf(people -> people.getAge());
@@ -67,7 +73,7 @@ public class OrderingTest {
 
 
     public static void main(String[] args) {
-        testGuavaOrder();
+        a();
     }
 }
 
@@ -80,6 +86,7 @@ class PeopleOne implements Comparable<PeopleOne>{
     @Override
     public int compareTo(PeopleOne o) {
         // 按照年龄大小降序排列
+        // 这里注意JDK7之后要考虑相等的情况!,即不可以出现 return this.age > o.getAge()?-1:1 ; 这种写法!
         if(this.age > o.getAge()) {
             return -1;
         }else if(this.age < o.getAge()) {
