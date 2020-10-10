@@ -110,7 +110,9 @@
     </dependencies>
     <profiles>
         <profile>
-            <!--生成 mvn generate-resources -Dmaven.test.skip=true -PgenerateThirdApiDoc -->
+            <!--生成pdf和html命令:
+                        mvn generate-resources -Dmaven.test.skip=true -PgenerateThirdApiDoc
+            -->
             <id>generateThirdApiDoc</id>
             <build>
                 <plugins>
