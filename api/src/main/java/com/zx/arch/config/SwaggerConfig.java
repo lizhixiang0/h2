@@ -57,7 +57,7 @@ public class SwaggerConfig {
                 .build();
     }
     /**
-     * 第一组是test组，第二组是其他组(排除test)
+     * 第二组(排除test)
      * @return
      */
     @Bean
@@ -66,7 +66,7 @@ public class SwaggerConfig {
                 .groupName("Other-api")
                 .select()
                 .apis(RequestHandlerSelectors.basePackage(basePackage()))
-                // 这个匹配规则比较特殊，test如果在类上就是/test.* , 在方法上就是/test/*
+                // test如果在类上就是/test.* , 在方法上就是/test/*
                 .paths(Predicates.and(Predicates.not(PathSelectors.regex("/test.*"))))
                 .build()
                 .apiInfo(getApiInfo("APIs for Others"));

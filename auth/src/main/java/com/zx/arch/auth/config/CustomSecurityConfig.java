@@ -54,6 +54,33 @@ public class CustomSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     protected static final String[] PUBLIC_URLS = new String[]{
             "/**",
+            "/index.html",
+            "/**.html",
+            "/webjars/**",
+            "/static/**",
+            "/assets/**",
+            "/swagger-ui.html",
+            "/favicon.ico",
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+            "/swagger-resources/**",
+            "/webjars/**",
+            "/v2/api-docs/**",
+            "/api-docs/**",
+            "/swagger.json",
+            "/error/**",
+            "/auth/connect/**",
+            "/auth/code/**",
+            "/v1/service/**",
+            "/**.css",
+            "/**.js",
+            "/**.png",
+            "/admin/**",
+            "/api"+"/**",
+    };
+
+    protected static final String[] PAXSTORE_REQUEST_URLS = new String[] {
+            "/api/pax/**",
     };
 
     @Override
@@ -76,7 +103,7 @@ public class CustomSecurityConfig extends WebSecurityConfigurerAdapter {
                 //除了上面三个之外都需要认证
                 .anyRequest().authenticated()
                 .and()
-                //jwt认证
+                //使用jwt认证
                 .addFilterBefore(paxstoreApiAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
@@ -88,6 +115,6 @@ public class CustomSecurityConfig extends WebSecurityConfigurerAdapter {
     };
 
     public PaxstoreApiAuthenticationFilter paxstoreApiAuthenticationFilter(){
-        return new PaxstoreApiAuthenticationFilter(PUBLIC_URLS,new DefaultErrorResponseHandler(), API_NEED_CURRENT_SERVICE_ENABLED_URLS, tokenServiceApi);
+        return new PaxstoreApiAuthenticationFilter(PAXSTORE_REQUEST_URLS,new DefaultErrorResponseHandler(), API_NEED_CURRENT_SERVICE_ENABLED_URLS, tokenServiceApi);
     }
 }

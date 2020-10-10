@@ -21,7 +21,6 @@ public class H2Application {
         SpringApplication app = new SpringApplication(H2Application.class);
         //app.addListeners(new ApplicationPidFileWriter("app.pid"));
         app.run(args);
-       // System.setProperty("tomcat.util.http.parser.HttpParser.requestTargetAllow","! * ’ ( ) ; : @ & = + \"\"$ , / ? # [ ]{}");
     }
 
     @Bean(initMethod = "myInitMethod", destroyMethod = "myDestroyMethod")
