@@ -64,3 +64,8 @@ vas-common:
     vas-api-url: http://%s:8084/p-market-vas
     bypass-ssl-check: false
     auth-code-process-url: http://www.paxdev.com:8080/platform/auth/code
+
+
+logging:
+  # 用的SpringBoot自带的日志系统 https://www.cnblogs.com/sueyyyy/p/13721976.html
+  config: classpath:logback-spring.xml

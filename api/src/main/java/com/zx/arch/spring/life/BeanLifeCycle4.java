@@ -4,7 +4,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -30,7 +29,7 @@ public class BeanLifeCycle4 implements BeanFactoryPostProcessor {
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
         String[] strings =  beanFactory.getBeanDefinitionNames();
-        Arrays.stream(strings).forEach(i-> System.out.println(i));
+        //Arrays.stream(strings).forEach(i-> System.out.println(i));
         BeanDefinition beanDefinition = beanFactory.getBeanDefinition("beanLifeCycle4");
         beanDefinition.getPropertyValues().add("name", "大宝");
     }
