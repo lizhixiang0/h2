@@ -8,17 +8,17 @@ import org.springframework.util.ObjectUtils;
 /**
  * @author lizx
  * @since 1.0.0
- * @description   ³£¼ûµÄObject·½·¨¸ÄÐ´
+ * @description   ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Objectï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´
  * @blog          "http://ifeve.com/google-guava-commonobjectutilities/"
  **/
 @Data
 public class ObjectsTest implements Comparable<ObjectsTest>{
-    // ²âÊÔComparisonChain
+    // ï¿½ï¿½ï¿½ï¿½ComparisonChain
     private String name;
     private int age;
 
     /**
-     * 1¡¢Objects.equal()  ±ÜÃâÔªËØÎªnull±¨´í
+     * 1ï¿½ï¿½Objects.equal()  ï¿½ï¿½ï¿½ï¿½Ôªï¿½ï¿½Îªnullï¿½ï¿½ï¿½ï¿½
      */
     private static void a(){
         // returns false
@@ -26,13 +26,13 @@ public class ObjectsTest implements Comparable<ObjectsTest>{
     }
 
     /**
-     * ¼ÆËãhashcode¸ü¼Ó·½±ã
+     * ï¿½ï¿½ï¿½ï¿½hashcodeï¿½ï¿½ï¿½Ó·ï¿½ï¿½ï¿½
      */
     private static void b(){
         Integer temp1 = Objects.hashCode(null,2,3,4,5);
-        //×¢Òâ£ºJDK7ÒýÈëµÄObjectsÀàÌá¹©ÁËÒ»ÑùµÄ·½·¨Objects.hash(Object...)
+        //×¢ï¿½â£ºJDK7ï¿½ï¿½ï¿½ï¿½ï¿½Objectsï¿½ï¿½ï¿½á¹©ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ä·ï¿½ï¿½ï¿½Objects.hash(Object...)
         Integer temp2 = java.util.Objects.hash(null,2,3,4,5);
-        //Á½ÕßÆäÊµ¶¼ÊÇµ÷ÓÃµÄArrays.hashCode(values)
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½ï¿½Çµï¿½ï¿½Ãµï¿½Arrays.hashCode(values)
         System.out.println(Objects.equal(temp1,temp2));
     }
 
@@ -42,8 +42,8 @@ public class ObjectsTest implements Comparable<ObjectsTest>{
     }
 
     public static void main(String[] args) {
-        // GuavaµÄObjectsÀà×îºÃÓÃµÄ¾ÍÊÇObjects.equal()
-        // org.springframework.util.ObjectUtils;Ò²¿ÉÒÔ!
+        // Guavaï¿½ï¿½Objectsï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÃµÄ¾ï¿½ï¿½ï¿½Objects.equal()
+        // org.springframework.util.ObjectUtils;Ò²ï¿½ï¿½ï¿½ï¿½!
         Integer a = null;
         Integer b = 128;
         Integer c = 128;

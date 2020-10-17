@@ -19,6 +19,7 @@ target/
 *.iml
 *.ipr
 *.cmd
+logback.2020-10-17.log
 HELP.md
 mvnw
 .mvn

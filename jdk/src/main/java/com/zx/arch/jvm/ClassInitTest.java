@@ -11,17 +11,18 @@ public class ClassInitTest {
     static {
         String a ="d";
     }
+    private static int count = 1;
     public static void main(String[] args) {
-        int num = 2;
-        System.out.println(ClassInitTest.num);
+        System.out.println(count);
+        count++;
+        main(args);
     }
 
-    public static void m(String a, String s) {
-        double e = 1.00;
-        long d = 1L;
-        int num = 3;
+    public static void m() {
+        int d = 1;
+        Long dd = 1L;
+        long num = d+dd;
 
-        System.out.println(num);
     }
     public void test(){
         int w = 1;
@@ -33,4 +34,10 @@ public class ClassInitTest {
         int c = 3;
     }
     private ClassInitTest(){}
+
+    public void c(){
+        int i  =2;
+        Integer j = 3;
+        int m =i+j+1;
+    }
 }
