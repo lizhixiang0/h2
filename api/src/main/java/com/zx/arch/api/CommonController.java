@@ -27,4 +27,6 @@ public class CommonController {
         System.out.println(user);
         return "s";
     }
+
+
 }

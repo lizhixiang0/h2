@@ -4,18 +4,24 @@ import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.zx.arch.handler.CustomHandlerExceptionResolver;
 import com.zx.arch.il8.AppScanApiLocaleResolver;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.nio.charset.Charset;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -59,6 +65,28 @@ public class WebMvcConfig implements WebMvcConfigurer {
             }
         }
     }
+
+    @Bean
+    public Converter addConverters(){
+        return new Converter<String, Date>() {
+            @Override
+            public Date convert(String source) {
+                DateFormat format = null;
+                try {
+                    if(StringUtils.isEmpty(source)) {
+                        throw new NullPointerException("请输入要转换的日期");
+                    }
+                    format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Date date = format.parse(source);
+                    return date;} catch (Exception e) {
+                    throw new RuntimeException("输入日期有误");
+
+                }
+            }
+        };
+    }
+
+
 
     /**
      * @param exceptionResolvers 二、全局异常处理
