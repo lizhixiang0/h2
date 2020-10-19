@@ -1,5 +1,6 @@
 package com.zx.arch.api;
 
+import com.zx.arch.domain.entity.User;
 import com.zx.arch.rest.BaseController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
@@ -17,23 +18,22 @@ public class MvcController extends BaseController {
 
     @GetMapping("/test")
     @ResponseBody
-    public Date a(@RequestParam(name = "date") Date dateTime, @RequestParam("addr") String addr,@RequestParam("lastName") String lastName ){
-        System.out.println(addr+lastName);
+    public Date a(@RequestParam Date dateTime, @ModelAttribute("user") User user){
+        System.out.println(user);
         // 这里注意下，其实我们在WebMvcConfig里配置了时间输出格式为yyyy-MM-dd,其实还可以配置时间输入格式。
         return dateTime;
     }
 
-    //绑定变量名字和属性，参数封装进类
-    @InitBinder("addr")
+    /**
+     * Controller级别的属性编辑器,
+     * @param binder
+     */
+    @InitBinder("user")
     public void initBinderAddr(WebDataBinder binder) {
+        // 设置所有变量名都可以加前缀addr,例如原来是name:lizx ，现在可以改写成addr.name:lizx
         binder.setFieldDefaultPrefix("addr.");
+        // 设置哪一个值不进行赋值 ,即使前端传递了age这个属性，也不会set进对象
+        binder.setDisallowedFields("age");
     }
-
-    @InitBinder("lastName")
-    private void initBinder(WebDataBinder binder){
-        //由表单到JavaBean赋值过程中哪一个值不进行赋值
-        binder.setDisallowedFields("lastName");
-    }
-
 
 }

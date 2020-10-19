@@ -23,12 +23,15 @@
     </appender>
 
     <root level="info">
-        <appender-ref ref="console" />
         <appender-ref ref="file" />
     </root>
 
+    <root level="info">
+        <appender-ref ref="console" />
+    </root>
+
     <!--logback.LogbackDemo：类的全路径 -->
-    <logger name="com.zx.arch" level="info" additivity="false">
+    <logger name="com.zx.arch.domain" level="info" additivity="false">
         <appender-ref ref="file"/>
     </logger>
 
