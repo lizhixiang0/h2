@@ -12,6 +12,8 @@
         <module>common</module>
         <module>domain</module>
         <module>jdk</module>
+        <module>ui-web</module>
+        <module>mybatis3.3</module>
     </modules>
 
     <parent>

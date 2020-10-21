@@ -23,7 +23,7 @@ spring:
 
 kafka:
   broker:
-    hosts: 49.233.91.71:9092
+    hosts: localhost:9092
   producer:
     retries: 3
     batch-size: 16384
