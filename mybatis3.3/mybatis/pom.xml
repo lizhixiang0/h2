@@ -88,11 +88,13 @@
       </exclusions>
     </dependency>
     <dependency>
+      <!--provided适合在编译和测试的环境，他和compile很接近，但是provided仅仅需要在编译和测试阶段，同样provide将不会被打包到lib目录下。-->
       <groupId>org.javassist</groupId>
       <artifactId>javassist</artifactId>
       <version>3.18.2-GA</version>
       <scope>provided</scope>
-      <optional>true</optional>
+      <!--如果不把这个<optional>去掉,Mybatis-test模块无法引用-->
+     <!-- <optional>true</optional>-->
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -308,35 +310,6 @@
         </excludes>
       </testResource>
     </testResources>
-    <pluginManagement>
-        <plugins>
-            <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-            <plugin>
-                <groupId>org.eclipse.m2e</groupId>
-                <artifactId>lifecycle-mapping</artifactId>
-                <version>1.0.0</version>
-                <configuration>
-                    <lifecycleMappingMetadata>
-                        <pluginExecutions>
-                            <pluginExecution>
-                                <pluginExecutionFilter>
-                                    <groupId>org.sonatype.plugins</groupId>
-                                    <artifactId>jarjar-maven-plugin</artifactId>
-                                    <versionRange>[1.9,)</versionRange>
-                                    <goals>
-                                        <goal>jarjar</goal>
-                                    </goals>
-                                </pluginExecutionFilter>
-                                <action>
-                                    <ignore></ignore>
-                                </action>
-                            </pluginExecution>
-                        </pluginExecutions>
-                    </lifecycleMappingMetadata>
-                </configuration>
-            </plugin>
-        </plugins>
-    </pluginManagement>
   </build>
 
 </project>
