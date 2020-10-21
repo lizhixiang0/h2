@@ -93,8 +93,7 @@
       <artifactId>javassist</artifactId>
       <version>3.18.2-GA</version>
       <scope>provided</scope>
-      <!--如果不把这个<optional>去掉,Mybatis-test模块无法引用-->
-     <!-- <optional>true</optional>-->
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
