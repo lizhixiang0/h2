@@ -27,16 +27,20 @@ import java.util.Properties;
 
 /**
  * A class to simplify access to resources through the classloader.
- * 通过类加载器获得resource的辅助类
+ * 通过类加载器获得资源的辅助类
  *
  * @author Clinton Begin
+ *
+ * 看了一圈，就是将资源加载成各种形式，具体四种：InputStream 、URL、Properties、Reader
+ * 然后另外加载方式有两种：自带类加载器和使用系统自带的类加载器。同时允许使用特定的字符集。
  */
 public class Resources {
 
   //大多数方法都是委托给ClassLoaderWrapper，再去做真正的事
   private static ClassLoaderWrapper classLoaderWrapper = new ClassLoaderWrapper();
 
-  /*
+  /**
+   * 自己set进去一个字符集
    * Charset to use when calling getResourceAsReader.
    * null means use the system default.
    */
@@ -45,8 +49,8 @@ public class Resources {
   Resources() {
   }
 
-  /*
-   * Returns the default classloader (may be null).
+  /**
+   * Returns the default classloader (may be null).这个方法莫名其妙的！
    *
    * @return The default classloader
    */
@@ -54,8 +58,8 @@ public class Resources {
     return classLoaderWrapper.defaultClassLoader;
   }
 
-  /*
-   * Sets the default classloader
+  /**
+   * Sets the default classloader  ，看吧！很奇怪！！
    *
    * @param defaultClassLoader - the new default ClassLoader
    */
@@ -63,7 +67,8 @@ public class Resources {
     classLoaderWrapper.defaultClassLoader = defaultClassLoader;
   }
 
-  /*
+  /**
+   *
    * Returns the URL of the resource on the classpath
    *
    * @param resource The resource to find

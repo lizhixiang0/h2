@@ -123,7 +123,6 @@
          | Plugins versions
         -->
         <animal.version>1.19</animal.version>
-        <antrun.version>3.0.0</antrun.version>
         <assembly.version>3.3.0</assembly.version>
         <bundle.version>5.1.1</bundle.version>
         <changes.version>2.12.1</changes.version>
@@ -185,6 +184,8 @@
 
                 <plugin>
                     <groupId>com.mycila</groupId>
+                    <!--https://www.jianshu.com/p/3456f6c75b7f -->
+                    <!--无视开发工具，通过maven命令能够直接在源文件顶部添加许可证以保护版权,类似IDEA的Copyright-->
                     <artifactId>license-maven-plugin</artifactId>
                     <version>${license.version}</version>
                     <configuration>
@@ -216,13 +217,6 @@
                             <version>${license.version}</version>
                         </dependency>
                     </dependencies>
-                </plugin>
-
-                <!-- Antrun here only to override eclipse settings -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-antrun-plugin</artifactId>
-                    <version>${antrun.version}</version>
                 </plugin>
 
                 <!-- Assembly here only to override eclipse settings -->
@@ -318,6 +312,8 @@
                     <version>${resources.version}</version>
                 </plugin>
 
+                <!--将依赖的jar包打包到当前jar包(通常并不会)-->
+                <!--   https://blog.csdn.net/yangguosb/article/details/80619481   -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
@@ -356,6 +352,7 @@
                     </dependencies>
                 </plugin>
 
+                <!--maven里执行测试用例的插件，不显示配置就会用默认配置。这个插件的surefire:test命令会默认绑定maven执行的test阶段。-->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
@@ -367,6 +364,8 @@
                     </configuration>
                 </plugin>
 
+                <!--查看代码测试覆盖率-->
+                <!--https://www.cnblogs.com/fnlingnzb-learner/p/10637802.html -->
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
@@ -439,7 +438,7 @@
                     <dependency>
                         <groupId>com.puppycrawl.tools</groupId>
                         <artifactId>checkstyle</artifactId>
-                        <version>${checkstyle-core.version}</version>
+                        <version>8.36.1</version>
                     </dependency>
                     <dependency>
                         <groupId>com.github.hazendaz</groupId>
@@ -450,6 +449,8 @@
             </plugin>
 
             <plugin>
+                <!--强制统一配置的插件-->
+                <!--https://www.cnblogs.com/qyf404/p/4829327.html  -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <version>${enforcer.version}</version>
@@ -481,11 +482,11 @@
                 </executions>
             </plugin>
 
-            <!--
-             | Make sure we only use defined java version methods
-            -->
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
+                <!--确保使用的都是JDK1.8里的api-->
+                <!--https://www.dazhuanlan.com/2019/12/05/5de8a68d51dd0/ -->
                 <artifactId>animal-sniffer-maven-plugin</artifactId>
                 <version>${animal.version}</version>
                 <configuration>
@@ -513,6 +514,7 @@
 
             <plugin>
                 <groupId>org.apache.felix</groupId>
+                <!--maven的捆绑插件，可以将依赖的jar包都打包进项目根路径-->
                 <artifactId>maven-bundle-plugin</artifactId>
                 <version>${bundle.version}</version>
                 <dependencies>
@@ -561,10 +563,12 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <!--https://www.jianshu.com/p/d44f713b1ec9 -->
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>${jar.version}</version>
                 <configuration>
                     <archive>
+                        <!--MANIFEST 文件位置-->
                         <manifestFile>${project.build.directory}/osgi/MANIFEST.MF</manifestFile>
                         <manifest>
                             <addBuildEnvironmentEntries>true</addBuildEnvironmentEntries>
@@ -582,6 +586,7 @@
             </plugin>
 
             <plugin>
+                <!--用于检查与以前版本的区别,可以生成报告-->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>clirr-maven-plugin</artifactId>
                 <version>${clirr.version}</version>
@@ -594,11 +599,14 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <!--代码版本控制的插件-->
+                <!--https://blog.csdn.net/houzhizhen/article/details/69229977 -->
                 <artifactId>maven-scm-plugin</artifactId>
                 <version>${scm.version}</version>
             </plugin>
 
             <plugin>
+                <!--查看代码测试覆盖率-->
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <executions>
@@ -612,6 +620,7 @@
             </plugin>
 
             <plugin>
+                <!--删除项目中没用的空格-->
                 <artifactId>whitespace-maven-plugin</artifactId>
                 <groupId>com.github.dantwining.whitespace-maven-plugin</groupId>
                 <executions>
@@ -626,6 +635,7 @@
 
             <plugin>
                 <groupId>org.gaul</groupId>
+                <!--检测项目中可以被新版JDK取代的API-->
                 <artifactId>modernizer-maven-plugin</artifactId>
                 <executions>
                     <execution>
@@ -636,9 +646,14 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <javaVersion>1.8</javaVersion>
+                </configuration>
             </plugin>
         </plugins>
 
+        <!--maven配置资源文件-->
+        <!--https://www.cnblogs.com/dreamroute/p/6729147.html  -->
         <resources>
             <resource>
                 <directory>${project.basedir}/src/main/resources</directory>
@@ -653,8 +668,10 @@
                 </includes>
             </resource>
         </resources>
+
         <extensions>
             <extension>
+                <!--自动化部署Java项目到Linux远程服务器-->
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-ssh</artifactId>
                 <version>${wagon-ssh.version}</version>
@@ -1176,5 +1193,30 @@
             </build>
         </profile>
     </profiles>
+
+
+    <repositories>
+        <repository>
+            <id>public</id>
+            <name>local private nexus</name>
+            <url>https://repo1.maven.org/maven2/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>public</id>
+            <name>local private nexus</name>
+            <url>https://repo1.maven.org/maven2/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 
 </project>

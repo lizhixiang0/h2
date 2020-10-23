@@ -92,8 +92,8 @@
       <groupId>org.javassist</groupId>
       <artifactId>javassist</artifactId>
       <version>3.18.2-GA</version>
-      <scope>provided</scope>
-      <optional>true</optional>
+     <!-- <scope>provided</scope>-->
+      <optional>false</optional>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>

@@ -197,6 +197,51 @@
     </profiles>
 
 
+    <build>
+        <finalName>h2-${project.version}</finalName>
+        <plugins>
+            <plugin>
+                <!--https://www.cnblogs.com/jpfss/p/11098740.html -->
+
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <!--在mvn package之后，再次打包可执行的jar/war，同时保留mvn package生成的jar/war为.origin-->
+                            <!--这个生成的jar文件可以直接通过java -jar 来运行-->
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!--使用缺省的mvn package也可生成jar文件，但是这种方式生成的jar缺少运行时所需要的设定，
+                比如入口和MANIFEST文件,所以我们可以在plugin中配置自己的打包方式-->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <!--https://blog.csdn.net/u010429286/article/details/78558170  -->
+                        <configuration>
+                            <classifier>bak</classifier> <!-- 生成deploy-0.0.1-SNAPSHOT-bak.jar -->
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+            </plugin>
+        </plugins>
+    </build>
+
 
 
 

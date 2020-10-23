@@ -1,0 +1,297 @@
+= APIs for Test
+
+
+[[_overview]]
+== Overview
+HTTP Status Code:
+- 200: The request has succeeded. The information returned with the response is dependent on the method used in the request
+- 201: The request has been fulfilled and resulted in a new resource being created
+- 204: The server has fulfilled the request but does not need to return an entity-body
+- 400: The request could not be understood by the server due to malformed syntax
+- 401: The request requires user authentication
+- 403: The server understood the request, but is refusing to fulfill it
+- 404: The server has not found anything matching the Request-URI
+- 409: The request could not be completed due to a conflict with the current state of the resource
+- 500: The server encountered an unexpected condition which prevented it from fulfilling the request
+
+
+=== Version information
+[%hardbreaks]
+__Version__ : 0.0.1-SNAPSHOT
+
+
+=== URI scheme
+[%hardbreaks]
+__Host__ : localhost:8084
+__BasePath__ : /
+
+
+=== Tags
+
+* 描述 : Swagger Controller
+
+
+
+
+[[_paths]]
+== Resources
+
+[[_cf9084b7770f9422dd60e4ef9c680097]]
+=== 描述
+Swagger Controller
+
+
+[[_testusingpost]]
+==== 创建任务
+....
+POST /test/hello
+....
+
+
+===== Description
+注意id为必填项
+
+
+===== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Body**|**scanTaskRequest** +
+__required__|Created user object|<<_scantaskrequest,ScanTaskRequest>>
+|===
+
+
+===== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|success|<<_restmessage,RestMessage>>
+|**201**|Created|No Content
+|**401**|Unauthorized|No Content
+|**403**|Forbidden|No Content
+|**404**|Not Found|No Content
+|===
+
+
+===== Consumes
+
+* `application/json`
+
+
+===== Produces
+
+* `\*/*`
+
+
+===== Example HTTP request
+
+====== Request path
+----
+/test/hello
+----
+
+
+====== Request body
+[source,json]
+----
+{
+  "appId" : 0,
+  "id" : 0
+}
+----
+
+
+===== Example HTTP response
+
+====== Response 200
+[source,json]
+----
+{
+  "data" : "object",
+  "errCode" : 0,
+  "message" : "string",
+  "success" : true
+}
+----
+
+
+[[_test3usingput]]
+==== 测试@ApiImplicitParam注解
+....
+PUT /test/hello
+....
+
+
+===== Description
+putMapping一般用于修改
+
+
+===== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a,.^2a"]
+|===
+|Type|Name|Description|Schema|Default
+|**Header**|**name** +
+__required__|名字|string|`"head china cant solve"`
+|===
+
+
+===== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_restmessage,RestMessage>>
+|**201**|Created|No Content
+|**401**|Unauthorized|No Content
+|**403**|Forbidden|No Content
+|**404**|Not Found|No Content
+|===
+
+
+===== Consumes
+
+* `application/json`
+
+
+===== Produces
+
+* `\*/*`
+
+
+===== Example HTTP request
+
+====== Request path
+----
+/test/hello
+----
+
+
+====== Request header
+[source,json]
+----
+"string"
+----
+
+
+===== Example HTTP response
+
+====== Response 200
+[source,json]
+----
+{
+  "data" : "object",
+  "errCode" : 0,
+  "message" : "string",
+  "success" : true
+}
+----
+
+
+[[_test2usingget]]
+==== 说明方法的用途
+....
+GET /test/hello/{phone}
+....
+
+
+===== Description
+方法的备注说明
+
+
+===== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**phone** +
+__required__|phone|integer (int32)
+|===
+
+
+===== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|success|<<_restmessage,RestMessage>>
+|**400**|请求参数没填好|No Content
+|**401**|Unauthorized|No Content
+|**403**|Forbidden|No Content
+|**404**|请求路径没有或页面跳转路径不对|No Content
+|===
+
+
+===== Produces
+
+* `\*/*`
+
+
+===== Example HTTP request
+
+====== Request path
+----
+/test/hello/0
+----
+
+
+===== Example HTTP response
+
+====== Response 200
+[source,json]
+----
+{
+  "data" : "object",
+  "errCode" : 0,
+  "message" : "string",
+  "success" : true
+}
+----
+
+
+
+
+[[_definitions]]
+== Definitions
+
+[[_restmessage]]
+=== RestMessage
+返回响应数据
+
+
+[options="header", cols=".^3a,.^11a,.^4a"]
+|===
+|Name|Description|Schema
+|**data** +
+__optional__|返回对象 +
+**Example** : `"object"`|object
+|**errCode** +
+__optional__|错误编号 +
+**Example** : `0`|integer (int32)
+|**message** +
+__optional__|错误信息 +
+**Example** : `"string"`|string
+|**success** +
+__optional__|是否成功 +
+**Example** : `true`|boolean
+|===
+
+
+[[_scantaskrequest]]
+=== ScanTaskRequest
+
+[options="header", cols=".^3a,.^11a,.^4a"]
+|===
+|Name|Description|Schema
+|**appId** +
+__optional__|**Example** : `0`|integer (int64)
+|**id** +
+__optional__|**Example** : `0`|integer (int64)
+|===
+
+
+
+
+
