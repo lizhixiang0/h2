@@ -1,2 +1,9 @@
-var i = 1;
-console.log(i)
+var http = require('http')
+var server = http.createServer()
+server.on('request',function(request,response){
+    response.write("ÎÒ°®ÂÞ","latin1")
+    response.end()
+})
+server.listen(3000,function(){
+    console.log('ccc')
+})

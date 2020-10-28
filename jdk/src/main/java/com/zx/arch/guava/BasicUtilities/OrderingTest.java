@@ -54,7 +54,7 @@ public class OrderingTest {
     }
 
     /**
-     * 使用guava的排序,允许出现null情况,但是如果是采用自定义的排序规则，还是很难不好出现null 的情况
+     * 使用guava的排序,允许出现null情况,但是如果是采用自定义的排序规则，还是不好把握出现null 的情况
      */
     private static void b(){
         // https://blog.csdn.net/windrui/article/details/51558518

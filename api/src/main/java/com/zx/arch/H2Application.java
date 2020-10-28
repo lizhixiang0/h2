@@ -5,6 +5,7 @@ import com.zx.arch.domain.config.DomainConfig;
 import com.zx.arch.spring.life.BeanLifeCycle1;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.ApplicationPidFileWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
@@ -20,7 +21,8 @@ public class H2Application {
     public static void main(String[] args) {
         // 可以直接通过 mvn springboot:run 启动
         SpringApplication app = new SpringApplication(H2Application.class);
-        //app.addListeners(new ApplicationPidFileWriter("app.pid"));
+        // 生成进程文件
+        app.addListeners(new ApplicationPidFileWriter("app.pid"));
         app.run(args);
     }
 

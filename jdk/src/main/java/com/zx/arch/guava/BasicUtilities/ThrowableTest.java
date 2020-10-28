@@ -31,7 +31,6 @@ public class ThrowableTest {
         try {
             throw new NullPointerException();
         } catch (Throwable t) {
-            //todo
             //ÖØÐÂÅ×³ö
             Throwables.throwIfInstanceOf(t,NullPointerException.class);
             Throwables.throwIfInstanceOf(t,IOException.class);

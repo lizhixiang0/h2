@@ -80,7 +80,7 @@ public class CustomSecurityConfig extends WebSecurityConfigurerAdapter {
     };
 
     protected static final String[] PAXSTORE_REQUEST_URLS = new String[] {
-            "/api/pax/**",
+            "/api/test/**",
     };
 
     @Override
@@ -111,7 +111,7 @@ public class CustomSecurityConfig extends WebSecurityConfigurerAdapter {
     private TokenServiceApi tokenServiceApi;
 
     protected static final String[] API_NEED_CURRENT_SERVICE_ENABLED_URLS = new String[] {
-            "/api/pax/abc"
+            "/api/abc"
     };
 
     public PaxstoreApiAuthenticationFilter paxstoreApiAuthenticationFilter(){

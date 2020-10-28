@@ -76,6 +76,13 @@ public class Blog {
         System.out.println(test1);
     }
 
+    /**
+     * 为啥GBK转成UTF-8 ,再转成GBK会变成混斤考？
+     * https://blog.csdn.net/u010234516/article/details/52853214
+     */
+    public static void d(){
+
+    }
     public static void main(String[] args) throws IOException {
         a("utf-8");
         c();
