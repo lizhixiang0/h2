@@ -40,6 +40,15 @@ public class InnerClassTest {
                 System.out.println(a + b+"\r\n"+Thread.currentThread().getName());
             }
         }).start();
+
+        /**
+         * 拓展:Lambda表达式和匿名内部类的区别
+         * "https://www.cnblogs.com/cht-/p/11897887.html
+         * "https://www.cnblogs.com/alinainai/p/11112455.html
+         */
+        new Thread(()->{
+            System.out.println(a + b+"\r\n"+Thread.currentThread().getName());
+        }).start();
     }
 
     /**
