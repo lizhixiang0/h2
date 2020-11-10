@@ -9,7 +9,7 @@ import java.io.IOException;
  * @blog "https://blog.csdn.net/zzti_erlie/article/details/108837882
  *       "http://www.zimug.com/java/java9%E6%94%B9%E8%BF%9Btry-with-resources%E8%AF%AD%E6%B3%95/.html
  **/
-public class Demo3 {
+public class TryWithResourceTest {
     // 一个内部类
     static class MyResource implements AutoCloseable{
 
