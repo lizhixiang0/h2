@@ -29,7 +29,7 @@ public class ArrayListTest {
      */
     public static void a(){
         List subList = array.subList(0,2);
-        System.out.println(subList.size());
+        /*System.out.println(subList.size());
         //1、 subList删除一个元素,array也少了一个元素,所以说sublist是array的一个视图
         subList.remove(1);
         System.out.println(array.size());
@@ -39,7 +39,7 @@ public class ArrayListTest {
 
         //3、 array修改后,subList必须重新截取,否则对subList的任何操作都会报java.util.ConcurrentModificationException
         array.add(6);
-        subList.get(0);
+        subList.get(0);*/
     }
 
     /**
@@ -75,7 +75,7 @@ public class ArrayListTest {
 
 
     public static void main(String[] args) {
-        c();
+        a();
     }
 
 }

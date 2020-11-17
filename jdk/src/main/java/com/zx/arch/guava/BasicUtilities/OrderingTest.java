@@ -9,6 +9,7 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.stream.Collectors;
 
 /**
  * @author lizx
@@ -36,21 +37,24 @@ public class OrderingTest {
         *  1、如果自定义类已经实现了Comparable则直接排序
          *
         */
-        Collections.sort(list1);
-        System.out.println(list1.get(0).getAge());
+        //Collections.sort(list1);
+        //System.out.println(list1.get(0).getAge());
 
         /**
-         * 2、如果没有实现排序规则则使用排序器
+         * 2、如果没有实现排序规则则使用排序器,下面的写法实际是实现了Comparator的lambda写法
          * 升序排的话就是第一个参数.compareTo(第二个参数);
          * 降序排的话就是第二个参数.compareTo(第一个参数);
          */
-        Collections.sort(list2, (o1, o2) -> o2.getAge().compareTo(o1.getAge()));
-        System.out.println(list2.get(0).getAge());
+        //Collections.sort(list2, (o1, o2) -> o2.getAge().compareTo(o1.getAge()));
+        //System.out.println(list2.get(0).getAge());
 
         /*
         * 3、JDK8之后提供了Stream操作，也支持排序
-            https://blog.csdn.net/l1028386804/article/details/56513205
+            "https://blog.csdn.net/l1028386804/article/details/56513205
         * */
+        list2 = (ArrayList<PeopleTwo>) list2.stream().sorted(Comparator.comparing(PeopleTwo::getAge)
+                .thenComparing(PeopleTwo::getName).reversed()).collect(Collectors.toList());
+        System.out.println(list2.get(0).getAge());
     }
 
     /**
@@ -59,11 +63,11 @@ public class OrderingTest {
     private static void b(){
         // https://blog.csdn.net/windrui/article/details/51558518
         // 有三种方法来创建排序器
-        Ordering<PeopleTwo> orderingByNatural = Ordering.natural().nullsFirst().onResultOf(people -> people.getAge());
-        Ordering<PeopleTwo> orderingByString = Ordering.usingToString().nullsFirst().onResultOf(people -> people.toString());
-        Ordering<PeopleTwo> orderingByCustom = Ordering.from(Comparator.comparingInt(PeopleTwo::getAge));
+        Ordering<PeopleTwo> orderingByNatural = Ordering.natural().nullsFirst().onResultOf(PeopleTwo::getAge);
+        Ordering<PeopleTwo> orderingByString = Ordering.usingToString().nullsFirst().onResultOf(PeopleTwo::getName);
+        Ordering<PeopleTwo> orderingByCustom = Ordering.from(Comparator.comparingInt(PeopleTwo::getAge).thenComparing(PeopleTwo::getName));
 
-        for (PeopleTwo p : orderingByNatural.sortedCopy(list2)) {
+        for (PeopleTwo p : orderingByCustom.sortedCopy(list2)) {
             System.out.println(MoreObjects.toStringHelper(p)
                     .add("name", p.getName())
                     .add("age", p.getAge())
@@ -73,7 +77,7 @@ public class OrderingTest {
 
 
     public static void main(String[] args) {
-        a();
+        b();
     }
 }
 
