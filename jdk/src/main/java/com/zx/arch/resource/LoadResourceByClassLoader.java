@@ -13,7 +13,7 @@ import java.net.URL;
  * @author lizx
  * @since 1.0.0
  * @description 通过类加载器加载项目资源
- * @note 资源放入static包之后要编译下,ClassPathResource加载的是类路径下的资源
+ * @note 资源放入static包之后要编译下,ClassPathResource加载的是类路径下的资源,注意一点区别，通过类加载器加载static文件夹下面的资源不要在前面加上“/”
  **/
 @Log
 public class LoadResourceByClassLoader {

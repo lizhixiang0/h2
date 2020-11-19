@@ -33,6 +33,7 @@ public class OptionalTest {
         java.util.Optional<String> possible = java.util.Optional.of(null);
         // 2、介绍map()      将optional中的对象 t 映射成另外一个对象 u (通常是调用t的方法生成u)，并将 u 存放到一个新的optional容器中。
         // 3、介绍orElse()   如果optional不为空，则直接返回optional中的对象；为null，则返回"s"这个默认值
+        // 4、还有orElseGet() ,"https://www.jianshu.com/p/790f7c185d3e
         String  temp = possible.map(String::toString).orElse("S");
         System.out.println(temp);
     }
