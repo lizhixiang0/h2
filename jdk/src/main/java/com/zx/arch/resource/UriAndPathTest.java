@@ -5,10 +5,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,7 +17,7 @@ import java.nio.file.Paths;
  *                  1、通常URL和URI的区别："https://www.cnblogs.com/hust-ghtao/p/4724885.html
  *                      只要能唯一标识资源的就是URI，在URI的基础上给出其资源的访问方式的就是URL
  *
- *                  2、测试Java中url 、uri 的区别
+ *                  2、测试Java中url 、uri 以及Path 的区别
  *
  *                          比较ok:"https://blog.csdn.net/abcwywht/article/details/53691632?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromBaidu-2.control&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromBaidu-2.control
  *
@@ -33,6 +30,11 @@ import java.nio.file.Paths;
  *                                并且处理绝对标识符和相对标识符!
  *
  *                                URL 类的toURI() 和 URI.toURL() 可以实现这两个类之间的转换。
+ *
+ *                           Path：Jdk1.7 引入,我个人觉得Path类就是为了处理本机文件。是为了取代老版的File类.
+ *                                  概念：https://www.iteye.com/blog/aswater-623971
+ *                                  如何取代：https://gquintana.github.io/2017/09/02/Java-File-vs-Path.html
+ *
  *
  *                 3、测试"/" 和 "\"的区别
  *                              反斜杠\表示母文件夹与子文件夹的路径分隔符。所以Path是\
@@ -88,11 +90,13 @@ public class UriAndPathTest {
      * http请求，使用uri(资源的各种信息)获取资源
      */
     public static void c() throws IOException, URISyntaxException {
-        URL url = new URL("http://www.yhfund.com.cn");
+        URL url = new URL("https://imgm.gmw.cn/attachement/jpg/site215/20201119/4364645368520067749.jpg");
         HttpGet httpGet = new HttpGet(url.toURI());
         HttpClient httpClient = HttpClientBuilder.create().build();
         HttpResponse httpResponse = httpClient.execute(httpGet);
-        System.out.println(httpResponse.getEntity().getContent());
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        httpResponse.getEntity().writeTo(output);
+        System.out.println(new String(output.toByteArray()).length());
         httpGet.releaseConnection();
     }
 
@@ -101,18 +105,17 @@ public class UriAndPathTest {
      * @throws IOException
      */
     public static void d() throws IOException {
-        URL url = new URL("http://www.yhfund.com.cn");
-        HttpURLConnection urlcon = (HttpURLConnection)url.openConnection();
-        InputStream in = urlcon.getInputStream();
+        URL url = new URL("https://imgm.gmw.cn/attachement/jpg/site215/20201119/4364645368520067749.jpg");
+        URLConnection urlcon = url.openConnection();
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         int len = -1;
         // 读取内容不含响应头
-        while ((len = in.read(buffer)) != -1)
+        while ((len = urlcon.getInputStream().read(buffer)) != -1)
         {
             output.write(buffer, 0, len);
         }
-        System.err.println(new String(output.toByteArray()));
+        System.out.println(new String(output.toByteArray()).length());
 
     }
 
@@ -122,6 +125,7 @@ public class UriAndPathTest {
 
         public static void main(String[] args) throws URISyntaxException, IOException {
         c();
+        d();
     }
 }
 
