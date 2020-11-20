@@ -70,7 +70,7 @@ public class UriAndPathTest {
 
 
     /**
-     *  URI 可以对组成字段进行转码，获取字段自动解码
+     *  URI 可以对组成字段进行转码，获取字段时自动解码
      */
     public static void b() {
         try {
