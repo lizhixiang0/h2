@@ -30,7 +30,7 @@ public class InnerClassTest {
     }
 
     /**
-     * No.2 内部类的变种:匿名内部类
+     * No.2 内部类的变种:匿名内部类  ，传递的是一个对象，直接生成类文件
      */
     public void useThreadRunMethod2(){
         String b = "bbb";
@@ -42,9 +42,11 @@ public class InnerClassTest {
         }).start();
 
         /**
+         * Lambda表达式，传递的是一个函数.会在第一次调用时动态生成类文件
          * 拓展:Lambda表达式和匿名内部类的区别
          * "https://www.cnblogs.com/cht-/p/11897887.html
          * "https://www.cnblogs.com/alinainai/p/11112455.html
+         * 注意：Lambda 规定接口中只能有一个需要被实现的方法，不是规定接口中只能有一个方法
          */
         new Thread(()->{
             System.out.println(a + b+"\r\n"+Thread.currentThread().getName());
@@ -101,6 +103,7 @@ public class InnerClassTest {
 
     /**
      * No.4 使用匿名内部类来实现方法回调
+     *       我的理解就是不需要改变原始代码，调用者实现接口方法
      */
     public static void callBackMethod(){
         class Demo{
@@ -110,6 +113,9 @@ public class InnerClassTest {
             }
         }
 
+        /**
+         *
+         */
         new Demo().test(a -> {
             System.out.println(a+"调用者编写方法实现");
         });

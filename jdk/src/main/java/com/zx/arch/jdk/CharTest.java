@@ -3,7 +3,7 @@ package com.zx.arch.jdk;
 /**
  * @author lizx
  * @since 1.0.0
- * @description char类型到底是个啥,它和两个字节的unicode一一对应  （和四个字节的unicode没有关系）
+ * @description char类型到底是个啥,他是unicode 的一个代码单元！
  **/
 public class CharTest {
     private static void a(){
@@ -12,9 +12,12 @@ public class CharTest {
         System.out.println((int)Character.MIN_VALUE);
         System.out.println((int)Character.MAX_VALUE);
 
+
     }
 
     public static void main(String[] args) {
+        // java中Double的isInfinite()和isNaN()
+        //"https://www.cnblogs.com/xubiao/p/5461714.html
         a();
     }
 }
