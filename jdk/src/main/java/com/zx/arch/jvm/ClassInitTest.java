@@ -12,16 +12,18 @@ public class ClassInitTest {
         String a ="d";
     }
     private static int count = 1;
-    public static void main(String[] args) {
+    public void main(String[] args) {
         System.out.println(count);
         count++;
         main(args);
     }
 
-    public static void m() {
+    public  void m() {
         int d = 1;
+        //对象类型的局部变量只占据一个槽
         Long dd = 1L;
-        long num = d+dd;
+        //long类型占据两个槽位，并且在操作栈中也占两个位
+        Long num = d+dd;
 
     }
     public void test(){
