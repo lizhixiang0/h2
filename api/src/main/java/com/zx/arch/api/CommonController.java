@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author lizx
  * @date 2020/08/07
  * @description 用来测试spring、springboot特性
+ *
  **/
 @Controller
 @RequestMapping("/api")
@@ -22,6 +23,7 @@ public class CommonController {
 
     @GetMapping("/test")
     @ResponseBody
+    //将请求精细化:https://www.cnblogs.com/lemonzhang/p/12925482.html
     public String a(){
         User user = userService.getUserById(1L);
         System.out.println(user);

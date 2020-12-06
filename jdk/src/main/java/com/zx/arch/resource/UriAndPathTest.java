@@ -71,13 +71,14 @@ public class UriAndPathTest {
 
     /**
      *  URI 可以对组成字段进行转码，获取字段时自动解码
+     *  但是URI不允许出现空格！出现空格就报错！需要把空格换成%20，这是为啥呢？？
      */
     public static void b() {
         try {
-            String urlString = "http://192.168.21.77:8080/swp/mainPage?aa=11&bb%3D22";
-            URI uri = URI.create(urlString);
+            String urlString = "http://192.168.21.77:8080/swp/mainPage?aa= 11&bb%3D22";
+            URI uri = URI.create(urlString.replace(" ", "%20"));
             System.out.println(uri.getPath()); // 输出：/swp/mainPage
-            System.out.println(uri.getQuery());// 解码，输出： aa=11&bb=22
+            System.out.println(uri.getQuery());// 解码，输出： aa=11&bb=22*/
             URL url2 = new URL(urlString);
             System.out.println(url2.getPath());// 输出：/swp/mainPage
             System.out.println(url2.getQuery());// 不解码，输出：aa=11&bb%3D22
@@ -124,8 +125,7 @@ public class UriAndPathTest {
 
 
         public static void main(String[] args) throws URISyntaxException, IOException {
-        c();
-        d();
+        b();
     }
 }
 
