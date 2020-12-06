@@ -39,6 +39,9 @@ public class CharTest {
         System.out.println((int) f);
         System.out.println(Float.MAX_VALUE);
 
-
+        int a = -100;
+        System.out.println(a<<3); //   100*8
+        System.out.println(a>>3); //   100/8
+        System.out.println(a>>>3);
     }
 }

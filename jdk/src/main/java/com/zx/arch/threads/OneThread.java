@@ -12,7 +12,11 @@ public class OneThread extends Thread{
     @SneakyThrows
     @Override
     public void run() {
-        Thread.sleep(5000);
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         System.out.println("高!");
     }
 
