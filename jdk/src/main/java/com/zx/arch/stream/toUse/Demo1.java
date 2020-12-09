@@ -6,12 +6,11 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * @author lizx
@@ -33,7 +32,9 @@ public class Demo1 {
 
     static {
         strings = new String[]{"a","b","a"};
-        list = Arrays.asList(strings);
+        list = new ArrayList();
+        list.add(1);
+        list.add(2);
     }
 
     /**
@@ -67,7 +68,7 @@ public class Demo1 {
     private static void createStream2() throws IOException, URISyntaxException {
         // 1、从字符串中获取单词流
         String content = "hello44 world";
-        Stream<String> stream = pattern.splitAsStream(content);
+        stream = pattern.splitAsStream(content);
         //扫描器也可以从字符串获取单词，但它默认是以空格作为分隔符
         stream=new Scanner(content).tokens();
 
@@ -76,22 +77,32 @@ public class Demo1 {
         stream=Files.lines(Paths.get(Demo1.class.getResource("/static/test.txt").toURI()));
         stream.forEach(System.out::println);
 
+        // 3、iterator对象可以转化成stream流
+        Iterator iterator =list.iterator();
+        stream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator,Spliterator.ORDERED),false);
+        stream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(Paths.get(Demo1.class.getResource("/static/test.txt").toURI()).iterator(),Spliterator.ORDERED),false);
+        stream.forEach(System.out::println);
+        // 4、iterable对象可以转化成stream流,这里说明下.list实现了iterable接口，所以他算是iterable对象，
+        // 另外iterable.iterator()可以得到Iterator对象
+        // iterable:可迭代的    Iterator:迭代器
+        stream = StreamSupport.stream(list.spliterator(),false);
+        stream = StreamSupport.stream(FileSystems.getDefault().getRootDirectories().spliterator(),false);
+        stream.forEach(System.out::println);
     }
 
     /**
      *  使用stream的注意点
-     *  1、
+     *  1、创建流之后修改集合是允许的，虽然并不建议 ！但是不许一边操作流一边修改集合 ，这样是不允许的。
      */
     private static void useStream(){
-
+        Stream stream = list.stream();
+        list.add(3);
+        stream.count();
+        stream.forEach(i-> list.add(4));
     }
 
-
-
-
-
     public static void main(String[] args) throws IOException, URISyntaxException {
-        useStream();
+        createStream2();
     }
 
 }

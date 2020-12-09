@@ -1,6 +1,5 @@
 package com.zx.arch.jdk;
 
-import lombok.SneakyThrows;
 
 /**
  * @author lizx
@@ -67,6 +66,7 @@ public class InnerClassTest {
      * NO.3 使用内部类可以变相支持多继承
      */
     public static void mutiExtends(){
+        String a = "ss";
         class Demo1{
             public void test1(){
                 System.out.println("我是Demo1类的方法");
