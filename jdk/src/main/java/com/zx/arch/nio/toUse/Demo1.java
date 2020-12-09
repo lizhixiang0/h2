@@ -10,7 +10,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.Callable;
 
 /**
  * @author lizx
@@ -33,7 +32,7 @@ public class Demo1 {
      * @throws IOException
      */
     private static void b() throws IOException{
-        Scanner scanner = new Scanner(Paths.get(Demo1.class.getResource("/static/test.txt").getPath().substring(1)), StandardCharsets.UTF_8);//
+        Scanner scanner = new Scanner(Paths.get(Demo1.class.getResource("/static/test.txt").getPath().substring(1)), StandardCharsets.UTF_8);
         while (scanner.hasNext()){
             System.out.println(scanner.nextLine());
         }
