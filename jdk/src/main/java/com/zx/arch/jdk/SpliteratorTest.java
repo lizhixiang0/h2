@@ -46,16 +46,34 @@ public class SpliteratorTest {
         int characteristics = spliterator1.characteristics();
         System.out.println(characteristics);
 
-        // 6、估算还有多少元素没有被action,在元素数不尽或很难计算或者不知道的时候返回Long.MAX_VALUE
+        // 6、估算还有多少元素没有被action(如果具备SIZED特性那返回的就是准确值),在元素数不尽或很难计算或者不知道的时候返回Long.MAX_VALUE
         long l1 = spliterator1.estimateSize();
         System.out.println(l1);
 
         // 7、如果分割器（被分割的集合）具备Spliterator.SIZED的特性，则返回estimateSize()的结果,否则返回-1
         long l2 = spliterator1.getExactSizeIfKnown();
         System.out.println(l2);
+    }
+
+
+    /**
+     * Spliterator的四个子接口介绍,理解不了
+     */
+    public static void b(){
+    }
+
+    /**
+     * Spliterator用法实例
+     */
+    public static void c(){
 
     }
 
+    /**
+     * https://www.cnblogs.com/nevermorewang/p/9368431.html
+     * https://blog.csdn.net/lh513828570/article/details/56673804
+     * @param args
+     */
     public static void main(String[] args) {
         a();
     }

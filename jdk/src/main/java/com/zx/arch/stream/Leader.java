@@ -1,7 +1,8 @@
 package com.zx.arch.stream;
 
 import com.google.common.collect.Maps;
-import com.zx.arch.stream.toUse.Demo1;
+import com.zx.arch.stream.toUse.CreateStream;
+import com.zx.arch.stream.toUse.UpdateStream;
 
 import java.util.HashMap;
 
@@ -31,7 +32,9 @@ public interface Leader {
      * study log
      */
     default void setBasicLogs() {
-        To_Use_Stream_logs.put("Stream入门", Demo1.class);
+        To_Use_Stream_logs.put("生成stream的各类方法", CreateStream.class);
+        To_Use_Stream_logs.put("操作stream的各类方法", UpdateStream.class);
+
     }
 
 

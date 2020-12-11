@@ -5,7 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -17,7 +16,7 @@ import java.util.stream.StreamSupport;
  * @since 1.0.0
  * @decsription 如何创建、使用、关闭stream流
  **/
-public class Demo1 {
+public class CreateStream {
     /**
      * 数据准备
      */
@@ -74,16 +73,16 @@ public class Demo1 {
 
         // 2、Files.lines(Path)会返回一个包含文件所有行的stream
         // 这边记得Path是怎么构造的。
-        stream=Files.lines(Paths.get(Demo1.class.getResource("/static/test.txt").toURI()));
+        stream=Files.lines(Paths.get(CreateStream.class.getResource("/static/test.txt").toURI()));
         stream.forEach(System.out::println);
 
-        // 3、iterator对象可以转化成stream流
+        // 3、iterator对象可以转化成stream流,先将迭代器转变成分割器,然后再将分割器转换成stream流
         Iterator iterator =list.iterator();
         stream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator,Spliterator.ORDERED),false);
-        stream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(Paths.get(Demo1.class.getResource("/static/test.txt").toURI()).iterator(),Spliterator.ORDERED),false);
+        stream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(Paths.get(CreateStream.class.getResource("/static/test.txt").toURI()).iterator(),Spliterator.ORDERED),false);
         stream.forEach(System.out::println);
         // 4、iterable对象可以转化成stream流,这里说明下.list实现了iterable接口，所以他算是iterable对象，
-        // 另外iterable.iterator()可以得到Iterator对象
+        // 其实iterable.iterator()即Iterator对象
         // iterable:可迭代的    Iterator:迭代器
         stream = StreamSupport.stream(list.spliterator(),false);
         stream = StreamSupport.stream(FileSystems.getDefault().getRootDirectories().spliterator(),false);

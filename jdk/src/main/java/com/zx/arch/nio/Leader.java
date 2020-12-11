@@ -1,7 +1,7 @@
 package com.zx.arch.nio;
 
 import com.google.common.collect.Maps;
-import com.zx.arch.stream.toUse.Demo1;
+import com.zx.arch.stream.toUse.CreateStream;
 
 import java.util.HashMap;
 
@@ -31,7 +31,7 @@ public interface Leader {
      * study log
      */
     default void setBasicLogs() {
-        To_Use_Nio_logs.put("Nio入门", Demo1.class);
+        To_Use_Nio_logs.put("Nio入门", CreateStream.class);
     }
 
 }
