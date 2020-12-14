@@ -5,12 +5,12 @@ import java.io.IOException;
 /**
  * @author lizx
  * @since 1.0.0
- * @description Àí½âtry-with-resourcesÓï¾ä¼°Ê¾Àı
+ * @description ç†è§£try-with-resourcesè¯­å¥åŠç¤ºä¾‹
  * @blog "https://blog.csdn.net/zzti_erlie/article/details/108837882
  *       "http://www.zimug.com/java/java9%E6%94%B9%E8%BF%9Btry-with-resources%E8%AF%AD%E6%B3%95/.html
  **/
 public class TryWithResourceTest {
-    // Ò»¸öÄÚ²¿Àà
+    // ä¸€ä¸ªå†…éƒ¨ç±»
     static class MyResource implements AutoCloseable{
 
         public void open() throws IOException {
@@ -26,7 +26,7 @@ public class TryWithResourceTest {
     }
 
     /**
-     * jdk7Ö®Ç°
+     * jdk7ä¹‹å‰
      */
     public static void a(){
         MyResource myResource = null;
@@ -46,7 +46,7 @@ public class TryWithResourceTest {
     }
 
     /**
-     * jdk7Ö®ºó
+     * jdk7ä¹‹å
      */
     public static void b(){
         try(MyResource myResource = new MyResource()){
@@ -58,6 +58,6 @@ public class TryWithResourceTest {
 
     public static void main(String[] args){
         a();
-        // Ëµµ½µ×¾ÍÊÇ¸öÓï·¨ÌÇ,Ã»ÓĞÊ²Ã´Ï¡ÆæµÄ¡£
+        // è¯´åˆ°åº•å°±æ˜¯ä¸ªè¯­æ³•ç³–,æ²¡æœ‰ä»€ä¹ˆç¨€å¥‡çš„ã€‚
     }
 }

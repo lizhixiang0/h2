@@ -18,6 +18,11 @@ import org.springframework.context.annotation.Import;
         CustomSecurityConfig.class,
 })
 public class H2Application {
+
+    // https://blog.csdn.net/z_ssyy/article/details/105347680
+    private static final String SPRING_CONFIG_LOCATION_KEY = "--spring.config.location";
+
+
     public static void main(String[] args) {
         // 可以直接通过 mvn springboot:run 启动
         SpringApplication app = new SpringApplication(H2Application.class);
