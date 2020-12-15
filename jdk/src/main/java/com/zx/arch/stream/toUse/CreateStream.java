@@ -66,8 +66,10 @@ public class CreateStream {
      */
     private static void createStream2() throws IOException, URISyntaxException {
         // 1、从字符串中获取单词流
-        String content = "hello44 world";
-        stream = pattern.splitAsStream(content);
+        String content = " hello44 world";
+        // 分割开后第一个元素为"",所以需要skip跳过
+        stream = pattern.splitAsStream(content).skip(1);
+        stream.forEach(System.out::println);
         //扫描器也可以从字符串获取单词，但它默认是以空格作为分隔符
         stream=new Scanner(content).tokens();
 

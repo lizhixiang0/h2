@@ -1,6 +1,8 @@
 package com.zx.arch.stream.toUse;
 
 import java.util.Arrays;
+import java.util.Optional;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -31,14 +33,44 @@ public class UpdateStream {
         // 使用flatMap对流中的元素进行处理，除了操纵元素,如果操纵元素时将元素也变为流类型，那flatMap会自动将所有流元素合并成一个
         Stream<String> stream3 = streamB.flatMap(str -> Arrays.stream(str));
 
-        stream3.forEach(System.out::print);
+        stream3.distinct().forEach(System.out::print);
 
         // 综上,如果会出现流中流的情况，那就要考虑使用flatMap()
 
     }
 
+    /**
+     * 1、filter    筛选满足条件的所有元素
+     * 2、limit(n)  只要前n个元素
+     * 3、skip(n)   丢弃前n个元素
+     * 4、Stream.concat(stream1,stream2)   连接两个流
+     * 5、distinct() 去重
+     * 6、sorted    排序
+       */
+    public static void b(){
+        // 1、筛选
+        Stream stream = Stream.of(5,6,4,1,2,3);
+        stream.filter(i-> Optional.of(i).get().equals(1)).forEach(System.out::println);
+
+        // 6、排序
+
+    }
+
+    /**
+     * jdk9
+     * 1、takeWhile()    依次获取满足条件的元素，直到不满足条件为止结束获取
+     * 2、dropWhile()    依次删除满足条件的元素，直到不满足条件为止结束删除
+     */
+    public static void c(){
+        IntStream.of(12, 4, 3, 6, 8, 9).takeWhile(x -> x % 2 == 0).forEach(System.out::print);
+        System.out.println("\r");
+        IntStream.of(12, 4, 3, 6, 8, 9).dropWhile(x -> x % 2 == 0).forEach(System.out::print);
+    }
+
+
+
     public static void main(String[] args) {
-        a();
+        c();
     }
 
 }
