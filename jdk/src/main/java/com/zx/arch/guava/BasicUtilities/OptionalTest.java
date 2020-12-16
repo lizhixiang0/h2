@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * @author lizx
@@ -38,6 +39,19 @@ public class OptionalTest {
         System.out.println(temp);
     }
 
+    private static void e() {
+        // jdk还提供了Objects.requireNonNull()来判断参数是否为null,Optional类好的一点是可以自定义报错信息
+        Objects.requireNonNull(null,"The variable is null");
+        // 如果给定参数为null ,可以返回默认值
+        Objects.requireNonNullElse(null,null);
+
+        // 支持以下面这种方式提供报错信息，以后再写这样的好处
+        Supplier<String> messageSupplier = () -> "The variable is null";
+        Objects.requireNonNull(null,messageSupplier);
+
+
+    }
+
     private static void c(){
         // 下面这个是Guava的Optional类 ,我们暂时用fromNullable()方法,不会直接报错.
         Optional<String> possible = Optional.fromNullable("S");
@@ -50,7 +64,6 @@ public class OptionalTest {
     public static void main(String[] args) {
         // 两者区别:https://blog.csdn.net/qq_42105629/article/details/102458804
         // 实战:https://blog.csdn.net/y_k_y/article/details/84633143
-        // 如果只是说防止参数为null,Objects也提供了一个
-        Objects.requireNonNull(null);
+        e();
     }
 }

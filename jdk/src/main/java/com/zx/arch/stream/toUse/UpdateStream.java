@@ -1,6 +1,8 @@
 package com.zx.arch.stream.toUse;
 
+
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -50,9 +52,17 @@ public class UpdateStream {
     public static void b(){
         // 1、筛选
         Stream stream = Stream.of(5,6,4,1,2,3);
-        stream.filter(i-> Optional.of(i).get().equals(1)).forEach(System.out::println);
+        stream.filter(i-> Optional.of(i).get().equals(1)).forEach(System.out::print);System.out.println("\r\n");
 
         // 6、排序
+        // Integer实现了Comparable,所以stream可以直接使用sorted进行排序
+        Stream stream1 = Stream.of(5,6,4,1,2,3);
+        stream1.sorted().forEach(System.out::print);System.out.println("\r\n");
+
+        // 如果元素没有实现Comparable,那只能使用sorted(Comparator<? super T> comparator)
+        // 或者如果元素自己实现的排序不是我们想要的,那也可以使用sorted(Comparator<? super T> comparator)
+        Stream stream2 = Stream.of(5,6,4,1,2,3);
+        stream2.sorted(Comparator.comparing(Object::toString).reversed()).forEach(System.out::print);
 
     }
 
@@ -70,7 +80,7 @@ public class UpdateStream {
 
 
     public static void main(String[] args) {
-        c();
+        b();
     }
 
 }
