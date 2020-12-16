@@ -202,7 +202,7 @@
         <plugins>
             <plugin>
                 <!--https://www.cnblogs.com/jpfss/p/11098740.html -->
-
+                <!--加了这个插件才可以使用mvn spring-boot:run 启动项目-->
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <executions>
