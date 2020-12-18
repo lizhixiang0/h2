@@ -122,6 +122,13 @@ public class InnerClassTest {
 
     }
 
+    /**
+     * 还有内部接口也很牛逼,见过一个大神用过
+     * 好处：内部接口可以使用外部类的属性！！！并且可以根据不同的情况定制所需要的类
+     */
+    public static void testInnerInterface(){
+
+    }
 
     public static void main(String[] args) {
         // 还有一个是可以区分继承和实现的方法名一致问题

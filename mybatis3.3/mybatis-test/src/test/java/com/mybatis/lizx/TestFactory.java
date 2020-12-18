@@ -8,6 +8,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.Test;
 
 public class TestFactory {
+    /*https://blog.csdn.net/qq_28807077/article/details/111322573*/
     @Test
     public void test(){
         SqlSessionFactory sqlSessionFactory = SqlSessionFactoryUtil.getSqlSessionFactory();
