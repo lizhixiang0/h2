@@ -27,12 +27,12 @@ import java.util.Properties;
 
 /**
  * A class to simplify access to resources through the classloader.
- * 通过类加载器获得资源的辅助类
+ * 简化通过类加载器获得资源的方法
  *
  * @author Clinton Begin
  *
  * 看了一圈，就是将资源加载成各种形式，具体四种：InputStream 、URL、Properties、Reader
- * 然后另外加载方式有两种：自带类加载器和使用系统自带的类加载器。同时允许使用特定的字符集。
+ * 加载方式有两种：自带类加载器和使用系统自带的类加载器。允许选择字符集。
  */
 public class Resources {
 
@@ -80,7 +80,7 @@ public class Resources {
       return getResourceURL(null, resource);
   }
 
-  /*
+  /**
    * Returns the URL of the resource on the classpath
    *
    * @param loader   The classloader used to fetch the resource
@@ -96,7 +96,7 @@ public class Resources {
     return url;
   }
 
-  /*
+  /**
    * Returns a resource on the classpath as a Stream object
    *
    * @param resource The resource to find
@@ -107,7 +107,7 @@ public class Resources {
     return getResourceAsStream(null, resource);
   }
 
-  /*
+  /**
    * Returns a resource on the classpath as a Stream object
    *
    * @param loader   The classloader used to fetch the resource
@@ -123,7 +123,7 @@ public class Resources {
     return in;
   }
 
-  /*
+  /**
    * Returns a resource on the classpath as a Properties object
    *
    * @param resource The resource to find
@@ -138,7 +138,7 @@ public class Resources {
     return props;
   }
 
-  /*
+  /**
    * Returns a resource on the classpath as a Properties object
    *
    * @param loader   The classloader used to fetch the resource
@@ -154,7 +154,7 @@ public class Resources {
     return props;
   }
 
-  /*
+  /**
    * Returns a resource on the classpath as a Reader object
    *
    * @param resource The resource to find
@@ -171,7 +171,7 @@ public class Resources {
     return reader;
   }
 
-  /*
+  /**
    * Returns a resource on the classpath as a Reader object
    *
    * @param loader   The classloader used to fetch the resource
@@ -189,7 +189,7 @@ public class Resources {
     return reader;
   }
 
-  /*
+  /**
    * Returns a resource on the classpath as a File object
    *
    * @param resource The resource to find
@@ -200,7 +200,7 @@ public class Resources {
     return new File(getResourceURL(resource).getFile());
   }
 
-  /*
+  /**
    * Returns a resource on the classpath as a File object
    *
    * @param loader   - the classloader used to fetch the resource
@@ -212,7 +212,7 @@ public class Resources {
     return new File(getResourceURL(loader, resource).getFile());
   }
 
-  /*
+  /**
    * Gets a URL as an input stream
    *
    * @param urlString - the URL to get
@@ -225,7 +225,7 @@ public class Resources {
     return conn.getInputStream();
   }
 
-  /*
+  /**
    * Gets a URL as a Reader
    *
    * @param urlString - the URL to get
@@ -242,7 +242,7 @@ public class Resources {
     return reader;
   }
 
-  /*
+  /**
    * Gets a URL as a Properties object
    *
    * @param urlString - the URL to get
@@ -257,7 +257,7 @@ public class Resources {
     return props;
   }
 
-  /*
+  /**
    * Loads a class
    *
    * @param className - the class to fetch

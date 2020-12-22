@@ -64,7 +64,7 @@ public class ClassLoaderWrapper {
     return getResourceAsURL(resource, getClassLoaders(classLoader));
   }
 
-  /*
+  /**
    * Get a resource from the classpath
    *
    * @param resource - the resource to find
@@ -74,7 +74,7 @@ public class ClassLoaderWrapper {
     return getResourceAsStream(resource, getClassLoaders(null));
   }
 
-  /*
+  /**
    * Get a resource from the classpath, starting with a specific class loader
    *
    * @param resource    - the resource to find
@@ -85,7 +85,7 @@ public class ClassLoaderWrapper {
     return getResourceAsStream(resource, getClassLoaders(classLoader));
   }
 
-  /*
+  /**
    * Find a class on the classpath (or die trying)
    *
    * @param name - the class to look for
@@ -96,7 +96,7 @@ public class ClassLoaderWrapper {
     return classForName(name, getClassLoaders(null));
   }
 
-  /*
+  /**
    * Find a class on the classpath, starting with a specific classloader (or die trying)
    *
    * @param name        - the class to look for
@@ -108,7 +108,7 @@ public class ClassLoaderWrapper {
     return classForName(name, getClassLoaders(classLoader));
   }
 
-  /*
+  /**
    * Try to get a resource from a group of classloaders
    * 用5个类加载器一个个查找资源，只要其中任何一个找到，就返回
    *
@@ -136,7 +136,7 @@ public class ClassLoaderWrapper {
     return null;
   }
 
-  /*
+  /**
    * Get a resource as a URL using the current class path
    * 用5个类加载器一个个查找资源，只要其中任何一个找到，就返回
    *
@@ -144,6 +144,7 @@ public class ClassLoaderWrapper {
    * @param classLoader - the class loaders to examine
    * @return the resource or null
    */
+
   URL getResourceAsURL(String resource, ClassLoader[] classLoader) {
 
     URL url;
@@ -176,7 +177,7 @@ public class ClassLoaderWrapper {
 
   }
 
-  /*
+  /**
    * Attempt to load a class from a group of classloaders
    * 用5个类加载器一个个调用Class.forName(加载类)，只要其中任何一个加载成功，就返回
    *
