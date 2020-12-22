@@ -12,17 +12,19 @@ public class Person {
     private int id;
     private String name;
     private int age;
+    private String phone;
+    private String email;
+    private String address;
 
-    @Override
-    public String toString() {
-        return "Person{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", age=" + age +
-                ", phone='" + phone + '\'' +
-                ", email='" + email + '\'' +
-                ", address='" + address + '\'' +
-                '}';
+    public Person() {
+    }
+
+    public Person(String name, int age, String phone, String email, String address) {
+        this.name = name;
+        this.age = age;
+        this.phone = phone;
+        this.email = email;
+        this.address = address;
     }
 
     public void setId(int id) {
@@ -73,8 +75,17 @@ public class Person {
         return address;
     }
 
-    private String phone;
-    private String email;
-    private String address;
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", age=" + age +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", address='" + address + '\'' +
+                '}';
+    }
 
 }
