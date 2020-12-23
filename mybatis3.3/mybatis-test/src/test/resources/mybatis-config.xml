@@ -2,16 +2,28 @@
 <!DOCTYPE configuration
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
-
+<!--1、全局配置文件的根元素-->
 <configuration>
 
+    <!---->
     <typeAliases>
         <package name="com.mybatis.lizx.model"/>
     </typeAliases>
 
+    <!--environments表示环境配置,用来配置数据库连接池和事物管理-->
+    <!--可以配置开发环境(development)、测试环境(test)、生产环境(production)等,通过default来选择。-->
+    <!--若和Spring配合使用，则事务的管理和数据库连接池一般都是交给Spring控制,那environments的配置是省略的-->
     <environments default="development">
+
         <environment id="development">
+            <!--transactionManager： 事务管理器,事物工厂类型只有两个取值：JDBC和MANAGED-->
+            <!--这里使用的是事物工厂的实现类别名,
+             JDBC:JdbcTransactionFactory           Mybatis内部的JDBC事务管理器,
+             MANAGED: ManagedTransactionFactory    外部容器事务管理器,由外部容器实现,spring实现了一个叫DataSourceTransactionManager
+            -->
             <transactionManager type="JDBC" />
+            <!--dataSource: 数据源配置 ,数据源工厂类型有三种:JNDI、POOLED、UNPOOLED-->
+            <!--分别是JndiDataSourceFactory、PooledDataSourceFactory、UnpooledDataSourceFactory的别名-->
             <dataSource type="POOLED">
                 <property name="driver" value="com.mysql.jdbc.Driver" />
                 <property name="url" value="jdbc:mysql://localhost:3306/db_mybatis" />
@@ -19,9 +31,10 @@
                 <property name="password" value="root"/>
             </dataSource>
         </environment>
+
     </environments>
     <mappers>
-        <!--这里只能这么写目录结构-->
+        <!--mappers文件路径配置,目录结构必须以斜杠分割-->
         <mapper resource="com/mybatis/lizx/mapper/PersonMapper.xml"/>
     </mappers>
 </configuration>

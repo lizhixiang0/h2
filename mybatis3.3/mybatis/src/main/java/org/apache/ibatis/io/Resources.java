@@ -31,7 +31,7 @@ import java.util.Properties;
  *
  * @author Clinton Begin
  *
- * 看了一圈，就是将资源加载成各种形式，具体四种：InputStream 、URL、Properties、Reader
+ * 看了一圈，就是将资源加载成各种形式，具体四种：InputStream 、URL、Properties、InputStreamReader
  * 加载方式有两种：自带类加载器和使用系统自带的类加载器。允许选择字符集。
  */
 public class Resources {
