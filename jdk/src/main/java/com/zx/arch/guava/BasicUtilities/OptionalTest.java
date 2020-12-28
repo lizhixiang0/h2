@@ -1,10 +1,14 @@
 package com.zx.arch.guava.BasicUtilities;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import lombok.extern.slf4j.Slf4j;
 
 
+import javax.swing.text.html.Option;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -14,6 +18,7 @@ import java.util.function.Supplier;
  * @description  通过Optional来合理使用或者避免null
  * @blog   "http://ifeve.com/google-guava-using-and-avoiding-null/"
  **/
+@Slf4j
 public class OptionalTest {
     private static HashMap map = Maps.newHashMap();
 
@@ -30,13 +35,21 @@ public class OptionalTest {
 
     private static void b() {
         // 首先,JDK1.8的新特性也包含一个Optional类  https://blog.csdn.net/weixin_43897590/article/details/108257129
-        // 1、传入的参数是null直接报NullPointerException,当然也可以使用ofNullable()方法，这样使用时需要调用isPresent()判断下
+        // 1、通过of()或者ofNullable()来创建Optional包装器对象
+        // 传入的参数是null直接报NullPointerException,当然也可以使用ofNullable()方法，这样使用时需要调用isPresent()判断下
         java.util.Optional<String> possible = java.util.Optional.of(null);
-        // 2、介绍map()      将optional中的对象 t 映射成另外一个对象 u (通常是调用t的方法生成u)，并将 u 存放到一个新的optional容器中。
+        // 2、介绍map()      将optional中的对象 t 映射成另外一个对象 u (通常是调用对象t自己的方法生成u)，并将 u 存放到一个新的optional容器中。
         // 3、介绍orElse()   如果optional不为空，则直接返回optional中的对象；为null，则返回"s"这个默认值
-        // 4、还有orElseGet() ,"https://www.jianshu.com/p/790f7c185d3e
         String  temp = possible.map(String::toString).orElse("S");
-        System.out.println(temp);
+        // 4、介绍orElseGet(supplier) ,如果possible包装的是个null,就会调用supplier的get方法来计算默认值
+        possible.orElseGet(String::new);
+        // 5、介绍orElseThrow,如果possible包装的是个null,就会调用supplier的get方法来抛出异常
+        possible.orElseThrow(IllegalAccessError::new);
+        // 6、介绍ifPresent(Consumer) ,如果possible包装的不是个null就执行consumer的accept方法
+        List list = Lists.newArrayList();
+        possible.ifPresent(list::add);
+        // 7、JDK9 介绍ifPresentOrElse(Consumer1,Consumer2) , 存在就执行Consumer1的accept,不存在就执行Consumer2的accept
+        possible.ifPresentOrElse(list::add,()->log.error("cant find ..."));
     }
 
     private static void e() {

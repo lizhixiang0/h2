@@ -18,7 +18,7 @@ public class ThreadPool {
 
     public static void main(String[] args) {
         /**
-         * 固定可重用线程&&无界队列   实际生产中不可能使用无界队列，会有内存隐患。
+         * 固定可重用线程(内部使用的无界队列)   注：实际生产中不可能使用固定可重用线程,(就是因为无界队列)，会有内存隐患。
          * 详情看:https://segmentfault.com/a/1190000013292447
          */
         ExecutorService fixedThreadPool = Executors.newFixedThreadPool(3);

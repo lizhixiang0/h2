@@ -18,6 +18,7 @@ import java.util.Scanner;
  **/
 public class Demo1 {
     /**
+     * 注意Files.readAllLines()是直接将内容读到内存中,如果文件太大会出现OOM ,所以使用前先判断文件大小,太大的文件，可以使用Files.line()按需读取
      * 利用Files.readAllLines()来读取文件
      * @throws URISyntaxException
      * @throws IOException

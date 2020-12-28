@@ -1,7 +1,7 @@
 package com.zx.arch.stream;
 
 import com.google.common.collect.Maps;
-import com.zx.arch.stream.toAnalysis.SupplierTest;
+import com.zx.arch.stream.toAnalysis.StreamTest;
 import com.zx.arch.stream.toUse.CreateStream;
 import com.zx.arch.stream.toUse.UpdateStream;
 
@@ -35,7 +35,7 @@ public interface Leader {
     default void setBasicLogs() {
         To_Use_Stream_logs.put("生成stream的各类方法", CreateStream.class);
         To_Use_Stream_logs.put("操作stream的各类方法", UpdateStream.class);
-        To_Analysis_Stream_logs.put("提供者Supplier介绍", SupplierTest.class);
+        To_Analysis_Stream_logs.put("提供者Supplier介绍", StreamTest.class);
 
     }
 
