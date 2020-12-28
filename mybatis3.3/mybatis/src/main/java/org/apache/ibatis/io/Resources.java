@@ -40,26 +40,7 @@ public class Resources {
   private static ClassLoaderWrapper classLoaderWrapper = new ClassLoaderWrapper();
 
   /**
-   * 自己set进去一个字符集
-   * Charset to use when calling getResourceAsReader.
-   * null means use the system default.
-   */
-  private static Charset charset;
-
-  Resources() {
-  }
-
-  /**
-   * Returns the default classloader (may be null).这个方法莫名其妙的！
-   *
-   * @return The default classloader
-   */
-  public static ClassLoader getDefaultClassLoader() {
-    return classLoaderWrapper.defaultClassLoader;
-  }
-
-  /**
-   * Sets the default classloader  ，看吧！很奇怪！！
+   * 自己可以传递一个类加载器进去
    *
    * @param defaultClassLoader - the new default ClassLoader
    */
@@ -68,8 +49,35 @@ public class Resources {
   }
 
   /**
+   * Returns the default classloader (如果自己不传则为null).
    *
-   * Returns the URL of the resource on the classpath
+   * @return The default classloader
+   */
+  public static ClassLoader getDefaultClassLoader() {
+    return classLoaderWrapper.defaultClassLoader;
+  }
+
+  /**
+   * 自己set进去一个字符集
+   * Charset to use when calling getResourceAsReader.
+   * null means use the system default.
+   */
+  private static Charset charset;
+
+  public static Charset getCharset() {
+    return charset;
+  }
+
+  public static void setCharset(Charset charset) {
+    Resources.charset = charset;
+  }
+
+  Resources() {
+  }
+
+  /**
+   *
+   * 如果用户不传递类加载器，那就调用默认的几个类加载器去加载资源
    *
    * @param resource The resource to find
    * @return The resource
@@ -81,7 +89,7 @@ public class Resources {
   }
 
   /**
-   * Returns the URL of the resource on the classpath
+   * 用户可以自己传递类加载器直接查找资源
    *
    * @param loader   The classloader used to fetch the resource
    * @param resource The resource to find
@@ -266,14 +274,6 @@ public class Resources {
    */
   public static Class<?> classForName(String className) throws ClassNotFoundException {
     return classLoaderWrapper.classForName(className);
-  }
-
-  public static Charset getCharset() {
-    return charset;
-  }
-
-  public static void setCharset(Charset charset) {
-    Resources.charset = charset;
   }
 
 }

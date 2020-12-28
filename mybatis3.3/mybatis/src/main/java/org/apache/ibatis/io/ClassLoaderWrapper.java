@@ -27,7 +27,7 @@ import java.net.URL;
 public class ClassLoaderWrapper {
 
   /**
-   * defaultClassLoader不是初始化的,set进去的
+   * defaultClassLoader不是初始化的,用户set进去的
    */
   ClassLoader defaultClassLoader;
   /**
@@ -41,6 +41,16 @@ public class ClassLoaderWrapper {
     } catch (SecurityException ignored) {
       // AccessControlException on Google App Engine
     }
+  }
+
+  //至少会有三个类加载器,defaultClassLoader看用户传不传,classLoader一般为null
+  ClassLoader[] getClassLoaders(ClassLoader classLoader) {
+    return new ClassLoader[]{
+            classLoader,
+            defaultClassLoader,
+            Thread.currentThread().getContextClassLoader(),
+            getClass().getClassLoader(),
+            systemClassLoader};
   }
 
   /**
@@ -210,16 +220,6 @@ public class ClassLoaderWrapper {
 
     throw new ClassNotFoundException("Cannot find class: " + name);
 
-  }
-
-  //一共5个类加载器
-  ClassLoader[] getClassLoaders(ClassLoader classLoader) {
-    return new ClassLoader[]{
-        classLoader,
-        defaultClassLoader,
-        Thread.currentThread().getContextClassLoader(),
-        getClass().getClassLoader(),
-        systemClassLoader};
   }
 
 }

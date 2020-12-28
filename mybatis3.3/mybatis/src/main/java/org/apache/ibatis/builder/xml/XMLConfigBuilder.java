@@ -56,7 +56,6 @@ public class XMLConfigBuilder extends BaseBuilder {
   private XPathParser parser;
   private String environment;
 
-  //以下3个一组
   public XMLConfigBuilder(Reader reader) {
     this(reader, null, null);
   }
