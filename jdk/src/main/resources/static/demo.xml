@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5">
+    <servlet>
+        <servlet-name>HelloMyServlet</servlet-name>
+        <servlet-class>com.jourwon.HelloMyServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>HelloMyServlet</servlet-name>
+        <url-pattern>/hello</url-pattern>
+    </servlet-mapping>
+    <TT>
+        <tt>tutu</tt>
+    </TT>
+</web-app>

@@ -28,7 +28,9 @@ import org.xml.sax.SAXException;
 
 /**
  * Offline entity resolver for the MyBatis DTDs
- * 目的是未联网的情况下也能做DTD验证，实现原理就是将DTD搞到本地，然后用org.xml.sax.EntityResolver，最后调用DocumentBuilder.setEntityResolver来达到脱机验证
+ * 如果解析 mybatis-config .xm l 配置文件，默认联网加载http://mybatis.org/dtd/mybatis-3-config.dtd 这个 DTD文档，当网络比较慢时会导致验证过程缓慢。
+ * 在实践中往往会提前设置 EntityResolver 接口对象加载本地的 DTD 文件，从而避免联网加载DTD 文件。
+ * 最后调用DocumentBuilder.setEntityResolver来达到脱机验证
  * EntityResolver
  * public InputSource resolveEntity (String publicId, String systemId)
  * 应用程序可以使用此接口将系统标识符重定向到本地 URI

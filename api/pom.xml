@@ -113,6 +113,44 @@
         </dependency>
     </dependencies>
     <profiles>
+        <!--将附属文件夹生成到项目里去，例如我做过的python文件夹，下次补充-->
+        <profile>
+            <id>dev</id>
+            <properties>
+                <artifact-name-suffix>dev</artifact-name-suffix>
+                <deployProfile>dev</deployProfile>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+
+        <profile>
+            <id>zip</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <configuration>
+                            <finalName>paxvas-app-scan-engine</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <descriptors>
+                                <descriptor>${project.basedir}/src/assembly/assembly.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
         <profile>
             <!--生成pdf和html命令:
                         mvn generate-resources -Dmaven.test.skip=true -PgenerateThirdApiDoc
@@ -242,8 +280,5 @@
             </plugin>
         </plugins>
     </build>
-
-
-
 
 </project>

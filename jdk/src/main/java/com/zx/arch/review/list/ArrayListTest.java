@@ -49,7 +49,7 @@ public class ArrayListTest {
         // 1、toArray()无参方法有问题，转化后的是Object[],强转成需要的类型会报ClassCastException
         Integer[] objects = (Integer[]) array.toArray();
 
-        // 2、使用toArray()有参方法,除了要传入数组类型，传入的数组大小最好和array一致，如果小于则toArray()内部会重新分配地址
+        // 2、使用toArray()的重载有参方法,传入数组类型，另外注意传入的数组大小最好和array一致，如果小于则toArray()内部会重新分配地址
         Integer[] integers = new Integer[array.size()+1];
         int temp = integers.hashCode();
         integers = array.toArray(integers);
@@ -62,20 +62,27 @@ public class ArrayListTest {
      * 使用Arrays方法将数组转化成集合时有一些注意点
      */
     public static void c(){
-        Integer[] integers = {1,2,3,4,5};
-        List list = Arrays.asList(integers);
-        // 1、asList()返回的是Arrays的内部类,这个内部类只支持读取,所以只需add()会报UnsupportedOperationException
-        list.add(6);
+        int[] ints = {1,2,3,4,5};
+        // 1、基本类型不能作为 Arrays.asList方法的参数，否则会被当做一个参数
+        // T是个继承于Object的类，并非基本类型，所以int[]作为参数导入时，T 为int[]。也就是Arrays.asList(传入一个int[]) 返回的是ArrayList<int[]>类型
+        List list = Arrays.asList(ints);
+        System.out.println(list.size());
 
-        // 2、另外这个内部类相当于一个接口,类似适配器，后台的数据还是数组
+        Integer[] integers = {1,2,3,4,5};
+        list = Arrays.asList(integers);
+        // 2、asList()返回的是Arrays的内部类,这个内部类只支持读取,所以只需add()会报UnsupportedOperationException
+        // list.add(6);
+
+        // 3、另外这个内部类相当于一个接口,类似适配器，后台的数据还是数组
         integers[4] = 9;
         System.out.println(list.get(4));
+        System.out.println(list.size());
 
     }
 
 
     public static void main(String[] args) {
-        a();
+        c();
     }
 
 }

@@ -44,6 +44,7 @@ import org.xml.sax.SAXParseException;
  */
 /**
  * XPath解析器，用的都是JDK的类包,封装了一下，使得使用起来更方便
+ * https://blog.csdn.net/weixin_46168350/article/details/111876833
  *
  */
 public class XPathParser {
@@ -246,6 +247,8 @@ public class XPathParser {
     try {
 		//这个是DOM解析方式
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      // 需要使用DTD文件验证XML是否合法
+      // 注意，如果XML文档声明了一个DTD ，即使不启用校验（validation）这个特性，解析器总是试着去读入这个DTD ,目的是为了保证XML文档中entity reference被正确的扩展了，以防止出现格式不正确的XML文档，只有在XML文档序言部分的声明中standalone属性被置为true时，外部的DTD才会被完全忽略掉。
       factory.setValidating(validation);
 
 		//名称空间
@@ -258,11 +261,10 @@ public class XPathParser {
       factory.setCoalescing(false);
 		//扩展实体引用
       factory.setExpandEntityReferences(true);
-
       DocumentBuilder builder = factory.newDocumentBuilder();
-		//需要注意的就是定义了EntityResolver(XMLMapperEntityResolver)，这样不用联网去获取DTD，
-		//将DTD放在org\apache\ibatis\builder\xml\mybatis-3-config.dtd,来达到验证xml合法性的目的
+      // 用来定位DTD文件,在获取DTD文件的时候，根据映射关系，将远程的url转成本地的DTD文件路径
       builder.setEntityResolver(entityResolver);
+
       builder.setErrorHandler(new ErrorHandler() {
         @Override
         public void error(SAXParseException exception) throws SAXException {

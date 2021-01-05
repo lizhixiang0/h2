@@ -11,7 +11,10 @@ import java.util.concurrent.*;
      *              1、线程池内线程可以重复利用、节约系统资源
      *              2、可以防止开启大量线程、导致系统崩盘
      *              3、提高响应速度,不需要等待线程创建就能立即执行
- * @blog  https://www.cnblogs.com/jiawen010/p/11855768.html
+ * @blog  "https://www.cnblogs.com/jiawen010/p/11855768.html
+ * @info  线程池中对异常的处理和平时不一样,要着重关注！！！ "https://blog.csdn.net/weixin_37968613/article/details/108407774
+ * @note springboot项目中使用线程池:"https://www.jianshu.com/p/d1847ecd6b29
+ *                                https://blog.csdn.net/weixin_38399962/article/details/82146480
  **/
 public class ThreadPool {
 
