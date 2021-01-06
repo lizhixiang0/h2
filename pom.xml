@@ -15,6 +15,7 @@
         <module>ui-web</module>
         <module>mybatis3.3</module>
         <module>algorithm</module>
+        <module>jdk1.8</module>
     </modules>
 
     <parent>
