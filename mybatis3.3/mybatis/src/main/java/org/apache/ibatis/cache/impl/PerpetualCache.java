@@ -26,16 +26,16 @@ import org.apache.ibatis.cache.CacheException;
  * @author Clinton Begin
  */
 /**
- * 永久缓存
- * 一旦存入就一直保持
+ * 最初级的cache实现
+ * 没有缓存淘汰机制,容易内存溢出(除非手动调用clear)
+ * 没有考虑线程安全问题,多线程环境下不安全
+ * 补充：HashMap 的线程安全问题//todo
  *
  */
 public class PerpetualCache implements Cache {
 
-    //每个永久缓存有一个ID来识别
   private String id;
 
-  //内部就是一个HashMap,所有方法基本就是直接调用HashMap的方法,不支持多线程？
   private Map<Object, Object> cache = new HashMap<Object, Object>();
 
   public PerpetualCache(String id) {

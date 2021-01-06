@@ -22,23 +22,23 @@ import java.util.concurrent.locks.ReadWriteLock;
 import org.apache.ibatis.cache.Cache;
 
 /**
+ * 添加了先进先出的淘汰机制,维护一个FIFO链表(大小为1024)
  * FIFO (first in, first out) cache decorator
  *
  * @author Clinton Begin
  */
-/*
- * FIFO缓存
- * 这个类就是维护一个FIFO链表，其他都委托给所包装的cache去做。典型的装饰模式
- */
 public class FifoCache implements Cache {
 
   private final Cache delegate;
+  /**
+   * double ended queue 双头队列的缩写
+   */
   private Deque<Object> keyList;
   private int size;
 
   public FifoCache(Cache delegate) {
     this.delegate = delegate;
-    this.keyList = new LinkedList<Object>();
+    this.keyList = new LinkedList<>();
     this.size = 1024;
   }
 
@@ -84,8 +84,9 @@ public class FifoCache implements Cache {
   }
 
   private void cycleKeyList(Object key) {
-      //增加记录时判断如果记录已超过1024条，会移除链表的第一个元素，从而达到FIFO缓存效果
+    //每次往cache里插入元素之前先将key插入到Deque里
     keyList.addLast(key);
+    //插入到Deque里之后判断Deque的大小是否超出1024,如果超出则删除第一个插入Deque的key,同时删除cache中的元素
     if (keyList.size() > size) {
       Object oldestKey = keyList.removeFirst();
       delegate.removeObject(oldestKey);
