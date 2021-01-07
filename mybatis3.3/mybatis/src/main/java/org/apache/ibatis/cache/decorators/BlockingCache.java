@@ -59,7 +59,7 @@ public class BlockingCache implements Cache {
   @Override
   public void putObject(Object key, Object value) {
     try {
-      // 向缓存中添加数据
+      // 向缓存中添加数据,添加完数据之后，释放锁，这一步源码似乎有点问题，有可能为null
       delegate.putObject(key, value);
     } finally {
       /**
