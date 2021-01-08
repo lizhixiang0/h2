@@ -22,16 +22,14 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
 /**
+ * 输出缓存命中的日志信息
  * @author Clinton Begin
- */
-/**
- * 日志缓存
- * 添加功能：取缓存时打印命中率
- *
  */
 public class LoggingCache implements Cache {
 
-  //用的mybatis自己的抽象Log
+  /**
+   * mybatis自己的抽象Log
+   */
   private Log log;
   private Cache delegate;
   protected int requests = 0;
@@ -57,21 +55,36 @@ public class LoggingCache implements Cache {
     delegate.putObject(key, object);
   }
 
-  //目的就是getObject时，打印命中率
+  /**
+   * 目的就是getObject时，打印命中率
+   * @param key The key
+   * @return
+   */
   @Override
   public Object getObject(Object key) {
-      //访问一次requests加一
+    /**
+     * 访问一次+1
+     */
     requests++;
     final Object value = delegate.getObject(key);
-    //命中了则hits加一
+    /**
+     * 命中一次+1
+     */
     if (value != null) {
       hits++;
     }
     if (log.isDebugEnabled()) {
-        //就是打印命中率 hits/requests
       log.debug("Cache Hit Ratio [" + getId() + "]: " + getHitRatio());
     }
     return value;
+  }
+
+  /**
+   * 计算缓存命中率
+   * @return
+   */
+  private double getHitRatio() {
+    return (double) hits / (double) requests;
   }
 
   @Override
@@ -97,10 +110,6 @@ public class LoggingCache implements Cache {
   @Override
   public boolean equals(Object obj) {
     return delegate.equals(obj);
-  }
-
-  private double getHitRatio() {
-    return (double) hits / (double) requests;
   }
 
 }

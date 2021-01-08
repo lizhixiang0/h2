@@ -20,12 +20,8 @@ import java.util.concurrent.locks.ReadWriteLock;
 import org.apache.ibatis.cache.Cache;
 
 /**
+ * 定时调度缓存,目的是每一小时清空一下缓存
  * @author Clinton Begin
- */
-/**
- * 定时调度缓存
- * 目的是每一小时清空一下缓存
- *
  */
 public class ScheduledCache implements Cache {
 
@@ -35,13 +31,32 @@ public class ScheduledCache implements Cache {
 
   public ScheduledCache(Cache delegate) {
     this.delegate = delegate;
-    //1小时清空一次缓存
-    this.clearInterval = 60 * 60 * 1000; // 1 hour
+    /**
+     * 1小时
+     */
+    this.clearInterval = 60 * 60 * 1000;
     this.lastClear = System.currentTimeMillis();
   }
 
+  /**
+   * 自己设置清除时间
+   * @param clearInterval
+   */
   public void setClearInterval(long clearInterval) {
     this.clearInterval = clearInterval;
+  }
+
+  /**
+   * 执行getSize、putObject、getObject、removeObject 都会调用这个这个方法
+   * 如果到时间了，清空一下缓存
+   * @return
+   */
+  private boolean clearWhenStale() {
+    if (System.currentTimeMillis() - lastClear > clearInterval) {
+      clear();
+      return true;
+    }
+    return false;
   }
 
   @Override
@@ -91,15 +106,6 @@ public class ScheduledCache implements Cache {
   @Override
   public boolean equals(Object obj) {
     return delegate.equals(obj);
-  }
-
-  private boolean clearWhenStale() {
-    //如果到时间了，清空一下缓存
-    if (System.currentTimeMillis() - lastClear > clearInterval) {
-      clear();
-      return true;
-    }
-    return false;
   }
 
 }

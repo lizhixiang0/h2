@@ -18,22 +18,21 @@ package org.apache.ibatis.logging;
 import java.lang.reflect.Constructor;
 
 /**
+ * 日志工厂
  * @author Clinton Begin
  * @author Eduardo Macarron
- */
-/**
- * 日志工厂
- *
  */
 public final class LogFactory {
 
   /**
    * Marker to be used by logging implementations that support markers
+   * 给支持marker功能的logger使用(目前有slf4j, log4j2)
    */
-  //给支持marker功能的logger使用(目前有slf4j, log4j2)
   public static final String MARKER = "MYBATIS";
 
-  //具体究竟用哪个日志框架，那个框架所对应logger的构造函数
+  /**
+   * 具体究竟用哪个日志框架，那个框架所对应logger的构造函数
+   */
   private static Constructor<? extends Log> logConstructor;
 
   static {
