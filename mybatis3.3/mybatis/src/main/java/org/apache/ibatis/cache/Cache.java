@@ -19,13 +19,9 @@ import java.util.concurrent.locks.ReadWriteLock;
 
 /**
  * SPI for cache providers.
- *
  * One instance of cache will be created for each namespace.
- *
  * The cache implementation must have a constructor that receives the cache id as an String parameter.
- *
  * MyBatis will pass the namespace as id to the constructor.
- *
  * <pre>
  * public MyCache(final String id) {
  *  if (id == null) {
@@ -35,13 +31,9 @@ import java.util.concurrent.locks.ReadWriteLock;
  *  initialize();
  * }
  * </pre>
- *
  * @author Clinton Begin
- */
-
-/**
- * 缓存
  *
+ * 补充介绍：java 的SPI机制  "https://blog.csdn.net/gallenzhang/article/details/88958800
  */
 public interface Cache {
 
@@ -89,7 +81,6 @@ public interface Cache {
    *
    * @return A ReadWriteLock
    */
-  //取得读写锁, 从3.2.6开始没用了，要SPI自己实现锁
   ReadWriteLock getReadWriteLock();
 
 }
