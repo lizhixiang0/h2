@@ -13,12 +13,14 @@ import java.io.Reader;
 
 public class TestFactory {
     /*mybatis中的设计模式：https://mp.weixin.qq.com/s/S9R_sZ246iaTyNLG-So9GQ*/
-    /*缓存“https://my.oschina.net/lixin91/blog/620890*/
+    // 缓存:"https://www.cnblogs.com/51life/p/9529409.html
+    // 缓存:https://blog.csdn.net/finalcola/article/details/81155517
     /*https://blog.csdn.net/qq_35571554/article/details/82629253*/
     /*https://juejin.cn/post/6844903841163378701
     /*https://www.iteye.com/blog/elim-2353672*/
     /*https://blog.csdn.net/iteye_11305/article/details/82678034?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.control&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.control*/
     /*https://my.oschina.net/zudajun/blog/665956*/
+    /*https://www.cnblogs.com/zhjh256/p/8512392.html*/
     @Test
     public void test() throws IOException {
 

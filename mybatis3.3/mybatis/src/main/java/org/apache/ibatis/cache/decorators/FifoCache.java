@@ -32,6 +32,8 @@ public class FifoCache implements Cache {
   private final Cache delegate;
   /**
    * double ended queue 双头队列的缩写
+   * 队列是一种只允许在一端删除而在另一端插入的数据结构。
+   * 而双端队列(Deque)是队列的一种拓展，它可以在队列的两端进行插入和删除。
    */
   private Deque<Object> keyList;
   private int size;

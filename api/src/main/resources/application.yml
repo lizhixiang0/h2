@@ -1,5 +1,5 @@
 server:
-  port: 8084
+  port: 18087
 
 application:
   version: "@project.version@"

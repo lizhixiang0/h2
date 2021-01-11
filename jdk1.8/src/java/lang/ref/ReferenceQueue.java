@@ -99,6 +99,7 @@ public class ReferenceQueue<T> {
      * available without further delay then it is removed from the queue and
      * returned.  Otherwise this method immediately returns <tt>null</tt>.
      *
+     * 轮询此队队列，查看是否存在可用的引用对象。如果存在则从该队列中移除此对象并返回此对象。否则此方法立即返回 null。
      * @return  A reference object, if one was immediately available,
      *          otherwise <code>null</code>
      */

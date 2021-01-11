@@ -56,7 +56,7 @@ public class XPathParser {
   private XPath xpath;
 
 	//一些构造函数,全部调用commonConstructor以及createDocument
-	//1~4,默认不需要验证
+	//1~4,validation默认为false ,不使用DTD文件验证XML是否合法
   public XPathParser(String xml) {
     commonConstructor(false, null, null);
     this.document = createDocument(new InputSource(new StringReader(xml)));
@@ -77,7 +77,7 @@ public class XPathParser {
     this.document = document;
   }
 
-	//5~8,传入是否需要验证参数
+	//5~8,validation默认为true ,使用DTD文件验证XML是否合法,但是不使用本地的DTD文件
   public XPathParser(String xml, boolean validation) {
     commonConstructor(validation, null, null);
     this.document = createDocument(new InputSource(new StringReader(xml)));
@@ -98,7 +98,7 @@ public class XPathParser {
     this.document = document;
   }
 
-	//9~12,传入是否需要验证参数,Properties
+	//9~12,validation默认为true ,使用DTD文件验证XML是否合法,但是不使用本地的DTD文件,同时传入参数Properties
   public XPathParser(String xml, boolean validation, Properties variables) {
     commonConstructor(validation, variables, null);
     this.document = createDocument(new InputSource(new StringReader(xml)));
@@ -119,7 +119,7 @@ public class XPathParser {
     this.document = document;
   }
 
-	//13~16,传入是否需要验证参数,Properties,EntityResolver
+	//13~16,validation默认为true ,使用DTD文件验证XML是否合法,使用本地的DTD文件,同时传入参数Properties
   public XPathParser(String xml, boolean validation, Properties variables, EntityResolver entityResolver) {
     commonConstructor(validation, variables, entityResolver);
     this.document = createDocument(new InputSource(new StringReader(xml)));
@@ -140,11 +140,17 @@ public class XPathParser {
     this.document = document;
   }
 
-	//17.设置Properties
+	//17.允许单独设置Properties
   public void setVariables(Properties variables) {
     this.variables = variables;
   }
 
+
+  /**
+   * 根据给定的表达式expression来获得xml文件里表达式对应的元素值
+   * @param expression
+   * @return
+   */
   public String evalString(String expression) {
     return evalString(document, expression);
   }
@@ -193,7 +199,12 @@ public class XPathParser {
     return evalFloat(document, expression);
   }
 
-	//??这里有点疑问，为何Float用evalString,Double用evaluate XPathConstants.NUMBER
+  /**
+   * 这里有点疑问，为何Float用evalString,Double用evaluate XPathConstants.NUMBER
+   * @param root
+   * @param expression
+   * @return
+   */
   public Float evalFloat(Object root, String expression) {
     return Float.valueOf(evalString(root, expression));
   }
@@ -224,7 +235,6 @@ public class XPathParser {
     return evalNode(document, expression);
   }
 
-	//返回节点
   public XNode evalNode(Object root, String expression) {
     Node node = (Node) evaluate(expression, root, XPathConstants.NODE);
     if (node == null) {
@@ -233,13 +243,38 @@ public class XPathParser {
     return new XNode(this, node, variables);
   }
 
+  /**
+   * 在指定的上下文中评估XPath表达式，并以指定的类型返回结果
+   * @param expression
+   * @param root
+   * @param returnType
+   * @return
+   */
   private Object evaluate(String expression, Object root, QName returnType) {
     try {
-		//最终合流到这儿，直接调用XPath.evaluate
+      //最终全部合流到这儿，直接调用XPath.evaluate
       return xpath.evaluate(expression, root, returnType);
     } catch (Exception e) {
       throw new BuilderException("Error evaluating XPath.  Cause: " + e, e);
     }
+  }
+
+
+  /**
+   * 可以学学这种方式！！将构造document对象分成了两步！
+   * 第一步调用commonConstructor（validation,variables,entityResolver),传递一些配置参数
+   * 第二步调用createDocument（inputSource）,将数据源传递过去
+   * @param validation
+   * @param variables
+   * @param entityResolver
+   */
+  private void commonConstructor(boolean validation, Properties variables, EntityResolver entityResolver) {
+    this.validation = validation;
+    this.entityResolver = entityResolver;
+    this.variables = variables;
+    //共通构造函数，除了把参数都设置到实例变量里面去以外，还初始化了XPath
+    XPathFactory factory = XPathFactory.newInstance();
+    this.xpath = factory.newXPath();
   }
 
   private Document createDocument(InputSource inputSource) {
@@ -247,10 +282,9 @@ public class XPathParser {
     try {
 		//这个是DOM解析方式
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-      // 需要使用DTD文件验证XML是否合法
-      // 注意，如果XML文档声明了一个DTD ，即使不启用校验（validation）这个特性，解析器总是试着去读入这个DTD ,目的是为了保证XML文档中entity reference被正确的扩展了，以防止出现格式不正确的XML文档，只有在XML文档序言部分的声明中standalone属性被置为true时，外部的DTD才会被完全忽略掉。
+      // 是否使用DTD文件验证XML是否合法
+      // 注意，如果XML文档声明了一个DTD ，即使不启用校验（validation）这个特性，解析器也会读入这个DTD ,目的是保证XML文档中entity reference被正确的扩展，防止出现格式不正确的XML文档，只有在XML文档序言部分的声明中standalone属性被置为true时，外部的DTD才会被完全忽略掉。
       factory.setValidating(validation);
-
 		//名称空间
       factory.setNamespaceAware(false);
 		//忽略注释
@@ -264,7 +298,7 @@ public class XPathParser {
       DocumentBuilder builder = factory.newDocumentBuilder();
       // 用来定位DTD文件,在获取DTD文件的时候，根据映射关系，将远程的url转成本地的DTD文件路径
       builder.setEntityResolver(entityResolver);
-
+      // 指定解析器要使用的ErrorHandler ,注意如果将其设置为null则导致使用其自身的默认实现和行为的基础实现
       builder.setErrorHandler(new ErrorHandler() {
         @Override
         public void error(SAXParseException exception) throws SAXException {
@@ -277,22 +311,18 @@ public class XPathParser {
         }
 
         @Override
-        public void warning(SAXParseException exception) throws SAXException {
+        public void warning(SAXParseException exception) {
         }
       });
+      /**
+       * Parse the content of the given input source as an XML document
+       */
       return builder.parse(inputSource);
     } catch (Exception e) {
       throw new BuilderException("Error creating document instance.  Cause: " + e, e);
     }
   }
 
-  private void commonConstructor(boolean validation, Properties variables, EntityResolver entityResolver) {
-    this.validation = validation;
-    this.entityResolver = entityResolver;
-    this.variables = variables;
-	//共通构造函数，除了把参数都设置到实例变量里面去以外，还初始化了XPath
-    XPathFactory factory = XPathFactory.newInstance();
-    this.xpath = factory.newXPath();
-  }
+
 
 }

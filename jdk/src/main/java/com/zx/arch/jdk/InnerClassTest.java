@@ -4,7 +4,7 @@ package com.zx.arch.jdk;
 /**
  * @author lizx
  * @since 1.0.0
- * @description 测试内部类的作用
+ * @description 测试内部类的作用,首先，用内部类是因为内部类与所在外部类有一定的关系，往往只有该外部类调用此内部类。所以没有必要专门用一个Java文件存放这个类
  * @blog "https://www.zhihu.com/question/26954130
  **/
 public class InnerClassTest {
@@ -128,6 +128,18 @@ public class InnerClassTest {
      */
     public static void testInnerInterface(){
 
+    }
+
+    /**
+     * 静态内部类的作用
+     */
+    public static void testInner(){
+        /**
+         * 内部类和静态修饰符static
+         * (1）首先，用内部类是因为内部类与所在外部类有一定的关系，往往只有该外部类调用此内部类。所以没有必要专门用一个Java文件存放这个类。
+         * (2）静态都是用来修饰类的内部成员的。比如静态方法，静态成员变量，静态常量。它唯一的作用就是随着类的加载（而不是随着对象的产生）而产生，以致可以用类名+静态成员名直接获得。
+         * 这样静态内部类就可以理解了，因为这个类没有必要单独存放一个文件，它一般来说只被所在外部类使用。并且它可以直接被用 外部类名+内部类名 获得。
+         */
     }
 
     public static void main(String[] args) {
