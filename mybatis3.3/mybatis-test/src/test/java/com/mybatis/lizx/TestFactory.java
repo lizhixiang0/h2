@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.Reader;
 
 public class TestFactory {
+    /*mybatis技术内幕*/
     /*mybatis中的设计模式：https://mp.weixin.qq.com/s/S9R_sZ246iaTyNLG-So9GQ*/
     // 缓存:"https://www.cnblogs.com/51life/p/9529409.html
     // 缓存:https://blog.csdn.net/finalcola/article/details/81155517

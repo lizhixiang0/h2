@@ -16,12 +16,9 @@
 package org.apache.ibatis.exceptions;
 
 /**
- * @author Clinton Begin
- */
-/**
- *
  * 持久化异常
- * 可以看到这个类只是继承了一个废弃的IbatisException，其他都一样
+ * 可以看到这个类只是继承了一个废弃的ibatisException，其他都一样
+ * @author Clinton Begin
  */
 @SuppressWarnings("deprecation")
 public class PersistenceException extends IbatisException {

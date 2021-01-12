@@ -79,7 +79,9 @@ public class PerpetualCache implements Cache {
 
   @Override
   public boolean equals(Object o) {
-    //只要id相等就认为两个cache相同
+    /**
+     * 只要id相等就认为两个cache相同
+     */
     if (getId() == null) {
       throw new CacheException("Cache instances require an ID.");
     }

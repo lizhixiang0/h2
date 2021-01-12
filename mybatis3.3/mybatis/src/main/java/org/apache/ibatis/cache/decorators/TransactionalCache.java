@@ -36,21 +36,21 @@ import org.apache.ibatis.cache.Cache;
  * @blog "https://blog.csdn.net/qq_28126793/article/details/85726066
  * @简介   TransactionalCache比其他Cache对象多出了2个方法：commit()和rollback()。
  *        TransactionalCache对象内部存在暂存区，所有对缓存对象的写操作都不会直接作用于缓存对象，而是被保存在暂存区，
- *        只有调用TransactionalCache的commit()方法时，所有的更新操作才会真正同步到缓存对象中。
+ *        在事务提交(调用TransactionalCache的commit()方法)后再将过程中存放在其中的数据提交到二级缓存，如果事务回滚（调用rollback()方法），则将数据清除掉
  *        这样的话，就会存在一个问题：
  *        若事务被设置为自动提交（autoCommit=true）,写操作会更新RDBMS（关系型数据库管理系统），但不会清空缓存对象（因为自动提交不会调用commit方法），
  *        这样就会产生数据库与缓存中数据不一致的情况。如果缓存没有过期失效的机制，那么问题会很严重。
+ *        这里需要验证，自动提交会不会触发commit方法？
+ *，
  *
- *        主要作用是保存SqlSession在事务中需要向某个二级缓存提交的缓存数据（因为事务过程中的数据可能会回滚，所以不能直接把数据就提交二级缓存，而是暂存在TransactionalCache中，
- *        在事务提交后再将过程中存放在其中的数据提交到二级缓存，如果事务回滚，则将数据清除掉）
  */
 public class TransactionalCache implements Cache {
 
   private Cache delegate;
 
   /**
-   * 如果此值为true，则调用commit时会进行清空缓存的操作,初始为false
-   * 只有事务中包含更新操作时，此值才会为true,否则只需要覆盖指定key/value的更新即可，（覆盖分为删除和添加两步操作）
+   * 初始为false，调用commit时，覆盖指定的key->value即可
+   * 只有事务中包含update更新操作时，此值才会为true，调用commit时会先清空二级缓存中的所有缓存项。
    */
   private boolean clearOnCommit;
 
@@ -60,17 +60,21 @@ public class TransactionalCache implements Cache {
    */
   private Map<Object, Object> entriesToAddOnCommit;
   /**
-   * 执行commit方法时,会将entriesMissedInCache（Missed暂存区）中的缓存项都从缓存中移除
-   * 注：调用removeObject时,不会直接从缓存中移除此缓存项，而是先将缓存项存入到这个缓存区
+   * 执行commit方法时,判断entriesMissedInCache（Missed暂存区）中的缓存项在暂存区中是否存在，不存在则还将该CacheKey置为null
+   * 注：调用getObject方法时,记录缓存未命中的CacheKey对象,目的是为了防止缓存穿透
+   * 缓存穿透：缓存穿透是指用户不断对缓存和数据库中都没有的数据发起请求，如发起为id为“-1”的数据或id为特别大不存在的数据。这时的用户很可能是攻击者，攻击会导致数据库压力过大。
+   *          所以我们在缓存中将此数据设置为null,请求就打不到数据库上去。
    */
   private Set<Object> entriesMissedInCache;
 
   public TransactionalCache(Cache delegate) {
     this.delegate = delegate;
-    //默认commit时不清缓存
+    /**
+     * 默认commit时不清缓存
+     */
     this.clearOnCommit = false;
-    this.entriesToAddOnCommit = new HashMap<Object, Object>();
-    this.entriesMissedInCache = new HashSet<Object>();
+    this.entriesToAddOnCommit = new HashMap<>();
+    this.entriesMissedInCache = new HashSet<>();
   }
 
   @Override
@@ -84,28 +88,24 @@ public class TransactionalCache implements Cache {
   }
 
   @Override
+  public void putObject(Object key, Object object) {
+    /**
+     * 缓存在entriesToAddOnCommit中等待事务提交
+     */
+    entriesToAddOnCommit.put(key, object);
+  }
+
+  @Override
   public Object getObject(Object key) {
-    // issue #116
     Object object = delegate.getObject(key);
     if (object == null) {
       entriesMissedInCache.add(key);
     }
-    // issue #146
     if (clearOnCommit) {
       return null;
     } else {
       return object;
     }
-  }
-
-  @Override
-  public ReadWriteLock getReadWriteLock() {
-    return null;
-  }
-
-  @Override
-  public void putObject(Object key, Object object) {
-    entriesToAddOnCommit.put(key, object);
   }
 
   @Override
@@ -115,24 +115,44 @@ public class TransactionalCache implements Cache {
 
   @Override
   public void clear() {
+    /**
+     * 这个clear什么情况下会调用到？
+     */
     clearOnCommit = true;
     entriesToAddOnCommit.clear();
   }
 
-  //多了commit方法，提供事务功能
   public void commit() {
     if (clearOnCommit) {
+      /**
+       * 如果clearOnCommit为true则，事务提交前清空二级缓存
+       */
       delegate.clear();
     }
+    /**
+     * 将entriesToAddOnCommit、entriesMissedInCache添加至二级缓存中
+     */
     flushPendingEntries();
+    /**
+     * 回到事务最初的状态,等待下一次事务的开始
+     */
     reset();
   }
 
   public void rollback() {
+    /**
+     * 将entriesMissedInCache添加进二级缓存
+     */
     unlockMissedEntries();
+    /**
+     * 回到事务最初的状态，等待下一次事务的开始
+     */
     reset();
   }
 
+  /**
+   * 重置clearOnCommit=false,清空entriesToAddOnCommit、entriesMissedInCache
+   */
   private void reset() {
     clearOnCommit = false;
     entriesToAddOnCommit.clear();
@@ -143,9 +163,12 @@ public class TransactionalCache implements Cache {
     for (Map.Entry<Object, Object> entry : entriesToAddOnCommit.entrySet()) {
       delegate.putObject(entry.getKey(), entry.getValue());
     }
-    for (Object entry : entriesMissedInCache) {
-      if (!entriesToAddOnCommit.containsKey(entry)) {
-        delegate.putObject(entry, null);
+    /**
+     *  将未命中的缓存且暂存区不存在的缓存项置为null, 自己觉得是为了防止缓存穿透
+     */
+    for (Object key : entriesMissedInCache) {
+      if (!entriesToAddOnCommit.containsKey(key)) {
+        delegate.putObject(key, null);
       }
     }
   }
@@ -155,5 +178,11 @@ public class TransactionalCache implements Cache {
       delegate.putObject(entry, null);
     }
   }
+
+  @Override
+  public ReadWriteLock getReadWriteLock() {
+    return null;
+  }
+
 
 }

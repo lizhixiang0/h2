@@ -16,18 +16,14 @@
 package org.apache.ibatis.cache;
 
 /**
+ * CacheKey的特殊情况,即缓存key为null ,有的集合容器不允许key为null ,例如TreeMap、ConcurrentHashMap、HashTable
  * @author Clinton Begin
- */
-/**
- * Null值缓存key
- *
  */
 public final class NullCacheKey extends CacheKey {
 
   private static final long serialVersionUID = 3704229911977019465L;
 
   public NullCacheKey() {
-      //只有hash值和校验码为key?
     super();
   }
 
