@@ -21,42 +21,49 @@ import java.util.Map;
 import org.apache.ibatis.cache.decorators.TransactionalCache;
 
 /**
- * 事务缓存管理器，被CachingExecutor使用
- * @blog "https://www.cnblogs.com/51life/p/9529409.html
+ * 事务缓存管理器，用来操作所有的transactionalCache
  * @author Clinton Begin
  */
 public class TransactionalCacheManager {
 
-  //管理了许多TransactionalCache
-  private Map<Cache, TransactionalCache> transactionalCaches = new HashMap<Cache, TransactionalCache>();
+  /**
+   * 管理了许多TransactionalCache
+   */
+  private Map<Cache, TransactionalCache> transactionalCaches = new HashMap<>();
 
+  /**
+   * 清除被代理缓存和暂存区缓存
+   * @param cache
+   */
   public void clear(Cache cache) {
     getTransactionalCache(cache).clear();
   }
 
-  //得到某个TransactionalCache的值
+  /**
+   * 获得某个TransactionalCache的缓存项
+   * @param cache
+   * @param key
+   * @return
+   */
   public Object getObject(Cache cache, CacheKey key) {
     return getTransactionalCache(cache).getObject(key);
   }
 
+  /**
+   * 往某个TransactionalCache添加缓存项
+   * @param cache
+   * @param key
+   * @param value
+   */
   public void putObject(Cache cache, CacheKey key, Object value) {
     getTransactionalCache(cache).putObject(key, value);
   }
 
-  //提交时全部提交
-  public void commit() {
-    for (TransactionalCache txCache : transactionalCaches.values()) {
-      txCache.commit();
-    }
-  }
-
-  //回滚时全部回滚
-  public void rollback() {
-    for (TransactionalCache txCache : transactionalCaches.values()) {
-      txCache.rollback();
-    }
-  }
-
+  /**
+   * 根据被代理缓存找到某个暂存区缓存
+   * @param cache
+   * @return
+   */
   private TransactionalCache getTransactionalCache(Cache cache) {
     TransactionalCache txCache = transactionalCaches.get(cache);
     if (txCache == null) {
@@ -64,6 +71,24 @@ public class TransactionalCacheManager {
       transactionalCaches.put(cache, txCache);
     }
     return txCache;
+  }
+
+  /**
+   * 全部提交，将所有的暂存区的缓存都提交到代理缓存中
+   */
+  public void commit() {
+    for (TransactionalCache txCache : transactionalCaches.values()) {
+      txCache.commit();
+    }
+  }
+
+  /**
+   * 将所有的未命中缓存放到对应的代理缓存中，暂存区缓存全部清除！
+   */
+  public void rollback() {
+    for (TransactionalCache txCache : transactionalCaches.values()) {
+      txCache.rollback();
+    }
   }
 
 }

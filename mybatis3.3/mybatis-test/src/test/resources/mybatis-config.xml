@@ -5,6 +5,11 @@
 <!--1、全局配置文件的根元素-->
 <configuration>
 
+    <settings>
+        <!-- 开启二级缓存  默认值为true -->
+        <setting name="cacheEnabled" value="true"/>
+    </settings>
+
     <!---->
     <typeAliases>
         <package name="com.mybatis.lizx.model"/>
@@ -15,7 +20,9 @@
     <!--若和Spring配合使用，则事务的管理和数据库连接池一般都是交给Spring控制,那environments的配置是省略的-->
     <environments default="development">
 
+
         <environment id="development">
+
             <!--transactionManager： 事务管理器,事物工厂类型只有两个取值：JDBC和MANAGED-->
             <!--这里使用的是事物工厂的实现类别名,
              JDBC:JdbcTransactionFactory           Mybatis内部的JDBC事务管理器,
@@ -30,11 +37,16 @@
                 <property name="username" value="root" />
                 <property name="password" value="root"/>
             </dataSource>
+
         </environment>
 
     </environments>
     <mappers>
         <!--mappers文件路径配置,目录结构必须以斜杠分割-->
         <mapper resource="com/mybatis/lizx/mapper/PersonMapper.xml"/>
+
     </mappers>
+
+
 </configuration>
+

@@ -34,12 +34,26 @@ public class TestFactory {
         SqlSession sqlSession = sqlSessionFactory.openSession();
         PersonDao personDao =  sqlSession.getMapper(PersonDao.class);
 
-        Person p = new Person("chen",12,"15345634565","157538651@qq.com","广东省");
-        personDao.insert(p);
-
-        System.out.println(p.toString());
-
+        //Person p = new Person("chen",12,"15345634565","157538651@qq.com","广东省");
+        //personDao.insert(p);
+        //System.out.println(p.toString());
+        /**
+         * 第一次查询
+         */
+        Person person = personDao.getById(13L);
+        /**
+         * 事务提交
+         */
         sqlSession.commit();
+        /**
+         * 第二次查询
+         */
+        Person person1 = personDao.getById(13L);
         sqlSession.close();
+
+        System.out.println(person);
+        System.out.println(person1);
+
+
     }
 }

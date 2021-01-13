@@ -3,11 +3,21 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mybatis.lizx.dao.PersonDao">
+    <!--配置二级缓存-->
+    <!--https://www.jianshu.com/p/bcab9be85f26-->
+    <cache
+            eviction="FIFO"
+            flushInterval="6000"
+            size="512"
+            readOnly="false"/>
 
     <insert id="insert" parameterType="com.mybatis.lizx.model.Person" keyProperty="id" useGeneratedKeys="true">
         INSERT INTO person (name, age, phone, email, address)
         VALUES(#{name},#{age},#{phone},#{email},#{address})
     </insert>
+    <select id="getById" resultType="com.mybatis.lizx.model.Person">
+        select * from person where id = #{id}
+    </select>
 
 </mapper>
 
