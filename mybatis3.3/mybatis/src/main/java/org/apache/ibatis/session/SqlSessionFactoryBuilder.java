@@ -25,15 +25,11 @@ import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.session.defaults.DefaultSqlSessionFactory;
 
-/*
+/**
  * Builds {@link SqlSession} instances.
  * 构建SqlSessionFactory的工厂.工厂模式
- *
- * 一共9个方法，最核心的是方法3,可以看到会话工厂构造器构造的是默认会话工厂 DefaultSqlSessionFactory
- *
- */
-/**
- * @author Clinton Begin
+ * 一共9个方法，最核心的是build(Configuration config),构造默认会话工厂 DefaultSqlSessionFactory
+ *@author Clinton Begin
  */
 public class SqlSessionFactoryBuilder {
 

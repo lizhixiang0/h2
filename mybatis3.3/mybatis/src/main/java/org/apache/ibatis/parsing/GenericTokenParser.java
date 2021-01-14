@@ -56,7 +56,7 @@ public class GenericTokenParser {
             builder.append(src, offset, start - offset);
             offset = start + openToken.length();
             String content = new String(src, offset, end - offset);
-            //得到一对大括号里的字符串后，调用handler.handleToken,比如替换变量这种功能
+            //得到一对大括号里的字符串后，调用handler.handleToken,替换变量
             builder.append(handler.handleToken(content));
             offset = end + closeToken.length();
           }
