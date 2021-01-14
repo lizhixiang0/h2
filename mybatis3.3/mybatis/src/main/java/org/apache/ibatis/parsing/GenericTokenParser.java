@@ -16,18 +16,13 @@
 package org.apache.ibatis.parsing;
 
 /**
+ * 通用标记解析器，处理${}参数
  * @author Clinton Begin
- */
-/**
- * 普通记号解析器，处理#{}和${}参数
- *
  */
 public class GenericTokenParser {
 
-  //有一个开始和结束记号
   private final String openToken;
   private final String closeToken;
-  //记号处理器
   private final TokenHandler handler;
 
   public GenericTokenParser(String openToken, String closeToken, TokenHandler handler) {

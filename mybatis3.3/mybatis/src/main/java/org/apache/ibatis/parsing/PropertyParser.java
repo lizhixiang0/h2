@@ -23,22 +23,27 @@ import java.util.Properties;
 /**
  * 属性解析器
  * @author Clinton Begin
- * @blog "https://blog.csdn.net/hou_ge/article/details/100139261
  */
 public class PropertyParser {
 
-  private PropertyParser() {
-    // Prevent Instantiation
-  }
+  private PropertyParser() {}
 
+  /**
+   * 静态方法
+   * @param string
+   * @param variables
+   * @return
+   */
   public static String parse(String string, Properties variables) {
     VariableTokenHandler handler = new VariableTokenHandler(variables);
     GenericTokenParser parser = new GenericTokenParser("${", "}", handler);
     return parser.parse(string);
   }
 
-  //就是一个map，用相应的value替换key
   private static class VariableTokenHandler implements TokenHandler {
+    /**
+     * Properties继承了Hashtable
+     */
     private Properties variables;
 
     public VariableTokenHandler(Properties variables) {
@@ -50,6 +55,7 @@ public class PropertyParser {
       if (variables != null && variables.containsKey(content)) {
         return variables.getProperty(content);
       }
+      //如果在给定的Properties中找不到,则还拼装成原来的样子返回
       return "${" + content + "}";
     }
   }

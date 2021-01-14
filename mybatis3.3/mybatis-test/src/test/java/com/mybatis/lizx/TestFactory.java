@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Properties;
 
 public class TestFactory {
     /*mybatis技术内幕*/
@@ -26,10 +27,12 @@ public class TestFactory {
     public void test() throws IOException {
 
         String path = "mybatis-config.xml";
+        String path1 = "dbconfig.properties";
         // 1、通过自定义的资源加载类加载配置文件
         Reader reader = Resources.getResourceAsReader(path);
+        Properties properties = Resources.getResourceAsProperties(path1);
         // 2、通过构造器解析配置文件生成会话工厂
-        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader,properties);
         // 3、SqlSession是数据库的C、R、U、D及事务处理接口
         SqlSession sqlSession = sqlSessionFactory.openSession();
         PersonDao personDao =  sqlSession.getMapper(PersonDao.class);

@@ -16,14 +16,11 @@
 package org.apache.ibatis.parsing;
 
 /**
+ * 标记处理器
  * @author Clinton Begin
- */
-/**
- * 记号处理器
- *
+ * @blog "https://blog.csdn.net/hou_ge/article/details/100139261
  */
 public interface TokenHandler {
-	//处理记号
   String handleToken(String content);
 }
 

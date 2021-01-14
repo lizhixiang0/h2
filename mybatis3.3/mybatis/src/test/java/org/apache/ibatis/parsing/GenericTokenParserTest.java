@@ -24,17 +24,22 @@ import java.util.Map;
 public class GenericTokenParserTest {
 
   public static class VariableTokenHandler implements TokenHandler {
-    private Map<String, String> variables = new HashMap<String, String>();
+    private Map<String, String> variables;
 
     public VariableTokenHandler(Map<String, String> variables) {
       this.variables = variables;
     }
 
+    @Override
     public String handleToken(String content) {
       return variables.get(content);
     }
   }
 
+  /**
+   * parse()应该具备通用性
+   * 这里我学到了，这才是好的程序员应该具备的素质！测试用例应该这么写！！！
+   */
   @Test
   public void shouldDemonstrateGenericTokenReplacement() {
     GenericTokenParser parser = new GenericTokenParser("${", "}", new VariableTokenHandler(new HashMap<String, String>() {
@@ -67,9 +72,13 @@ public class GenericTokenParserTest {
     assertEquals("Hello } ${ this is a test.", parser.parse("Hello } ${ this is a test."));
   }
 
+
+  /**
+   * 不应插值跳过的变量,加上\\可以 跳过标记处理
+   */
   @Test
   public void shallNotInterpolateSkippedVaiables() {
-    GenericTokenParser parser = new GenericTokenParser("${", "}", new VariableTokenHandler(new HashMap<String, String>()));
+    GenericTokenParser parser = new GenericTokenParser("${", "}", new VariableTokenHandler(new HashMap<>()));
 
     assertEquals("${skipped} variable", parser.parse("\\${skipped} variable"));
     assertEquals("This is a ${skipped} variable", parser.parse("This is a \\${skipped} variable"));
@@ -77,6 +86,9 @@ public class GenericTokenParserTest {
     assertEquals("The null is ${skipped} variable", parser.parse("The ${skipped} is \\${skipped} variable"));
   }
 
+  /**
+   * 应该在Jdk 7 u 6上快速解析
+   */
   @Test(timeout = 1000)
   public void shouldParseFastOnJdk7u6() {
     // issue #760

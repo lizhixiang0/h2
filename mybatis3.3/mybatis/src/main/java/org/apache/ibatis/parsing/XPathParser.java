@@ -42,10 +42,8 @@ import org.xml.sax.SAXParseException;
 /**
  * @author Clinton Begin
  * mybatis自己使用的XPath解析器，里面主要是两个功能:
- *                                        1、根据xml配置文件生成document！
- *                                        2、根据不同的expression和returnType来使用xpath.evaluate(expression, document, returnType)实现对XML文档的解析!
- *
- * @blog "https://blog.csdn.net/lululove19870526/article/details/53116062
+ *                                 1、根据xml配置文件生成document！
+ *                                 2、根据不同的expression和returnType来使用xpath.evaluate(expression, document, returnType)实现对XML文档的解析!
  *
  */
 public class XPathParser {
@@ -56,8 +54,15 @@ public class XPathParser {
   private Properties variables;
   private XPath xpath;
 
-	//一些构造函数,全部调用commonConstructor以及createDocument
-	//1~4,validation默认为false ,不使用DTD文件验证XML是否合法
+  /**
+   * 1~4,validation默认为false ,不使用DTD文件验证XML是否合法
+   *
+   * @param xml
+   * @note 一些构造函数,全部调用commonConstructor以及createDocument
+   *      可以学学这种方式！！将构造document对象和XPath对象分成了两步！
+   *        第一步调用commonConstructor（validation,variables,entityResolver),传递一些配置参数，并构造Xpath对象
+   *        第二步调用createDocument（inputSource）,将数据源传递过去，构造document对象
+   */
   public XPathParser(String xml) {
     commonConstructor(false, null, null);
     this.document = createDocument(new InputSource(new StringReader(xml)));
@@ -78,7 +83,11 @@ public class XPathParser {
     this.document = document;
   }
 
-	//5~8,validation默认为true ,使用DTD文件验证XML是否合法,但是不使用本地的DTD文件
+  /**
+   * 5~8,validation默认为true ,使用DTD文件验证XML是否合法,但是不使用本地的DTD文件
+   * @param xml
+   * @param validation
+   */
   public XPathParser(String xml, boolean validation) {
     commonConstructor(validation, null, null);
     this.document = createDocument(new InputSource(new StringReader(xml)));
@@ -99,7 +108,12 @@ public class XPathParser {
     this.document = document;
   }
 
-	//9~12,validation默认为true ,使用DTD文件验证XML是否合法,但是不使用本地的DTD文件,同时传入参数Properties
+  /**
+   * 9~12,validation默认为true ,使用DTD文件验证XML是否合法,但是不使用本地的DTD文件,同时传入参数Properties
+   * @param xml
+   * @param validation
+   * @param variables
+   */
   public XPathParser(String xml, boolean validation, Properties variables) {
     commonConstructor(validation, variables, null);
     this.document = createDocument(new InputSource(new StringReader(xml)));
@@ -120,7 +134,13 @@ public class XPathParser {
     this.document = document;
   }
 
-	//13~16,validation默认为true ,使用DTD文件验证XML是否合法,使用本地的DTD文件,同时传入参数Properties
+  /**
+   * 13~16,validation默认为true ,使用DTD文件验证XML是否合法,使用本地的DTD文件,同时传入参数Properties
+   * @param xml
+   * @param validation
+   * @param variables
+   * @param entityResolver
+   */
   public XPathParser(String xml, boolean validation, Properties variables, EntityResolver entityResolver) {
     commonConstructor(validation, variables, entityResolver);
     this.document = createDocument(new InputSource(new StringReader(xml)));
@@ -141,7 +161,10 @@ public class XPathParser {
     this.document = document;
   }
 
-	//17.允许单独设置Properties
+  /**
+   * 17.允许单独设置Properties
+   * @param variables
+   */
   public void setVariables(Properties variables) {
     this.variables = variables;
   }
@@ -156,10 +179,16 @@ public class XPathParser {
     return evalString(document, expression);
   }
 
+
+  /**
+   * 先用xpath解析获得元素内容（value）, 然后再调用PropertyParser去处理内容
+   *      <property name="driver" value="${driver}" />    <<<<=====================>>> driver=com.mysql.jdbc.Driver
+   * @param root
+   * @param expression
+   * @return
+   */
   public String evalString(Object root, String expression) {
-	//1.先用xpath解析获得元素内容（value）
     String result = (String) evaluate(expression, root, XPathConstants.STRING);
-	//2.然后再调用PropertyParser去解析内容,例如替换 ${} 这种格式的字符串
     result = PropertyParser.parse(result, variables);
     return result;
   }
@@ -238,7 +267,7 @@ public class XPathParser {
   }
 
   /**
-   * 在指定的上下文中评估XPath表达式，并以指定的类型返回结果
+   * 最终全部合流到这儿，调用XPath.evaluate,根据表达式和返回类型对document进行解析并返回结果
    * @param expression
    * @param root
    * @param returnType
@@ -246,22 +275,12 @@ public class XPathParser {
    */
   private Object evaluate(String expression, Object root, QName returnType) {
     try {
-      //最终全部合流到这儿，直接调用XPath.evaluate
       return xpath.evaluate(expression, root, returnType);
     } catch (Exception e) {
       throw new BuilderException("Error evaluating XPath.  Cause: " + e, e);
     }
   }
 
-
-  /**
-   * 可以学学这种方式！！将构造document对象分成了两步！
-   * 第一步调用commonConstructor（validation,variables,entityResolver),传递一些配置参数
-   * 第二步调用createDocument（inputSource）,将数据源传递过去
-   * @param validation
-   * @param variables
-   * @param entityResolver
-   */
   private void commonConstructor(boolean validation, Properties variables, EntityResolver entityResolver) {
     this.validation = validation;
     this.entityResolver = entityResolver;
