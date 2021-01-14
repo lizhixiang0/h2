@@ -1,13 +1,17 @@
 package com.mybatis.lizx.model;
 
 
+import org.apache.ibatis.type.Alias;
+
+import java.io.Serializable;
 
 /**
  * @author lizx
  * @since 1.0.0
+ * @note 开启二级缓存第三步、model类实现序列化，这一步是否非做不可有待研究
  **/
-
-public class Person {
+@Alias("person")
+public class Person implements Serializable {
 
     private int id;
     private String name;

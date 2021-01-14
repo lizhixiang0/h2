@@ -6,13 +6,22 @@
 <configuration>
 
     <settings>
-        <!-- 开启二级缓存  默认值为true -->
+        <!-- 开启二级缓存第一步:设置cacheEnabled为true -->
         <setting name="cacheEnabled" value="true"/>
     </settings>
 
-    <!---->
+
     <typeAliases>
+        <!--
+        第一种方式:通过<typeAlias>标签，直接指定类名
+        -->
+        <typeAlias alias="person" type="com.mybatis.lizx.model.Person"/>
+        <!--
+        第二种方式:通过<package>标签, 指定包名， mybatis会扫描指定包下面的所有javabean,
+        默认设置别名为小写类名,也可以指定（在javabean 加上注解@Alias 来自定义别名， 例如： @Alias(myUser)）。
+         -->
         <package name="com.mybatis.lizx.model"/>
+
     </typeAliases>
 
     <!--environments表示环境配置,用来配置数据库连接池和事物管理-->

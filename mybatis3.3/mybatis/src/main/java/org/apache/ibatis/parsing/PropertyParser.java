@@ -18,10 +18,12 @@ package org.apache.ibatis.parsing;
 import java.util.Properties;
 
 /**
- * @author Clinton Begin
+ *
  */
 /**
  * 属性解析器
+ * @author Clinton Begin
+ * @blog "https://blog.csdn.net/hou_ge/article/details/100139261
  */
 public class PropertyParser {
 

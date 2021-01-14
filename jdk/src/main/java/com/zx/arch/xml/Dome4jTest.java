@@ -40,5 +40,7 @@ public class Dome4jTest {
             }
 
         }
+
+        //5、dom4j也可以使用XPath来快速解析xml  "https://www.cnblogs.com/vastsum/p/5940235.html
     }
 }

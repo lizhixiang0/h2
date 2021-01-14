@@ -41,10 +41,11 @@ import org.xml.sax.SAXParseException;
 
 /**
  * @author Clinton Begin
- */
-/**
- * XPath解析器，用的都是JDK的类包,封装了一下，使得使用起来更方便
- * https://blog.csdn.net/weixin_46168350/article/details/111876833
+ * mybatis自己使用的XPath解析器，里面主要是两个功能:
+ *                                        1、根据xml配置文件生成document！
+ *                                        2、根据不同的expression和returnType来使用xpath.evaluate(expression, document, returnType)实现对XML文档的解析!
+ *
+ * @blog "https://blog.csdn.net/lululove19870526/article/details/53116062
  *
  */
 public class XPathParser {
@@ -156,9 +157,9 @@ public class XPathParser {
   }
 
   public String evalString(Object root, String expression) {
-	//1.先用xpath解析
+	//1.先用xpath解析获得元素内容（value）
     String result = (String) evaluate(expression, root, XPathConstants.STRING);
-	//2.再调用PropertyParser去解析,也就是替换 ${} 这种格式的字符串
+	//2.然后再调用PropertyParser去解析内容,例如替换 ${} 这种格式的字符串
     result = PropertyParser.parse(result, variables);
     return result;
   }
@@ -199,12 +200,6 @@ public class XPathParser {
     return evalFloat(document, expression);
   }
 
-  /**
-   * 这里有点疑问，为何Float用evalString,Double用evaluate XPathConstants.NUMBER
-   * @param root
-   * @param expression
-   * @return
-   */
   public Float evalFloat(Object root, String expression) {
     return Float.valueOf(evalString(root, expression));
   }
@@ -221,7 +216,6 @@ public class XPathParser {
     return evalNodes(document, expression);
   }
 
-	//返回节点List
   public List<XNode> evalNodes(Object root, String expression) {
     List<XNode> xnodes = new ArrayList<XNode>();
     NodeList nodes = (NodeList) evaluate(expression, root, XPathConstants.NODESET);
@@ -278,9 +272,8 @@ public class XPathParser {
   }
 
   private Document createDocument(InputSource inputSource) {
-    // important: this must only be called AFTER common constructor
     try {
-		//这个是DOM解析方式
+      //这个是DOM解析方式
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       // 是否使用DTD文件验证XML是否合法
       // 注意，如果XML文档声明了一个DTD ，即使不启用校验（validation）这个特性，解析器也会读入这个DTD ,目的是保证XML文档中entity reference被正确的扩展，防止出现格式不正确的XML文档，只有在XML文档序言部分的声明中standalone属性被置为true时，外部的DTD才会被完全忽略掉。
@@ -316,6 +309,7 @@ public class XPathParser {
       });
       /**
        * Parse the content of the given input source as an XML document
+       * 将配置文件加载到一个Document对象中
        */
       return builder.parse(inputSource);
     } catch (Exception e) {
