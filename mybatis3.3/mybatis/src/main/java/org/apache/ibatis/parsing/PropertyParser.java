@@ -55,7 +55,7 @@ public class PropertyParser {
       if (variables != null && variables.containsKey(content)) {
         return variables.getProperty(content);
       }
-      //如果在给定的Properties中找不到,则还拼装成原来的样子返回
+      //如果在给定的Properties中找不到,则拼装成原来的样子返回
       return "${" + content + "}";
     }
   }

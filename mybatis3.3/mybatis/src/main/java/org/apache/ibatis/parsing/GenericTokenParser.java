@@ -21,7 +21,13 @@ package org.apache.ibatis.parsing;
  */
 public class GenericTokenParser {
 
+  /**
+   * 硬编码 ${
+   */
   private final String openToken;
+  /**
+   * 硬编码 }
+   */
   private final String closeToken;
   private final TokenHandler handler;
 
@@ -31,20 +37,31 @@ public class GenericTokenParser {
     this.handler = handler;
   }
 
+  /**
+   * 这里面是一个算法，就是在将某个字符串里所有的${attr}替换掉
+   * 要考虑到多种情况，比如
+   *              ${id}}
+   *              ${{id}
+   *              _${id}_
+   *              ${id}${id}
+   *              {}${id}
+   *              ${}}
+   * 特殊情况,如果${id}前面加了"\\"则不需要替换
+   * 补充:默认attr里面不会出现"{、$、}"
+   * @param text
+   * @return
+   */
   public String parse(String text) {
     StringBuilder builder = new StringBuilder();
     if (text != null && text.length() > 0) {
       char[] src = text.toCharArray();
       int offset = 0;
       int start = text.indexOf(openToken, offset);
-      //#{favouriteSection,jdbcType=VARCHAR}
-      //这里是循环解析参数，参考GenericTokenParserTest,比如可以解析${first_name} ${initial} ${last_name} reporting.这样的字符串,里面有3个 ${}
+      // 一个text里可能有多个${},所以这里用循环
       while (start > -1) {
-    	  //判断一下 ${ 前面是否是反斜杠，这个逻辑在老版的mybatis中（如3.1.0）是没有的
+    	  //判断一下 ${ 前面是否是反斜杠，如果有反斜杠，那这个${}不做处理
         if (start > 0 && src[start - 1] == '\\') {
-          // the variable is escaped. remove the backslash.
-      	  //新版已经没有调用substring了，改为调用如下的offset方式，提高了效率
-          //issue #760
+          // 例如src = [\\${}XXX]
           builder.append(src, offset, start - offset - 1).append(openToken);
           offset = start + openToken.length();
         } else {
