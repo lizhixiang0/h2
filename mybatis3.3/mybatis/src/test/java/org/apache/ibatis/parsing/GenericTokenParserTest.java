@@ -70,6 +70,21 @@ public class GenericTokenParserTest {
     assertEquals("Hello ${ this is a test.", parser.parse("Hello ${ this is a test."));
     assertEquals("Hello } this is a test.", parser.parse("Hello } this is a test."));
     assertEquals("Hello } ${ this is a test.", parser.parse("Hello } ${ this is a test."));
+    assertEquals("Hello } ${ this is a test.", parser.parse("${}first_name}"));
+
+  }
+
+  public static void main(String[] args) {
+    GenericTokenParser parser = new GenericTokenParser("${", "}", new VariableTokenHandler(new HashMap<String, String>() {
+      {
+        put("first_name", "James");
+        put("initial", "T");
+        put("last_name", "Kirk");
+        put("", "");
+      }
+    }));
+    System.out.println(parser.parse("${}first_name}"));
+    System.out.println(parser.parse("${{first_name}"));
   }
 
 

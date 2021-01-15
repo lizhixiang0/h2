@@ -45,11 +45,19 @@ public class GenericTokenParser {
    *              _${id}_
    *              ${id}${id}
    *              {}${id}
-   *              ${}}
+   *              ${id}}
+   *              {$$id}
+   *              ${id}
+   *              ${}id}
    * 特殊情况,如果${id}前面加了"\\"则不需要替换
-   * 补充:默认attr里面不会出现"{、$、}"
+   * 补充:默认attr里面不会出现"{、$、}",如果出现那也不管,如果是个空的${}那就替换成""
+   * 提示:"${"看做一个整体
    * @param text
    * @return
+   * @note 补充几个说明几个方法
+   *              string.indexOf(String str, int fromIndex)               str的第一个匹配项在字符串string中的索引
+   *              stringBuilder.append(char[] str, int offset, int len)   拿到字符数组里的一组字符
+   *              new String(char value[], int offset, int count)        根据字符数组里的一组字符创建String字符串
    */
   public String parse(String text) {
     StringBuilder builder = new StringBuilder();
@@ -86,5 +94,6 @@ public class GenericTokenParser {
     }
     return builder.toString();
   }
-
 }
+
+
