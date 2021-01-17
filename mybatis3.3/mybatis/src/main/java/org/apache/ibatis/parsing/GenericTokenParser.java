@@ -56,7 +56,7 @@ public class GenericTokenParser {
    * @return
    * @note 补充几个说明几个方法
    *              string.indexOf(String str, int fromIndex)               str的第一个匹配项在字符串string中的索引
-   *              stringBuilder.append(char[] str, int offset, int len)   拿到字符数组里的一组字符
+   *              stringBuilder.append(char[] str, int offset, int len)   拿到字符数组里的一组字符,包含offset上的元素
    *              new String(char value[], int offset, int count)        根据字符数组里的一组字符创建String字符串
    */
   public String parse(String text) {
@@ -64,12 +64,12 @@ public class GenericTokenParser {
     if (text != null && text.length() > 0) {
       char[] src = text.toCharArray();
       int offset = 0;
-      int start = text.indexOf(openToken, offset);
+      int start = text.indexOf(openToken);
       // 一个text里可能有多个${},所以这里用循环
       while (start > -1) {
     	  //判断一下 ${ 前面是否是反斜杠，如果有反斜杠，那这个${}不做处理
         if (start > 0 && src[start - 1] == '\\') {
-          // 例如src = [\\${}XXX]
+          // 例如src = [ss\\${skipped} variable${skipped}]   ==>  builder=[ss${]
           builder.append(src, offset, start - offset - 1).append(openToken);
           offset = start + openToken.length();
         } else {
@@ -94,6 +94,53 @@ public class GenericTokenParser {
     }
     return builder.toString();
   }
+  /**
+   * sss${first_name} sss${initial} \\${last_name} reporting.
+   * "ss\${skipped} variable
+   * ${
+   * @param text
+   * @return
+   */
+  public String parse2(String text) {
+    int start = text.indexOf(openToken);
+    int close;
+    int offset = 0;
+    char[] chars = text.toCharArray();
+    StringBuilder stringBuilder = new StringBuilder();
+    while(start>-1){
+      if(start>0 && chars[start-1]=='\\'){
+        start = text.indexOf(openToken,start+1);
+        if(start==-1){
+          stringBuilder.append(chars,offset,chars.length-offset);
+          start = -2;
+        }else {
+          stringBuilder.append(chars,offset,start);
+        }
+      }else {
+        close = text.indexOf(closeToken,start);
+        stringBuilder.append(chars,offset,start-offset);
+        if(close>-1){
+          String content = new String(chars, start+openToken.length(), close-start-openToken.length());
+          stringBuilder.append(handler.handleToken(content));
+          start = text.indexOf(openToken,close);
+          offset = close+1;
+        }else {
+          stringBuilder.append(chars,start,chars.length-start);
+          start = -2;
+        }
+      }
+    }
+    if(start==-1){
+      stringBuilder.append(chars,offset,chars.length-offset);
+    }
+    return stringBuilder.toString().replaceAll("\\\\","");
+  }
+
+  /**
+   * 学习指针的用法,在字符串里学会是必须要学会使用指针的！！！
+   * sss${first_name} sss${initial} \\${last_name reporting.
+   */
+
 }
 
 
