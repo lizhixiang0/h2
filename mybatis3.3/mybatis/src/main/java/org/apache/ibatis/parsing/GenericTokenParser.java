@@ -15,6 +15,9 @@
  */
 package org.apache.ibatis.parsing;
 
+import org.apache.log4j.rewrite.MapRewritePolicy;
+import sun.jvm.hotspot.ui.CommandProcessorPanel;
+
 /**
  * 通用标记解析器，处理${}参数
  * @author Clinton Begin
@@ -49,7 +52,7 @@ public class GenericTokenParser {
    *              {$$id}
    *              ${id}
    *              ${}id}
-   * 特殊情况,如果${id}前面加了"\\"则不需要替换
+   * 特殊情况,如果${id}前面加了"\\"则不需要替换${},但是需要把"\\"替换成空
    * 补充:默认attr里面不会出现"{、$、}",如果出现那也不管,如果是个空的${}那就替换成""
    * 提示:"${"看做一个整体
    * @param text
@@ -94,52 +97,42 @@ public class GenericTokenParser {
     }
     return builder.toString();
   }
+
   /**
-   * sss${first_name} sss${initial} \\${last_name} reporting.
-   * "ss\${skipped} variable
-   * ${
+   * 练习使用offset
+   * {}${first_name}${initial}${last_name}
    * @param text
    * @return
    */
-  public String parse2(String text) {
+  public String parse2(String text){
+    StringBuilder builder = new StringBuilder();
+    char[] src = text.toCharArray();
+    int offSet = 0;
     int start = text.indexOf(openToken);
-    int close;
-    int offset = 0;
-    char[] chars = text.toCharArray();
-    StringBuilder stringBuilder = new StringBuilder();
     while(start>-1){
-      if(start>0 && chars[start-1]=='\\'){
-        start = text.indexOf(openToken,start+1);
-        if(start==-1){
-          stringBuilder.append(chars,offset,chars.length-offset);
-          start = -2;
-        }else {
-          stringBuilder.append(chars,offset,start);
-        }
-      }else {
-        close = text.indexOf(closeToken,start);
-        stringBuilder.append(chars,offset,start-offset);
-        if(close>-1){
-          String content = new String(chars, start+openToken.length(), close-start-openToken.length());
-          stringBuilder.append(handler.handleToken(content));
-          start = text.indexOf(openToken,close);
-          offset = close+1;
-        }else {
-          stringBuilder.append(chars,start,chars.length-start);
-          start = -2;
+      if(start>0 && src[start-1]=='\\'){
+        builder.append(src,offSet,start-offSet-1).append(openToken);
+        offSet=start+openToken.length();
+      }else{
+        int end = text.indexOf(closeToken,start);
+        if(end==-1){
+          builder.append(src,offSet,src.length-offSet);
+          offSet=src.length;
+        }else{
+          builder.append(src,offSet,start-offSet);
+          offSet = start+openToken.length();
+          String content = new String(src,offSet,end-offSet);
+          builder.append(handler.handleToken(content));
+          offSet = end+closeToken.length();
         }
       }
+      start = text.indexOf(openToken,offSet);
     }
-    if(start==-1){
-      stringBuilder.append(chars,offset,chars.length-offset);
+    if(offSet<src.length){
+      builder.append(src,offSet,src.length-offSet);
     }
-    return stringBuilder.toString().replaceAll("\\\\","");
+    return builder.toString();
   }
-
-  /**
-   * 学习指针的用法,在字符串里学会是必须要学会使用指针的！！！
-   * sss${first_name} sss${initial} \\${last_name reporting.
-   */
 
 }
 
