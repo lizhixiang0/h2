@@ -105,33 +105,33 @@ public class GenericTokenParser {
    * @return
    */
   public String parse2(String text){
-    StringBuilder builder = new StringBuilder();
-    char[] src = text.toCharArray();
-    int offSet = 0;
-    int start = text.indexOf(openToken);
-    while(start>-1){
-      if(start>0 && src[start-1]=='\\'){
-        builder.append(src,offSet,start-offSet-1).append(openToken);
-        offSet=start+openToken.length();
-      }else{
-        int end = text.indexOf(closeToken,start);
-        if(end==-1){
-          builder.append(src,offSet,src.length-offSet);
-          offSet=src.length;
-        }else{
-          builder.append(src,offSet,start-offSet);
-          offSet = start+openToken.length();
-          String content = new String(src,offSet,end-offSet);
-          builder.append(handler.handleToken(content));
-          offSet = end+closeToken.length();
-        }
-      }
-      start = text.indexOf(openToken,offSet);
-    }
-    if(offSet<src.length){
-      builder.append(src,offSet,src.length-offSet);
-    }
-    return builder.toString();
+   StringBuilder builder = new StringBuilder();
+   char[] src = text.toCharArray();
+   int offset  = 0;
+   int start  = text.indexOf(openToken);
+   while (start>-1){
+     if(start>0 && src[start-1]=='\\'){
+        builder.append(src,offset,start-offset-1).append(openToken);
+        offset = start+openToken.length();
+     }else{
+       int end  = text.indexOf(closeToken,start);
+       if(end == -1){
+         builder.append(src,offset,src.length-offset);
+         offset = src.length;
+       }else {
+         builder.append(src,offset,start-offset);
+         offset = start+openToken.length();
+         String content = new String(src,offset,end-offset);
+         builder.append(handler.handleToken(content));
+         offset = end+closeToken.length();
+       }
+     }
+     start = text.indexOf(openToken,offset);
+   }
+   if(offset<src.length){
+     builder.append(src,offset,src.length-offset);
+   }
+   return builder.toString();
   }
 
 }
