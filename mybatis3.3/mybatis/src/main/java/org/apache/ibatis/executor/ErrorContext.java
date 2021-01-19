@@ -33,8 +33,11 @@ public class ErrorContext {
    *       用到mybatis上就是我们就能直接取到之前执行本SQL的线程上的各种信息, 也就很方便的构建出异常发生时的上下文，快速排错
    *
    *    2、线程间数据隔离
+   *
+   * 老版：private static final ThreadLocal<ErrorContext> LOCAL = new ThreadLocal<>();
    */
-  private static final ThreadLocal<ErrorContext> LOCAL = new ThreadLocal<>();
+
+  private static final ThreadLocal<ErrorContext> LOCAL = ThreadLocal.withInitial(ErrorContext::new);
 
   private ErrorContext stored;
   private String resource;
@@ -50,14 +53,20 @@ public class ErrorContext {
   private ErrorContext() {
   }
 
+  /**
+   * 老版：
+          public static ErrorContext instance() {
+            //试图拿到该线程自己的ErrorContext副本,没有则创建
+            ErrorContext context = LOCAL.get();
+            if (context == null) {
+              context = new ErrorContext();
+              LOCAL.set(context);
+            }
+            return context;
+          }
+   */
   public static ErrorContext instance() {
-    //试图拿到该线程自己的ErrorContext副本,没有则创建
-    ErrorContext context = LOCAL.get();
-    if (context == null) {
-      context = new ErrorContext();
-      LOCAL.set(context);
-    }
-    return context;
+    return LOCAL.get();
   }
 
   /**
@@ -86,7 +95,8 @@ public class ErrorContext {
   }
 
   /**
-   * @return 重置变量，为变量赋 null 值，以便 gc 的执行，并清空 LOCAL：
+   * @return 重置变量，为变量赋 null 值，以便 gc 的执行，并清空 LOCAL;
+   * 补充: 必须手动清空ThreadLocalMap来防止内存泄漏
    */
   public ErrorContext reset() {
     resource = null;

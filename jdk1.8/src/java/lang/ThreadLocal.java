@@ -239,7 +239,7 @@ public class ThreadLocal<T> {
             /**
              * 构造键值对
              *
-             * @param k k 作 key,作为 key 的 ThreadLocal 会被包装为一个弱引用
+             * @param k k 作 key,作为 key 的 ThreadLocal 会被包装为一个弱引用,因此当发生gc的时候，弱引用的key会被回收掉，而作为强引用的value还存在
              * @param v v 作 value
              */
             Entry(ThreadLocal<?> k, Object v) {
