@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 /**
  * 线程局部缓存：为线程缓存数据，数据独享
  * 原理：
- * 1. 每个线程由一个 ThreadLocalMap 属性，本质就是一个 map
+ * 1. 每个线程有一个 ThreadLocalMap 属性，本质就是一个 map
  * 2. map 里面存储的 <key, value> 称为键值对，存储键值对时需要先求取哈希值
  * 3. map 里存储的 key 是一个弱引用，其包装了当前线程中构造的 ThreadLocal 对象
  * 这意味着，只要 ThreadLocal 对象丢掉了强引用，那么在下次 GC 后，map 中的 ThreadLocal 对象也会被清除
@@ -223,6 +223,7 @@ public class ThreadLocal<T> {
 
     /**
      * 类似HashMap，进行元素存取时，要清理遇到的垃圾值，且合并原先紧密相邻的元素（除去垃圾值会造成新空槽）
+     * 默认权限是default：即不加任何访问修饰符，通常称为“默认访问权限“或者“包访问权限”。该模式下，强调只允许在同一个包中进行访问。（子类如果不在一个包里无法访问）
      */
     static class ThreadLocalMap {
 

@@ -16,7 +16,7 @@
 package org.apache.ibatis.parsing;
 
 import org.apache.log4j.rewrite.MapRewritePolicy;
-import sun.jvm.hotspot.ui.CommandProcessorPanel;
+//import sun.jvm.hotspot.ui.CommandProcessorPanel;
 
 /**
  * 通用标记解析器，处理${}参数

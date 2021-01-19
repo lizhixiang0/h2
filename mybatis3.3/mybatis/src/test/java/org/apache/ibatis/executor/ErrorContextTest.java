@@ -44,4 +44,11 @@ public class ErrorContextTest {
 
   }
 
+  @Test
+  public void ErrorContextBuilding() {
+    ErrorContext e1= ErrorContext.instance().resource("sssssssssssssss");
+    ErrorContext e2=ErrorContext.instance().store();
+    ErrorContext e3=ErrorContext.instance().recall();
+  }
+
 }

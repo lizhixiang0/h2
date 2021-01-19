@@ -17,16 +17,24 @@ package org.apache.ibatis.executor;
 
 /**
  * @author Clinton Begin
- */
-/**
- *
- * 错误上下文
+ * @blog "https://www.jianshu.com/p/901e37d05853
  */
 public class ErrorContext {
-  // 获得 \n 不同的操作系统不一样
-  private static final String LINE_SEPARATOR = System.getProperty("line.separator","\n");
-  //每个线程给开一个错误上下文，防止多线程问题
-  private static final ThreadLocal<ErrorContext> LOCAL = new ThreadLocal<ErrorContext>();
+
+  /**
+   * 获得行分隔符,不同的操作系统不一样,所以不能写死、windows下换行符为\r\n,linux下换行符为\n
+   */
+  private static final String LINE_SEPARATOR = System.lineSeparator();
+  /**
+   * 使用ThreadLocal,每个线程都创建的是自己的ErrorContext副本
+   * 补充说明：这个ThreadLocal看起来挺玄幻,其实就是为每一个线程维护了一个ThreadLocalMap
+   * 优点：
+   *    1、使用ThreadLocal的优点是无论程序运行到任何地方，只要还是当前线程,都可以拿到ErrorContext,避免多次传递
+   *       用到mybatis上就是我们就能直接取到之前执行本SQL的线程上的各种信息, 也就很方便的构建出异常发生时的上下文，快速排错
+   *
+   *    2、线程间数据隔离
+   */
+  private static final ThreadLocal<ErrorContext> LOCAL = new ThreadLocal<>();
 
   private ErrorContext stored;
   private String resource;
@@ -36,15 +44,15 @@ public class ErrorContext {
   private String sql;
   private Throwable cause;
 
-  //单例模式
+  /**
+   * 无参构造器私有化======》单例模式
+   */
   private ErrorContext() {
   }
 
-  //工厂方法，得到一个实例
   public static ErrorContext instance() {
-      //因为是多线程，所以用了ThreadLocal  线程安全
+    //试图拿到该线程自己的ErrorContext副本,没有则创建
     ErrorContext context = LOCAL.get();
-      //懒汉 单例模式
     if (context == null) {
       context = new ErrorContext();
       LOCAL.set(context);
@@ -52,14 +60,23 @@ public class ErrorContext {
     return context;
   }
 
-  //啥意思？把ErrorContext存起来供后用？并把ThreadLocal里的东西清空了？
+  /**
+   * store()和recall()成对使用, stored 变量充当一个中介,store()方法将当前 ErrorContext 保存下来，调用 recall() 方法再将该 ErrorContext 实例传递给 LOCAL
+   * 据说这个方法是为了防止信息污染？？？
+   * 网友猜测：这个成对方法只在processBefore()方法前后被调用过,processBefore()方法执行先于主体数据库执行，如果不进行这个成组操作，之后的主体操作出现的异常信息可能被前者所污染，导致排错困难
+   * @return
+   */
   public ErrorContext store() {
-    stored = this;
-    LOCAL.set(new ErrorContext());
+    ErrorContext newContext = new ErrorContext();
+    newContext.stored = this;
+    LOCAL.set(newContext);
     return LOCAL.get();
   }
 
-  //应该是和store相对应的方法，store是存储起来，recall是召回
+  /**
+   * 应该是和store相对应的方法，store是存储起来，recall是召回
+   * @return
+   */
   public ErrorContext recall() {
     if (stored != null) {
       LOCAL.set(stored);
@@ -68,38 +85,9 @@ public class ErrorContext {
     return LOCAL.get();
   }
 
-  //以下都是建造者模式
-  public ErrorContext resource(String resource) {
-    this.resource = resource;
-    return this;
-  }
-
-  public ErrorContext activity(String activity) {
-    this.activity = activity;
-    return this;
-  }
-
-  public ErrorContext object(String object) {
-    this.object = object;
-    return this;
-  }
-
-  public ErrorContext message(String message) {
-    this.message = message;
-    return this;
-  }
-
-  public ErrorContext sql(String sql) {
-    this.sql = sql;
-    return this;
-  }
-
-  public ErrorContext cause(Throwable cause) {
-    this.cause = cause;
-    return this;
-  }
-
-  //全部清空重置
+  /**
+   * @return 重置变量，为变量赋 null 值，以便 gc 的执行，并清空 LOCAL：
+   */
   public ErrorContext reset() {
     resource = null;
     activity = null;
@@ -111,40 +99,104 @@ public class ErrorContext {
     return this;
   }
 
-  //打印信息供人阅读
+  /**
+   *
+   * @param resource 存储异常存在于哪个资源文件中
+   * @return 建造者模式返回 this
+   */
+  public ErrorContext resource(String resource) {
+    this.resource = resource;
+    return this;
+  }
+
+  /**
+   *
+   * @param activity 存储异常是做什么操作时发生的
+   * @return 建造者模式返回 this
+   */
+  public ErrorContext activity(String activity) {
+    this.activity = activity;
+    return this;
+  }
+
+  /**
+   *
+   * @param object 存储哪个对象操作时发生异常。
+   * @return 建造者模式返回 this
+   */
+  public ErrorContext object(String object) {
+    this.object = object;
+    return this;
+  }
+
+  /**
+   *
+   * @param message 存储异常的概览信息。
+   * @return 建造者模式返回 this
+   */
+  public ErrorContext message(String message) {
+    this.message = message;
+    return this;
+  }
+
+  /**
+   *
+   * @param sql  存储发生日常的 SQL 语句。
+   * @return 建造者模式返回 this
+   */
+  public ErrorContext sql(String sql) {
+    this.sql = sql;
+    return this;
+  }
+
+  /**
+   *
+   * @param cause 存储详细的 Java 异常日志
+   * @return 建造者模式返回 this
+   */
+  public ErrorContext cause(Throwable cause) {
+    this.cause = cause;
+    return this;
+  }
+
+
+
+  /**
+   * @return 打印报错信息
+   */
   @Override
   public String toString() {
     StringBuilder description = new StringBuilder();
 
-    // message
+    // 存储异常的概览信息
     if (this.message != null) {
       description.append(LINE_SEPARATOR);
       description.append("### ");
       description.append(this.message);
     }
 
-    // resource
+    // 存储异常存在于哪个资源文件中
     if (resource != null) {
       description.append(LINE_SEPARATOR);
       description.append("### The error may exist in ");
       description.append(resource);
     }
 
-    // object
+    // 存储哪个对象操作时发生异常
     if (object != null) {
       description.append(LINE_SEPARATOR);
       description.append("### The error may involve ");
       description.append(object);
     }
 
-    // activity
+    // 存储异常是做什么操作时发生的
     if (activity != null) {
       description.append(LINE_SEPARATOR);
       description.append("### The error occurred while ");
       description.append(activity);
     }
 
-    // activity
+    // 存储发生日常的 SQL 语句。
     if (sql != null) {
       description.append(LINE_SEPARATOR);
       description.append("### SQL: ");
@@ -152,14 +204,22 @@ public class ErrorContext {
       description.append(sql.replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').trim());
     }
 
-    // cause
+    // 存储详细的 Java 异常日志
     if (cause != null) {
       description.append(LINE_SEPARATOR);
       description.append("### Cause: ");
       description.append(cause.toString());
     }
-
     return description.toString();
   }
+
+  /**
+   * 实例：
+   * ### Error updating database.  Cause: java.sql.SQLException: Incorrect integer value: 'ss' for column 'phone' at row 1
+   * ### The error may involve com.mybatis.lizx.dao.PersonDao.insert-Inline
+   * ### The error occurred while setting parameters
+   * ### SQL: INSERT INTO person (name, age, phone, email, address)         VALUES(?,?,?,?,?)
+   * ### Cause: java.sql.SQLException: Incorrect integer value: 'ss' for column 'phone' at row 1
+   */
 
 }

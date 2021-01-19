@@ -37,9 +37,9 @@ public class TestFactory {
         SqlSession sqlSession = sqlSessionFactory.openSession();
         PersonDao personDao =  sqlSession.getMapper(PersonDao.class);
 
-        //Person p = new Person("chen",12,"15345634565","157538651@qq.com","广东省");
-        //personDao.insert(p);
-        //System.out.println(p.toString());
+        Person p = new Person("chen",12,"ss","157538651@qq.com","广东省");
+        personDao.insert(p);
+        System.out.println(p.toString());
         /**
          * 第一次查询
          */
@@ -51,7 +51,7 @@ public class TestFactory {
         /**
          * 第二次查询
          */
-        Person person1 = personDao.getById(13L);
+        Person person1 = personDao.getById(0L);
         sqlSession.close();
 
         System.out.println(person);
