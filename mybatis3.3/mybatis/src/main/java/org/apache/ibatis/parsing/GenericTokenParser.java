@@ -100,38 +100,38 @@ public class GenericTokenParser {
 
   /**
    * 练习使用offset
-   * {}${first_name}${initial}${last_name}
+   * {}//${first_name}${initial}${last_name}
    * @param text
    * @return
    */
   public String parse2(String text){
-   StringBuilder builder = new StringBuilder();
-   char[] src = text.toCharArray();
-   int offset  = 0;
-   int start  = text.indexOf(openToken);
-   while (start>-1){
-     if(start>0 && src[start-1]=='\\'){
+    StringBuilder builder = new StringBuilder();
+    char[] src = text.toCharArray();
+    int start = text.indexOf(openToken);
+    int offset = 0;
+    while (start>-1){
+      if(start>0 && src[start-1]=='\\'){
         builder.append(src,offset,start-offset-1).append(openToken);
         offset = start+openToken.length();
-     }else{
-       int end  = text.indexOf(closeToken,start);
-       if(end == -1){
-         builder.append(src,offset,src.length-offset);
-         offset = src.length;
-       }else {
-         builder.append(src,offset,start-offset);
-         offset = start+openToken.length();
-         String content = new String(src,offset,end-offset);
-         builder.append(handler.handleToken(content));
-         offset = end+closeToken.length();
-       }
-     }
-     start = text.indexOf(openToken,offset);
-   }
-   if(offset<src.length){
-     builder.append(src,offset,src.length-offset);
-   }
-   return builder.toString();
+      }else{
+        int end  = text.indexOf(closeToken,start);
+        if(end>-1){
+          builder.append(src,offset,start-offset);
+          offset = start+openToken.length();
+          String content = new String(src,offset,end-offset);
+          builder.append(handler.handleToken(content));
+          offset = end +closeToken.length();
+        }else{
+          builder.append(src,offset,src.length-offset);
+          offset=src.length;
+        }
+      }
+      start = text.indexOf(openToken,offset);
+    }
+    if(offset<src.length){
+      builder.append(src,offset,src.length-offset);
+    }
+    return builder.toString();
   }
 
 }
