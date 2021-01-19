@@ -33,7 +33,7 @@ public class ThreadLocalTest {
     /**
      * 内存泄露测试
      * @blog "https://blog.csdn.net/thewindkee/article/details/103726942"
-     * @note "https://blog.csdn.net/thewindkee/article/details/89390145
+     * @note "https://zhuanlan.zhihu.com/p/58636499
      *       我比较赞成这个作者的话！
      *       ThreadLocal内存泄漏的根源是：
      *       由于ThreadLocalMap的生命周期跟Thread一样长，如果没有手动删除对应key的value就会导致内存泄漏，而不是因为弱引用。
