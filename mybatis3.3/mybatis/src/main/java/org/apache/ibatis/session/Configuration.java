@@ -88,15 +88,14 @@ import org.apache.ibatis.type.TypeAliasRegistry;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
+ * Configuration配置类
  * @author Clinton Begin
- */
-/**
- * 配置，里面好多配置项
- *
  */
 public class Configuration {
 
-  //环境
+  /**
+   *  环境
+   */
   protected Environment environment;
 
   //---------以下都是<settings>节点-------
@@ -107,7 +106,6 @@ public class Configuration {
   protected boolean multipleResultSetsEnabled = true;
   protected boolean useGeneratedKeys = false;
   protected boolean useColumnLabel = true;
-  //默认启用缓存
   protected boolean cacheEnabled = true;
   protected boolean callSettersOnNulls = false;
 
@@ -115,9 +113,11 @@ public class Configuration {
   protected Class <? extends Log> logImpl;
   protected LocalCacheScope localCacheScope = LocalCacheScope.SESSION;
   protected JdbcType jdbcTypeForNull = JdbcType.OTHER;
-  protected Set<String> lazyLoadTriggerMethods = new HashSet<String>(Arrays.asList(new String[] { "equals", "clone", "hashCode", "toString" }));
+  protected Set<String> lazyLoadTriggerMethods = new HashSet<>(Arrays.asList("equals", "clone", "hashCode", "toString"));
   protected Integer defaultStatementTimeout;
-  //默认为简单执行器
+  /**
+   * 默认为简单执行器
+   */
   protected ExecutorType defaultExecutorType = ExecutorType.SIMPLE;
   protected AutoMappingBehavior autoMappingBehavior = AutoMappingBehavior.PARTIAL;
   //---------以上都是<settings>节点-------
@@ -167,7 +167,7 @@ public class Configuration {
   protected final Collection<ResultMapResolver> incompleteResultMaps = new LinkedList<ResultMapResolver>();
   protected final Collection<MethodResolver> incompleteMethods = new LinkedList<MethodResolver>();
 
-  /*
+  /**
    * A map holds cache-ref relationship. The key is the namespace that
    * references a cache bound to another namespace and the value is the
    * namespace which the actual cache is bound to.
@@ -183,22 +183,17 @@ public class Configuration {
     //注册更多的类型别名，至于为何不直接在TypeAliasRegistry里注册，还需进一步研究
     typeAliasRegistry.registerAlias("JDBC", JdbcTransactionFactory.class);
     typeAliasRegistry.registerAlias("MANAGED", ManagedTransactionFactory.class);
-
     typeAliasRegistry.registerAlias("JNDI", JndiDataSourceFactory.class);
     typeAliasRegistry.registerAlias("POOLED", PooledDataSourceFactory.class);
     typeAliasRegistry.registerAlias("UNPOOLED", UnpooledDataSourceFactory.class);
-
     typeAliasRegistry.registerAlias("PERPETUAL", PerpetualCache.class);
     typeAliasRegistry.registerAlias("FIFO", FifoCache.class);
     typeAliasRegistry.registerAlias("LRU", LruCache.class);
     typeAliasRegistry.registerAlias("SOFT", SoftCache.class);
     typeAliasRegistry.registerAlias("WEAK", WeakCache.class);
-
     typeAliasRegistry.registerAlias("DB_VENDOR", VendorDatabaseIdProvider.class);
-
     typeAliasRegistry.registerAlias("XML", XMLLanguageDriver.class);
     typeAliasRegistry.registerAlias("RAW", RawLanguageDriver.class);
-
     typeAliasRegistry.registerAlias("SLF4J", Slf4jImpl.class);
     typeAliasRegistry.registerAlias("COMMONS_LOGGING", JakartaCommonsLoggingImpl.class);
     typeAliasRegistry.registerAlias("LOG4J", Log4jImpl.class);
@@ -206,7 +201,6 @@ public class Configuration {
     typeAliasRegistry.registerAlias("JDK_LOGGING", Jdk14LoggingImpl.class);
     typeAliasRegistry.registerAlias("STDOUT_LOGGING", StdOutImpl.class);
     typeAliasRegistry.registerAlias("NO_LOGGING", NoLoggingImpl.class);
-
     typeAliasRegistry.registerAlias("CGLIB", CglibProxyFactory.class);
     typeAliasRegistry.registerAlias("JAVASSIST", JavassistProxyFactory.class);
 
@@ -711,7 +705,7 @@ public class Configuration {
     cacheRefMap.put(namespace, referencedNamespace);
   }
 
-  /*
+  /**
    * Parses all the unprocessed statement nodes in the cache. It is recommended
    * to call this method once all the mappers are added as it provides fail-fast
    * statement validation.
@@ -743,7 +737,7 @@ public class Configuration {
     }
   }
 
-  /*
+  /**
    * Extracts namespace from fully qualified statement id.
    *
    * @param statementId

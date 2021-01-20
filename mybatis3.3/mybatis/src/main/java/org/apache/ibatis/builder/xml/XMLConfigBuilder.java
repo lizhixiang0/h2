@@ -97,19 +97,19 @@ public class XMLConfigBuilder extends BaseBuilder {
    * @return
    */
   public Configuration parse() {
-    //如果已经解析过了，报错
+    //全局Configuration只会初始化一次,如果已经解析过了，报错
     if (parsed) {
       throw new BuilderException("Each XMLConfigBuilder can only be used once.");
     }
     parsed = true;
-    //根节点是configuration
+    //将配置文件整个/configuration节点内容传递给parseConfiguration()方法
     parseConfiguration(parser.evalNode("/configuration"));
     return configuration;
   }
 
   /**
    * 分步解析配置文件
-   * @param root custom node for "/configuration"（对org.w3c.dom.Node的包装）
+   * @param root custom node for "/configuration"
    */
   private void parseConfiguration(XNode root) {
     try {
