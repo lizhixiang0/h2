@@ -93,7 +93,7 @@ public class XpathTest {
             if (child.getNodeType() == Node.CDATA_SECTION_NODE || child.getNodeType() == Node.TEXT_NODE) {
                 data = ((CharacterData) child).getData();
                 System.out.println(data.trim()+"\r\n");
-                // 通过这种方式将空格排除掉
+                // 通过这种方式将各节点直接的空格导致的文本节点排除掉
                 if(data!=null){
                     break;
                 }
