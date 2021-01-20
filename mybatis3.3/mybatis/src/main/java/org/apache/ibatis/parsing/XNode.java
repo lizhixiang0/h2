@@ -101,7 +101,7 @@ public class XNode {
   }
 
   /**
-   * 获取子元素节点的属性 ,默认是name 和 value
+   * 获取子元素节点的属性 ,默认取name 和 value
    * @return
    */
   public Properties getChildrenAsProperties() {
@@ -139,7 +139,7 @@ public class XNode {
   }
 
   /**
-   * 调用Node.getParentNode,如果取到，包装一下，返回XNode
+   * 调用Node.getParentNode,取到则包装成XNode返回
    * @return XNode
    */
   public XNode getParent() {
@@ -202,7 +202,11 @@ public class XNode {
     return builder.toString();
   }
 
-  //以下方法都是把XPathParser的方法再重复一遍
+  /**
+   * 以下方法都是把XPathParser的方法再写了一遍,方便直接通过XNode来使用
+   * @param expression
+   * @return
+   */
   public String evalString(String expression) {
     return xpathParser.evalString(node, expression);
   }
@@ -231,7 +235,10 @@ public class XNode {
     return name;
   }
 
-  //以下是一些getBody的方法
+  /**
+   * 以下是一些getBody的方法
+   * @return String
+   */
   public String getStringBody() {
     return getStringBody(null);
   }
@@ -304,7 +311,13 @@ public class XNode {
     }
   }
 
-  //以下是一些getAttribute的方法
+  /**
+   * 以下是一些getAttribute的方法
+   * @param enumType
+   * @param name
+   * @param <T>
+   * @return
+   */
   public <T extends Enum<T>> T getEnumAttribute(Class<T> enumType, String name) {
     return getEnumAttribute(enumType, name, null);
   }
@@ -401,7 +414,7 @@ public class XNode {
 
   /**
    * 打印当前节点的信息
-   * @return
+   * @return String
    */
   @Override
   public String toString() {
