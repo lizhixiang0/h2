@@ -75,7 +75,7 @@ public class XpathTest {
 
 
         /**
-         * 打印根元素的文本节点
+         * 打印根元素下的文本节点和元素节点
          *
          * @note DOM 是这样规定的：
          *              整个文档是一个文档节点
@@ -93,7 +93,7 @@ public class XpathTest {
             if (child.getNodeType() == Node.CDATA_SECTION_NODE || child.getNodeType() == Node.TEXT_NODE) {
                 data = ((CharacterData) child).getData();
                 System.out.println(data.trim()+"\r\n");
-                // 通过这种方式将各节点直接的空格导致的文本节点排除掉
+                // 通过这个方式巧妙地将子元素节点间空格导致的文本节点排除掉
                 if(data!=null){
                     break;
                 }

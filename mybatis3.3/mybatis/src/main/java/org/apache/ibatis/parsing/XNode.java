@@ -76,12 +76,12 @@ public class XNode {
     //如果当前元素是文本元素,则直接取出文本内容
     String data = getBodyData(node);
     if (data == null) {
-      // 当前元素不是文本元素则获取此元素拥有的文本元素
+      // 当前元素不是文本元素则获取此元素下的文本元素
       NodeList children = node.getChildNodes();
       for (int i = 0; i < children.getLength(); i++) {
         Node child = children.item(i);
         data = getBodyData(child);
-        //只要一个节点为文本节点或者CDATA节点,就结束循环。因而此时的body值是node的第一个文本节点的内容,(通常我们只会在一个元素节点中放置一个文本元素)
+        //只要能获取到文本节点,立刻结束循环。此时body值是node的第一个文本节点的内容,(通常我们只会在一个元素节点中放置一个文本元素)
         if (data != null) {
           break;
         }
@@ -98,6 +98,40 @@ public class XNode {
       return data;
     }
     return null;
+  }
+
+  /**
+   * 获取子元素节点的属性 ,默认是name 和 value
+   * @return
+   */
+  public Properties getChildrenAsProperties() {
+    Properties properties = new Properties();
+    for (XNode child : getChildren()) {
+      String name = child.getStringAttribute("name");
+      String value = child.getStringAttribute("value");
+      if (name != null && value != null) {
+        properties.setProperty(name, value);
+      }
+    }
+    return properties;
+  }
+
+  /**
+   * 获取子元素节点
+   * @return 子元素节点集合
+   */
+  public List<XNode> getChildren() {
+    List<XNode> children = new ArrayList<XNode>();
+    NodeList nodeList = node.getChildNodes();
+    if (nodeList != null) {
+      for (int i = 0, n = nodeList.getLength(); i < n; i++) {
+        Node node = nodeList.item(i);
+        if (node.getNodeType() == Node.ELEMENT_NODE) {
+          children.add(new XNode(xpathParser, node, variables));
+        }
+      }
+    }
+    return children;
   }
 
   public XNode newXNode(Node node) {
@@ -117,12 +151,14 @@ public class XNode {
     }
   }
 
-  //取得完全的path (a/b/c)
+  /**
+   * @return 获取该元素节点的全路径
+   * 补充: stringBuilder.insert(offset,str) ===>  就是在原序列的offset处插入字符str并生成新的StringBuilder对象。
+   */
   public String getPath() {
-    //循环依次取得节点的父节点，然后倒序打印,也可以用一个堆栈实现
     StringBuilder builder = new StringBuilder();
     Node current = node;
-    while (current != null && current instanceof Element) {
+    while (current instanceof Element) {
       if (current != node) {
         builder.insert(0, "/");
       }
@@ -132,15 +168,19 @@ public class XNode {
     return builder.toString();
   }
 
-	//取得标示符   ("resultMap[authorResult]")
-	//XMLMapperBuilder.resultMapElement调用
-//	<resultMap id="authorResult" type="Author">
-//	  <id property="id" column="author_id"/>
-//	  <result property="username" column="author_username"/>
-//	  <result property="password" column="author_password"/>
-//	  <result property="email" column="author_email"/>
-//	  <result property="bio" column="author_bio"/>
-//	</resultMap>
+
+
+  /**
+   * 取得当前元素全路径各级元素节点的标识符   resultMap[authorResult]_result[username]
+   * 	<resultMap id="authorResult" type="Author">
+   * 	  <id property="id" column="author_id"/>
+   * 	  <result property="username" column="author_username"/>
+   * 	  <result property="password" column="author_password"/>
+   * 	  <result property="email" column="author_email"/>
+   * 	  <result property="bio" column="author_bio"/>
+   * 	</resultMap>
+   * @return 标示符
+   */
   public String getValueBasedIdentifier() {
     StringBuilder builder = new StringBuilder();
     XNode current = this;
@@ -149,14 +189,11 @@ public class XNode {
         builder.insert(0, "_");
       }
       //先拿id，拿不到再拿value,再拿不到拿property
-      String value = current.getStringAttribute("id",
-          current.getStringAttribute("value",
-              current.getStringAttribute("property", null)));
+      String value = current.getStringAttribute("id",current.getStringAttribute("value",current.getStringAttribute("property", null)));
       if (value != null) {
         value = value.replace('.', '_');
         builder.insert(0, "]");
-        builder.insert(0,
-            value);
+        builder.insert(0,value);
         builder.insert(0, "[");
       }
       builder.insert(0, current.getName());
@@ -359,35 +396,13 @@ public class XNode {
     }
   }
 
-  //得到孩子，原理是调用Node.getChildNodes
-  public List<XNode> getChildren() {
-    List<XNode> children = new ArrayList<XNode>();
-    NodeList nodeList = node.getChildNodes();
-    if (nodeList != null) {
-      for (int i = 0, n = nodeList.getLength(); i < n; i++) {
-        Node node = nodeList.item(i);
-        if (node.getNodeType() == Node.ELEMENT_NODE) {
-          children.add(new XNode(xpathParser, node, variables));
-        }
-      }
-    }
-    return children;
-  }
 
-  //得到孩子，返回Properties，孩子的格式肯定都有name,value属性
-  public Properties getChildrenAsProperties() {
-    Properties properties = new Properties();
-    for (XNode child : getChildren()) {
-      String name = child.getStringAttribute("name");
-      String value = child.getStringAttribute("value");
-      if (name != null && value != null) {
-        properties.setProperty(name, value);
-      }
-    }
-    return properties;
-  }
 
-  //打印信息，为了调试用
+
+  /**
+   * 打印当前节点的信息
+   * @return
+   */
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
