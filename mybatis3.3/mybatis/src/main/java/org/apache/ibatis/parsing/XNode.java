@@ -32,17 +32,19 @@ import org.w3c.dom.NodeList;
  */
 public class XNode {
 
-  //org.w3c.dom.Node
   private Node node;
-  //以下都是预先把信息都解析好，放到map等数据结构中（内存中）
   private String name;
   private String body;
   private Properties attributes;
   private Properties variables;
-  //XPathParser方便xpath解析
   private XPathParser xpathParser;
 
-  //在构造时就把一些信息（属性，body）全部解析好，以便我们直接通过getter函数取得
+  /**
+   * 在构造时就将元素的属性和文本解析好
+   * @param xpathParser xpath解析器
+   * @param node 当前元素
+   * @param variables 配置文件参数值
+   */
   public XNode(XPathParser xpathParser, Node node, Properties variables) {
     this.xpathParser = xpathParser;
     this.node = node;
@@ -52,14 +54,63 @@ public class XNode {
     this.body = parseBody(node);
   }
 
+  /**
+   * 构造XNode时调用,将当前元素的属性取出全部放到attributes中,且根据给定的variables,将${var}替换成具体属性值
+   * @param n 当前元素
+   * @return   元素的属性值
+   */
+  private Properties parseAttributes(Node n) {
+    Properties attributes = new Properties();
+    NamedNodeMap attributeNodes = n.getAttributes();
+    if (attributeNodes != null) {
+      for (int i = 0; i < attributeNodes.getLength(); i++) {
+        Node attribute = attributeNodes.item(i);
+        String value = PropertyParser.parse(attribute.getNodeValue(), variables);
+        attributes.put(attribute.getNodeName(), value);
+      }
+    }
+    return attributes;
+  }
+
+  private String parseBody(Node node) {
+    //如果当前元素是文本元素,则直接取出文本内容
+    String data = getBodyData(node);
+    if (data == null) {
+      // 当前元素不是文本元素则获取此元素拥有的文本元素
+      NodeList children = node.getChildNodes();
+      for (int i = 0; i < children.getLength(); i++) {
+        Node child = children.item(i);
+        data = getBodyData(child);
+        //只要一个节点为文本节点或者CDATA节点,就结束循环。因而此时的body值是node的第一个文本节点的内容,(通常我们只会在一个元素节点中放置一个文本元素)
+        if (data != null) {
+          break;
+        }
+      }
+    }
+    return data;
+  }
+
+  private String getBodyData(Node child) {
+    //如果该节点是文本节点或者CDATA节点，取其文本值
+    if (child.getNodeType() == Node.CDATA_SECTION_NODE || child.getNodeType() == Node.TEXT_NODE) {
+      String data = ((CharacterData) child).getData();
+      data = PropertyParser.parse(data, variables);
+      return data;
+    }
+    return null;
+  }
+
   public XNode newXNode(Node node) {
     return new XNode(xpathParser, node, variables);
   }
 
+  /**
+   * 调用Node.getParentNode,如果取到，包装一下，返回XNode
+   * @return XNode
+   */
   public XNode getParent() {
-		//调用Node.getParentNode,如果取到，包装一下，返回XNode
     Node parent = node.getParentNode();
-    if (parent == null || !(parent instanceof Element)) {
+    if (!(parent instanceof Element)) {
       return null;
     } else {
       return new XNode(xpathParser, parent, variables);
@@ -370,46 +421,6 @@ public class XNode {
     }
     builder.append("\n");
     return builder.toString();
-  }
-
-  //以下2个方法在构造时就解析
-  private Properties parseAttributes(Node n) {
-    Properties attributes = new Properties();
-    NamedNodeMap attributeNodes = n.getAttributes();
-    if (attributeNodes != null) {
-      for (int i = 0; i < attributeNodes.getLength(); i++) {
-        Node attribute = attributeNodes.item(i);
-        String value = PropertyParser.parse(attribute.getNodeValue(), variables);
-        attributes.put(attribute.getNodeName(), value);
-      }
-    }
-    return attributes;
-  }
-
-  private String parseBody(Node node) {
-    //取不到body，循环取孩子的body，只要取到第一个，立即返回
-    String data = getBodyData(node);
-    if (data == null) {
-      NodeList children = node.getChildNodes();
-      for (int i = 0; i < children.getLength(); i++) {
-        Node child = children.item(i);
-        data = getBodyData(child);
-        if (data != null) {
-          break;
-        }
-      }
-    }
-    return data;
-  }
-
-  private String getBodyData(Node child) {
-    if (child.getNodeType() == Node.CDATA_SECTION_NODE
-        || child.getNodeType() == Node.TEXT_NODE) {
-      String data = ((CharacterData) child).getData();
-      data = PropertyParser.parse(data, variables);
-      return data;
-    }
-    return null;
   }
 
 }

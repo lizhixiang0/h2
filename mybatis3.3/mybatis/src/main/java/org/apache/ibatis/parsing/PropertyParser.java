@@ -29,13 +29,14 @@ public class PropertyParser {
   private PropertyParser() {}
 
   /**
-   * 静态方法
+   * 静态方法 将${id}替换掉
    * @param string
    * @param variables
    * @return
    */
   public static String parse(String string, Properties variables) {
     VariableTokenHandler handler = new VariableTokenHandler(variables);
+    //${}符号是mybatis配置文件中的占位符
     GenericTokenParser parser = new GenericTokenParser("${", "}", handler);
     return parser.parse(string);
   }

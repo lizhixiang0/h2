@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="2.5">
+    根元素的文本节点
+    <test>ss</test>
     <servlet>
         <servlet-name>HelloMyServlet</servlet-name>
         <servlet-class>com.jourwon.HelloMyServlet</servlet-class>
