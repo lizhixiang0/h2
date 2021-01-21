@@ -340,8 +340,8 @@ public class XMLConfigBuilder extends BaseBuilder {
       configuration.setDefaultStatementTimeout(integerValueOf(props.getProperty("defaultStatementTimeout"), null));
       //是否将DB字段自动映射到驼峰式Java属性（A_COLUMN-->aColumn）
       configuration.setMapUnderscoreToCamelCase(booleanValueOf(props.getProperty("mapUnderscoreToCamelCase"), false));
-      //嵌套语句上使用RowBounds
-      configuration.setSafeRowBoundsEnabled(booleanValueOf(props.getProperty("safeRowBoundsEnabled"), false));
+      //允许嵌套语句上使用RowBounds
+      configuration.setSafeRowBoundsEnabled(booleanValueOf(props.getProperty("safeRowBoundsEnabled"), true));
       //默认用session级别的缓存
       configuration.setLocalCacheScope(LocalCacheScope.valueOf(props.getProperty("localCacheScope", "SESSION")));
       //为null值设置jdbctype

@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import jdk.jfr.Enabled;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.builder.CacheRefResolver;
 import org.apache.ibatis.builder.ResultMapResolver;
@@ -94,16 +95,65 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 public class Configuration {
 
   /**
-   *  环境
+   *  1、环境
    */
   protected Environment environment;
+  public Environment getEnvironment() {return environment;}
+  public void setEnvironment(Environment environment) {
+    this.environment = environment;
+  }
+  public Configuration(Environment environment) {
+    this();
+    this.environment = environment;
+  }
 
-  //---------以下都是<settings>节点-------
+  /**
+   *  2、允许在嵌套语句中使用分页（RowBounds）。如果允许使用则设置为false。 todo 没懂啥意思
+   */
   protected boolean safeRowBoundsEnabled = false;
+  public boolean isSafeRowBoundsEnabled() {return safeRowBoundsEnabled;}
+  public void setSafeRowBoundsEnabled(boolean safeRowBoundsEnabled) {this.safeRowBoundsEnabled = safeRowBoundsEnabled;}
+
+
+  /**
+   *  3、是否允许在嵌套语句中使用结果处理器（ResultHandler）。如果允许使用则设置为 false  todo
+   */
   protected boolean safeResultHandlerEnabled = true;
+  public boolean isSafeResultHandlerEnabled() {return safeResultHandlerEnabled; }
+  public void setSafeResultHandlerEnabled(boolean safeResultHandlerEnabled) {this.safeResultHandlerEnabled = safeResultHandlerEnabled;}
+
+  /**
+   *  4、驼峰转换  设为true表示开启
+   * 作用:可以将数据库中user_name转化成userName与实体类属性对应,配置后无需写resultMapper将数据库字段和实体类属性对应
+   */
   protected boolean mapUnderscoreToCamelCase = false;
+  public boolean isMapUnderscoreToCamelCase() {return mapUnderscoreToCamelCase;}
+  public void setMapUnderscoreToCamelCase(boolean mapUnderscoreToCamelCase) {this.mapUnderscoreToCamelCase = mapUnderscoreToCamelCase;}
+
+  /**
+   * 5、懒加载  设为false表示关闭
+   * @blog "https://www.cnblogs.com/ashleyboy/p/9286814.html
+   *       "https://blog.csdn.net/weixin_42476601/article/details/84194210
+   */
+  protected boolean lazyLoadingEnabled = false;
+  public boolean isLazyLoadingEnabled() {return lazyLoadingEnabled; }
+  public void setLazyLoadingEnabled(boolean lazyLoadingEnabled) {this.lazyLoadingEnabled = lazyLoadingEnabled; }
+
+  /**
+   * 6、积极的懒加载   设为true表示开启,配合lazyLoadingEnabled使用
+   */
   protected boolean aggressiveLazyLoading = true;
+  public boolean isAggressiveLazyLoading() {return aggressiveLazyLoading; }
+  public void setAggressiveLazyLoading(boolean aggressiveLazyLoading) {this.aggressiveLazyLoading = aggressiveLazyLoading;}
+
+  /**
+   *  7、是否允许单一语句返回多结果集（需要兼容驱动）。
+   * @blog "https://blog.csdn.net/qq_40233503/article/details/94436578
+   */
   protected boolean multipleResultSetsEnabled = true;
+  public boolean isMultipleResultSetsEnabled() {return multipleResultSetsEnabled; }
+  public void setMultipleResultSetsEnabled(boolean multipleResultSetsEnabled) {this.multipleResultSetsEnabled = multipleResultSetsEnabled; }
+
   protected boolean useGeneratedKeys = false;
   protected boolean useColumnLabel = true;
   protected boolean cacheEnabled = true;
@@ -128,9 +178,6 @@ public class Configuration {
   protected ObjectWrapperFactory objectWrapperFactory = new DefaultObjectWrapperFactory();
   //映射注册机
   protected MapperRegistry mapperRegistry = new MapperRegistry(this);
-
-  //默认禁用延迟加载
-  protected boolean lazyLoadingEnabled = false;
   protected ProxyFactory proxyFactory = new JavassistProxyFactory(); // #224 Using internal Javassist instead of OGNL
 
   protected String databaseId;
@@ -173,11 +220,6 @@ public class Configuration {
    * namespace which the actual cache is bound to.
    */
   protected final Map<String, String> cacheRefMap = new HashMap<String, String>();
-
-  public Configuration(Environment environment) {
-    this();
-    this.environment = environment;
-  }
 
   public Configuration() {
     //注册更多的类型别名，至于为何不直接在TypeAliasRegistry里注册，还需进一步研究
@@ -252,44 +294,12 @@ public class Configuration {
     this.configurationFactory = configurationFactory;
   }
 
-  public boolean isSafeResultHandlerEnabled() {
-    return safeResultHandlerEnabled;
-  }
-
-  public void setSafeResultHandlerEnabled(boolean safeResultHandlerEnabled) {
-    this.safeResultHandlerEnabled = safeResultHandlerEnabled;
-  }
-
-  public boolean isSafeRowBoundsEnabled() {
-    return safeRowBoundsEnabled;
-  }
-
-  public void setSafeRowBoundsEnabled(boolean safeRowBoundsEnabled) {
-    this.safeRowBoundsEnabled = safeRowBoundsEnabled;
-  }
-
-  public boolean isMapUnderscoreToCamelCase() {
-    return mapUnderscoreToCamelCase;
-  }
-
-  public void setMapUnderscoreToCamelCase(boolean mapUnderscoreToCamelCase) {
-    this.mapUnderscoreToCamelCase = mapUnderscoreToCamelCase;
-  }
-
   public void addLoadedResource(String resource) {
     loadedResources.add(resource);
   }
 
   public boolean isResourceLoaded(String resource) {
     return loadedResources.contains(resource);
-  }
-
-  public Environment getEnvironment() {
-    return environment;
-  }
-
-  public void setEnvironment(Environment environment) {
-    this.environment = environment;
   }
 
   public AutoMappingBehavior getAutoMappingBehavior() {
@@ -300,13 +310,7 @@ public class Configuration {
     this.autoMappingBehavior = autoMappingBehavior;
   }
 
-  public boolean isLazyLoadingEnabled() {
-    return lazyLoadingEnabled;
-  }
 
-  public void setLazyLoadingEnabled(boolean lazyLoadingEnabled) {
-    this.lazyLoadingEnabled = lazyLoadingEnabled;
-  }
 
   public ProxyFactory getProxyFactory() {
     return proxyFactory;
@@ -317,22 +321,6 @@ public class Configuration {
       proxyFactory = new JavassistProxyFactory();
     }
     this.proxyFactory = proxyFactory;
-  }
-
-  public boolean isAggressiveLazyLoading() {
-    return aggressiveLazyLoading;
-  }
-
-  public void setAggressiveLazyLoading(boolean aggressiveLazyLoading) {
-    this.aggressiveLazyLoading = aggressiveLazyLoading;
-  }
-
-  public boolean isMultipleResultSetsEnabled() {
-    return multipleResultSetsEnabled;
-  }
-
-  public void setMultipleResultSetsEnabled(boolean multipleResultSetsEnabled) {
-    this.multipleResultSetsEnabled = multipleResultSetsEnabled;
   }
 
   public Set<String> getLazyLoadTriggerMethods() {

@@ -14,7 +14,7 @@ import java.io.Serializable;
 public class Person implements Serializable {
 
     private int id;
-    private String name;
+    private String personName;
     private int age;
     private String phone;
     private String email;
@@ -23,8 +23,8 @@ public class Person implements Serializable {
     public Person() {
     }
 
-    public Person(String name, int age, String phone, String email, String address) {
-        this.name = name;
+    public Person(String personName, int age, String phone, String email, String address) {
+        this.personName = personName;
         this.age = age;
         this.phone = phone;
         this.email = email;
@@ -35,8 +35,8 @@ public class Person implements Serializable {
         this.id = id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String personName) {
+        this.personName = personName;
     }
 
     public void setAge(int age) {
@@ -59,8 +59,8 @@ public class Person implements Serializable {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getPersonName() {
+        return personName;
     }
 
     public int getAge() {
@@ -84,7 +84,7 @@ public class Person implements Serializable {
     public String toString() {
         return "Person{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", personName='" + personName + '\'' +
                 ", age=" + age +
                 ", phone='" + phone + '\'' +
                 ", email='" + email + '\'' +

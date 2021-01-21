@@ -3,6 +3,7 @@ package com.mybatis.lizx;
 import com.mybatis.lizx.dao.PersonDao;
 import com.mybatis.lizx.model.Person;
 import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
@@ -10,10 +11,12 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.List;
 import java.util.Properties;
 
 public class TestFactory {
     /*mybatis技术内幕*/
+    /*mybatis官方技术文档"https://mybatis.org/mybatis-3/zh/index.html*/
     /*mybatis中的设计模式：https://mp.weixin.qq.com/s/S9R_sZ246iaTyNLG-So9GQ*/
     // 缓存:"https://www.cnblogs.com/51life/p/9529409.html
     // 缓存:https://blog.csdn.net/finalcola/article/details/81155517
@@ -23,6 +26,7 @@ public class TestFactory {
     /*https://blog.csdn.net/iteye_11305/article/details/82678034?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.control&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.control*/
     /*https://my.oschina.net/zudajun/blog/665956*/
     /*https://www.cnblogs.com/zhjh256/p/8512392.html*/
+    /*超全配置文件“https://www.jianshu.com/p/232928bf5010*/
     @Test
     public void test() throws IOException {
 
@@ -37,9 +41,9 @@ public class TestFactory {
         SqlSession sqlSession = sqlSessionFactory.openSession();
         PersonDao personDao =  sqlSession.getMapper(PersonDao.class);
 
-        Person p = new Person("chen",12,"ss","157538651@qq.com","广东省");
-        personDao.insert(p);
-        System.out.println(p.toString());
+        //Person p = new Person("chen",12,"ss","157538651@qq.com","广东省");
+        //personDao.insert(p);
+        //System.out.println(p.toString());
         /**
          * 第一次查询
          */
@@ -51,11 +55,30 @@ public class TestFactory {
         /**
          * 第二次查询
          */
-        Person person1 = personDao.getById(0L);
-        sqlSession.close();
+        Person person1 = personDao.getById(13L);
+
 
         System.out.println(person);
         System.out.println(person1);
+
+
+        // 使用RowBounds实现分页
+        int currentPage = 1; //当前页
+        int pageSize = 10; //页面大小
+
+        RowBounds rowBounds = new RowBounds((currentPage - 1) * pageSize, pageSize);
+
+        //注意点；使用RowBounds就不能使用getMapper了
+        //selectList: 接收一个List
+        //selectMap: 接收一个Map
+        //selectOne ： 接收只有一个对象的时候
+
+        List<Person> persons = sqlSession.selectList("com.mybatis.lizx.dao.PersonDao.selectPersonByRowBounds", null, rowBounds);
+
+        sqlSession.close();
+        for (Person user : persons) {
+            System.out.println(user);
+        }
 
 
     }

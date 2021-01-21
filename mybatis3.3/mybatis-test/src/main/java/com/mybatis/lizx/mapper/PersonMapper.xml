@@ -15,8 +15,15 @@
         VALUES(#{name},#{age},#{phone},#{email},#{address})
     </insert>
     <select id="getById" resultType="person">
-        select * from person where id = #{id}
+        select  * from (select * from person where id = #{id} limit 0,1) a
     </select>
+
+
+    <select id="selectPersonByRowBounds" resultType="com.mybatis.lizx.model.Person">
+        select * from person
+    </select>
+
+
 
 </mapper>
 
