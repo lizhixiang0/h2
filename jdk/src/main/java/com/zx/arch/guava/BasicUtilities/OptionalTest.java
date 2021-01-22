@@ -50,6 +50,12 @@ public class OptionalTest {
         possible.ifPresent(list::add);
         // 7、JDK9 介绍ifPresentOrElse(Consumer1,Consumer2) , 存在就执行Consumer1的accept,不存在就执行Consumer2的accept
         possible.ifPresentOrElse(list::add,()->log.error("cant find ..."));
+        // 8、flatMap()方法,flatMap中的方法返回值必须是Optional类型,一般用于前面“list存在某个方法的返回值是Optional类型”，可以用这个flatMap方法直接调用
+        java.util.Optional.ofNullable(list).flatMap(java.util.Optional::of);
+        // 9、Optional直接转化成流
+        java.util.Optional.of(list).stream();
+        // 上面的8、9俩个方法配合stream用比较ok
+
     }
 
     private static void e() {

@@ -24,7 +24,7 @@ public class CreateStream {
     private static List list;
     private static Stream stream;
     /**
-     * 1、了解\\PL是啥意思(以非字母作为分隔符)  https://blog.csdn.net/CelLew/article/details/81362977
+     * 1、了解\\PL是啥意思(非.字母)  https://blog.csdn.net/CelLew/article/details/81362977
      * 2、Pattern的预编译功能 https://blog.csdn.net/weixin_44259720/article/details/102806050
      */
     private static final Pattern pattern  = Pattern.compile("\\PL+");

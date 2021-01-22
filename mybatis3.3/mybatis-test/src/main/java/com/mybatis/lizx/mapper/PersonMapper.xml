@@ -10,12 +10,12 @@
             size="512"
             readOnly="false"/>
 
-    <insert id="insert" parameterType="person" keyProperty="id" useGeneratedKeys="true">
-        INSERT INTO person (name, age, phone, email, address)
-        VALUES(#{name},#{age},#{phone},#{email},#{address})
+    <insert id="insert" parameterType="person" keyProperty="id">
+        INSERT INTO person (person_name, age, phone, email, address)
+        VALUES(#{personName},#{age},#{phone},#{email},#{address})
     </insert>
     <select id="getById" resultType="person">
-        select  * from (select * from person where id = #{id} limit 0,1) a
+        select p.person_name as name,p.age,p.phone,p.email,p.address from person p where p.id = #{id}
     </select>
 
 

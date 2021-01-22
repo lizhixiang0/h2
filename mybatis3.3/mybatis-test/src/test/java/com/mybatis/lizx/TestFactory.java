@@ -41,17 +41,11 @@ public class TestFactory {
         SqlSession sqlSession = sqlSessionFactory.openSession();
         PersonDao personDao =  sqlSession.getMapper(PersonDao.class);
 
-        //Person p = new Person("chen",12,"ss","157538651@qq.com","广东省");
-        //personDao.insert(p);
-        //System.out.println(p.toString());
         /**
          * 第一次查询
          */
         Person person = personDao.getById(13L);
-        /**
-         * 事务提交
-         */
-        sqlSession.commit();
+
         /**
          * 第二次查询
          */
@@ -75,10 +69,21 @@ public class TestFactory {
 
         List<Person> persons = sqlSession.selectList("com.mybatis.lizx.dao.PersonDao.selectPersonByRowBounds", null, rowBounds);
 
-        sqlSession.close();
+
         for (Person user : persons) {
             System.out.println(user);
         }
+
+        Person p = new Person("chen",12,"111","157538651@qq.com","广东省");
+        personDao.insert(p);
+        System.out.println(p.toString());
+
+        /**
+         * 事务提交
+         */
+        sqlSession.commit();
+        sqlSession.close();
+        //sqlSession.commit();
 
 
     }

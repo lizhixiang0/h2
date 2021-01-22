@@ -333,7 +333,7 @@ public class XMLConfigBuilder extends BaseBuilder {
       //使用列标签代替列名
       configuration.setUseColumnLabel(booleanValueOf(props.getProperty("useColumnLabel"), true));
       //允许 JDBC 支持生成的键
-      configuration.setUseGeneratedKeys(booleanValueOf(props.getProperty("useGeneratedKeys"), false));
+      configuration.setUseGeneratedKeys(booleanValueOf(props.getProperty("useGeneratedKeys"), true));
       //配置默认的执行器
       configuration.setDefaultExecutorType(ExecutorType.valueOf(props.getProperty("defaultExecutorType", "SIMPLE")));
       //超时时间

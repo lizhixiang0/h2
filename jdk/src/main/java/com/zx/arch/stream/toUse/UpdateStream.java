@@ -34,6 +34,7 @@ public class UpdateStream {
 
         // 使用flatMap对流中的元素进行处理，除了操纵元素,如果操纵元素时将元素也变为流类型，那flatMap会自动将所有流元素合并成一个
         // 所以，如果出现流中所有元素也都是流，那就要考虑使用flatMap()使它扁平化
+        // 从另一种角度上说，使用了它，就是使用了双重for循环。
         Stream<String> stream3 = streamB.flatMap(str -> Arrays.stream(str));
         stream3.distinct().forEach(System.out::print);
 

@@ -26,6 +26,8 @@ import java.util.Properties;
 import java.util.Set;
 
 import jdk.jfr.Enabled;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.builder.CacheRefResolver;
 import org.apache.ibatis.builder.ResultMapResolver;
@@ -92,16 +94,14 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
  * Configuration配置类
  * @author Clinton Begin
  */
+@Getter
+@Setter
 public class Configuration {
 
   /**
    *  1、环境
    */
   protected Environment environment;
-  public Environment getEnvironment() {return environment;}
-  public void setEnvironment(Environment environment) {
-    this.environment = environment;
-  }
   public Configuration(Environment environment) {
     this();
     this.environment = environment;
@@ -111,24 +111,18 @@ public class Configuration {
    *  2、允许在嵌套语句中使用分页（RowBounds）。如果允许使用则设置为false。 todo 没懂啥意思
    */
   protected boolean safeRowBoundsEnabled = false;
-  public boolean isSafeRowBoundsEnabled() {return safeRowBoundsEnabled;}
-  public void setSafeRowBoundsEnabled(boolean safeRowBoundsEnabled) {this.safeRowBoundsEnabled = safeRowBoundsEnabled;}
 
 
   /**
    *  3、是否允许在嵌套语句中使用结果处理器（ResultHandler）。如果允许使用则设置为 false  todo
    */
   protected boolean safeResultHandlerEnabled = true;
-  public boolean isSafeResultHandlerEnabled() {return safeResultHandlerEnabled; }
-  public void setSafeResultHandlerEnabled(boolean safeResultHandlerEnabled) {this.safeResultHandlerEnabled = safeResultHandlerEnabled;}
 
   /**
    *  4、驼峰转换  设为true表示开启
    * 作用:可以将数据库中user_name转化成userName与实体类属性对应,配置后无需写resultMapper将数据库字段和实体类属性对应
    */
   protected boolean mapUnderscoreToCamelCase = false;
-  public boolean isMapUnderscoreToCamelCase() {return mapUnderscoreToCamelCase;}
-  public void setMapUnderscoreToCamelCase(boolean mapUnderscoreToCamelCase) {this.mapUnderscoreToCamelCase = mapUnderscoreToCamelCase;}
 
   /**
    * 5、懒加载  设为false表示关闭
@@ -136,27 +130,41 @@ public class Configuration {
    *       "https://blog.csdn.net/weixin_42476601/article/details/84194210
    */
   protected boolean lazyLoadingEnabled = false;
-  public boolean isLazyLoadingEnabled() {return lazyLoadingEnabled; }
-  public void setLazyLoadingEnabled(boolean lazyLoadingEnabled) {this.lazyLoadingEnabled = lazyLoadingEnabled; }
 
   /**
    * 6、积极的懒加载   设为true表示开启,配合lazyLoadingEnabled使用
    */
   protected boolean aggressiveLazyLoading = true;
-  public boolean isAggressiveLazyLoading() {return aggressiveLazyLoading; }
-  public void setAggressiveLazyLoading(boolean aggressiveLazyLoading) {this.aggressiveLazyLoading = aggressiveLazyLoading;}
 
   /**
-   *  7、是否允许单一语句返回多结果集（需要兼容驱动）。
+   *  7、是否允许单一语句返回多结果集（需要兼容驱动）。todo
    * @blog "https://blog.csdn.net/qq_40233503/article/details/94436578
    */
   protected boolean multipleResultSetsEnabled = true;
-  public boolean isMultipleResultSetsEnabled() {return multipleResultSetsEnabled; }
-  public void setMultipleResultSetsEnabled(boolean multipleResultSetsEnabled) {this.multipleResultSetsEnabled = multipleResultSetsEnabled; }
 
+  /**
+   *  8、调用JDBC的getGeneratedKeys方法获取主键然后赋值到keyProperty设置的领域模型属性（一般为id）中。 如果允许使用则设置为 true
+   * @example1 <setting name="useGeneratedKeys" value="true" />
+   * @example2 <insert id="insert" parameterType="jw.base.entity.WrongRecApply" useGeneratedKeys="true" keyProperty="id" ></insert>
+   * @blog "https://www.cnblogs.com/nuccch/p/9069644.html
+   */
   protected boolean useGeneratedKeys = false;
+
+  /**
+   * 9、使用列标签代替列别名 允许使用则设置为 true
+   * @note 列标签就是数据库中的字段名，列别名就是查询语句查询字段的时候给字段自定义的名称
+   */
   protected boolean useColumnLabel = true;
+
+  /**
+   * 10、开启二级缓存 默认值为true
+   *  https://blog.csdn.net/canot/article/details/51491732
+   */
   protected boolean cacheEnabled = true;
+
+  /**
+   * @blog "https://www.cnblogs.com/Oliver-rebirth/p/mybatis_2018-3-24.html
+   */
   protected boolean callSettersOnNulls = false;
 
   protected String logPrefix;
@@ -270,14 +278,6 @@ public class Configuration {
     }
   }
 
-  public boolean isCallSettersOnNulls() {
-    return callSettersOnNulls;
-  }
-
-  public void setCallSettersOnNulls(boolean callSettersOnNulls) {
-    this.callSettersOnNulls = callSettersOnNulls;
-  }
-
   public String getDatabaseId() {
     return databaseId;
   }
@@ -331,14 +331,6 @@ public class Configuration {
     this.lazyLoadTriggerMethods = lazyLoadTriggerMethods;
   }
 
-  public boolean isUseGeneratedKeys() {
-    return useGeneratedKeys;
-  }
-
-  public void setUseGeneratedKeys(boolean useGeneratedKeys) {
-    this.useGeneratedKeys = useGeneratedKeys;
-  }
-
   public ExecutorType getDefaultExecutorType() {
     return defaultExecutorType;
   }
@@ -347,13 +339,7 @@ public class Configuration {
     this.defaultExecutorType = defaultExecutorType;
   }
 
-  public boolean isCacheEnabled() {
-    return cacheEnabled;
-  }
 
-  public void setCacheEnabled(boolean cacheEnabled) {
-    this.cacheEnabled = cacheEnabled;
-  }
 
   public Integer getDefaultStatementTimeout() {
     return defaultStatementTimeout;
@@ -361,14 +347,6 @@ public class Configuration {
 
   public void setDefaultStatementTimeout(Integer defaultStatementTimeout) {
     this.defaultStatementTimeout = defaultStatementTimeout;
-  }
-
-  public boolean isUseColumnLabel() {
-    return useColumnLabel;
-  }
-
-  public void setUseColumnLabel(boolean useColumnLabel) {
-    this.useColumnLabel = useColumnLabel;
   }
 
   public LocalCacheScope getLocalCacheScope() {
