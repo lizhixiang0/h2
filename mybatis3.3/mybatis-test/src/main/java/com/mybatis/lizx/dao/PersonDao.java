@@ -3,7 +3,9 @@ package com.mybatis.lizx.dao;
 import com.mybatis.lizx.model.Person;
 
 import java.time.Period;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author lizx
@@ -19,6 +21,11 @@ public interface PersonDao {
 
     Person getById(Long id);
 
-    //查询全部用户（使用RowBounds实现分页）
+    HashMap<String, Object> getPerson(Long i);
+
+    /**
+     * 查询全部用户（使用RowBounds实现分页）
+     * @return
+     */
     List<Person> selectPersonByRowBounds();
 }

@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
@@ -20,6 +21,7 @@ public class TestFactory {
     /*mybatis中的设计模式：https://mp.weixin.qq.com/s/S9R_sZ246iaTyNLG-So9GQ*/
     // 缓存:"https://www.cnblogs.com/51life/p/9529409.html
     // 缓存:https://blog.csdn.net/finalcola/article/details/81155517
+    // spring使用缓存“https://www.cnblogs.com/ssskkk/p/11097159.html
     /*https://blog.csdn.net/qq_35571554/article/details/82629253*/
     /*https://juejin.cn/post/6844903841163378701
     /*https://www.iteye.com/blog/elim-2353672*/
@@ -27,6 +29,7 @@ public class TestFactory {
     /*https://my.oschina.net/zudajun/blog/665956*/
     /*https://www.cnblogs.com/zhjh256/p/8512392.html*/
     /*超全配置文件“https://www.jianshu.com/p/232928bf5010*/
+
     @Test
     public void test() throws IOException {
 
@@ -44,19 +47,19 @@ public class TestFactory {
         /**
          * 第一次查询
          */
-        Person person = personDao.getById(13L);
+        Person person = personDao.getById(43L);
 
         /**
          * 第二次查询
          */
-        Person person1 = personDao.getById(13L);
+        HashMap person1 = personDao.getPerson(43L);
 
 
         System.out.println(person);
         System.out.println(person1);
 
 
-        // 使用RowBounds实现分页
+       /* // 使用RowBounds实现分页
         int currentPage = 1; //当前页
         int pageSize = 10; //页面大小
 
@@ -72,7 +75,23 @@ public class TestFactory {
 
         for (Person user : persons) {
             System.out.println(user);
-        }
+        }*//* // 使用RowBounds实现分页
+        int currentPage = 1; //当前页
+        int pageSize = 10; //页面大小
+
+        RowBounds rowBounds = new RowBounds((currentPage - 1) * pageSize, pageSize);
+
+        //注意点；使用RowBounds就不能使用getMapper了
+        //selectList: 接收一个List
+        //selectMap: 接收一个Map
+        //selectOne ： 接收只有一个对象的时候
+
+        List<Person> persons = sqlSession.selectList("com.mybatis.lizx.dao.PersonDao.selectPersonByRowBounds", null, rowBounds);
+
+
+        for (Person user : persons) {
+            System.out.println(user);
+        }*/
 
         Person p = new Person("chen",12,"111","157538651@qq.com","广东省");
         personDao.insert(p);

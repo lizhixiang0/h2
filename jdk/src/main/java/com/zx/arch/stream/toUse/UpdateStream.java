@@ -65,6 +65,7 @@ public class UpdateStream {
         System.out.println(isAnyMatch);
         System.out.println(isAllMatch);
         System.out.println(isNoneMatch);
+        //https://blog.csdn.net/qq_28410283/article/details/110533469
 
     }
 

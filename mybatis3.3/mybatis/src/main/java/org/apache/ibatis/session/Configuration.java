@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-
-import jdk.jfr.Enabled;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.binding.MapperRegistry;
@@ -158,17 +156,37 @@ public class Configuration {
 
   /**
    * 10、开启二级缓存 默认值为true
-   *  https://blog.csdn.net/canot/article/details/51491732
+   * @blog "https://blog.csdn.net/canot/article/details/51491732
+   * @blog "https://www.cnblogs.com/KingIceMou/p/9389872.html
    */
   protected boolean cacheEnabled = true;
 
   /**
+   * 11、当结果集中含有Null值时是否执行Map对象的put方法。true为执行  。此设置只对resultType为集合类型有效
    * @blog "https://www.cnblogs.com/Oliver-rebirth/p/mybatis_2018-3-24.html
+   * @use "https://www.cnblogs.com/shamo89/p/7807955.html
+   *      "https://www.cnblogs.com/libin6505/p/10036898.html
    */
   protected boolean callSettersOnNulls = false;
 
+  /**
+   *  12、设置日志
+   */
   protected String logPrefix;
   protected Class <? extends Log> logImpl;
+  public Class<? extends Log> getLogImpl() {
+    return logImpl;
+  }
+  @SuppressWarnings("unchecked")
+  public void setLogImpl(Class<?> logImpl) {
+    if (logImpl != null) {
+      this.logImpl = (Class<? extends Log>) logImpl;
+      LogFactory.useCustomLogging(this.logImpl);
+    }
+  }
+
+
+
   protected LocalCacheScope localCacheScope = LocalCacheScope.SESSION;
   protected JdbcType jdbcTypeForNull = JdbcType.OTHER;
   protected Set<String> lazyLoadTriggerMethods = new HashSet<>(Arrays.asList("equals", "clone", "hashCode", "toString"));
@@ -256,26 +274,6 @@ public class Configuration {
 
     languageRegistry.setDefaultDriverClass(XMLLanguageDriver.class);
     languageRegistry.register(RawLanguageDriver.class);
-  }
-
-  public String getLogPrefix() {
-    return logPrefix;
-  }
-
-  public void setLogPrefix(String logPrefix) {
-    this.logPrefix = logPrefix;
-  }
-
-  public Class<? extends Log> getLogImpl() {
-    return logImpl;
-  }
-
-  @SuppressWarnings("unchecked")
-  public void setLogImpl(Class<?> logImpl) {
-    if (logImpl != null) {
-      this.logImpl = (Class<? extends Log>) logImpl;
-      LogFactory.useCustomLogging(this.logImpl);
-    }
   }
 
   public String getDatabaseId() {
@@ -796,6 +794,7 @@ public class Configuration {
       //可以看到，如果有包名，会放2个key到这个map，一个缩略，一个全名
     }
 
+    @Override
     public V get(Object key) {
       V value = super.get(key);
       //如果找不到相应的key，直接报错

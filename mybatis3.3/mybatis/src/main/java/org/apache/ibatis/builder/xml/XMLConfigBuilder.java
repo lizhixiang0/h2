@@ -353,7 +353,7 @@ public class XMLConfigBuilder extends BaseBuilder {
       //动态SQL生成语言所使用的脚本语言
       configuration.setDefaultScriptingLanguage(resolveClass(props.getProperty("defaultScriptingLanguage")));
       //当结果集中含有Null值时是否执行映射对象的setter或者Map对象的put方法。此设置对于原始类型如int,boolean等无效。
-      configuration.setCallSettersOnNulls(booleanValueOf(props.getProperty("callSettersOnNulls"), false));
+      configuration.setCallSettersOnNulls(booleanValueOf(props.getProperty("callSettersOnNulls"), true));
       //logger名字的前缀
       configuration.setLogPrefix(props.getProperty("logPrefix"));
       //显式定义用什么log框架，不定义则用默认的自动发现jar包机制
