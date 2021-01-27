@@ -105,7 +105,7 @@ public final class LogFactory {
 
   private static void setImplementation(Class<? extends Log> implClass) {
     try {
-      //获取有参构造
+      //获取有参构造,这些适配器的构造器都是一个String类型的单参构造器
       Constructor<? extends Log> candidate = implClass.getConstructor(String.class);
       Log log = candidate.newInstance(LogFactory.class.getName());
       log.debug("Logging initialized using '" + implClass + "' adapter.");

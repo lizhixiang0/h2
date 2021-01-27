@@ -19,8 +19,8 @@ package org.apache.ibatis.logging;
  * 日志接口
  * @author Clinton Begin
  * @description Mybatis没有提供日志的实现类，需要接入第三方的日志组件，但第三方的日志组件有自己各自的Log级别，
- *              以JDK提供的日志组件为例，输出级别为FINE,FINER,SERVRE,WARNING，这与Mybatis规定的Log接口格格不入
- *              Mybatis提供了trace、debug、warn、error四个级别,所以需要用到适配器模式
+ *              以Apache提供的日志组件log4j为例，输出级别为OFF、FATAL、ERROR、WARN、INFO、DEBUG、TRACE，这与Mybatis规定的Log接口格格不入
+ *              Mybatis只提供了trace、debug、warn、error四个级别,所以需要用到适配器模式
  */
 public interface Log {
 

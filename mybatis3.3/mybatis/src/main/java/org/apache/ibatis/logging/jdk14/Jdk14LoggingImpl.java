@@ -21,7 +21,9 @@ import java.util.logging.Logger;
 import org.apache.ibatis.logging.Log;
 
 /**
- * 用的jdk1.4 logger里的Logger
+ * 用的jdk1.4 java.util.logging里的Logger,简称jul,不需要引入jar包
+ * spring底层就用的这玩意儿
+ * 缺点是定制化比较困难,比如打印格式
  * @author Clinton Begin
  */
 public class Jdk14LoggingImpl implements Log {

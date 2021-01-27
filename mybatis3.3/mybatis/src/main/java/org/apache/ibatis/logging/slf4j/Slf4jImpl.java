@@ -22,8 +22,10 @@ import org.slf4j.Marker;
 import org.slf4j.spi.LocationAwareLogger;
 
 /**
+ * 这个类只是一个wrapper（包装器）
  * @author Clinton Begin
  * @author Eduardo Macarron
+ * @note   Slf4j是jcl的优化，也是抽象日志，兼容所有的日志类型
  */
 public class Slf4jImpl implements Log {
 
@@ -41,13 +43,8 @@ public class Slf4jImpl implements Log {
         logger.getClass().getMethod("log", Marker.class, String.class, int.class, String.class, Object[].class, Throwable.class);
         log = new Slf4jLocationAwareLoggerImpl((LocationAwareLogger) logger);
         return;
-      } catch (SecurityException e) {
-        // fail-back to Slf4jLoggerImpl
-      } catch (NoSuchMethodException e) {
-        // fail-back to Slf4jLoggerImpl
-      }
+      } catch (SecurityException | NoSuchMethodException ignored) {}
     }
-
     // Logger is not LocationAwareLogger or slf4j version < 1.6
     log = new Slf4jLoggerImpl(logger);
   }

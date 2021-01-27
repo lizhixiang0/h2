@@ -21,7 +21,11 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.spi.AbstractLogger;
 
 /**
+ *
+ * log4j2和log4j是一个作者，log4j2是log4j 1.x和logback的改进版，据说采用了一些新技术（无锁异步、等等），使得日志的吞吐量、性能比log4j 1.x提高10倍，并解决了一些死锁的bug，而且配置更加简单灵活
+ * log4j是通过一个.properties的文件作为主配置文件的，而现在的log4j 2则已经弃用了这种方式，采用的是.xml，.json或者.jsn这种方式来做
  * @author Eduardo Macarron
+ * @blog "https://www.cnblogs.com/pjfmeng/archive/2004/01/13/11277124.html
  */
 public class Log4j2Impl implements Log {
 

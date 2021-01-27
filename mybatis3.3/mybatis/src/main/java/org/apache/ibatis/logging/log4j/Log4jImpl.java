@@ -20,7 +20,8 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
- * 用的log4j里的Logger
+ * Log for Java
+ * 某种意义上，log4j是jul的改进！可以通过log4j.properties配置文件来控制打印格式和级别
  * @author Eduardo Macarron
  */
 public class Log4jImpl implements Log {
