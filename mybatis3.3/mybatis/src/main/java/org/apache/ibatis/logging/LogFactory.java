@@ -95,7 +95,11 @@ public final class LogFactory {
   }
 
   /**
-   * 使用自定义的log
+   * 加载这个LogFactory类时会自动执行静态代码块中的代码,自动按优先级去搜索发现jar包
+   * 但是支持用户自己选择一个日志类,如下
+   * <settings>
+   *        <setting name="logImpl" value="STDOUT_LOGGING"/>
+   * </settings>
    * @param clazz 类对象
    */
   public static synchronized void useCustomLogging(Class<? extends Log> clazz) {

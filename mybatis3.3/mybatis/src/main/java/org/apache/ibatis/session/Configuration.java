@@ -171,6 +171,7 @@ public class Configuration {
 
   /**
    *  12、设置日志
+   * @blog "https://www.cnblogs.com/junlinsky/p/12810752.html
    */
   protected String logPrefix;
   protected Class <? extends Log> logImpl;
@@ -186,8 +187,11 @@ public class Configuration {
   }
 
 
-
+  /**
+   *  13、本地缓存机制（Local Cache）
+   */
   protected LocalCacheScope localCacheScope = LocalCacheScope.SESSION;
+
   protected JdbcType jdbcTypeForNull = JdbcType.OTHER;
   protected Set<String> lazyLoadTriggerMethods = new HashSet<>(Arrays.asList("equals", "clone", "hashCode", "toString"));
   protected Integer defaultStatementTimeout;
@@ -345,14 +349,6 @@ public class Configuration {
 
   public void setDefaultStatementTimeout(Integer defaultStatementTimeout) {
     this.defaultStatementTimeout = defaultStatementTimeout;
-  }
-
-  public LocalCacheScope getLocalCacheScope() {
-    return localCacheScope;
-  }
-
-  public void setLocalCacheScope(LocalCacheScope localCacheScope) {
-    this.localCacheScope = localCacheScope;
   }
 
   public JdbcType getJdbcTypeForNull() {
