@@ -18,11 +18,8 @@ package org.apache.ibatis.logging;
 import org.apache.ibatis.exceptions.PersistenceException;
 
 /**
- * @author Clinton Begin
- */
-/**
  * 日志异常,继承PersistenceException，没啥好说的，就是语义分类
- *
+ * @author Clinton Begin
  */
 public class LogException extends PersistenceException {
 

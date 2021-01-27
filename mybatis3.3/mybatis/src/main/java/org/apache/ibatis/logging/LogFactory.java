@@ -21,89 +21,49 @@ import java.lang.reflect.Constructor;
  * 日志工厂
  * @author Clinton Begin
  * @author Eduardo Macarron
+ * @description 通过适配器模式，实现了集成和复用常见的第三方日志组件。优先级由高到低为slf4J、common logging、Log4J2、Log4J和jdk logging
+ * @note   适配器模式：解决由于接口不能兼容而导致类无法使用的问题，将需要适配的类转换成调用者能够使用的目标接口
+ * @blog   "https://blog.csdn.net/hou_ge/article/details/100556022
  */
 public final class LogFactory {
 
   /**
    * Marker to be used by logging implementations that support markers
    * 给支持marker功能的logger使用(目前有slf4j, log4j2)
+   * @blog "https://logging.apache.org/log4j/2.x/manual/markers.html
+   * @note 个人理解是为了提供标记信息用来过滤日志,方便调试和调错
    */
   public static final String MARKER = "MYBATIS";
 
   /**
-   * 具体究竟用哪个日志框架，那个框架所对应logger的构造函数
+   * 记录当前使用的第三方日志组件所对应的适配器的构造方法
    */
   private static Constructor<? extends Log> logConstructor;
 
   static {
-    //这边乍一看以为开了几个并行的线程去决定使用哪个具体框架的logging，其实不然
     //slf4j
-    tryImplementation(new Runnable() {
-      @Override
-      public void run() {
-        useSlf4jLogging();
-      }
-    });
+    tryImplementation(LogFactory::useSlf4jLogging);
     //common logging
-    tryImplementation(new Runnable() {
-      @Override
-      public void run() {
-        useCommonsLogging();
-      }
-    });
+    tryImplementation(LogFactory::useCommonsLogging);
     //log4j2
-    tryImplementation(new Runnable() {
-      @Override
-      public void run() {
-        useLog4J2Logging();
-      }
-    });
+    tryImplementation(LogFactory::useLog4J2Logging);
     //log4j
-    tryImplementation(new Runnable() {
-      @Override
-      public void run() {
-        useLog4JLogging();
-      }
-    });
+    tryImplementation(LogFactory::useLog4JLogging);
     //jdk logging
-    tryImplementation(new Runnable() {
-      @Override
-      public void run() {
-        useJdkLogging();
-      }
-    });
+    tryImplementation(LogFactory::useJdkLogging);
     //没有日志
-    tryImplementation(new Runnable() {
-      @Override
-      public void run() {
-        useNoLogging();
+    tryImplementation(LogFactory::useNoLogging);
+  }
+
+  private static void tryImplementation(Runnable runnable) {
+    // logConstructor为空才继续执行，所以一般就只执行第一次tryImplementation,通过这种方式控制了第三方日志插件加载的优先级。
+    if (logConstructor == null) {
+      try {
+        //调用的run,没用多线程
+        runnable.run();
+      } catch (Throwable ignored) {
       }
-    });
-  }
-
-  //单例模式，不得自己new实例
-  private LogFactory() {
-    // disable construction
-  }
-
-  //根据传入的类来构建Log
-  public static Log getLog(Class<?> aClass) {
-    return getLog(aClass.getName());
-  }
-
-  //根据传入的类名来构建Log
-  public static Log getLog(String logger) {
-    try {
-      //构造函数，参数必须是一个，为String型，指明logger的名称
-      return logConstructor.newInstance(new Object[] { logger });
-    } catch (Throwable t) {
-      throw new LogException("Error creating logger for logger " + logger + ".  Cause: " + t, t);
     }
-  }
-
-  //提供一个扩展功能，如果以上log都不满意，可以使用自定义的log
-  public static synchronized void useCustomLogging(Class<? extends Log> clazz) {
-    setImplementation(clazz);
   }
 
   public static synchronized void useSlf4jLogging() {
@@ -126,7 +86,6 @@ public final class LogFactory {
     setImplementation(org.apache.ibatis.logging.jdk14.Jdk14LoggingImpl.class);
   }
 
-  //这个没用到
   public static synchronized void useStdOutLogging() {
     setImplementation(org.apache.ibatis.logging.stdout.StdOutImpl.class);
   }
@@ -135,27 +94,50 @@ public final class LogFactory {
     setImplementation(org.apache.ibatis.logging.nologging.NoLoggingImpl.class);
   }
 
-  private static void tryImplementation(Runnable runnable) {
-    if (logConstructor == null) {
-      try {
-      	//这里调用的不是start,而是run！根本就没用多线程嘛！
-        runnable.run();
-      } catch (Throwable t) {
-        // ignore
-      }
-    }
+  /**
+   * 使用自定义的log
+   * @param clazz 类对象
+   */
+  public static synchronized void useCustomLogging(Class<? extends Log> clazz) {
+    setImplementation(clazz);
   }
+
 
   private static void setImplementation(Class<? extends Log> implClass) {
     try {
-      Constructor<? extends Log> candidate = implClass.getConstructor(new Class[] { String.class });
-      Log log = candidate.newInstance(new Object[] { LogFactory.class.getName() });
+      //获取有参构造
+      Constructor<? extends Log> candidate = implClass.getConstructor(String.class);
+      Log log = candidate.newInstance(LogFactory.class.getName());
       log.debug("Logging initialized using '" + implClass + "' adapter.");
-      //设置logConstructor,一旦设上，表明找到相应的log的jar包了，那后面别的log就不找了。
+      //设置logConstructor,一旦设上，表明找到相应的log的jar包了，那后面别的log就不找了。如果找不到就报异常，然后继续找。。。
       logConstructor = candidate;
     } catch (Throwable t) {
       throw new LogException("Error setting Log implementation.  Cause: " + t, t);
     }
   }
 
+  /**
+   * 构造函数私有化----------->单例模式
+   */
+  private LogFactory() {}
+
+  /**
+   * 根据传入的类来构建Log
+   * @param aClass 类
+   */
+  public static Log getLog(Class<?> aClass) {
+    return getLog(aClass.getName());
+  }
+
+  /**
+   * @param logger 参数
+   * @note 注意这个logger参数是logConstructor有参构造函数的参数,不是日志的全限定名
+   */
+  public static Log getLog(String logger) {
+    try {
+      return logConstructor.newInstance(logger);
+    } catch (Throwable t) {
+      throw new LogException("Error creating logger for logger " + logger + ".  Cause: " + t, t);
+    }
+  }
 }

@@ -17,14 +17,32 @@ package org.apache.ibatis.logging;
 
 /**
  * 日志接口
- * 和一般的log4j很像，提供日志接口的一些方法,error, debug, warn。
- * 用自己的日志类恐怕是为了通用，不绑死在某个特定的日志框架中,但不是也有类似的slf4j吗？为何还要自己写？可能是不想引入额外的jar包
  * @author Clinton Begin
+ * @description Mybatis没有提供日志的实现类，需要接入第三方的日志组件，但第三方的日志组件有自己各自的Log级别，
+ *              以JDK提供的日志组件为例，输出级别为FINE,FINER,SERVRE,WARNING，这与Mybatis规定的Log接口格格不入
+ *              Mybatis提供了trace、debug、warn、error四个级别,所以需要用到适配器模式
  */
 public interface Log {
 
+  /**
+   * Debug,Info和Trace一般会打印比较详细的信息，而且打印的次数较多，如果我们不加log.isDebugEnabled()等
+   * 进行预先判断，当系统loglevel设置高于Debug或Info或Trace时，虽然系统不会打印出这些级别的日志，但是还是会拼接
+   * 参数字符串，影响系统的性能。
+   *
+   *  所以当要打印的debug信息比较复杂,避免浪费资源，加上isDebugEnabled方法
+   *  if (log.isDebugEnabled()) {
+   *      Log.debug("Input Object/List/Map:" + Object/List/Map);
+   *  }
+   *  或者使用字符串拼接的方式：
+   *  Log.debug("Processing trade with id: {} symbol ： {} ", id, symbol);
+   * @return boolean
+   */
   boolean isDebugEnabled();
 
+  /**
+   *  和上面的作用一样
+   * @return boolean
+   */
   boolean isTraceEnabled();
 
   void error(String s, Throwable e);

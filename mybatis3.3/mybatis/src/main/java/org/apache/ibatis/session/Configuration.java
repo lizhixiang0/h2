@@ -162,7 +162,7 @@ public class Configuration {
   protected boolean cacheEnabled = true;
 
   /**
-   * 11、当结果集中含有Null值时是否执行Map对象的put方法。true为执行  。此设置只对resultType为集合类型有效
+   * 11、当结果集中某字段为null值时是否执行映射。true为执行  。此设置只对resultType为集合类型有效
    * @blog "https://www.cnblogs.com/Oliver-rebirth/p/mybatis_2018-3-24.html
    * @use "https://www.cnblogs.com/shamo89/p/7807955.html
    *      "https://www.cnblogs.com/libin6505/p/10036898.html
