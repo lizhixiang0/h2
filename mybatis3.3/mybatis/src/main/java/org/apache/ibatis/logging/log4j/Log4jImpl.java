@@ -20,14 +20,14 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
- * @author Eduardo Macarron
- */
-/**
  * 用的log4j里的Logger
- *
+ * @author Eduardo Macarron
  */
 public class Log4jImpl implements Log {
 
+  /**
+   * The wrapper class' fully qualified class name.
+   */
   private static final String FQCN = Log4jImpl.class.getName();
 
   private Logger log;

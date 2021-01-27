@@ -19,11 +19,8 @@ import org.apache.ibatis.logging.Log;
 import org.slf4j.Logger;
 
 /**
- * @author Eduardo Macarron
- */
-/**
  * 用的slf4j里的Logger和LoggerFactory
- *
+ * @author Eduardo Macarron
  */
 class Slf4jLoggerImpl implements Log {
 
