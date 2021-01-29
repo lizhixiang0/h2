@@ -20,18 +20,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * JDBC类型枚举,包装一下java.sql.Types
  * @author Clinton Begin
  */
-/**
- * JDBC类型枚举
- *
- */
+
 public enum JdbcType {
   /*
-   * This is added to enable basic support for the
-   * ARRAY data type - but a custom type handler is still required
+   * This is added to enable basic support for the ARRAY data type - but a custom type handler is still required
    */
-  //就是包装一下java.sql.Types
   ARRAY(Types.ARRAY),
   BIT(Types.BIT),
   TINYINT(Types.TINYINT),
@@ -57,30 +53,36 @@ public enum JdbcType {
   BLOB(Types.BLOB),
   CLOB(Types.CLOB),
   BOOLEAN(Types.BOOLEAN),
-  CURSOR(-10), // Oracle
+  CURSOR(-10),
   UNDEFINED(Integer.MIN_VALUE + 1000),
-  //太周到了，还考虑jdk5兼容性，jdk6的常量都不是直接引用
-  NVARCHAR(Types.NVARCHAR), // JDK6
-  NCHAR(Types.NCHAR), // JDK6
-  NCLOB(Types.NCLOB), // JDK6
+  /**
+   * 考虑jdk5兼容性，jdk6的常量都不是直接引用
+   */
+  NVARCHAR(Types.NVARCHAR),
+  NCHAR(Types.NCHAR),
+  NCLOB(Types.NCLOB),
   STRUCT(Types.STRUCT);
 
+  /**
+   * @blog "https://zhuanlan.zhihu.com/p/51296740
+   */
   public final int TYPE_CODE;
-  private static Map<Integer,JdbcType> codeLookup = new HashMap<Integer,JdbcType>();
-
-  //一开始就将数字对应的枚举型放入hashmap
-  static {
-    for (JdbcType type : JdbcType.values()) {
-      codeLookup.put(type.TYPE_CODE, type);
-    }
-  }
 
   JdbcType(int code) {
     this.TYPE_CODE = code;
   }
 
+  /**
+   * 将所有的JdbcType实例都放到HashMap里,随取随用！可以借鉴。
+   */
+  private static Map<Integer,JdbcType> codeLookup = new HashMap<>();
+
+  static {
+    for (JdbcType type : JdbcType.values()) {
+      codeLookup.put(type.TYPE_CODE, type);
+    }
+  }
   public static JdbcType forCode(int code)  {
     return codeLookup.get(code);
   }
-
 }

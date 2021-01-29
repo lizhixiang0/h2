@@ -155,14 +155,7 @@ public class Configuration {
   protected boolean useColumnLabel = true;
 
   /**
-   * 10、开启二级缓存 默认值为true
-   * @blog "https://blog.csdn.net/canot/article/details/51491732
-   * @blog "https://www.cnblogs.com/KingIceMou/p/9389872.html
-   */
-  protected boolean cacheEnabled = true;
-
-  /**
-   * 11、当结果集中某字段为null值时是否执行映射。true为执行  。此设置只对resultType为集合类型有效
+   * 10、当结果集中某字段为null值时是否执行映射。true为执行  。此设置只对resultType为集合类型有效
    * @blog "https://www.cnblogs.com/Oliver-rebirth/p/mybatis_2018-3-24.html
    * @use "https://www.cnblogs.com/shamo89/p/7807955.html
    *      "https://www.cnblogs.com/libin6505/p/10036898.html
@@ -170,7 +163,7 @@ public class Configuration {
   protected boolean callSettersOnNulls = false;
 
   /**
-   *  12、设置日志
+   *  11、设置日志   这个logPrefix不知道啥用 todo
    * @blog "https://www.cnblogs.com/junlinsky/p/12810752.html
    */
   protected String logPrefix;
@@ -186,23 +179,58 @@ public class Configuration {
     }
   }
 
-
   /**
-   *  13、本地缓存机制（Local Cache）
+   *  12、一级缓存机制配置   默认SESSION
+   * @blog 理解一级缓存的SESSION级别和STATEMENT级别  "https://www.jianshu.com/p/c553169c5921
+   * @note 在query方法执行的最后，会判断一级缓存级别是否是STATEMENT级别，如果是的话，清空缓存,这样就避免了出现脏数据！
+   *
    */
   protected LocalCacheScope localCacheScope = LocalCacheScope.SESSION;
 
-  protected JdbcType jdbcTypeForNull = JdbcType.OTHER;
-  protected Set<String> lazyLoadTriggerMethods = new HashSet<>(Arrays.asList("equals", "clone", "hashCode", "toString"));
-  protected Integer defaultStatementTimeout;
   /**
-   * 默认为简单执行器
+   * 13、二级缓存设置 默认值为true
+   * @blog Mybatis 如何配置二级缓存 ？ "https://blog.csdn.net/canot/article/details/51491732
+   * @blog Mybatis 为什么不推荐用二级缓存？ "https://www.cnblogs.com/KingIceMou/p/9389872.html   todo
+   */
+  protected boolean cacheEnabled = true;
+
+  /**
+   *  14、当没有为参数提供特定的 JDBC 类型时，为空值指定 JDBC 类型。
+   *     某些驱动需要指定列的 JDBC 类型，例如oracle数据库需配置JdbcType.NULL
+   * @blog "https://blog.csdn.net/weixin_42447959/article/details/105006410
+   * @note 但是我在使用时发现对于mysql这玩意似乎可有可无  todo
+   */
+  protected JdbcType jdbcTypeForNull = JdbcType.OTHER;
+
+  /**
+   *  15、设置查询超时时间，不设置则无线等待  todo
+   *  如果是一些sql执行时间需要超过defaultStatementTimeout,可以通过Mapper文件单独的sql的timeout进行配置的。
+   */
+  protected Integer defaultStatementTimeout;
+
+  /**
+   * 16、MyBatis可以根据不同的数据库厂商执行不同的语句，用于一个系统内多厂商数据源支持。大部分场景下无需修改 todo
+   */
+  protected String databaseId;
+
+  /**
+   * 17、配置文件中所有<property>的属性名及属性值
+   * 例如：<property name="username" value="dev_user"/>
+   */
+  protected Properties variables = new Properties();
+
+  /**
+   * 18、默认为简单执行器
    */
   protected ExecutorType defaultExecutorType = ExecutorType.SIMPLE;
+
+  protected Set<String> lazyLoadTriggerMethods = new HashSet<>(Arrays.asList("equals", "clone", "hashCode", "toString"));
+
+
   protected AutoMappingBehavior autoMappingBehavior = AutoMappingBehavior.PARTIAL;
   //---------以上都是<settings>节点-------
 
-  protected Properties variables = new Properties();
+
   //对象工厂和对象包装器工厂
   protected ObjectFactory objectFactory = new DefaultObjectFactory();
   protected ObjectWrapperFactory objectWrapperFactory = new DefaultObjectWrapperFactory();
@@ -210,7 +238,7 @@ public class Configuration {
   protected MapperRegistry mapperRegistry = new MapperRegistry(this);
   protected ProxyFactory proxyFactory = new JavassistProxyFactory(); // #224 Using internal Javassist instead of OGNL
 
-  protected String databaseId;
+
   /**
    * Configuration factory class.
    * Used to create Configuration for loading deserialized unread properties.
@@ -280,14 +308,6 @@ public class Configuration {
     languageRegistry.register(RawLanguageDriver.class);
   }
 
-  public String getDatabaseId() {
-    return databaseId;
-  }
-
-  public void setDatabaseId(String databaseId) {
-    this.databaseId = databaseId;
-  }
-
   public Class<?> getConfigurationFactory() {
     return configurationFactory;
   }
@@ -331,40 +351,6 @@ public class Configuration {
 
   public void setLazyLoadTriggerMethods(Set<String> lazyLoadTriggerMethods) {
     this.lazyLoadTriggerMethods = lazyLoadTriggerMethods;
-  }
-
-  public ExecutorType getDefaultExecutorType() {
-    return defaultExecutorType;
-  }
-
-  public void setDefaultExecutorType(ExecutorType defaultExecutorType) {
-    this.defaultExecutorType = defaultExecutorType;
-  }
-
-
-
-  public Integer getDefaultStatementTimeout() {
-    return defaultStatementTimeout;
-  }
-
-  public void setDefaultStatementTimeout(Integer defaultStatementTimeout) {
-    this.defaultStatementTimeout = defaultStatementTimeout;
-  }
-
-  public JdbcType getJdbcTypeForNull() {
-    return jdbcTypeForNull;
-  }
-
-  public void setJdbcTypeForNull(JdbcType jdbcTypeForNull) {
-    this.jdbcTypeForNull = jdbcTypeForNull;
-  }
-
-  public Properties getVariables() {
-    return variables;
-  }
-
-  public void setVariables(Properties variables) {
-    this.variables = variables;
   }
 
   public TypeHandlerRegistry getTypeHandlerRegistry() {

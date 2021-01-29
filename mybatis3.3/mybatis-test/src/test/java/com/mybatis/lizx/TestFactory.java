@@ -29,6 +29,7 @@ public class TestFactory {
     /*https://my.oschina.net/zudajun/blog/665956*/
     /*https://www.cnblogs.com/zhjh256/p/8512392.html*/
     /*超全配置文件“https://www.jianshu.com/p/232928bf5010*/
+    /*mybatis事务认识"https://www.cnblogs.com/timfruit/p/11508873.html*/
 
     @Test
     public void test() throws IOException {
@@ -47,7 +48,7 @@ public class TestFactory {
         /**
          * 第一次查询
          */
-        Person person = personDao.getById(43L);
+        Person person = personDao.getById(null);
 
         /**
          * 第二次查询

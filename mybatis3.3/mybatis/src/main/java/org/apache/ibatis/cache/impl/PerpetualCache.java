@@ -26,9 +26,8 @@ import org.apache.ibatis.cache.CacheException;
  * @author Clinton Begin
  */
 /**
- * 最初级的cache实现
- * 没有缓存淘汰机制,容易内存溢出(除非手动调用clear)
- * 没有考虑线程安全问题,多线程环境下不安全
+ * 最初级的cache实现，什么包装都没有
+ * 没有缓存淘汰机制,容易内存溢出(除非手动调用clear),没有考虑线程安全问题,多线程环境下不安全
  * 补充：HashMap 的线程安全问题//todo
  *
  */

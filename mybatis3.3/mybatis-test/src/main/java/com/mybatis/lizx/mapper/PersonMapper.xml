@@ -12,9 +12,9 @@
 
     <insert id="insert" parameterType="person" keyProperty="id">
         INSERT INTO person (person_name, age, phone, email, address)
-        VALUES(#{personName},#{age},#{phone},#{email},#{address})
+        VALUES(#{personName},#{age},#{phone ,jdbcType=VARCHAR},#{email},#{address})
     </insert>
-    <select id="getById" resultType="person">
+    <select id="getById" resultType="person" >
         select p.person_name as name,p.age,p.phone,p.email,p.address from person p where p.id = #{id}
     </select>
 

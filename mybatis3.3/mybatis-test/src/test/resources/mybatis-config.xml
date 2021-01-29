@@ -14,7 +14,9 @@
     <settings>
         <!-- 开启二级缓存第一步:设置cacheEnabled为true -->
         <setting name="cacheEnabled" value="true"/>
+        <setting name="logPrefix" value="dao."/>
         <setting name="logImpl" value="LOG4J"/>
+
     </settings>
 
 
