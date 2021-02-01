@@ -31,11 +31,8 @@ import java.util.TreeSet;
 import org.apache.ibatis.reflection.ReflectionException;
 
 /**
+ * 默认对象工厂
  * @author Clinton Begin
- */
-/**
- * 默认对象工厂，所有对象都要由工厂来产生
- *
  */
 public class DefaultObjectFactory implements ObjectFactory, Serializable {
 
@@ -46,28 +43,49 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
     return create(type, null, null);
   }
 
+  /**
+   * 根据接口创建具体的类
+   */
   @SuppressWarnings("unchecked")
   @Override
   public <T> T create(Class<T> type, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
-    //根据接口创建具体的类
-    //1.解析接口
+    //1.解析接口，获取对应的实现类
     Class<?> classToCreate = resolveInterface(type);
-    // we know types are assignable
-    //2.实例化类
+    //2.实例化类、类型是可分配的
     return (T) instantiateClass(classToCreate, constructorArgTypes, constructorArgs);
   }
 
-  //默认没有属性可以设置
-  @Override
-  public void setProperties(Properties properties) {
-    // no props for default
+  /**
+   * 1、解析接口,将接口转为对应的实现类
+   * 例如：list、Collection、Iterable 对应着 ArrayList
+   *      Map  对应着 HashMap
+   *      Set   对应着 HashSet
+   *      SortedSet 对应着 TreeSet
+   *  如果都不是就返回自身。
+   */
+  protected Class<?> resolveInterface(Class<?> type) {
+    Class<?> classToCreate;
+    if (type == List.class || type == Collection.class || type == Iterable.class) {
+      classToCreate = ArrayList.class;
+    } else if (type == Map.class) {
+      classToCreate = HashMap.class;
+    } else if (type == SortedSet.class) {
+      classToCreate = TreeSet.class;
+    } else if (type == Set.class) {
+      classToCreate = HashSet.class;
+    } else {
+      classToCreate = type;
+    }
+    return classToCreate;
   }
 
-  //2.实例化类
+  /**
+   * 2、实例化类
+   */
   private <T> T instantiateClass(Class<T> type, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
     try {
       Constructor<T> constructor;
-      //如果没有传入constructor，调用空构造函数，核心是调用Constructor.newInstance
+      //如果没有传入参数类型和参数值，则调用空构造函数，核心Constructor.newInstance
       if (constructorArgTypes == null || constructorArgs == null) {
         constructor = type.getDeclaredConstructor();
         if (!constructor.isAccessible()) {
@@ -75,12 +93,12 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
         }
         return constructor.newInstance();
       }
-      //如果传入constructor，调用传入的构造函数，核心是调用Constructor.newInstance
-      constructor = type.getDeclaredConstructor(constructorArgTypes.toArray(new Class[constructorArgTypes.size()]));
+      //如果传入参数类型和参数值，说明是有参构造函数，核心是调用Constructor.newInstance,这里可以看到用的toArray的重载方法.值得学习
+      constructor = type.getDeclaredConstructor(constructorArgTypes.toArray(new Class[0]));
       if (!constructor.isAccessible()) {
         constructor.setAccessible(true);
       }
-      return constructor.newInstance(constructorArgs.toArray(new Object[constructorArgs.size()]));
+      return constructor.newInstance(constructorArgs.toArray(new Object[0]));
     } catch (Exception e) {
         //如果出错，包装一下，重新抛出自己的异常
       StringBuilder argTypes = new StringBuilder();
@@ -93,7 +111,7 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
       StringBuilder argValues = new StringBuilder();
       if (constructorArgs != null) {
         for (Object argValue : constructorArgs) {
-          argValues.append(String.valueOf(argValue));
+          argValues.append(argValue);
           argValues.append(",");
         }
       }
@@ -101,32 +119,13 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
     }
   }
 
-  //1.解析接口,将interface转为实际class
-  protected Class<?> resolveInterface(Class<?> type) {
-    Class<?> classToCreate;
-    if (type == List.class || type == Collection.class || type == Iterable.class) {
-        //List|Collection|Iterable-->ArrayList
-      classToCreate = ArrayList.class;
-    } else if (type == Map.class) {
-        //Map->HashMap
-      classToCreate = HashMap.class;
-    } else if (type == SortedSet.class) { // issue #510 Collections Support
-        //SortedSet->TreeSet
-      classToCreate = TreeSet.class;
-    } else if (type == Set.class) {
-        //Set->HashSet
-      classToCreate = HashSet.class;
-    } else {
-        //除此以外，就用原来的类型
-      classToCreate = type;
-    }
-    return classToCreate;
+  @Override
+  public <T> boolean isCollection(Class<T> type) {
+    //判断type是不是Collection的子类或者子接口
+    return Collection.class.isAssignableFrom(type);
   }
 
   @Override
-  public <T> boolean isCollection(Class<T> type) {
-      //是否是Collection的子类
-    return Collection.class.isAssignableFrom(type);
-  }
+  public void setProperties(Properties properties) {}
 
 }

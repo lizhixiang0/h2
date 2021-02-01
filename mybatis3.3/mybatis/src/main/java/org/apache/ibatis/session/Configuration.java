@@ -123,16 +123,26 @@ public class Configuration {
   protected boolean mapUnderscoreToCamelCase = false;
 
   /**
-   * 5、懒加载  设为false表示关闭
+   * 5、懒加载  默认为false
+   *
+   *  lazyLoadingEnabled属性启用时只要加载对象，就会加载该对象的所有属性
    * @blog "https://www.cnblogs.com/ashleyboy/p/9286814.html
    *       "https://blog.csdn.net/weixin_42476601/article/details/84194210
    */
   protected boolean lazyLoadingEnabled = false;
 
   /**
-   * 6、积极的懒加载   设为true表示开启,配合lazyLoadingEnabled使用
+   * 6、积极的懒加载 ，默认为true ,配合lazyLoadingEnabled使用
+   *    如果aggressiveLazyLoading=true，只要触发到对象任何的方法，就会立即加载所有属性的加载
    */
   protected boolean aggressiveLazyLoading = true;
+
+  /**
+   *  6、指定调用对象的哪些方法前触发一次数据加载
+   *  保证我们的目标方法被调用时延迟加载的对象已经从数据库中加载出来了
+   * @blog "https://www.jb51.net/article/101885.htm
+   */
+  protected Set<String> lazyLoadTriggerMethods = new HashSet<>(Arrays.asList("equals", "clone", "hashCode", "toString"));
 
   /**
    *  7、是否允许单一语句返回多结果集（需要兼容驱动）。todo
@@ -220,29 +230,40 @@ public class Configuration {
   protected Properties variables = new Properties();
 
   /**
-   * 18、默认为简单执行器
+   * 18、设置执行器,默认为简单执行器,todo
+   * @blog "https://www.cnblogs.com/zhaoyan001/p/10905826.html
+   * @blog "https://segmentfault.com/a/1190000022800141
    */
   protected ExecutorType defaultExecutorType = ExecutorType.SIMPLE;
 
-  protected Set<String> lazyLoadTriggerMethods = new HashSet<>(Arrays.asList("equals", "clone", "hashCode", "toString"));
-
-
+  /**
+   * 19、自动映射全局配置
+   * @blog "https://www.jb51.net/article/198342.htm
+   * @note mybatis中自动映射主要有2种配置，
+   *       一种是全局的配置，对应用中所有的resultMap起效，这个是在mybatis配置文件中进行设置的；
+   *       另外一种是通过resultMap的autoMapping属性进行配置
+   */
   protected AutoMappingBehavior autoMappingBehavior = AutoMappingBehavior.PARTIAL;
-  //---------以上都是<settings>节点-------
-
-
-  //对象工厂和对象包装器工厂
-  protected ObjectFactory objectFactory = new DefaultObjectFactory();
-  protected ObjectWrapperFactory objectWrapperFactory = new DefaultObjectWrapperFactory();
-  //映射注册机
-  protected MapperRegistry mapperRegistry = new MapperRegistry(this);
-  protected ProxyFactory proxyFactory = new JavassistProxyFactory(); // #224 Using internal Javassist instead of OGNL
-
 
   /**
-   * Configuration factory class.
-   * Used to create Configuration for loading deserialized unread properties.
-   *
+   * 对象工厂
+   */
+  protected ObjectFactory objectFactory = new DefaultObjectFactory();
+  /**
+   * 对象包装器工厂
+   */
+  protected ObjectWrapperFactory objectWrapperFactory = new DefaultObjectWrapperFactory();
+  /**
+   * 映射注册机
+   */
+  protected MapperRegistry mapperRegistry = new MapperRegistry(this);
+  /**
+   * 代理工厂,Using internal Javassist instead of OGNL
+   */
+  protected ProxyFactory proxyFactory = new JavassistProxyFactory();
+
+  /**
+   * 配置类工厂,Used to create Configuration for loading deserialized unread properties.
    * @see <a href='https://code.google.com/p/mybatis/issues/detail?id=300'>Issue 300</a> (google code)
    */
   protected Class<?> configurationFactory;
@@ -308,14 +329,6 @@ public class Configuration {
     languageRegistry.register(RawLanguageDriver.class);
   }
 
-  public Class<?> getConfigurationFactory() {
-    return configurationFactory;
-  }
-
-  public void setConfigurationFactory(Class<?> configurationFactory) {
-    this.configurationFactory = configurationFactory;
-  }
-
   public void addLoadedResource(String resource) {
     loadedResources.add(resource);
   }
@@ -324,19 +337,6 @@ public class Configuration {
     return loadedResources.contains(resource);
   }
 
-  public AutoMappingBehavior getAutoMappingBehavior() {
-    return autoMappingBehavior;
-  }
-
-  public void setAutoMappingBehavior(AutoMappingBehavior autoMappingBehavior) {
-    this.autoMappingBehavior = autoMappingBehavior;
-  }
-
-
-
-  public ProxyFactory getProxyFactory() {
-    return proxyFactory;
-  }
 
   public void setProxyFactory(ProxyFactory proxyFactory) {
     if (proxyFactory == null) {
@@ -345,54 +345,11 @@ public class Configuration {
     this.proxyFactory = proxyFactory;
   }
 
-  public Set<String> getLazyLoadTriggerMethods() {
-    return lazyLoadTriggerMethods;
-  }
-
-  public void setLazyLoadTriggerMethods(Set<String> lazyLoadTriggerMethods) {
-    this.lazyLoadTriggerMethods = lazyLoadTriggerMethods;
-  }
-
-  public TypeHandlerRegistry getTypeHandlerRegistry() {
-    return typeHandlerRegistry;
-  }
-
-  public TypeAliasRegistry getTypeAliasRegistry() {
-    return typeAliasRegistry;
-  }
-
-  /**
-   * @since 3.2.2
-   */
-  public MapperRegistry getMapperRegistry() {
-    return mapperRegistry;
-  }
-
-  public ObjectFactory getObjectFactory() {
-    return objectFactory;
-  }
-
-  public void setObjectFactory(ObjectFactory objectFactory) {
-    this.objectFactory = objectFactory;
-  }
-
-  public ObjectWrapperFactory getObjectWrapperFactory() {
-    return objectWrapperFactory;
-  }
-
-  public void setObjectWrapperFactory(ObjectWrapperFactory objectWrapperFactory) {
-    this.objectWrapperFactory = objectWrapperFactory;
-  }
-
   /**
    * @since 3.2.2
    */
   public List<Interceptor> getInterceptors() {
     return interceptorChain.getInterceptors();
-  }
-
-  public LanguageDriverRegistry getLanguageRegistry() {
-    return languageRegistry;
   }
 
   public void setDefaultScriptingLanguage(Class<?> driver) {

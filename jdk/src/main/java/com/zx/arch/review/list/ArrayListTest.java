@@ -50,6 +50,7 @@ public class ArrayListTest {
         Integer[] objects = (Integer[]) array.toArray();
 
         // 2、使用toArray()的重载有参方法,传入数组类型，另外注意传入的数组大小最好和array一致，如果小于则toArray()内部会重新分配地址
+        // 我在看mybatis源码的时候，了解到有一种说法是推荐产地空数组！这样反而比较好！！
         Integer[] integers = new Integer[array.size()+1];
         int temp = integers.hashCode();
         integers = array.toArray(integers);

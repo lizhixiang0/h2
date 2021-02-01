@@ -20,12 +20,8 @@ import java.util.Properties;
 
 /**
  * MyBatis uses an ObjectFactory to create all needed new Objects.
- *
+ *对象工厂接口，定义对象工厂的行为
  * @author Clinton Begin
- */
-/**
- * 对象工厂，所有对象都要由工厂来产生
- *
  */
 public interface ObjectFactory {
 
@@ -47,9 +43,9 @@ public interface ObjectFactory {
   /**
    * Creates a new object with the specified constructor and params.
    * 生产对象，使用指定的构造函数和构造函数参数
-   * @param type Object type
-   * @param constructorArgTypes Constructor argument types
-   * @param constructorArgs Constructor argument values
+   * @param type 类类型
+   * @param constructorArgTypes 参数类型
+   * @param constructorArgs 参数值
    * @return
    */
   <T> T create(Class<T> type, List<Class<?>> constructorArgTypes, List<Object> constructorArgs);

@@ -21,6 +21,7 @@ import java.util.Map;
 
 /**
  * JDBC类型枚举,包装一下java.sql.Types
+ * 具体用法以后补充
  * @author Clinton Begin
  */
 
