@@ -35,9 +35,13 @@ import org.apache.ibatis.reflection.property.PropertyTokenizer;
  */
 public class BeanWrapper extends BaseWrapper {
 
-  //原来的对象
+  /**
+   * 原来的对象
+   */
   private Object object;
-  //元类
+  /**
+   * 元类
+   */
   private MetaClass metaClass;
 
   public BeanWrapper(MetaObject metaObject, Object object) {
@@ -48,7 +52,7 @@ public class BeanWrapper extends BaseWrapper {
 
   @Override
   public Object get(PropertyTokenizer prop) {
-      //如果有index(有中括号),说明是集合，那就要解析集合,调用的是BaseWrapper.resolveCollection 和 getCollectionValue
+      //如果有index(有[]括号),说明是集合，那就要解析集合,调用的是BaseWrapper.resolveCollection 和 getCollectionValue
     if (prop.getIndex() != null) {
       Object collection = resolveCollection(prop, object);
       return getCollectionValue(prop, collection);

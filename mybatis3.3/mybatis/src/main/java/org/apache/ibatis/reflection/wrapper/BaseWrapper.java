@@ -23,18 +23,22 @@ import org.apache.ibatis.reflection.ReflectionException;
 import org.apache.ibatis.reflection.property.PropertyTokenizer;
 
 /**
+ * 对象包装器的抽象基类,提供了一些公共方法，并且实现了对象包装器接口（继承了其行为）
  * @author Clinton Begin
  */
-/**
- * 对象包装器的基类
- *
- */
 public abstract class BaseWrapper implements ObjectWrapper {
-    //什么方法都没实现，只提供了一些util方法
 
+  /**
+   * no arguments ,不知道这种方式有啥好处
+   */
   protected static final Object[] NO_ARGUMENTS = new Object[0];
+
   protected MetaObject metaObject;
 
+  /**
+   * 抽象类虽然不能被实例化,但是抽象类可以有构造函数,用来初始化一些属性
+   * @param metaObject metaObject
+   */
   protected BaseWrapper(MetaObject metaObject) {
     this.metaObject = metaObject;
   }

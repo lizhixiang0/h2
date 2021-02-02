@@ -22,12 +22,12 @@ import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.reflection.property.PropertyTokenizer;
 
 /**
- * 对象包装器
+ * 对象包装器接口，定义了包装器的行为
  * @author Clinton Begin
  */
 public interface ObjectWrapper {
 
-    //get
+  //get
   Object get(PropertyTokenizer prop);
 
   //set
@@ -61,9 +61,9 @@ public interface ObjectWrapper {
   boolean isCollection();
 
   //添加属性
-  public void add(Object element);
+  void add(Object element);
 
   //添加属性
-  public <E> void addAll(List<E> element);
+  <E> void addAll(List<E> element);
 
 }
