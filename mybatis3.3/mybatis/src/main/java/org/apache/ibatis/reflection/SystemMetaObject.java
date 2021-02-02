@@ -22,28 +22,44 @@ import org.apache.ibatis.reflection.wrapper.DefaultObjectWrapperFactory;
 import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
 
 /**
- * @author Clinton Begin
- */
-/**
  * 一些系统级别的元对象
- *
+ * @author Clinton Begin
  */
 public final class SystemMetaObject {
 
+  /**
+   * 默认对象工厂
+   */
   public static final ObjectFactory DEFAULT_OBJECT_FACTORY = new DefaultObjectFactory();
+  /**
+   * 默认对象包装工厂
+   */
   public static final ObjectWrapperFactory DEFAULT_OBJECT_WRAPPER_FACTORY = new DefaultObjectWrapperFactory();
+
+  /**
+   * MetaObject的初始对象（originalObject）为null
+   */
   public static final MetaObject NULL_META_OBJECT = MetaObject.forObject(NullObject.class, DEFAULT_OBJECT_FACTORY, DEFAULT_OBJECT_WRAPPER_FACTORY);
 
-  private SystemMetaObject() {
-    // Prevent Instantiation of Static Class
-  }
+  /**
+   * 构造私有化
+   */
+  private SystemMetaObject() {}
 
-  //空对象
-  private static class NullObject {
-  }
-
+  /**
+   *  可以调用SystemMetaObject.forObject()来创建MetaObject对象
+   * @param object obj
+   * @return MetaObject
+   */
   public static MetaObject forObject(Object object) {
     return MetaObject.forObject(object, DEFAULT_OBJECT_FACTORY, DEFAULT_OBJECT_WRAPPER_FACTORY);
   }
+
+  /**
+   * 私有的静态内部类,就是充当null而已
+   */
+  private static class NullObject {}
+
+
 
 }

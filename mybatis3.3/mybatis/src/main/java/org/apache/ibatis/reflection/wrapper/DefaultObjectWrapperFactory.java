@@ -19,21 +19,26 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.ReflectionException;
 
 /**
+ * 默认的对象包装器工厂啥都不做
  * @author Clinton Begin
  */
-/**
- * 默认对象包装器工厂
- *
- */
 public class DefaultObjectWrapperFactory implements ObjectWrapperFactory {
-
+  /**
+   * 默认不提供包装器
+   * @param object obj
+   * @return false
+   */
   @Override
-  //默认没有包装器
   public boolean hasWrapperFor(Object object) {
     return false;
   }
 
-  //默认抛异常
+  /**
+   * 默认不提供包装器，所以调用这个方法就抛异常
+   * @param metaObject obj
+   * @param object obj
+   * @return throw ReflectionException
+   */
   @Override
   public ObjectWrapper getWrapperFor(MetaObject metaObject, Object object) {
     throw new ReflectionException("The DefaultObjectWrapperFactory should never be called to provide an ObjectWrapper.");

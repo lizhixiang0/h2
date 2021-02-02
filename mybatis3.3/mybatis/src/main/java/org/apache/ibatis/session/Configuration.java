@@ -246,11 +246,11 @@ public class Configuration {
   protected AutoMappingBehavior autoMappingBehavior = AutoMappingBehavior.PARTIAL;
 
   /**
-   * 对象工厂
+   * 20、对象构造工厂,mybatis提供了默认实现,支持定制化
    */
   protected ObjectFactory objectFactory = new DefaultObjectFactory();
   /**
-   * 对象包装器工厂
+   * 21、对象包装器工厂,,mybatis提供了默认实现,支持定制化
    */
   protected ObjectWrapperFactory objectWrapperFactory = new DefaultObjectWrapperFactory();
   /**

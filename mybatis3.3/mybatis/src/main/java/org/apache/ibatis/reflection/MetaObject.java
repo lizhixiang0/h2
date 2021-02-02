@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import lombok.Data;
 import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.reflection.property.PropertyTokenizer;
 import org.apache.ibatis.reflection.wrapper.BeanWrapper;
@@ -28,19 +29,22 @@ import org.apache.ibatis.reflection.wrapper.ObjectWrapper;
 import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
 
 /**
+ *   MetaObject是Mybatis提供的一个用于方便、优雅访问对象属性的对象，通过它可以简化代码、不需要try/catch各种reflect异常，同时它支持对JavaBean、Collection、Map三种类型对象的操作
+ *  可以参考MetaObjectTest来跟踪调试，基本上用到了reflection包下所有的类
  * @author Clinton Begin
  */
-/**
- * 元对象,各种get，set方法有点ognl表达式的味道
- * 可以参考MetaObjectTest来跟踪调试，基本上用到了reflection包下所有的类
- *
- */
+@Data
 public class MetaObject {
 
-    //有一个原来的对象，对象包装器，对象工厂，对象包装器工厂
+  /**
+   * 原始对象 和 对象工厂
+   */
   private Object originalObject;
-  private ObjectWrapper objectWrapper;
   private ObjectFactory objectFactory;
+  /**
+   * 包装对象、对象包装工厂
+   */
+  private ObjectWrapper objectWrapper;
   private ObjectWrapperFactory objectWrapperFactory;
 
   private MetaObject(Object object, ObjectFactory objectFactory, ObjectWrapperFactory objectWrapperFactory) {
@@ -66,6 +70,13 @@ public class MetaObject {
     }
   }
 
+  /**
+   * MetaObject 的构造器是私有的,只能通过静态方法forObject()创建对象实例
+   * @param object obj
+   * @param objectFactory objectFactory
+   * @param objectWrapperFactory objectWrapperFactory
+   * @return MetaObject
+   */
   public static MetaObject forObject(Object object, ObjectFactory objectFactory, ObjectWrapperFactory objectWrapperFactory) {
     if (object == null) {
         //处理一下null,将null包装起来
@@ -73,18 +84,6 @@ public class MetaObject {
     } else {
       return new MetaObject(object, objectFactory, objectWrapperFactory);
     }
-  }
-
-  public ObjectFactory getObjectFactory() {
-    return objectFactory;
-  }
-
-  public ObjectWrapperFactory getObjectWrapperFactory() {
-    return objectWrapperFactory;
-  }
-
-  public Object getOriginalObject() {
-    return originalObject;
   }
 
   //--------以下方法都是委派给ObjectWrapper------
@@ -171,10 +170,6 @@ public class MetaObject {
       //实际是递归调用
     Object value = getValue(name);
     return MetaObject.forObject(value, objectFactory, objectWrapperFactory);
-  }
-
-  public ObjectWrapper getObjectWrapper() {
-    return objectWrapper;
   }
 
   //是否是集合
