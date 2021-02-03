@@ -27,11 +27,10 @@ public class CollectRules {
     private static HashMap<String,Character> rulesName = new HashMap<>();
 
 
-    /*public static void main(String[] args) throws URISyntaxException{
+    public static void main(String[] args) throws URISyntaxException{
         readAllFilesName();
         stream.forEach(i-> {
             try {
-                count++;
                 readThenWrite(i);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -40,7 +39,7 @@ public class CollectRules {
         System.out.println("rule总条数:"+count);
         loadSource.forEach(System.out::println);
 
-    }*/
+    }
 
     private static void readAllFilesName() throws URISyntaxException {
         Path p = Paths.get(CollectRules.class.getResource("/static/rulesets").toURI());
@@ -58,7 +57,11 @@ public class CollectRules {
         String prefix  = "import";
         String checkString = "droidbox";
         AtomicBoolean ischecked = new AtomicBoolean(true);
+        System.out.println(Files.lines(srcPath).count());
         Files.lines(srcPath).forEach(i-> {
+            if(i.trim().contains("{")){
+                count++;
+            }
             //过滤掉'*/'之前的内容
             if(tag.equals(i.trim())){
                 isUseful.set(true);
@@ -71,7 +74,7 @@ public class CollectRules {
             //过滤备注
             //过滤*/
             if(isUseful.get() && ischecked.get()&& !"".equals(i.trim())&&!tag.equals(i.trim())&&!i.trim().startsWith("//")){
-                if(i.startsWith(prefix)){
+                if(i.trim().startsWith(prefix)){
                     loadSource.add(i);
                 }else {
                     try {
@@ -133,7 +136,7 @@ public class CollectRules {
 
     //过滤哪些没啥用的
 
-    public static void main(String[] args) {
+   /* public static void main(String[] args) {
         String str1 =  dealWithRuleName(" rule adware : installer");
         String str2 =  dealWithRuleName("rule  adware:aggressive");
         String str5 =  dealWithRuleName("rule  adware :aggressive");
@@ -148,6 +151,6 @@ public class CollectRules {
         System.out.println(str3);
         System.out.println(str4);
         System.out.println(str6);
-    }
+    }*/
 
 }
