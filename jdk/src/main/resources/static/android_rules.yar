@@ -47,16 +47,18 @@ rule HummingWhale_a
 	strings:
 		$ = "apis.groupteamapi.com"
 		$ = "app.blinkingcamera.com"
+	condition:
+     		1 of them
 }
 rule OxyLabs_a
 {
 	meta:
 		description = "This rule detects what Norman say"
 	strings: 
-	$src1="oxylabs.io"
-	$src2 = "us-pr.oxylabs.io"
+        $src1="oxylabs.io"
+        $src2 = "us-pr.oxylabs.io"
 	condition:
-	$src1 or $src2
+	    $src1 or $src2
 }
 rule minsdktest_a
 {
@@ -313,50 +315,6 @@ rule String_search_a
                 1 of ($c2_*)
 }
 
-rule YaYaSmsSenderOpt1_a {
-	meta:
-		author = "YaYaGen -- Yet Another Yara Rule Generator (!) v0.3_summer17"
-		date = "24 Aug 2017"
-		original = "874:SmsSender"
-	condition:
-		androguard.displayed_version("1.0") and 
-		androguard.functionality.dynamic_broadcast.class(/Lcom\/software\/application\/Actor\;/) and 
-		androguard.functionality.dynamic_broadcast.class(/Lcom\/software\/application\/Main\$4\;/) and 
-		androguard.functionality.dynamic_broadcast.code(/invoke\-virtual\ v0\,\ v1\,\ v2\,\ Landroid\/content\/Context\;\-\>registerReceiver\(Landroid\/content\/BroadcastReceiver\;\ Landroid\/content\/IntentFilter\;\)Landroid\/content\/Intent\;/) and 
-		androguard.functionality.dynamic_broadcast.method(/acquire/) and 
-		androguard.functionality.dynamic_broadcast.method(/onReceive/) and 
-		androguard.functionality.mcc.class(/Lcom\/software\/application\/Main\;/) and 
-		androguard.functionality.mcc.code(/invoke\-virtual\ v0\,\ Landroid\/telephony\/TelephonyManager\;\-\>getNetworkOperator\(\)Ljava\/lang\/String\;/) and 
-		androguard.functionality.mcc.method(/onCreate/) and 
-		androguard.functionality.socket.class(/Lcom\/software\/application\/Actor\;/) and 
-		androguard.functionality.socket.method(/report/) and 
-		androguard.main_activity("com.software.application.Main") and 
-		androguard.number_of_activities == 3 and 
-		androguard.package_name("com.software.application")
-}
-
-rule YaYaSmsSenderOpt2_a
-{
-	meta:
-		author = "YaYaGen -- Yet Another Yara Rule Generator (!) v0.3_summer17"
-		date = "24 Aug 2017"
-		original = "874:SmsSender"
-	condition:
-		androguard.displayed_version("1.0") and 
-		androguard.functionality.dynamic_broadcast.class(/Lcom\/software\/application\/Actor\;/) and 
-		androguard.functionality.dynamic_broadcast.code(/invoke\-virtual\ v0\,\ v1\,\ v2\,\ Landroid\/content\/Context\;\-\>registerReceiver\(Landroid\/content\/BroadcastReceiver\;\ Landroid\/content\/IntentFilter\;\)Landroid\/content\/Intent\;/) and 
-		androguard.functionality.dynamic_broadcast.method(/acquire/) and 
-		androguard.functionality.dynamic_broadcast.method(/onReceive/) and 
-		androguard.functionality.mcc.class(/Lcom\/software\/application\/Main\;/) and 
-		androguard.functionality.mcc.code(/invoke\-virtual\ v0\,\ Landroid\/telephony\/TelephonyManager\;\-\>getNetworkOperator\(\)Ljava\/lang\/String\;/) and 
-		androguard.functionality.mcc.method(/onCreate/) and 
-		androguard.functionality.socket.class(/Lcom\/software\/application\/Actor\;/) and 
-		androguard.functionality.socket.method(/activate/) and 
-		androguard.functionality.socket.method(/report/) and 
-		androguard.main_activity("com.software.application.Main") and 
-		androguard.number_of_activities == 3 and 
-		androguard.package_name("com.software.application")
-}
 
 rule LLCdev_a: official
 {
@@ -376,26 +334,6 @@ rule HypervergeSDKTracker_a
 		androguard.activity("co.hyperverge.hvinstructionmodule.activities.FaceInstructionActivity")
 }
 
-rule YaYaHummingBad2Opt_a
-{
-	meta:
-		author = "YaYaGen -- Yet Another Yara Rule Generator (!) v0.3_summer17"
-		original = "1187:HummingBad2"
-		date = "24 Aug 2017"
-	condition:
-		androguard.functionality.dynamic_broadcast.code(/invoke\-virtual\ v0\,\ v1\,\ Landroid\/content\/Context\;\-\>unregisterReceiver\(Landroid\/content\/BroadcastReceiver\;\)V/) and 
-		androguard.functionality.imei.class(/Lcom\/tencent\/bugly\/proguard\/a\;/) and 
-		androguard.functionality.imsi.class(/Lcom\/tencent\/bugly\/proguard\/a\;/) and 
-		androguard.functionality.imsi.code(/invoke\-virtual\ v0\,\ Landroid\/telephony\/TelephonyManager\;\-\>getSubscriberId\(\)Ljava\/lang\/String\;/) and 
-		androguard.functionality.imsi.method(/b/) and 
-		androguard.functionality.ssl.method(/e/) and 
-		androguard.number_of_permissions == 18 and 
-		androguard.url("http://alog.umeng.co/app_logs") and 
-		androguard.url("http://alog.umeng.com/app_logs") and 
-		androguard.url("http://log.umsns.com/") and 
-		androguard.url("http://log.umsns.com/share/api/") and 
-		androguard.url("http://oc.umeng.com/check_config_update")
-}
 
 rule wipelocker_a_a
 {
@@ -418,75 +356,7 @@ rule koodous_f: official
 		any of them
 }
 
-rule YaYaSyringeOpt1_a {
-	meta:
-		author = "YaYaGen -- Yet Another Yara Rule Generator (!) v0.3_summer17"
-		date = "24 Aug 2017"
-		original = "1154:Syringe"
-	condition:
-		androguard.app_name("Super Video Downloader") and 
-		androguard.certificate.sha1("816199E3E7DB93A8ABF0B01D24271AF43D6D240F") and 
-		androguard.displayed_version("1.0") and 
-		androguard.functionality.crypto.code(/invoke\-virtual\ v1\,\ Ljava\/security\/MessageDigest\;\-\>digest\(\)\[B/) and 
-		androguard.functionality.socket.class(/Lcom\/aqplay\/shell\/i\;/) and 
-		androguard.functionality.socket.method(/j/) and 
-		androguard.functionality.ssl.code(/const\-string\ v3\,\ \'https\:\/\/m\.youtube\.com\/watch\?v\=\'/) and 
-		androguard.functionality.ssl.method(/onClick/) and 
-		androguard.number_of_filters == 14 and 
-		androguard.number_of_permissions == 11 and 
-		androguard.number_of_providers == 2 and 
-		androguard.url("vnd.android.cursor.dir/com.umeng.dl") and 
-		androguard.url("vnd.android.cursor.item/com.demo.history") and 
-		androguard.url("vnd.android.cursor.dir/com.umeng.dl")
-}
 
-rule YaYaSyringeOpt2_a
-{
-	meta:
-		author = "YaYaGen -- Yet Another Yara Rule Generator (!) v0.3_summer17"
-		date = "24 Aug 2017"
-		original = "1154:Syringe"
-	condition:
-		androguard.app_name("Alarm Controller") and 
-		androguard.certificate.sha1("22B253E10FEDB833435E2CC213F68B29FCBA3AB1") and 
-		androguard.functionality.crypto.code(/invoke\-virtual\ v1\,\ Ljava\/security\/MessageDigest\;\-\>digest\(\)\[B/) and 
-		androguard.functionality.crypto.method(/a/) and 
-		androguard.functionality.socket.code(/invoke\-virtual\ v0\,\ Ljava\/net\/URL\;\-\>openConnection\(\)Ljava\/net\/URLConnection\;/) and 
-		androguard.functionality.socket.code(/invoke\-virtual\ v4\,\ Ljava\/net\/URL\;\-\>openConnection\(\)Ljava\/net\/URLConnection\;/) and 
-		androguard.number_of_filters == 10 and 
-		androguard.number_of_permissions == 15 and 
-		androguard.number_of_receivers == 2 and 
-		androguard.number_of_services == 3 and 
-		androguard.package_name("com.al.alarm.controller") and 
-		androguard.url("http://s.adslinkup.com/v2/ads/update/")
-}
-rule YaYaSyringeOpt3_a
-{
-	meta:
-		author = "YaYaGen -- Yet Another Yara Rule Generator (!) v0.3_summer17"
-		date = "24 Aug 2017"
-		original = "1154:Syringe"
-	condition:
-		androguard.app_name("SmsManager") and 
-		androguard.functionality.crypto.code(/invoke\-virtual\ v1\,\ Ljava\/security\/MessageDigest\;\-\>digest\(\)\[B/) and 
-		androguard.functionality.crypto.code(/invoke\-virtual\ v1\,\ v2\,\ Ljava\/security\/MessageDigest\;\-\>digest\(\[B\)\[B/) and 
-		androguard.functionality.crypto.method(/a/) and 
-		androguard.functionality.imei.code(/invoke\-virtual\ v0\,\ Landroid\/telephony\/TelephonyManager\;\-\>getDeviceId\(\)Ljava\/lang\/String\;/) and 
-		androguard.functionality.imei.method(/e/) and 
-		androguard.functionality.installed_app.code(/invoke\-virtual\ v0\,\ v2\,\ Landroid\/content\/pm\/PackageManager\;\-\>getInstalledApplications\(I\)Ljava\/util\/List\;/) and 
-		androguard.functionality.installed_app.method(/i/) and 
-		androguard.functionality.socket.class(/Lcom\/aqplay\/shell\/i\;/) and 
-		androguard.functionality.socket.code(/invoke\-virtual\ v0\,\ Ljava\/net\/URL\;\-\>openConnection\(\)Ljava\/net\/URLConnection\;/) and 
-		androguard.functionality.socket.code(/invoke\-virtual\ v4\,\ Ljava\/net\/URL\;\-\>openConnection\(\)Ljava\/net\/URLConnection\;/) and 
-		androguard.functionality.socket.method(/g/) and 
-		androguard.number_of_activities == 2 and 
-		androguard.number_of_filters == 10 and 
-		androguard.number_of_receivers == 2 and 
-		androguard.number_of_services == 3 and 
-		androguard.package_name("com.sms.sys.manager") and 
-		androguard.url("http://s.adslinkup.com/v2/ads/update/") and 
-		androguard.url("http://t.adslinkup.com/v1/appevent/")
-}
 rule joker_notif_a
 {
     strings:
@@ -1241,102 +1111,7 @@ rule koodous_j: official
 		$b or
 		$c
 }
-rule YaYaCryptocurrencyScams0_a: rule0 {
-	meta:
-		author = "YaYaGen -- Yet Another Yara Rule Generator (*) v0.4_winter17/18"
-		date = "01 Mar 2018"
-	condition:
-		androguard.filter("com.google.android.c2dm.intent.RECEIVE") and 
-		androguard.functionality.dynamic_broadcast.code(/invoke\-virtual\ v0\,\ v1\,\ Landroid\/content\/Context\;\-\>unregisterReceiver\(Landroid\/content\/BroadcastReceiver\;\)V/) and 
-		androguard.functionality.socket.class(/Landroid\/support\/v4\/app\/NotificationManagerCompat\$SideChannelManager\;/) and 
-		androguard.functionality.socket.method(/processListenerQueue/) and 
-		androguard.permission("android.permission.ACCESS_NETWORK_STATE") and 
-		androguard.permission("android.permission.INTERNET") and 
-		androguard.permission("android.permission.WAKE_LOCK") and 
-		androguard.permission("com.google.android.c2dm.permission.RECEIVE")
-}
-rule YaYaCryptocurrencyScams1_a: rule1 {
-	meta:
-		author = "YaYaGen -- Yet Another Yara Rule Generator (*) v0.4_winter17/18"
-		date = "01 Mar 2018"
-	condition:
-		androguard.app_name("Poloniex") and 
-		androguard.displayed_version("1.0.0") and 
-		androguard.functionality.dynamic_broadcast.class(/Lorg\/apache\/cordova\/CoreAndroid\;/) and 
-		androguard.functionality.dynamic_broadcast.class(/Lorg\/apache\/cordova\/engine\/SystemWebViewEngine\;/) and 
-		androguard.functionality.dynamic_broadcast.code(/invoke\-virtual\ v0\,\ v1\,\ Landroid\/content\/Context\;\-\>unregisterReceiver\(Landroid\/content\/BroadcastReceiver\;\)V/) and 
-		androguard.functionality.dynamic_broadcast.code(/invoke\-virtual\ v1\,\ v2\,\ v0\,\ Landroid\/content\/Context\;\-\>registerReceiver\(Landroid\/content\/BroadcastReceiver\;\ Landroid\/content\/IntentFilter\;\)Landroid\/content\/Intent\;/) and 
-		androguard.functionality.dynamic_broadcast.code(/invoke\-virtual\ v10\,\ v11\,\ v6\,\ Landroid\/content\/Context\;\-\>registerReceiver\(Landroid\/content\/BroadcastReceiver\;\ Landroid\/content\/IntentFilter\;\)Landroid\/content\/Intent\;/) and 
-		androguard.functionality.dynamic_broadcast.method(/initTelephonyReceiver/) and 
-		androguard.functionality.dynamic_broadcast.method(/initWebViewSettings/) and 
-		androguard.functionality.dynamic_broadcast.method(/onDestroy/) and 
-		androguard.functionality.run_binary.class(/Lorg\/apache\/cordova\/CordovaBridge\;/) and 
-		androguard.functionality.run_binary.code(/const\-string\ v1\,\ \'Bridge\ access\ attempt\ with\ wrong\ secret\ token\,\ possibly\ from\ malicious\ code\.\ Disabling\ exec\(\)\ bridge\!\'/) and 
-		androguard.functionality.run_binary.code(/const\-string\ v2\,\ \'exec\(\)\'/) and 
-		androguard.functionality.run_binary.code(/invoke\-virtual\ v2\,\ v7\,\ v8\,\ v9\,\ v10\,\ Lorg\/apache\/cordova\/PluginManager\;\-\>exec\(Ljava\/lang\/String\;\ Ljava\/lang\/String\;\ Ljava\/lang\/String\;\ Ljava\/lang\/String\;\)V/) and 
-		androguard.functionality.run_binary.method(/jsExec/) and 
-		androguard.functionality.run_binary.method(/verifySecret/) and 
-		androguard.functionality.sms.class(/Lorg\/apache\/cordova\/inappbrowser\/InAppBrowser\$InAppBrowserClient\;/) and 
-		androguard.functionality.sms.code(/const\-string\ v7\,\ \'sms_body\'/) and 
-		androguard.functionality.sms.method(/shouldOverrideUrlLoading/) and 
-		androguard.functionality.socket.class(/Lorg\/apache\/cordova\/CordovaResourceApi\;/) and 
-		androguard.functionality.socket.code(/invoke\-virtual\ v0\,\ Ljava\/net\/URL\;\-\>openConnection\(\)Ljava\/net\/URLConnection\;/) and 
-		androguard.functionality.socket.code(/invoke\-virtual\ v2\,\ Ljava\/net\/URL\;\-\>openConnection\(\)Ljava\/net\/URLConnection\;/) and 
-		androguard.functionality.socket.method(/createHttpConnection/) and 
-		androguard.functionality.socket.method(/getMimeType/) and 
-		androguard.functionality.socket.method(/openForRead/) and 
-		androguard.functionality.ssl.class(/Lorg\/apache\/cordova\/CordovaResourceApi\;/) and 
-		androguard.functionality.ssl.class(/Lorg\/apache\/cordova\/PluginManager\;/) and 
-		androguard.functionality.ssl.class(/Lorg\/apache\/cordova\/Whitelist\;/) and 
-		androguard.functionality.ssl.code(/const\-string\ v1\,\ \'https\'/) and 
-		androguard.functionality.ssl.code(/const\-string\ v5\,\ \'https\:\/\/ssl\.gstatic\.com\/accessibility\/javascript\/android\/\'/) and 
-		androguard.functionality.ssl.code(/const\-string\ v9\,\ \'https\'/) and 
-		androguard.functionality.ssl.method(/addWhiteListEntry/) and 
-		androguard.functionality.ssl.method(/getUriType/) and 
-		androguard.functionality.ssl.method(/shouldAllowRequest/) and 
-		androguard.number_of_activities == 1 and 
-		androguard.number_of_filters == 1 and 
-		androguard.number_of_permissions == 1 and 
-		androguard.permission("android.permission.INTERNET")
-}
-rule YaYaCryptocurrencyScams2_a: rule2 {
-	meta:
-		author = "YaYaGen -- Yet Another Yara Rule Generator (*) v0.4_winter17/18"
-		date = "01 Mar 2018"
-	condition:
-		androguard.certificate.sha1("FF0947D1B6240275301E77B00D78D2AC2173D2F3") and 
-		androguard.functionality.dynamic_broadcast.class(/Landroid\/support\/v4\/media\/TransportMediatorJellybeanMR2\;/) and 
-		androguard.functionality.dynamic_broadcast.class(/Landroid\/support\/v7\/app\/AppCompatDelegateImplV14\$AutoNightModeManager\;/) and 
-		androguard.functionality.dynamic_broadcast.code(/invoke\-virtual\ v0\,\ v1\,\ Landroid\/content\/Context\;\-\>unregisterReceiver\(Landroid\/content\/BroadcastReceiver\;\)V/) and 
-		androguard.functionality.dynamic_broadcast.code(/invoke\-virtual\ v0\,\ v1\,\ v2\,\ Landroid\/content\/Context\;\-\>registerReceiver\(Landroid\/content\/BroadcastReceiver\;\ Landroid\/content\/IntentFilter\;\)Landroid\/content\/Intent\;/) and 
-		androguard.functionality.dynamic_broadcast.method(/cleanup/) and 
-		androguard.functionality.dynamic_broadcast.method(/windowAttached/) and 
-		androguard.functionality.dynamic_broadcast.method(/windowDetached/) and 
-		androguard.functionality.imei.class(/Landroid\/support\/v7\/app\/AppCompatDelegateImplV9\;/) and 
-		androguard.functionality.imei.class(/Landroid\/support\/v7\/app\/ToolbarActionBar\;/) and 
-		androguard.functionality.imei.code(/invoke\-virtual\ v11\,\ Landroid\/view\/KeyEvent\;\-\>getDeviceId\(\)I/) and 
-		androguard.functionality.imei.code(/invoke\-virtual\ v7\,\ Landroid\/view\/KeyEvent\;\-\>getDeviceId\(\)I/) and 
-		androguard.functionality.imei.method(/onKeyShortcut/) and 
-		androguard.functionality.imei.method(/preparePanel/) and 
-		androguard.functionality.socket.class(/Landroid\/support\/v4\/app\/NotificationManagerCompat\$SideChannelManager\;/) and 
-		androguard.functionality.socket.class(/Landroid\/support\/v4\/media\/MediaBrowserCompat\$ServiceBinderWrapper\;/) and 
-		androguard.functionality.socket.class(/Landroid\/support\/v4\/os\/ResultReceiver\;/) and 
-		androguard.functionality.socket.code(/invoke\-interface\ v0\,\ v3\,\ v4\,\ Landroid\/support\/v4\/os\/IResultReceiver\;\-\>send\(I\ Landroid\/os\/Bundle\;\)V/) and 
-		androguard.functionality.socket.code(/invoke\-interface\ v1\,\ v2\,\ Landroid\/support\/v4\/app\/NotificationManagerCompat\$Task\;\-\>send\(Landroid\/support\/v4\/app\/INotificationSideChannel\;\)V/) and 
-		androguard.functionality.socket.code(/invoke\-virtual\ v1\,\ v0\,\ Landroid\/os\/Messenger\;\-\>send\(Landroid\/os\/Message\;\)V/) and 
-		androguard.functionality.socket.method(/processListenerQueue/) and 
-		androguard.functionality.socket.method(/send/) and 
-		androguard.functionality.socket.method(/sendRequest/) and 
-		androguard.functionality.ssl.class(/Landroid\/support\/v4\/text\/util\/LinkifyCompat\;/) and 
-		androguard.functionality.ssl.class(/Landroid\/support\/v4\/util\/PatternsCompat\;/) and 
-		androguard.functionality.ssl.code(/const\-string\ v1\,\ \"\(\(\(\?\:\(\?i\:http\|https\|rtsp\)\:\/\/\(\?\:\(\?\:\[a\-zA\-Z0\-9\\\\\$\\\\\-\\\\_\\\\\.\\\\\+\\\\\!\\\\\*\\\\\'\\\\\(\\\\\)\\\\\,\\\\\;\\\\\?\\\\\&\\\\\=\]\|\(\?\:\\\\\%\[a\-fA\-F0\-9\]\{2\}\)\)\{1\,64\}\(\?\:\\\\\:\(\?\:\[a\-zA\-Z0\-9\\\\\$\\\\\-\\\\_\\\\\.\\\\\+\\\\\!\\\\\*\\\\\'\\\\\(\\\\\)\\\\\,\\\\\;\\\\\?\\\\\&\\\\\=\]\|\(\?\:\\\\\%\[a\-fA\-F0\-9\]\{2\}\)\)\{1\,25\}\)\?\\\\\@\)\?\)\?\(\?\:\"/) and 
-		androguard.functionality.ssl.code(/const\-string\ v1\,\ \"\(\(\?\:\\\\b\|\$\|\^\)\(\?\:\(\?\:\(\?i\:http\|https\|rtsp\)\:\/\/\(\?\:\(\?\:\[a\-zA\-Z0\-9\\\\\$\\\\\-\\\\_\\\\\.\\\\\+\\\\\!\\\\\*\\\\\'\\\\\(\\\\\)\\\\\,\\\\\;\\\\\?\\\\\&\\\\\=\]\|\(\?\:\\\\\%\[a\-fA\-F0\-9\]\{2\}\)\)\{1\,64\}\(\?\:\\\\\:\(\?\:\[a\-zA\-Z0\-9\\\\\$\\\\\-\\\\_\\\\\.\\\\\+\\\\\!\\\\\*\\\\\'\\\\\(\\\\\)\\\\\,\\\\\;\\\\\?\\\\\&\\\\\=\]\|\(\?\:\\\\\%\[a\-fA\-F0\-9\]\{2\}\)\)\{1\,25\}\)\?\\\\\@\)\?\)\(\?\:\"/) and 
-		androguard.functionality.ssl.code(/const\-string\ v1\,\ \'https\:\/\/\'/) and 
-		androguard.functionality.ssl.method(/\<clinit\>/) and 
-		androguard.functionality.ssl.method(/addLinks/) and 
-		androguard.number_of_activities == 6 and 
-		androguard.number_of_filters == 1
-}
+
 rule YaYaCryptocurrencyScams3_a: rule3 {
 	meta:
 		author = "YaYaGen -- Yet Another Yara Rule Generator (*) v0.4_winter17/18"
@@ -1380,34 +1155,12 @@ rule rule1_a: mmarrkv_misc
 		androguard.permission(/SYSTEM_ALERT_WINDOW/) and
 		androguard.permission(/BIND_ACCESSIBILITY_SERVICE/)
 }
-rule YaYaSMSFraud0_a: rule0 {
-	meta:
-		author = "YaYaGen -- Yet Another Yara Rule Generator (*) v0.4_winter17/18"
-		date = "20 Feb 2018"
-	condition:
-		androguard.activity("com.alipay.sdk.app.H5PayActivity") and 
-		androguard.filter("io.dcloud.ACTION_PICK") and 
-		androguard.functionality.dynamic_broadcast.class(/Lcom\/alipay\/sdk\/app\/PayTask\$6\$2\;/) and 
-		androguard.functionality.dynamic_broadcast.method(/onClick/) and 
-		androguard.functionality.imei.code(/invoke\-virtual\ v0\,\ Landroid\/telephony\/TelephonyManager\;\-\>getDeviceId\(\)Ljava\/lang\/String\;/) and 
-		androguard.functionality.imsi.class(/Lcom\/android\/dd\/data\/ChangeNetwork\;/) and 
-		androguard.functionality.imsi.code(/invoke\-virtual\ v0\,\ Landroid\/telephony\/TelephonyManager\;\-\>getSubscriberId\(\)Ljava\/lang\/String\;/) and 
-		androguard.functionality.imsi.method(/c/) and 
-		androguard.functionality.phone_number.method(/a/) and 
-		androguard.functionality.sms.code(/invoke\-virtual\/range\ v0\ \.\.\.\ v5\,\ Landroid\/telephony\/SmsManager\;\-\>sendTextMessage\(Ljava\/lang\/String\;\ Ljava\/lang\/String\;\ Ljava\/lang\/String\;\ Landroid\/app\/PendingIntent\;\ Landroid\/app\/PendingIntent\;\)V/) and 
-		androguard.functionality.ssl.method(/uploadCollectedData/) and 
-		androguard.number_of_services == 1 and 
-		androguard.permission("android.permission.RECEIVE_BOOT_COMPLETED") and 
-		androguard.permission("android.permission.RECORD_AUDIO") and 
-		androguard.permission("android.permission.VIBRATE") and 
-		androguard.permission("com.android.launcher.permission.INSTALL_SHORTCUT")
-}
+
 rule YaYaSMSFraud1_a: rule1 {
 	meta:
 		author = "YaYaGen -- Yet Another Yara Rule Generator (*) v0.4_winter17/18"
 		date = "20 Feb 2018"
 	condition:
-		androguard.functionality.phone_number.method(/cooeeGetPhoneNumber/) and 
 		androguard.permission("android.permission.GET_TASKS") and 
 		androguard.receiver("com.fanwei.sdk.push.FanweiReceiver") and 
 		androguard.receiver("com.yuelan.dreampay.service.StartReceiver") and 
@@ -1446,38 +1199,7 @@ rule taskhijack3_a: official
 	condition:
 		$file and ($a or $b)
 }
-rule YaYaRule_a: rule0 {
-	meta:
-		author = "YaYaGen -- Yet Another Yara Rule Generator (*) v0.4_winter17/18"
-		date = "09 Feb 2018"
-	condition:
-		androguard.certificate.sha1("A94017A56275BBAC8C31166CCE314A49C029E959") or 
-		(androguard.filter("android.intent.action.BOOT_COMPLETED") and 
-		androguard.functionality.dynamic_broadcast.class(/Landroid\/support\/v7\/app\/AppCompatDelegateImplV14\$AutoNightModeManager\;/) and 
-		androguard.functionality.dynamic_broadcast.code(/invoke\-virtual\ v0\,\ v1\,\ Landroid\/content\/Context\;\-\>unregisterReceiver\(Landroid\/content\/BroadcastReceiver\;\)V/) and 
-		androguard.functionality.dynamic_broadcast.code(/invoke\-virtual\ v0\,\ v1\,\ v2\,\ Landroid\/content\/Context\;\-\>registerReceiver\(Landroid\/content\/BroadcastReceiver\;\ Landroid\/content\/IntentFilter\;\)Landroid\/content\/Intent\;/) and 
-		androguard.functionality.dynamic_broadcast.method(/cleanup/) and 
-		androguard.functionality.dynamic_broadcast.method(/setup/) and 
-		androguard.functionality.imei.class(/Landroid\/support\/v7\/app\/AppCompatDelegateImplV9\;/) and 
-		androguard.functionality.imei.class(/Landroid\/support\/v7\/app\/ToolbarActionBar\;/) and 
-		androguard.functionality.imei.class(/Landroid\/support\/v7\/app\/WindowDecorActionBar\;/) and 
-		androguard.functionality.imei.code(/invoke\-virtual\ v11\,\ Landroid\/view\/KeyEvent\;\-\>getDeviceId\(\)I/) and 
-		androguard.functionality.imei.code(/invoke\-virtual\ v7\,\ Landroid\/view\/KeyEvent\;\-\>getDeviceId\(\)I/) and 
-		androguard.functionality.imei.method(/onKeyShortcut/) and 
-		androguard.functionality.imei.method(/preparePanel/) and 
-		androguard.functionality.socket.class(/Landroid\/support\/v4\/app\/NotificationManagerCompat\$SideChannelManager\;/) and 
-		androguard.functionality.socket.class(/Landroid\/support\/v4\/media\/MediaBrowserCompat\$ServiceBinderWrapper\;/) and 
-		androguard.functionality.socket.class(/Landroid\/support\/v4\/os\/ResultReceiver\;/) and 
-		androguard.functionality.socket.code(/invoke\-interface\ v0\,\ v3\,\ v4\,\ Landroid\/support\/v4\/os\/IResultReceiver\;\-\>send\(I\ Landroid\/os\/Bundle\;\)V/) and 
-		androguard.functionality.socket.code(/invoke\-interface\ v1\,\ v2\,\ Landroid\/support\/v4\/app\/NotificationManagerCompat\$Task\;\-\>send\(Landroid\/support\/v4\/app\/INotificationSideChannel\;\)V/) and 
-		androguard.functionality.socket.code(/invoke\-virtual\ v1\,\ v0\,\ Landroid\/os\/Messenger\;\-\>send\(Landroid\/os\/Message\;\)V/) and 
-		androguard.functionality.socket.method(/processListenerQueue/) and 
-		androguard.functionality.socket.method(/send/) and 
-		androguard.functionality.socket.method(/sendRequest/)) or
-		(androguard.url("http://lp.androidapk.world/?appid=") or 
-		cuckoo.network.dns_lookup(/lp\.androidapk\.world/)  or 
-		cuckoo.network.http_request(/lp\.androidapk\.world/))
-}
+
 rule possible_miner_test_a
 {
 	meta:
@@ -1871,7 +1593,6 @@ rule Size_and_Permissions_a: smsfraud
 		file.size <= 5MB //and file.size >= 1MB (?)
 		and androguard.number_of_permissions >= 90
 		and androguard.permission(/(SEND|WRITE)_SMS/)
-		and androguard.functionality.run_binary.code(/invoke-static v0, Ljava\/lang\/System;->loadLibrary(Ljava\/lang\/String;)V/)
 }
 rule Size_and_Permissions_b: smsfraud
 {
@@ -1885,7 +1606,6 @@ rule Size_and_Permissions_b: smsfraud
 		file.size <= 5MB //and file.size >= 1MB (?)
 		and androguard.number_of_permissions >= 90
 		and androguard.permission(/(SEND|WRITE)_SMS/)
-		and androguard.functionality.run_binary.code(/invoke-static v0, Ljava\/lang\/System;->loadLibrary(Ljava\/lang\/String;)V/)
 }
 rule SmsFraudUsingURLsAndDNS_a: smsfraud
 {
@@ -2510,9 +2230,7 @@ rule YaYa_a: rule0 {
 	condition:
 		androguard.filter("android.provider.Telephony.SMS_RECEIVED") and 
 		androguard.filter("com.android.vending.INSTALL_REFERRER") and 
-		androguard.filter("com.htc.intent.action.QUICKBOOT_POWERON") and 
-		androguard.functionality.crypto.method(/getErrorMessage/) and 
-		androguard.functionality.imei.method(/onTokenRefresh/) and 
+		androguard.filter("com.htc.intent.action.QUICKBOOT_POWERON") and
 		androguard.permission("android.permission.INTERNET") and 
 		androguard.permission("android.permission.READ_EXTERNAL_STORAGE") and 
 		androguard.permission("android.permission.SEND_SMS")
@@ -2547,53 +2265,7 @@ rule YaYa_b: rule0 {
 		androguard.filter("android.provider.Telephony.WAP_PUSH_DELIVER") and 
 		androguard.filter("com.android.vending.INSTALL_REFERRER") and 
 		androguard.filter("com.google.android.c2dm.intent.RECEIVE") and 
-		androguard.filter("com.htc.intent.action.QUICKBOOT_POWERON") and 
-		androguard.functionality.crypto.class(/Lcom\/google\/android\/gms\/common\/util\/AndroidUtilsLight\;/) and 
-		androguard.functionality.crypto.class(/Lcom\/google\/android\/gms\/common\/zzi\;/) and 
-		androguard.functionality.crypto.class(/Lcom\/google\/firebase\/iid\/zzae\;/) and 
-		androguard.functionality.crypto.code(/invoke\-virtual\ v1\,\ v0\,\ Ljava\/security\/MessageDigest\;\-\>digest\(\[B\)\[B/) and 
-		androguard.functionality.crypto.code(/invoke\-virtual\ v3\,\ v2\,\ Ljava\/security\/MessageDigest\;\-\>digest\(\[B\)\[B/) and 
-		androguard.functionality.crypto.method(/getErrorMessage/) and 
-		androguard.functionality.crypto.method(/getPackageCertificateHashBytes/) and 
-		androguard.functionality.crypto.method(/zza/) and 
-		androguard.functionality.dynamic_broadcast.class(/Lcom\/google\/android\/gms\/common\/api\/internal\/GooglePlayServicesUpdatedReceiver\;/) and 
-		androguard.functionality.dynamic_broadcast.class(/Lcom\/google\/android\/gms\/common\/util\/DeviceStateUtils\;/) and 
-		androguard.functionality.dynamic_broadcast.code(/invoke\-virtual\ v0\,\ v1\,\ Landroid\/content\/Context\;\-\>unregisterReceiver\(Landroid\/content\/BroadcastReceiver\;\)V/) and 
-		androguard.functionality.dynamic_broadcast.code(/invoke\-virtual\ v0\,\ v1\,\ v5\,\ Landroid\/content\/Context\;\-\>registerReceiver\(Landroid\/content\/BroadcastReceiver\;\ Landroid\/content\/IntentFilter\;\)Landroid\/content\/Intent\;/) and 
-		androguard.functionality.dynamic_broadcast.code(/invoke\-virtual\ v0\,\ v2\,\ v3\,\ Landroid\/content\/Context\;\-\>registerReceiver\(Landroid\/content\/BroadcastReceiver\;\ Landroid\/content\/IntentFilter\;\)Landroid\/content\/Intent\;/) and 
-		androguard.functionality.dynamic_broadcast.method(/getDeviceState/) and 
-		androguard.functionality.dynamic_broadcast.method(/getPowerPercentage/) and 
-		androguard.functionality.dynamic_broadcast.method(/unregister/) and 
-		androguard.functionality.imei.class(/Lgjfid\/pziovmiq\/eefff\/MyFirebaseInstanceIDService\;/) and 
-		androguard.functionality.imei.code(/invoke\-virtual\ v0\,\ Landroid\/telephony\/TelephonyManager\;\-\>getDeviceId\(\)Ljava\/lang\/String\;/) and 
-		androguard.functionality.imei.method(/onTokenRefresh/) and 
-		androguard.functionality.installed_app.class(/Lgjfid\/pziovmiq\/eefff\/MyFirebaseInstanceIDService\;/) and 
-		androguard.functionality.installed_app.code(/invoke\-virtual\ v0\,\ v2\,\ Landroid\/content\/pm\/PackageManager\;\-\>getInstalledApplications\(I\)Ljava\/util\/List\;/) and 
-		androguard.functionality.installed_app.method(/ALLATORIxDEMO/) and 
-		androguard.functionality.run_binary.class(/Lgjfid\/pziovmiq\/eefff\/Scrynlock\;/) and 
-		androguard.functionality.run_binary.code(/invoke\-static\ Ljava\/lang\/Runtime\;\-\>getRuntime\(\)Ljava\/lang\/Runtime\;/) and 
-		androguard.functionality.run_binary.method(/onCreate/) and 
-		androguard.functionality.sms.class(/Lgjfid\/pziovmiq\/eefff\/MyFirebaseMessagingService\;/) and 
-		androguard.functionality.sms.class(/Lgjfid\/pziovmiq\/eefff\/SmsReceiver\;/) and 
-		androguard.functionality.sms.class(/Lgjfid\/pziovmiq\/eefff\/StartBoot\;/) and 
-		androguard.functionality.sms.code(/invoke\-virtual\/range\ v0\ \.\.\.\ v5\,\ Landroid\/telephony\/SmsManager\;\-\>sendTextMessage\(Ljava\/lang\/String\;\ Ljava\/lang\/String\;\ Ljava\/lang\/String\;\ Landroid\/app\/PendingIntent\;\ Landroid\/app\/PendingIntent\;\)V/) and 
-		androguard.functionality.sms.method(/ALLATORIxDEMO/) and 
-		androguard.functionality.socket.class(/Landroid\/support\/v4\/app\/NotificationManagerCompat\$SideChannelManager\;/) and 
-		androguard.functionality.socket.class(/Landroid\/support\/v4\/media\/MediaBrowserCompat\$ServiceBinderWrapper\;/) and 
-		androguard.functionality.socket.class(/Landroid\/support\/v4\/os\/ResultReceiver\;/) and 
-		androguard.functionality.socket.code(/invoke\-interface\ v0\,\ v3\,\ v4\,\ Landroid\/support\/v4\/os\/IResultReceiver\;\-\>send\(I\ Landroid\/os\/Bundle\;\)V/) and 
-		androguard.functionality.socket.code(/invoke\-interface\ v1\,\ v2\,\ Landroid\/support\/v4\/app\/NotificationManagerCompat\$Task\;\-\>send\(Landroid\/support\/v4\/app\/INotificationSideChannel\;\)V/) and 
-		androguard.functionality.socket.code(/invoke\-virtual\ v1\,\ v0\,\ Landroid\/os\/Messenger\;\-\>send\(Landroid\/os\/Message\;\)V/) and 
-		androguard.functionality.socket.method(/processListenerQueue/) and 
-		androguard.functionality.socket.method(/send/) and 
-		androguard.functionality.socket.method(/sendRequest/) and 
-		androguard.functionality.ssl.class(/Landroid\/support\/v4\/text\/util\/LinkifyCompat\;/) and 
-		androguard.functionality.ssl.class(/Landroid\/support\/v4\/util\/PatternsCompat\;/) and 
-		androguard.functionality.ssl.code(/const\-string\ v1\,\ \"\(\(\(\?\:\(\?i\:http\|https\|rtsp\)\:\/\/\(\?\:\(\?\:\[a\-zA\-Z0\-9\\\\\$\\\\\-\\\\_\\\\\.\\\\\+\\\\\!\\\\\*\\\\\'\\\\\(\\\\\)\\\\\,\\\\\;\\\\\?\\\\\&\\\\\=\]\|\(\?\:\\\\\%\[a\-fA\-F0\-9\]\{2\}\)\)\{1\,64\}\(\?\:\\\\\:\(\?\:\[a\-zA\-Z0\-9\\\\\$\\\\\-\\\\_\\\\\.\\\\\+\\\\\!\\\\\*\\\\\'\\\\\(\\\\\)\\\\\,\\\\\;\\\\\?\\\\\&\\\\\=\]\|\(\?\:\\\\\%\[a\-fA\-F0\-9\]\{2\}\)\)\{1\,25\}\)\?\\\\\@\)\?\)\?\(\?\:\"/) and 
-		androguard.functionality.ssl.code(/const\-string\ v1\,\ \"\(\(\?\:\\\\b\|\$\|\^\)\(\?\:\(\?\:\(\?i\:http\|https\|rtsp\)\:\/\/\(\?\:\(\?\:\[a\-zA\-Z0\-9\\\\\$\\\\\-\\\\_\\\\\.\\\\\+\\\\\!\\\\\*\\\\\'\\\\\(\\\\\)\\\\\,\\\\\;\\\\\?\\\\\&\\\\\=\]\|\(\?\:\\\\\%\[a\-fA\-F0\-9\]\{2\}\)\)\{1\,64\}\(\?\:\\\\\:\(\?\:\[a\-zA\-Z0\-9\\\\\$\\\\\-\\\\_\\\\\.\\\\\+\\\\\!\\\\\*\\\\\'\\\\\(\\\\\)\\\\\,\\\\\;\\\\\?\\\\\&\\\\\=\]\|\(\?\:\\\\\%\[a\-fA\-F0\-9\]\{2\}\)\)\{1\,25\}\)\?\\\\\@\)\?\)\(\?\:\"/) and 
-		androguard.functionality.ssl.code(/const\-string\ v1\,\ \'https\:\/\/\'/) and 
-		androguard.functionality.ssl.method(/\<clinit\>/) and 
-		androguard.functionality.ssl.method(/addLinks/) and 
+		androguard.filter("com.htc.intent.action.QUICKBOOT_POWERON") and
 		androguard.number_of_filters == 15 and 
 		androguard.number_of_permissions == 24 and 
 		androguard.number_of_providers == 1 and 
@@ -3530,28 +3202,7 @@ rule ollvm_a: obfuscator
     not ollvm_v6_0 and
     not ollvm_v6_0_strenc
 }
-rule YaYaRuleEXOBOTDropped_a: rule0 {
-	meta:
-		author = "YaYaGen -- Yet Another Yara Rule Generator (*) v0.4_winter17/18"
-		date = "19 Jan 2018"
-		description = "Dropped apps: https://clientsidedetection.com/exobot_android_malware_spreading_via_google_play_store.html"
-	condition:
-		androguard.filter("android.provider.Telephony.SMS_RECEIVED") and 
-		androguard.functionality.crypto.code(/invoke\-virtual\ v0\,\ Ljava\/security\/MessageDigest\;\-\>digest\(\)\[B/) and 
-		androguard.functionality.crypto.code(/invoke\-virtual\ v6\,\ Ljava\/security\/MessageDigest\;\-\>digest\(\)\[B/) and 
-		androguard.functionality.crypto.method(/a/) and 
-		androguard.functionality.crypto.method(/b/) and 
-		androguard.functionality.dynamic_broadcast.method(/onBind/) and 
-		androguard.functionality.imei.class(/Landroid\/support\/v7\/a\/j\;/) and 
-		androguard.functionality.imei.code(/invoke\-virtual\ v0\,\ Landroid\/telephony\/TelephonyManager\;\-\>getDeviceId\(\)Ljava\/lang\/String\;/) and 
-		androguard.functionality.imei.code(/invoke\-virtual\ v10\,\ Landroid\/view\/KeyEvent\;\-\>getDeviceId\(\)I/) and 
-		androguard.functionality.imei.method(/a/) and 
-		androguard.functionality.imei.method(/b/) and
-		androguard.permission("android.permission.ACCESS_FINE_LOCATION") and 
-		androguard.permission("android.permission.ACCESS_NETWORK_STATE") and 
-		androguard.permission("android.permission.ACCESS_WIFI_STATE") and 
-		androguard.permission("android.permission.READ_CONTACTS")
-}
+
 rule YaYaRuleEXOBOT_a: rule0 {
 	meta:
 		author = "YaYaGen -- Yet Another Yara Rule Generator (*) v0.4_winter17/18"
@@ -3563,12 +3214,7 @@ rule YaYaRuleEXOBOT_a: rule0 {
 		androguard.filter("android.app.action.DEVICE_ADMIN_ENABLED") and 
 		androguard.filter("android.intent.action.BOOT_COMPLETED") and 
 		androguard.filter("android.intent.action.PACKAGE_ADDED") and 
-		androguard.filter("android.intent.action.USER_PRESENT") and 
-		androguard.functionality.imei.code(/invoke\-virtual\ v0\,\ Landroid\/telephony\/TelephonyManager\;\-\>getDeviceId\(\)Ljava\/lang\/String\;/) and 
-		androguard.functionality.run_binary.code(/invoke\-static\ Ljava\/lang\/Runtime\;\-\>getRuntime\(\)Ljava\/lang\/Runtime\;/) and 
-		androguard.functionality.run_binary.code(/invoke\-virtual\ v1\,\ v2\,\ Ljava\/lang\/Runtime\;\-\>exec\(Ljava\/lang\/String\;\)Ljava\/lang\/Process\;/) and 
-		androguard.functionality.run_binary.method(/a/) and 
-		androguard.functionality.ssl.method(/\<clinit\>/) and 
+		androguard.filter("android.intent.action.USER_PRESENT") and
 		androguard.number_of_filters == 7 and 
 		androguard.number_of_receivers == 2 and 
 		androguard.number_of_services == 2 and 
@@ -3618,16 +3264,7 @@ rule koodous_: official
 		androguard.permission(/android.permission.INTERNET/) and
 		$coinhive 
 }
-rule YaYaBankerHQFuncionalitySSL_a: rule0 {
-	meta:
-		author = "YaYaGen --/ Yet Another Yara Rule Generator (*) v0.4_winter17/18"
-		date = "03 Jan 2018"
-		url = "https://koodous.com/apks?search=204f2e5e18691156036cbcfc69fa759272a2180fba77a74415ccb2c7469a670b%20OR%2086aaed9017e3af5d1d9c8460f2d8164f14e14db01b1a278b4b93859d3cf982f5"
-	condition:
-		androguard.functionality.ssl.code(/const\-string\ v1\,\ \"\(\(\(\?\:\(\?i\:http\|https\|rtsp\)\:\/\/\(\?\:\(\?\:\[a\-zA\-Z0\-9\\\\\$\\\\\-\\\\_\\\\\.\\\\\+\\\\\!\\\\\*\\\\\'\\\\\(\\\\\)\\\\\,\\\\\;\\\\\?\\\\\&\\\\\=\]\|\(\?\:\\\\\%\[a\-fA\-F0\-9\]\{2\}\)\)\{1\,64\}\(\?\:\\\\\:\(\?\:\[a\-zA\-Z0\-9\\\\\$\\\\\-\\\\_\\\\\.\\\\\+\\\\\!\\\\\*\\\\\'\\\\\(\\\\\)\\\\\,\\\\\;\\\\\?\\\\\&\\\\\=\]\|\(\?\:\\\\\%\[a\-fA\-F0\-9\]\{2\}\)\)\{1\,25\}\)\?\\\\\@\)\?\)\?\(\?\:\"/) and 
-		androguard.functionality.ssl.code(/const\-string\ v1\,\ \"\(\(\?\:\\\\b\|\$\|\^\)\(\?\:\(\?\:\(\?i\:http\|https\|rtsp\)\:\/\/\(\?\:\(\?\:\[a\-zA\-Z0\-9\\\\\$\\\\\-\\\\_\\\\\.\\\\\+\\\\\!\\\\\*\\\\\'\\\\\(\\\\\)\\\\\,\\\\\;\\\\\?\\\\\&\\\\\=\]\|\(\?\:\\\\\%\[a\-fA\-F0\-9\]\{2\}\)\)\{1\,64\}\(\?\:\\\\\:\(\?\:\[a\-zA\-Z0\-9\\\\\$\\\\\-\\\\_\\\\\.\\\\\+\\\\\!\\\\\*\\\\\'\\\\\(\\\\\)\\\\\,\\\\\;\\\\\?\\\\\&\\\\\=\]\|\(\?\:\\\\\%\[a\-fA\-F0\-9\]\{2\}\)\)\{1\,25\}\)\?\\\\\@\)\?\)\(\?\:\"/) and 
-		androguard.functionality.ssl.code(/const\-string\ v1\,\ \'https\:\/\/\'/)
-}
+
 rule ANDROIDOS_JSMINER_a
 {
 	meta:
@@ -3646,8 +3283,6 @@ rule YaYaBanker2_a: rule0 {
 		date = "05 Jan 2018"
 		url = "https://koodous.com/apks?search=e96b38e2f76e38e5a02f41eec626330799e6b20a3ddfdaa2da62c0672fc8cbf5%20OR%20%200c5a24d64e0b6a7ad2d5b7fe928b939b6635f1129dc2239057bd381a94ce9aed%20OR%20%204680ec774eabfa22fff77eed8ee47da5ffc4b3563b29c313b51453cf161e7cc2%20OR%20%209f9412fe618c239227184189d71eab3e998db22b625a3324832734bb05b4aa0b%20OR%20%207c28b64d3e6a529cf3b3cfb308c4cba9e624271c2215575cbd0b66551fc0d9fe%20OR%20%200f6530b8120399437b256f7f5004dffc5763f2397382318ad313e16943641224%20OR%20%200852925981807512a1367fb7423956b2b2dbe617a42952de4e1af08a611f21d7%20OR%20%2012fd9f2a9150414618770353c0661d422091bdcddaae814f26401fa826da9423%20OR%20%20e44e54ddf46457eafc368c17e353e8aeb119f20f8c38060daed1d954670e1c87%20OR%20%2072c733e3fdf7ee9f74e4473f7e872a2aa6b425d249ad186c98615f9b3766f197"
 	condition:
-		androguard.functionality.dynamic_broadcast.code(/invoke\-virtual\ v0\,\ v1\,\ Landroid\/content\/Context\;\-\>unregisterReceiver\(Landroid\/content\/BroadcastReceiver\;\)V/) and 
-		androguard.functionality.dynamic_broadcast.code(/invoke\-virtual\ v0\,\ v1\,\ v2\,\ Landroid\/content\/Context\;\-\>registerReceiver\(Landroid\/content\/BroadcastReceiver\;\ Landroid\/content\/IntentFilter\;\)Landroid\/content\/Intent\;/) and 
 		androguard.permission("android.permission.ACCESS_NETWORK_STATE") and 
 		androguard.permission("android.permission.INTERNET") and 
 		androguard.permission("android.permission.READ_EXTERNAL_STORAGE") and 
@@ -3686,12 +3321,7 @@ rule YaYaMarcher_a: ruleDef {
 		(androguard.filter("android.app.action.DEVICE_ADMIN_ENABLED") and 
 		androguard.filter("android.intent.action.BOOT_COMPLETED") and 
 		androguard.filter("android.intent.action.QUICKBOOT_POWERON") and 
-		androguard.filter("android.provider.Telephony.SMS_RECEIVED") and 
-		androguard.functionality.imei.code(/invoke\-virtual\ v0\,\ Landroid\/telephony\/TelephonyManager\;\-\>getDeviceId\(\)Ljava\/lang\/String\;/) and 
-		androguard.functionality.imei.code(/invoke\-virtual\ v1\,\ Landroid\/telephony\/TelephonyManager\;\-\>getDeviceId\(\)Ljava\/lang\/String\;/) and 
-		androguard.functionality.imei.code(/invoke\-virtual\ v10\,\ Landroid\/view\/KeyEvent\;\-\>getDeviceId\(\)I/) and 
-		androguard.functionality.installed_app.code(/invoke\-virtual\ v0\,\ v1\,\ Landroid\/content\/pm\/PackageManager\;\-\>getInstalledApplications\(I\)Ljava\/util\/List\;/) and 
-		androguard.functionality.phone_number.code(/invoke\-virtual\ v1\,\ Landroid\/telephony\/TelephonyManager\;\-\>getLine1Number\(\)Ljava\/lang\/String\;/) and 
+		androguard.filter("android.provider.Telephony.SMS_RECEIVED") and
 		androguard.permission("android.permission.ACCESS_NETWORK_STATE") and 
 		androguard.permission("android.permission.GET_TASKS") and 
 		androguard.permission("android.permission.SEND_SMS") and 
@@ -6978,31 +6608,7 @@ rule kemoge_a
 	condition:
 		all of them
 }
-rule YaYaRedAlert_a: rule0 {
-	meta:
-		author = "YaYaGen -- Yet Another Yara Rule Generator (*) v0.4_winter17/18"
-		date = "04 Jan 2018"
-		url = "https://koodous.com/apks?search=a7c9cfa4ad14b0b9f907db0a1bef626327e1348515a4ae61a20387d6ec8fea78%20OR%20%20bb0c8992c9eb052934c7f341a6b7992f8bb01c078865c4e562fd9b84637c1e1b%20OR%20%2079424db82573e1d7e60f94489c5ca1992f8d65422dbb8805d65f418d20bbd03a%20OR%20%204d74b31907745ba0715d356e7854389830e519f5051878485c4be8779bb55736%20OR%20%202dc19f81352e84a45bd7f916afa3353d7f710338494d44802f271e1f3d972aed%20OR%20%20307f1b6eae57b6475b4436568774f0b23aa370a1a48f3b991af9c9b336733630%20OR%20%20359341b5b4306ef36343b2ed5625bbbb8c051f2957d268b57be9c84424affd29%20OR%20%209eaa3bb33c36626cd13fc94f9de88b0f390ac5219cc04a08ee5961d59bf4946b%20OR%20%20dc11d9eb2b09c2bf74136b313e752075afb05c2f82d1f5fdd2379e46089eb776%20OR%20%2058391ca1e3001311efe9fba1c05c15a2b1a7e5026e0f7b642a929a8fed25b187%20OR%20%2036cbe3344f027c2960f7ac0d661ddbefff631af2da90b5122a65c407d0182b69%20OR%20%20a5db9e4deadb2f7e075ba8a3beb6d927502b76237afaf0e2c28d00bb01570fae%20OR%20%200d0490d2844726314b7569827013d0555af242dd32b7e36ff5e28da3982a4f88%20OR%20%203e47f075b9d0b2eb840b8bbd49017ffb743f9973c274ec04b4db209af73300d6%20OR%20%2005ea7239e4df91e7ffd57fba8cc81751836d03fa7c2c4aa1913739f023b046f0%20OR%20%209446a9a13848906ca3040e399fd84bfebf21c40825f7d52a63c7ccccec4659b7%20OR%20%203a5ddb598e20ca7dfa79a9682751322a869695c500bdfb0c91c8e2ffb02cd6da%20OR%20%20b83bd8c755cb7546ef28bac157e51f04257686a045bbf9d64bec7eeb9116fd8a"
-	condition:
-		androguard.filter("android.app.action.DEVICE_ADMIN_ENABLED") and 
-		androguard.filter("android.intent.action.BOOT_COMPLETED") and 
-		androguard.filter("android.intent.action.QUICKBOOT_POWERON") and 
-		androguard.filter("android.intent.action.SEND") and 
-		androguard.filter("android.intent.action.SENDTO") and 
-		androguard.filter("android.provider.Telephony.SMS_DELIVER") and 
-		androguard.filter("android.provider.Telephony.SMS_RECEIVED") and 
-		androguard.functionality.crypto.code(/invoke\-virtual\ v0\,\ Ljava\/security\/MessageDigest\;\-\>digest\(\)\[B/) and 
-		androguard.functionality.iccid.code(/invoke\-virtual\ v0\,\ Landroid\/telephony\/TelephonyManager\;\-\>getSimSerialNumber\(\)Ljava\/lang\/String\;/) and 
-		androguard.functionality.imei.code(/invoke\-virtual\ v0\,\ Landroid\/telephony\/TelephonyManager\;\-\>getDeviceId\(\)Ljava\/lang\/String\;/) and 
-		androguard.functionality.imsi.code(/invoke\-virtual\ v0\,\ Landroid\/telephony\/TelephonyManager\;\-\>getSubscriberId\(\)Ljava\/lang\/String\;/) and 
-		androguard.functionality.installed_app.code(/invoke\-virtual\ v0\,\ v2\,\ Landroid\/content\/pm\/PackageManager\;\-\>getInstalledApplications\(I\)Ljava\/util\/List\;/) and 
-		androguard.functionality.phone_number.code(/invoke\-virtual\ v0\,\ Landroid\/telephony\/TelephonyManager\;\-\>getLine1Number\(\)Ljava\/lang\/String\;/) and 
-		androguard.functionality.run_binary.code(/invoke\-static\ Ljava\/lang\/Runtime\;\-\>getRuntime\(\)Ljava\/lang\/Runtime\;/) and 
-		androguard.functionality.run_binary.code(/invoke\-virtual\ v0\,\ v1\,\ Ljava\/lang\/Runtime\;\-\>exec\(Ljava\/lang\/String\;\)Ljava\/lang\/Process\;/) and 
-		androguard.functionality.sms.code(/invoke\-virtual\/range\ v0\ \.\.\.\ v5\,\ Landroid\/telephony\/SmsManager\;\-\>sendTextMessage\(Ljava\/lang\/String\;\ Ljava\/lang\/String\;\ Ljava\/lang\/String\;\ Landroid\/app\/PendingIntent\;\ Landroid\/app\/PendingIntent\;\)V/) and 
-		androguard.functionality.sms.method(/onHandleIntent/) and 
-		androguard.functionality.socket.code(/invoke\-virtual\ v0\,\ Ljava\/net\/URL\;\-\>openConnection\(\)Ljava\/net\/URLConnection\;/)
-}
+
 rule smsriskware_a
 {
 	meta:
@@ -7133,10 +6739,7 @@ rule YaYaSexDrugVokrug_a: rule0 {
 		date = "03 Jan 2018"
 		url = "https://koodous.com/apks?search=f879be33af6de2529a0eda45d9d8130ce3eb7619ab3f2bade3ce5d09cbf4b4e5%20OR%203281da03967737a42c10d41f65bf39b47c229c11212b77d4920d6664722f4c53%20OR%207ec5240358586a00f3cc45144737439792994e35718bf8c109e8488da345953c"
 	condition:
-		androguard.filter("android.intent.action.QUICKBOOT_POWERON") and 
-		androguard.functionality.imei.code(/invoke\-virtual\ v0\,\ Landroid\/telephony\/TelephonyManager\;\-\>getDeviceId\(\)Ljava\/lang\/String\;/) and 
-		androguard.functionality.installed_app.code(/invoke\-virtual\ v0\,\ v1\,\ Landroid\/content\/pm\/PackageManager\;\-\>getInstalledApplications\(I\)Ljava\/util\/List\;/) and 
-		androguard.functionality.installed_app.method(/a/) and 
+		androguard.filter("android.intent.action.QUICKBOOT_POWERON") and
 		androguard.permission("android.permission.GET_TASKS") and 
 		androguard.permission("android.permission.INTERNET") and 
 		androguard.permission("android.permission.READ_EXTERNAL_STORAGE") and 
@@ -17449,7 +17052,7 @@ rule Android_AliPay_smsStealer_a
 rule android_overlayer_a
 {
 	meta:
-		description = "This rule detects the banker trojan with overlaying functionality"
+		description = "This rule detects the banker trojan "
 		source =  "https://www.zscaler.com/blogs/research/android-banker-malware-goes-social"
 		author = "https://twitter.com/5h1vang"
 	strings:
@@ -20513,62 +20116,6 @@ rule allatoristrong_a: obfuscator
   condition:
     $s and not $n
 }
-rule YaYaskygofree_a: rule0 {
-	meta:
-		author = "YaYaGen -- Yet Another Yara Rule Generator (*) v0.4_winter17/18"
-	condition:
-		androguard.filter("android.intent.action.BOOT_COMPLETED") and 
-		androguard.functionality.dynamic_broadcast.class(/Landroid\/support\/v4\/media\/TransportMediatorJellybeanMR2\;/) and 
-		androguard.functionality.dynamic_broadcast.code(/invoke\-virtual\ v0\,\ v1\,\ Landroid\/content\/Context\;\-\>unregisterReceiver\(Landroid\/content\/BroadcastReceiver\;\)V/) and 
-		androguard.functionality.dynamic_broadcast.code(/invoke\-virtual\ v0\,\ v1\,\ v2\,\ Landroid\/content\/Context\;\-\>registerReceiver\(Landroid\/content\/BroadcastReceiver\;\ Landroid\/content\/IntentFilter\;\)Landroid\/content\/Intent\;/) and 
-		androguard.functionality.dynamic_broadcast.method(/windowAttached/) and 
-		androguard.functionality.dynamic_broadcast.method(/windowDetached/) and 
-		androguard.functionality.run_binary.code(/invoke\-static\ Ljava\/lang\/Runtime\;\-\>getRuntime\(\)Ljava\/lang\/Runtime\;/) and 
-		androguard.functionality.socket.class(/Landroid\/support\/v4\/app\/NotificationManagerCompat\$SideChannelManager\;/) and 
-		androguard.functionality.socket.code(/invoke\-interface\ v1\,\ v2\,\ Landroid\/support\/v4\/app\/NotificationManagerCompat\$Task\;\-\>send\(Landroid\/support\/v4\/app\/INotificationSideChannel\;\)V/) and 
-		androguard.functionality.socket.method(/processListenerQueue/) and 
-		androguard.permission("android.permission.ACCESS_NETWORK_STATE") and 
-		androguard.permission("android.permission.ACCESS_WIFI_STATE") and 
-		androguard.permission("android.permission.INTERNET") and 
-		androguard.permission("android.permission.READ_PHONE_STATE") and 
-		androguard.permission("android.permission.RECEIVE_BOOT_COMPLETED") and 
-		androguard.permission("android.permission.WAKE_LOCK") and 
-		androguard.permission("android.permission.WRITE_EXTERNAL_STORAGE")
-}
-rule ruleNumber1_a{
-    meta:
-        author = "Captain Picard"
-        date = "12 Dec 2517"
-        original = "NGS-784"
-    condition:
-        androguard.permission("android.permission.WRITE_EXTERNAL_STORAGE") and 
-        androguard.activity("com.software.application.ShowLink") and 
-        androguard.displayed_version("1.0") and 
-        androguard.filter("android.intent.action.DATA_SMS_RECEIVED") and 
-        androguard.filter("android.intent.action.BOOT_COMPLETED") and 
-        androguard.functionality.mcc.method(/onCreate/) and 
-        androguard.filter("com.software.CHECKER") and androguard.functionality.dynamic_broadcast.class(/Lcom\/software\/application\/Actor\;/) and 
-        androguard.functionality.dynamic_broadcast.code(/invoke\-virtual\ v0\,\ v1\,\ v2\,\ Landroid\/content\/Context\;\-\>registerReceiver\(Landroid\/content\/BroadcastReceiver\;\ Landroid\/content\/IntentFilter\;\)Landroid\/content\/Intent\;/) and 
-        androguard.functionality.dynamic_broadcast.method(/acquire/) and 
-        androguard.functionality.mcc.class(/Lcom\/software\/application\/Main\;/) and 
-        androguard.filter("android.intent.action.MAIN") and 
-        androguard.functionality.dynamic_broadcast.method(/onReceive/) and 
-        androguard.permission("android.permission.READ_SMS") and 
-        androguard.activity("com.software.application.Main") and 
-        androguard.permission("android.permission.INTERNET") and 
-        androguard.functionality.socket.class(/Lcom\/software\/application\/Actor\;/) and 
-        androguard.functionality.mcc.code(/invoke\-virtual\ v0\,\ Landroid\/telephony\/TelephonyManager\;\-\>getNetworkOperator\(\)Ljava\/lang\/String\;/) and 
-        androguard.functionality.socket.method(/report/) and 
-        androguard.main_activity("com.software.application.Main") and 
-        androguard.number_of_activities == 3 and 
-        androguard.package_name("com.software.application") and 
-        androguard.permission("android.permission.RECEIVE_SMS") and 
-        androguard.permission("android.permission.SEND_SMS") and 
-        androguard.receiver("com.software.application.Checker") and 
-        androguard.receiver("com.software.application.Notificator") and 
-        androguard.permission("android.permission.READ_PHONE_STATE") and 
-        androguard.receiver("com.software.application.SmsReceiver")
-}
 rule aamo_str_enc_a: obfuscator
 {
   meta:
@@ -22371,9 +21918,7 @@ rule AnubisV1_a: rule0 {
 		androguard.filter("android.provider.Telephony.SMS_DELIVER") and 
 		androguard.filter("android.provider.Telephony.SMS_RECEIVED") and 
 		androguard.filter("android.provider.Telephony.WAP_PUSH_DELIVER") and 
-		androguard.filter("com.htc.intent.action.QUICKBOOT_POWERON") and 
-		androguard.functionality.socket.code(/invoke\-static\ v1\,\ v2\,\ v3\,\ v4\,\ v5\,\ Landroid\/view\/Gravity\;\-\>accept\(I\ I\ I\ Landroid\/graphics\/Rect\;\ Landroid\/graphics\/Rect\;\)V/) and 
-		androguard.functionality.socket.code(/invoke\-static\/range\ v0\ \.\.\.\ v5\,\ Landroid\/view\/Gravity\;\-\>accept\(I\ I\ I\ Landroid\/graphics\/Rect\;\ Landroid\/graphics\/Rect\;\ I\)V/) and 
+		androguard.filter("com.htc.intent.action.QUICKBOOT_POWERON") and
 		androguard.number_of_filters == 17 and 
 		androguard.number_of_receivers == 4 and 
 		androguard.permission("android.permission.ACCESS_FINE_LOCATION") and 
@@ -24386,11 +23931,7 @@ rule YaYaSyringe_a {
 		androguard.filter("android.intent.action.USER_PRESENT") and 
 		androguard.filter("android.intent.action.core") and 
 		androguard.filter("android.intent.action.download") and 
-		androguard.filter("android.net.conn.CONNECTIVITY_CHANGE") and 
-		androguard.functionality.crypto.code(/invoke\-virtual\ v1\,\ Ljava\/security\/MessageDigest\;\-\>digest\(\)\[B/) and 
-		androguard.functionality.crypto.method(/a/) and 
-		androguard.functionality.socket.code(/invoke\-virtual\ v0\,\ Ljava\/net\/URL\;\-\>openConnection\(\)Ljava\/net\/URLConnection\;/) and 
-		androguard.functionality.socket.code(/invoke\-virtual\ v4\,\ Ljava\/net\/URL\;\-\>openConnection\(\)Ljava\/net\/URLConnection\;/) and 
+		androguard.filter("android.net.conn.CONNECTIVITY_CHANGE") and
 		androguard.number_of_services == 3 and 
 		androguard.permission("android.permission.ACCESS_NETWORK_STATE") and 
 		androguard.permission("android.permission.ACCESS_WIFI_STATE") and 
@@ -24418,22 +23959,7 @@ rule YaYaHummingBad2_a  {
 		androguard.filter("android.intent.action.PACKAGE_REPLACED") and 
 		androguard.filter("android.intent.action.PACKAGE_RESTARTED") and 
 		androguard.filter("android.intent.action.USER_PRESENT") and 
-		androguard.filter("android.net.conn.CONNECTIVITY_CHANGE") and 
-		androguard.functionality.dynamic_broadcast.class(/Lcom\/tencent\/bugly\/crashreport\/common\/strategy\/BuglyBroadcastRecevier\;/) and 
-		androguard.functionality.dynamic_broadcast.code(/invoke\-virtual\ v0\,\ v1\,\ Landroid\/content\/Context\;\-\>unregisterReceiver\(Landroid\/content\/BroadcastReceiver\;\)V/) and 
-		androguard.functionality.dynamic_broadcast.method(/finalize/) and 
-		androguard.functionality.imei.class(/Lcom\/tencent\/bugly\/proguard\/a\;/) and 
-		androguard.functionality.imei.code(/invoke\-virtual\ v0\,\ Landroid\/telephony\/TelephonyManager\;\-\>getDeviceId\(\)Ljava\/lang\/String\;/) and 
-		androguard.functionality.imei.method(/a/) and 
-		androguard.functionality.imsi.class(/Lcom\/tencent\/bugly\/proguard\/a\;/) and 
-		androguard.functionality.imsi.code(/invoke\-virtual\ v0\,\ Landroid\/telephony\/TelephonyManager\;\-\>getSubscriberId\(\)Ljava\/lang\/String\;/) and 
-		androguard.functionality.imsi.method(/b/) and 
-		androguard.functionality.run_binary.code(/invoke\-static\ Ljava\/lang\/Runtime\;\-\>getRuntime\(\)Ljava\/lang\/Runtime\;/) and 
-		androguard.functionality.socket.code(/invoke\-virtual\ v0\,\ Ljava\/net\/URL\;\-\>openConnection\(\)Ljava\/net\/URLConnection\;/) and 
-		androguard.functionality.socket.method(/run/) and 
-		androguard.functionality.ssl.class(/Lu\/aly\/cd\;/) and 
-		androguard.functionality.ssl.code(/const\-string\ v2\,\ \'https\:\/\/\'/) and 
-		androguard.functionality.ssl.method(/e/) and 
+		androguard.filter("android.net.conn.CONNECTIVITY_CHANGE") and
 		androguard.number_of_permissions == 18 and 
 		androguard.permission("android.permission.ACCESS_COARSE_LOCATION") and 
 		androguard.permission("android.permission.ACCESS_NETWORK_STATE") and 
@@ -24509,16 +24035,7 @@ rule YaYaSmsSender_a{
 		androguard.displayed_version("1.0") and 
 		androguard.filter("android.intent.action.BOOT_COMPLETED") and 
 		androguard.filter("android.intent.action.DATA_SMS_RECEIVED") and 
-		androguard.filter("android.intent.action.MAIN") and 
-		androguard.filter("com.software.CHECKER") and androguard.functionality.dynamic_broadcast.class(/Lcom\/software\/application\/Actor\;/) and 
-		androguard.functionality.dynamic_broadcast.code(/invoke\-virtual\ v0\,\ v1\,\ v2\,\ Landroid\/content\/Context\;\-\>registerReceiver\(Landroid\/content\/BroadcastReceiver\;\ Landroid\/content\/IntentFilter\;\)Landroid\/content\/Intent\;/) and 
-		androguard.functionality.dynamic_broadcast.method(/acquire/) and 
-		androguard.functionality.dynamic_broadcast.method(/onReceive/) and 
-		androguard.functionality.mcc.class(/Lcom\/software\/application\/Main\;/) and 
-		androguard.functionality.mcc.code(/invoke\-virtual\ v0\,\ Landroid\/telephony\/TelephonyManager\;\-\>getNetworkOperator\(\)Ljava\/lang\/String\;/) and 
-		androguard.functionality.mcc.method(/onCreate/) and 
-		androguard.functionality.socket.class(/Lcom\/software\/application\/Actor\;/) and 
-		androguard.functionality.socket.method(/report/) and 
+		androguard.filter("android.intent.action.MAIN") and
 		androguard.main_activity("com.software.application.Main") and 
 		androguard.number_of_activities == 3 and 
 		androguard.package_name("com.software.application") and 
