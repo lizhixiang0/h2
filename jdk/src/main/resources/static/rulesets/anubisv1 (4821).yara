@@ -23,8 +23,7 @@ rule AnubisV1: rule0 {
 		url = "https://koodous.com/apks?search=tag:anubis%20AND%20date:%3E2018-07-30"
 
 	condition:
-		androguard.displayed_version("1.0") and 
-
+		androguard.displayed_version("1.0") and
 		androguard.filter("android.intent.action.BOOT_COMPLETED") and 
 		androguard.filter("android.intent.action.DREAMING_STOPPED") and 
 		androguard.filter("android.intent.action.EXTERNAL_APPLICATIONS_AVAILABLE") and 
@@ -40,15 +39,11 @@ rule AnubisV1: rule0 {
 		androguard.filter("android.provider.Telephony.SMS_DELIVER") and 
 		androguard.filter("android.provider.Telephony.SMS_RECEIVED") and 
 		androguard.filter("android.provider.Telephony.WAP_PUSH_DELIVER") and 
-		androguard.filter("com.htc.intent.action.QUICKBOOT_POWERON") and 
-
+		androguard.filter("com.htc.intent.action.QUICKBOOT_POWERON") and
 		androguard.functionality.socket.code(/invoke\-static\ v1\,\ v2\,\ v3\,\ v4\,\ v5\,\ Landroid\/view\/Gravity\;\-\>accept\(I\ I\ I\ Landroid\/graphics\/Rect\;\ Landroid\/graphics\/Rect\;\)V/) and 
-		androguard.functionality.socket.code(/invoke\-static\/range\ v0\ \.\.\.\ v5\,\ Landroid\/view\/Gravity\;\-\>accept\(I\ I\ I\ Landroid\/graphics\/Rect\;\ Landroid\/graphics\/Rect\;\ I\)V/) and 
-
-		androguard.number_of_filters == 17 and 
-
-		androguard.number_of_receivers == 4 and 
-
+		androguard.functionality.socket.code(/invoke\-static\/range\ v0\ \.\.\.\ v5\,\ Landroid\/view\/Gravity\;\-\>accept\(I\ I\ I\ Landroid\/graphics\/Rect\;\ Landroid\/graphics\/Rect\;\ I\)V/) and
+		androguard.number_of_filters == 17 and
+		androguard.number_of_receivers == 4 and
 		androguard.permission("android.permission.ACCESS_FINE_LOCATION") and 
 		androguard.permission("android.permission.ACCESS_NETWORK_STATE") and 
 		androguard.permission("android.permission.CALL_PHONE") and 
