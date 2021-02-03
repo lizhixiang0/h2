@@ -62,17 +62,6 @@ public class CollectRules {
             if(i.trim().contains("{")){
                 count++;
             }
-            //过滤掉'*/'之前的内容
-            /*if(tag.equals(i.trim())){
-                isUseful.set(true);
-            }*/
-            //一旦出现droidbox则不许写入
-            /*if(i.contains(checkString)){
-                ischecked.set(false);
-            }*/
-            //过滤空行
-            //过滤备注
-            //过滤*/
             if(ischecked.get()&& !"".equals(i.trim())&&!tag.equals(i.trim())&&!i.trim().startsWith("//")){
                 if(i.trim().startsWith(prefix)){
                     loadSource.add(i);
@@ -117,7 +106,7 @@ public class CollectRules {
                 suffix = rulesName.get(ruleName);
                 StringBuilder string  = new StringBuilder();
                 string.append(src,0,content.indexOf(ruleName)+ruleName.length());
-                return suffix==null?content:string.append("_").append(suffix).append(content.substring(offset)).toString();
+                return suffix==null?content:string.append("_").append(getRandomString(suffix)).append(content.substring(offset)).toString();
             }else{
                 String ruleName = content.substring(4).replace("{","").trim();
                 boolean isHas = rulesName.containsKey(ruleName);
@@ -129,8 +118,16 @@ public class CollectRules {
                 }
                 suffix = rulesName.get(ruleName);
                 //拿出的值拼装后返回
-                return suffix==null?content:content.replace(ruleName,ruleName.concat("_").concat(String.valueOf(suffix)));
+                return suffix==null?content:content.replace(ruleName,ruleName.concat("_").concat(getRandomString(suffix)));
             }
+        }
+    }
+    // 122 20
+    public static String getRandomString(int length){
+        if(length<='z'){
+            return String.valueOf((char)length);
+        }else{
+            return getRandomString(length%'z'+'a')+'a' ;
         }
     }
 

@@ -49,7 +49,7 @@ public class GetRulesFromWeb {
         manifestList.forEach(i-> {
             try {
                 String rule  = i.getRules();
-                if(!rule.contains("file.md5") && !rule.contains("droidbox.")&&!rule.contains("functionality")){
+                if(!rule.contains("file.md5") && !rule.contains("droidbox.")&&!rule.contains("functionality")&&!rule.contains("file.size")){
                     write(i.getRules().concat("\r\n"));
                 }
             } catch (IOException e) {
