@@ -52,7 +52,7 @@ public class CollectRules {
     private static void  readThenWrite(String location) throws IOException {
         Path srcPath = Path.of(location);
         Path destPath = Path.of("D:\\JetBrains\\workspace\\h2\\jdk\\src\\main\\resources\\static\\android_rules.yar");
-        AtomicBoolean isUseful = new AtomicBoolean(false);
+        //AtomicBoolean isUseful = new AtomicBoolean(false);
         String tag = "*/";
         String prefix  = "import";
         String checkString = "droidbox";
@@ -63,17 +63,17 @@ public class CollectRules {
                 count++;
             }
             //过滤掉'*/'之前的内容
-            if(tag.equals(i.trim())){
+            /*if(tag.equals(i.trim())){
                 isUseful.set(true);
-            }
+            }*/
             //一旦出现droidbox则不许写入
-            if(i.contains(checkString)){
+            /*if(i.contains(checkString)){
                 ischecked.set(false);
-            }
+            }*/
             //过滤空行
             //过滤备注
             //过滤*/
-            if(isUseful.get() && ischecked.get()&& !"".equals(i.trim())&&!tag.equals(i.trim())&&!i.trim().startsWith("//")){
+            if(ischecked.get()&& !"".equals(i.trim())&&!tag.equals(i.trim())&&!i.trim().startsWith("//")){
                 if(i.trim().startsWith(prefix)){
                     loadSource.add(i);
                 }else {

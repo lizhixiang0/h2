@@ -48,7 +48,10 @@ public class GetRulesFromWeb {
         List<RuleInfo> manifestList =  JsonUtils.toJavaObjectList(jsonMap.get("results"), RuleInfo.class);
         manifestList.forEach(i-> {
             try {
-                write(i.getRules().concat("\r\n"));
+                String rule  = i.getRules();
+                if(!rule.contains("file.md5") && !rule.contains("droidbox.")){
+                    write(i.getRules().concat("\r\n"));
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -56,7 +59,7 @@ public class GetRulesFromWeb {
     }
 
     public static  void write(String rule) throws IOException {
-        Path destPath = Path.of("D:\\JetBrains\\workspace\\h2\\jdk\\src\\main\\resources\\static\\all_rules.yar");
+        Path destPath = Path.of("D:\\JetBrains\\workspace\\h2\\jdk\\src\\main\\resources\\static\\rulesets\\all_rules.yar");
         Files.writeString(destPath,rule, StandardOpenOption.CREATE,StandardOpenOption.APPEND);
     }
 }
