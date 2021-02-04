@@ -29,8 +29,8 @@ import org.apache.ibatis.reflection.wrapper.ObjectWrapper;
 import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
 
 /**
- *  元对象
- *  MetaObject是Mybatis提供的一个用于方便、优雅访问对象属性的对象，通过它可以简化代码、不需要try/catch各种reflect异常，同时它支持对JavaBean、Collection、Map三种类型对象的操作
+ *  MetaObject ,作用是访问和设置对象属性 。
+ *  通过它可以简化代码、不需要try/catch各种reflect异常，同时它支持对JavaBean、Collection、Map三种类型对象的操作
  *  可以参考MetaObjectTest来跟踪调试，基本上用到了reflection包下所有的类
  * @author Clinton Begin
  */
@@ -48,16 +48,20 @@ public class MetaObject {
   private ObjectWrapper objectWrapper;
   private ObjectWrapperFactory objectWrapperFactory;
 
+  /**
+   * 构造私有化,只能通过forObject来创建对象
+   */
   private MetaObject(Object object, ObjectFactory objectFactory, ObjectWrapperFactory objectWrapperFactory) {
     this.originalObject = object;
     this.objectFactory = objectFactory;
     this.objectWrapperFactory = objectWrapperFactory;
 
+    // ##最重要的就是找到对应的包装器##
     if (object instanceof ObjectWrapper) {
         //如果对象本身已经是ObjectWrapper型，则直接赋给objectWrapper
       this.objectWrapper = (ObjectWrapper) object;
     } else if (objectWrapperFactory.hasWrapperFor(object)) {
-        //如果有包装器,调用ObjectWrapperFactory.getWrapperFor
+        //如果有包装器(默认是没有),调用ObjectWrapperFactory.getWrapperFor
       this.objectWrapper = objectWrapperFactory.getWrapperFor(this, object);
     } else if (object instanceof Map) {
         //如果是Map型，返回MapWrapper
@@ -87,7 +91,8 @@ public class MetaObject {
     }
   }
 
-  //--------以下方法都是委派给ObjectWrapper------
+  //--------以下方法都是委派给包装器ObjectWrapper------
+
   //查找属性
   public String findProperty(String propName, boolean useCamelCaseMapping) {
     return objectWrapper.findProperty(propName, useCamelCaseMapping);
@@ -123,9 +128,15 @@ public class MetaObject {
     return objectWrapper.hasGetter(name);
   }
 
-  //取得值
-  //如person[0].birthdate.year
-  //具体测试用例可以看MetaObjectTest
+
+  //为某个属性生成元对象
+  public MetaObject metaObjectForProperty(String name) {
+    //实际是递归调用
+    Object value = getValue(name);
+    return MetaObject.forObject(value, objectFactory, objectWrapperFactory);
+  }
+
+  //取得值,如person[0].birthDate.year = 2021
   public Object getValue(String name) {
     PropertyTokenizer prop = new PropertyTokenizer(name);
     if (prop.hasNext()) {
@@ -142,8 +153,7 @@ public class MetaObject {
     }
   }
 
-  //设置值
-  //如person[0].birthdate.year
+  //设置值,如person[0].birthDate.year = 2021
   public void setValue(String name, Object value) {
     PropertyTokenizer prop = new PropertyTokenizer(name);
     if (prop.hasNext()) {
@@ -164,13 +174,6 @@ public class MetaObject {
         //到了最后一层了，所以委派给ObjectWrapper.set
       objectWrapper.set(prop, value);
     }
-  }
-
-  //为某个属性生成元对象
-  public MetaObject metaObjectForProperty(String name) {
-      //实际是递归调用
-    Object value = getValue(name);
-    return MetaObject.forObject(value, objectFactory, objectWrapperFactory);
   }
 
   //是否是集合

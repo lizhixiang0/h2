@@ -23,7 +23,7 @@ import org.apache.ibatis.reflection.ReflectionException;
 import org.apache.ibatis.reflection.property.PropertyTokenizer;
 
 /**
- * 对象包装器的抽象基类,提供了一些公共方法，并且实现了对象包装器接口（继承了其行为）
+ * 对象包装器的抽象基类,增加了三个公共方法和两个公共属性，并且实现了对象包装器(ObjectWrapper)接口（继承了其行为）
  * @author Clinton Begin
  */
 public abstract class BaseWrapper implements ObjectWrapper {
@@ -43,7 +43,9 @@ public abstract class BaseWrapper implements ObjectWrapper {
     this.metaObject = metaObject;
   }
 
-  //解析集合
+  /**
+   * 解析集合
+   */
   protected Object resolveCollection(PropertyTokenizer prop, Object object) {
     if ("".equals(prop.getName())) {
       return object;
@@ -52,8 +54,9 @@ public abstract class BaseWrapper implements ObjectWrapper {
     }
   }
 
-  //取集合的值
-  //中括号有2个意思，一个是Map，一个是List或数组
+  /**
+   * 取集合的值,注意，中括号有两种可能，一个是Map，一个是List或数组
+   */
   protected Object getCollectionValue(PropertyTokenizer prop, Object collection) {
     if (collection instanceof Map) {
         //map['name']
@@ -87,8 +90,9 @@ public abstract class BaseWrapper implements ObjectWrapper {
     }
   }
 
-  //设集合的值
-  //中括号有2个意思，一个是Map，一个是List或数组
+  /**
+   *  设集合的值,注意，中括号有两种可能，一个是Map，一个是List或数组
+   */
   protected void setCollectionValue(PropertyTokenizer prop, Object collection, Object value) {
     if (collection instanceof Map) {
       ((Map) collection).put(prop.getIndex(), value);

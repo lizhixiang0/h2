@@ -26,17 +26,17 @@ import org.apache.ibatis.transaction.TransactionFactory;
 public final class Environment {
 
   /**
-   * 环境id
+   * 1、环境id
    */
   private final String id;
 
   /**
-   * 事务工厂
+   * 2、事务工厂
    */
   private final TransactionFactory transactionFactory;
 
   /**
-   * 数据源
+   * 3、数据源
    */
   private final DataSource dataSource;
 

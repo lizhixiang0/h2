@@ -20,8 +20,8 @@ import lombok.Data;
 import java.util.Iterator;
 
 /**
- * 属性描述符解析器（分词器）-------迭代子模式
- * 例如: object.parent.name,每一个PropertyTokenizer主要是记录当前属性（object）而没有子属性，子属性通过调用next返回new PropertyTokenizer（parent）
+ * 属性描述符解析器（分词器）,使用到了迭代器模式
+ * 例如: object.parent.name,每一个PropertyTokenizer只记录当前属性（object），子属性则通过调用next返回new PropertyTokenizer（parent）获得
  *
  * @author Clinton Begin
  */

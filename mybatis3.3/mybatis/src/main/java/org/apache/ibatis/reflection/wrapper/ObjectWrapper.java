@@ -27,43 +27,69 @@ import org.apache.ibatis.reflection.property.PropertyTokenizer;
  */
 public interface ObjectWrapper {
 
-  //get
+  /**
+   * 根据属性名获取值
+   */
   Object get(PropertyTokenizer prop);
 
-  //set
+  /**
+   * 根据属性名设置值
+   */
   void set(PropertyTokenizer prop, Object value);
 
-  //查找属性
+  /**
+   * 查找属性
+   */
   String findProperty(String name, boolean useCamelCaseMapping);
 
-  //取得getter的名字列表
+  /**
+   * 取得getter的名字列表
+   */
   String[] getGetterNames();
 
-  //取得setter的名字列表
+  /**
+   * 取得setter的名字列表
+   */
   String[] getSetterNames();
 
-  //取得setter的类型
+  /**
+   * 取得setter的类型
+   */
   Class<?> getSetterType(String name);
 
-  //取得getter的类型
+  /**
+   * 取得getter的类型
+   */
   Class<?> getGetterType(String name);
 
-  //是否有指定的setter
+  /**
+   * 是否有指定的setter
+   */
   boolean hasSetter(String name);
 
-  //是否有指定的getter
+  /**
+   * 是否有指定的getter
+   */
   boolean hasGetter(String name);
 
-  //实例化属性
+  /**
+   * 实例化属性
+   */
   MetaObject instantiatePropertyValue(String name, PropertyTokenizer prop, ObjectFactory objectFactory);
 
-  //是否是集合
+  /**
+   * 是否是集合
+   */
   boolean isCollection();
 
-  //添加属性
+  /**
+   * 添加属性
+   */
   void add(Object element);
 
-  //添加属性
+  /**
+   * 添加属性
+   */
   <E> void addAll(List<E> element);
 
 }
