@@ -55,16 +55,14 @@ public abstract class BaseWrapper implements ObjectWrapper {
   }
 
   /**
-   * 取集合的值,注意，中括号有两种可能，一个是Map，一个是List或数组
+   * 取集合的值
    */
   protected Object getCollectionValue(PropertyTokenizer prop, Object collection) {
     if (collection instanceof Map) {
-        //map['name']
       return ((Map) collection).get(prop.getIndex());
     } else {
       int i = Integer.parseInt(prop.getIndex());
       if (collection instanceof List) {
-          //list[0]
         return ((List) collection).get(i);
       } else if (collection instanceof Object[]) {
         return ((Object[]) collection)[i];
@@ -91,7 +89,7 @@ public abstract class BaseWrapper implements ObjectWrapper {
   }
 
   /**
-   *  设集合的值,注意，中括号有两种可能，一个是Map，一个是List或数组
+   *  设集合的值
    */
   protected void setCollectionValue(PropertyTokenizer prop, Object collection, Object value) {
     if (collection instanceof Map) {

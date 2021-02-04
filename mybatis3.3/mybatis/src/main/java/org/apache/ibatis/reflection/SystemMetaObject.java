@@ -37,7 +37,7 @@ public final class SystemMetaObject {
   public static final ObjectWrapperFactory DEFAULT_OBJECT_WRAPPER_FACTORY = new DefaultObjectWrapperFactory();
 
   /**
-   * MetaObject的初始对象（originalObject）为null
+   * 当初始对象（originalObject）为 null  时特意构造出来的MetaObject对象
    */
   public static final MetaObject NULL_META_OBJECT = MetaObject.forObject(NullObject.class, DEFAULT_OBJECT_FACTORY, DEFAULT_OBJECT_WRAPPER_FACTORY);
 
@@ -47,7 +47,7 @@ public final class SystemMetaObject {
   private SystemMetaObject() {}
 
   /**
-   *  可以调用SystemMetaObject.forObject()来创建MetaObject对象
+   * 最核心的方法：可以调用SystemMetaObject.forObject()来创建MetaObject对象
    * @param object obj
    * @return MetaObject
    */

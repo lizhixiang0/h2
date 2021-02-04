@@ -136,13 +136,12 @@ public class MetaObject {
     return MetaObject.forObject(value, objectFactory, objectWrapperFactory);
   }
 
-  //取得值,如person[0].birthDate.year = 2021
+  //取得值
   public Object getValue(String name) {
     PropertyTokenizer prop = new PropertyTokenizer(name);
     if (prop.hasNext()) {
       MetaObject metaValue = metaObjectForProperty(prop.getIndexedName());
       if (metaValue == SystemMetaObject.NULL_META_OBJECT) {
-          //如果上层就是null了，那就结束，返回null
         return null;
       } else {
           //否则继续看下一层，递归调用getValue
@@ -153,25 +152,21 @@ public class MetaObject {
     }
   }
 
-  //设置值,如person[0].birthDate.year = 2021
+  //设置值
   public void setValue(String name, Object value) {
     PropertyTokenizer prop = new PropertyTokenizer(name);
     if (prop.hasNext()) {
       MetaObject metaValue = metaObjectForProperty(prop.getIndexedName());
       if (metaValue == SystemMetaObject.NULL_META_OBJECT) {
         if (value == null && prop.getChildren() != null) {
-          // don't instantiate child path if value is null
-          //如果上层就是null了，还得看有没有儿子，没有那就结束
           return;
         } else {
-            //否则还得new一个，委派给ObjectWrapper.instantiatePropertyValue
           metaValue = objectWrapper.instantiatePropertyValue(name, prop, objectFactory);
         }
       }
       //递归调用setValue
       metaValue.setValue(prop.getChildren(), value);
     } else {
-        //到了最后一层了，所以委派给ObjectWrapper.set
       objectWrapper.set(prop, value);
     }
   }

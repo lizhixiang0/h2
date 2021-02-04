@@ -20,25 +20,7 @@ import org.junit.Test;
 
 public class ReflectorTest {
 
-  @Test
-  public void testGetSetterType() throws Exception {
-    Reflector reflector = Reflector.forClass(Section.class);
-    Assert.assertEquals(Long.class, reflector.getSetterType("id"));
-  }
-
-  @Test
-  public void testGetGetterType() throws Exception {
-    Reflector reflector = Reflector.forClass(Section.class);
-    Assert.assertEquals(Long.class, reflector.getGetterType("id"));
-  }
-
-  @Test
-  public void shouldNotGetClass() throws Exception {
-    Reflector reflector = Reflector.forClass(Section.class);
-    Assert.assertFalse(reflector.hasGetter("class"));
-  }
-
-  static interface Entity<T> {
+  interface Entity<T> {
     T getId();
     void setId(T id);
   }
@@ -57,6 +39,32 @@ public class ReflectorTest {
   }
 
   static class Section extends AbstractEntity implements Entity<Long> {
+
+    public Section(Long id){
+      super.setId(id);
+    };
+
+    public Section(){}
   }
+
+  @Test
+  public void testGetSetterType() {
+    Reflector reflector = Reflector.forClass(Section.class);
+    Assert.assertEquals(Long.class, reflector.getSetterType("id"));
+  }
+
+  @Test
+  public void testGetGetterType() {
+    Reflector reflector = Reflector.forClass(Section.class);
+    Assert.assertEquals(Long.class, reflector.getGetterType("id"));
+  }
+
+  @Test
+  public void shouldNotGetClass() {
+    Reflector reflector = Reflector.forClass(Section.class);
+    Assert.assertFalse(reflector.hasGetter("class"));
+  }
+
+
 
 }

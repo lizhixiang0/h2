@@ -36,57 +36,58 @@ import org.apache.ibatis.reflection.invoker.MethodInvoker;
 import org.apache.ibatis.reflection.invoker.SetFieldInvoker;
 import org.apache.ibatis.reflection.property.PropertyNamer;
 
-/*
- * This class represents a cached set of class definition information that
- * allows for easy mapping between property names and getter/setter methods.
- */
 /**
+ *   Reflector是Mybatis中反射模块的基础，每个Reflector对象都对应一个类。
+ * @blog "https://blog.csdn.net/hou_ge/article/details/100666259
  * @author Clinton Begin
- */
-/**
- * 反射器, 属性->getter/setter的映射器，而且加了缓存
- * 可参考ReflectorTest来理解这个类的用处
- *
  */
 public class Reflector {
 
   private static boolean classCacheEnabled = true;
+
   private static final String[] EMPTY_STRING_ARRAY = new String[0];
+
   //这里用ConcurrentHashMap，多线程支持，作为一个缓存
   private static final Map<Class<?>, Reflector> REFLECTOR_MAP = new ConcurrentHashMap<Class<?>, Reflector>();
 
   private Class<?> type;
-  //getter的属性列表
-  private String[] readablePropertyNames = EMPTY_STRING_ARRAY;
-  //setter的属性列表
-  private String[] writeablePropertyNames = EMPTY_STRING_ARRAY;
-  //setter的方法列表
-  private Map<String, Invoker> setMethods = new HashMap<String, Invoker>();
-  //getter的方法列表
-  private Map<String, Invoker> getMethods = new HashMap<String, Invoker>();
-  //setter的类型列表
-  private Map<String, Class<?>> setTypes = new HashMap<String, Class<?>>();
-  //getter的类型列表
-  private Map<String, Class<?>> getTypes = new HashMap<String, Class<?>>();
-  //构造函数
+
+  //默认构造函数
   private Constructor<?> defaultConstructor;
+  //可读属性的名称集合，可读属性就是存在相应getter方法的属性，初始值为空数纽
+  private String[] readablePropertyNames;
+  //可写属性的名称集合，可写属性就是存在相应setter方法的属性，初始值为空数纽
+  private String[] writeablePropertyNames;
+  //属性相应的setter方法，key是属性名称,value是Invoker对象，它是对setter方法对应Method对象的封装
+  private Map<String, Invoker> setMethods = new HashMap<>();
+  //属性相应的getter方法集合， key是属性名称， value也是Invoker对象
+  private Map<String, Invoker> getMethods = new HashMap<>();
+  //属性相应的setter方法的参数值类型， key是属性名称， value是setter方法的参数类型
+  private Map<String, Class<?>> setTypes = new HashMap<>();
+  //属性相应的getter方法的返回位类型， key是属性名称， value是getter方法的返回类型
+  private Map<String, Class<?>> getTypes = new HashMap<>();
+  //所有属性名称的集合
+  private Map<String, String> caseInsensitivePropertyMap = new HashMap<>();
 
-  private Map<String, String> caseInsensitivePropertyMap = new HashMap<String, String>();
-
+  /**
+   * 在构造函数中，主要是对类的元信息进行解析和缓存，即初始化相关字段数据。下面分别分析数据初始化的过程。其中，type字段就是class
+   * @param clazz 类
+   */
   private Reflector(Class<?> clazz) {
     type = clazz;
-    //加入构造函数
+    //查找clazz的默认构造方法（无参构造方法），具体实现是通过反射遍历所有构造方法
     addDefaultConstructor(clazz);
-    //加入getter
+    //处理clazz中的getter方法，填充getMethods集合和getTypes集合
     addGetMethods(clazz);
-    //加入setter
+    //处理clazz中的setter方法，填充setMethods集合和setTypes集合
     addSetMethods(clazz);
-    //加入字段
+    //处理没有getter/setter方法的字段
     addFields(clazz);
-    readablePropertyNames = getMethods.keySet().toArray(new String[getMethods.keySet().size()]);
-    writeablePropertyNames = setMethods.keySet().toArray(new String[setMethods.keySet().size()]);
+    //根据getMethods/setMethods集合，初始化可读/写属性的名称集合
+    readablePropertyNames = getMethods.keySet().toArray(new String[0]);
+    writeablePropertyNames = setMethods.keySet().toArray(new String[0]);
+    //初始化caseInsensitivePropertyMap集合，其中记录了所有大写格式的属性名称,这里为了能找到某一个属性，就把他变成大写作为map的key。。。
     for (String propName : readablePropertyNames) {
-        //这里为了能找到某一个属性，就把他变成大写作为map的key。。。
       caseInsensitivePropertyMap.put(propName.toUpperCase(Locale.ENGLISH), propName);
     }
     for (String propName : writeablePropertyNames) {
@@ -96,6 +97,7 @@ public class Reflector {
 
   private void addDefaultConstructor(Class<?> clazz) {
     Constructor<?>[] consts = clazz.getDeclaredConstructors();
+    //循环，查询符合条件的构造函数
     for (Constructor<?> constructor : consts) {
       if (constructor.getParameterTypes().length == 0) {
         if (canAccessPrivateMethods()) {
@@ -189,11 +191,7 @@ public class Reflector {
   }
 
   private void addMethodConflict(Map<String, List<Method>> conflictingMethods, String name, Method method) {
-    List<Method> list = conflictingMethods.get(name);
-    if (list == null) {
-      list = new ArrayList<Method>();
-      conflictingMethods.put(name, list);
-    }
+    List<Method> list = conflictingMethods.computeIfAbsent(name, k -> new ArrayList<>());
     list.add(method);
   }
 
@@ -314,7 +312,7 @@ public class Reflector {
 
     Collection<Method> methods = uniqueMethods.values();
 
-    return methods.toArray(new Method[methods.size()]);
+    return methods.toArray(new Method[0]);
   }
 
   private void addUniqueMethods(Map<String, Method> uniqueMethods, Method[] methods) {
