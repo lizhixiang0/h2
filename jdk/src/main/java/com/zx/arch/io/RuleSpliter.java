@@ -20,15 +20,13 @@ public class RuleSpliter {
 
     private static void spliter() throws IOException {
         Path srcPath = Path.of("D:\\JetBrains\\workspace\\h2\\jdk\\src\\main\\resources\\static\\android_rules.yar");
-        Path destPath = Path.of("D:\\JetBrains\\workspace\\h2\\jdk\\src\\main\\resources\\static\\small_rules.yar");
+        Path destPath = Path.of("D:\\JetBrains\\workspace\\h2\\jdk\\src\\main\\resources\\static\\use\\small_rules.yar");
         Stream<String> stream =  Files.lines(srcPath);
         AtomicInteger count = new AtomicInteger();
         stream.forEach(
                 i->{
                     try {
-                        if(count.get()<1500)
                         Files.writeString(destPath,i.concat("\r\n"), StandardOpenOption.CREATE,StandardOpenOption.APPEND);
-                        count.getAndIncrement();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
