@@ -21,17 +21,17 @@ import org.junit.Test;
 public class ReflectorTest {
 
   interface Entity<T> {
-    T getId();
+   // T getId();
     void setId(T id);
   }
 
-  static abstract class AbstractEntity implements Entity<Long> {
+   abstract static class AbstractEntity implements Entity<Long> {
 
     private Long id;
 
-    public Long getId() {
+    /*public Long getId() {
       return id;
-    }
+    }*/
 
     public void setId(Long id) {
       this.id = id;

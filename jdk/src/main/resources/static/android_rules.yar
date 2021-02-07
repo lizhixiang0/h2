@@ -3,6 +3,36 @@ import "cuckoo"
 import "hash"
 import "elf"
 
+rule shedun_a
+{
+	meta:
+		description = "Detects libcrypt_sign used by shedun"
+		sample = "919f1096bb591c84b4aaf964f0374765c3fccda355c2686751219926f2d50fab"
+	strings:
+		$a = "madana!!!!!!!!!"
+		$b = "ooooop!!!!!!!!!!!"
+		$c = "hehe you never know what happened!!!!"
+	condition:
+		all of them
+}
+
+rule SMSSend
+{
+        meta:
+                description = "This rule detects applications that send SMSs"
+                sample = "ee95d232e73ba60cbe31dbae820c13789b5583b1b972df01db24d2d2159446d7"
+
+        strings:
+                $a = "\" cmcc = \"21\" cuc = \"50\" cnc = \"\">20</province>" wide ascii
+                $b = "\" cmcc = \"10\" cuc = \"36\" cnc = \"\">19</province>" wide ascii
+                $key_file = "assets/keycode.txtbinlangPK"
+
+        condition:
+                any of them
+
+}
+
+
 rule a: official
 {
 	condition:
@@ -799,7 +829,7 @@ rule e: official
 	condition:
 		any of them
 }
-private global rule whatever2
+rule whatever2
 {
 	condition:
 		androguard.app_name(/a/) or
@@ -4335,18 +4365,7 @@ rule dropper_a
 	condition:
 		all of them
 }
-rule SMSSend_b
-{
-	meta:
-		description = "This rule detects applications that send SMSs"
-		sample = "ee95d232e73ba60cbe31dbae820c13789b5583b1b972df01db24d2d2159446d7"
-	strings:
-		$a = "\" cmcc = \"21\" cuc = \"50\" cnc = \"\">20</province>" wide ascii
-		$b = "\" cmcc = \"10\" cuc = \"36\" cnc = \"\">19</province>" wide ascii
-		$key_file = "assets/keycode.txtbinlangPK"
-	condition:
-		any of them
-}
+
 rule loki_skd_a
 {
 	meta:
@@ -10068,18 +10087,7 @@ rule Acecard2_a
 		all of them and
 		androguard.permission(/android.permission.RECEIVE_SMS/)
 }
-rule shedun_a
-{
-	meta:
-		description = "Detects libcrypt_sign used by shedun"
-		sample = "919f1096bb591c84b4aaf964f0374765c3fccda355c2686751219926f2d50fab"
-	strings:
-		$a = "madana!!!!!!!!!"
-		$b = "ooooop!!!!!!!!!!!"
-		$c = "hehe you never know what happened!!!!"
-	condition:
-		all of them
-}
+
 rule dropper_b
 {
 	meta:
@@ -18154,7 +18162,7 @@ rule vage: UC_Safe
 		androguard.package_name("com.uc.iflow") and
 		androguard.certificate.sha1("8399A145C14393A55AC4FCEEFB7AB4522A905139")  
 }
-private global rule samsung_Safe
+rule samsung_Safe
 {
 	condition:
 		androguard.certificate.sha1("9ca5170f381919dfe0446fcdab18b19a143b3163")
@@ -22695,7 +22703,7 @@ rule Trojan_4_e: BankBot
 			or androguard.permission(/android.permission.READ_SMS/)
 		)
 }
-private global rule no_FPs
+rule no_FPs
 {
 	condition:
 		not androguard.certificate.sha1("9CA5170F381919DFE0446FCDAB18B19A143B3163")

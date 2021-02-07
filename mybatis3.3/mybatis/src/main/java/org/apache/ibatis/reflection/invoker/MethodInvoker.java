@@ -19,21 +19,19 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
+ * 方法调用器  ，通过method.invoke实现
  * @author Clinton Begin
- */
-/**
- * 方法调用者
- *
  */
 public class MethodInvoker implements Invoker {
 
   private Class<?> type;
+
   private Method method;
 
   public MethodInvoker(Method method) {
     this.method = method;
-
-    //如果只有一个参数，返回参数类型，否则返回return的类型
+    //如果只有一个参数,说明是set方法  ,则 type = 参数类型
+    //如果没有参数,说明是get方法, type = 返回值类型
     if (method.getParameterTypes().length == 1) {
       type = method.getParameterTypes()[0];
     } else {
@@ -41,7 +39,9 @@ public class MethodInvoker implements Invoker {
     }
   }
 
-  //就是调用Method.invoke
+  /**
+   * 调用Method.invoke来调用方法
+   */
   @Override
   public Object invoke(Object target, Object[] args) throws IllegalAccessException, InvocationTargetException {
     return method.invoke(target, args);
