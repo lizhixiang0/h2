@@ -21,34 +21,16 @@ rule SMSSend
         meta:
                 description = "This rule detects applications that send SMSs"
                 sample = "ee95d232e73ba60cbe31dbae820c13789b5583b1b972df01db24d2d2159446d7"
-
         strings:
                 $a = "\" cmcc = \"21\" cuc = \"50\" cnc = \"\">20</province>" wide ascii
                 $b = "\" cmcc = \"10\" cuc = \"36\" cnc = \"\">19</province>" wide ascii
                 $key_file = "assets/keycode.txtbinlangPK"
-
         condition:
                 any of them
-
 }
 
 
-rule a: official
-{
-	condition:
-		androguard.permission(/com.bsing.hellosing.permission.C2D_MESSAGE/) or
-		androguard.permission(/vn.cpgame.pokemonvictoryfire.permission.C2D_MESSAGE/)
-}
-rule ABTastySDK_a
-{
-	meta:
-		description = "This rule detects ABTasty SDK"
-	strings:
-		$a = "com.abtasty."
-	condition:
-		$a or androguard.activity(/com.abtasty.*/)
-		}
-rule Android_Trojan_FakeAd_B_a
+rule Android_Trojan_FakeAd_B
 {
 	meta:
 		description = "Rule used to detect jio and paytm fakeapp"
@@ -64,6 +46,7 @@ rule Android_Trojan_FakeAd_B_a
 	condition:
 		2 of ($a*) and $b
 }
+
 rule Example_a: Malware
 {
 	meta:
@@ -80,21 +63,7 @@ rule Example_a: Malware
 		any of ($domain_*) or any of ($ip_*)
 }
 
-rule myest_a
-{
-	condition:
-		androguard.receiver("com.android.license.CheckLicense") or androguard.service("com.android.license.LicenseService")
-}
-
-rule TEST_a
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e5d8f5095be1d411a9946dd291ec7cca3e81963f574662110486c93d1b0b73b5"
-	condition:
-		androguard.package_name("com.bigpanda.puzzlegame.dragnmatch") 
-}
-rule bankbot_discoverer_a
+rule bankbot_discoverer
 {
 	meta:
 		description = "This rule detects the bankbot app based on md5 and sha1"
@@ -117,6 +86,7 @@ rule bankbot_discoverer_a
 		androguard.permission(/READ_CONTACTS/) and
 		androguard.permission(/READ_SMS/)
 }
+
 rule b: official
 {
 	meta:
@@ -125,42 +95,19 @@ rule b: official
 		androguard.service(/ir.mono/i) or
 		androguard.url(/api.\mono\.ir/)
 }
-rule socks_1000_a: official
-{
-	meta:
-		 description = "This rule detects  Socks4 or Socks5"
-	strings:
-		$a = "Socks4"
-		$b = "Socks5"
-	condition:
-		$a  or $b
-}
-rule clonedfdroid_a: pua
+
+rule clonedfdroid: pua
 {
 	meta:
 		description = "Find cloned F-Droid Apps"
 		sample = "5962770b87a51fe9198ffdece47ca6faafad98e162275bb485833381774a29cd"
 		sample = "8ed89b20367d4ff0b375451d314780709cb706c17cc7103e9072ebf8ef2564d4"
 	condition:
-		(
-			androguard.package_name("org.fdroid.fdroie") 
-			or
-			androguard.package_name("org.fdroid.fdroid")
-		)
+		(androguard.package_name("org.fdroid.fdroie") or androguard.package_name("org.fdroid.fdroid"))
 		and
-		(
-			androguard.activity(/com\.applisto\.appcloner\.classes.*/)
-			or
-			androguard.permission(/com.applisto.appcloner.permission.DEFAULT/)
-		)
+		(androguard.activity(/com\.applisto\.appcloner\.classes.*/) or androguard.permission(/com.applisto.appcloner.permission.DEFAULT/))
 }
-rule ILightsService_a: official
-{
-	meta:
-		description = "This rule detects the android.app.ILightsService, see https://wuffs.org/blog/digitime-tech-fota-backdoors"
-	condition:
-	    androguard.service("android.app.ILightsService")		
-}
+
 rule Dresscode_hzytrfd_a: official
 {
 	meta:
@@ -204,8 +151,7 @@ rule gretel_com_android_service_a
         $a_2 = "com/ryg/dynamicload/DLProxyActivity" 
         $a_3 = "com/ryg/dynamicload/DLBasePluginActivity" 
 	condition:
-		all of ($a_*) and
-		androguard.certificate.sha1("5E7C8FE28537307E28BEB0F82F67DF76F1A119D6")
+		all of ($a_*) and androguard.certificate.sha1("5E7C8FE28537307E28BEB0F82F67DF76F1A119D6")
 }
 rule Trojan_a: SMSSpy
 {
@@ -492,15 +438,6 @@ rule detection_a
     condition:
 		$x or ($d and 1 of ($))
 }
-rule c: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	condition:
-		androguard.activity("*.jifenActivity") or
-		androguard.activity("*.JFMain")
-}
 rule gretel_ibingo_launcher3_a
 {
 	meta:
@@ -627,10 +564,9 @@ rule test_a: BankBot
 		$c2_3 = "/private/set_data.php" nocase
 		$c2_4 = "activity_inj" nocase
 	condition:
-		2 of ($c2_*) or
-		$a or androguard.permission(/android.permission.CALL_PHONE/) 
+		2 of ($c2_*) and $a and (androguard.permission(/android.permission.CALL_PHONE/)
 		or androguard.permission(/android.permission.READ_CONTACTS/)
-		or androguard.permission(/android.permission.READ_PHONE_STATE/)
+		or androguard.permission(/android.permission.READ_PHONE_STATE/))
 }
 rule bzwbk_a
 {
@@ -648,16 +584,6 @@ rule bzwbk_a
 		androguard.app_name("bzwbk*")or
 		androguard.app_name(/bzwbk*/)
 }
-rule d: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$a = "BZWBK mobile"
-	condition:
-		androguard.package_name(/BZWBK/) or $a
-}
 rule Xavier_a
 {
 	meta:
@@ -666,22 +592,7 @@ rule Xavier_a
 	condition:
 		androguard.activity(/xavier.lib.XavierActivity/i)
 }
-rule whatever_a
-{
-	meta:
-		description = "This rule detects something"
-	condition:
-		androguard.app_name(/BZWBK/) or 
-		androguard.app_name("BZWBK") or 
-		androguard.app_name(/bzwbk/) or
-		androguard.app_name("bzwbk") or
-		androguard.app_name(/BZWBK24/) or
-		androguard.app_name(/bzwbk24/) or
-		androguard.app_name(/BZWBK24 mobile/) or
-		androguard.app_name("BZWBK24 mobile") or
-		androguard.app_name(/Santander/) or
-		androguard.app_name("Santander")
-}
+
 rule allatori_commercial_a
 {
     strings:
@@ -797,14 +708,7 @@ rule e: official
 	condition:
 		any of them
 }
-rule whatever2
-{
-	condition:
-		androguard.app_name(/a/) or
-		androguard.app_name(/b/) or
-		androguard.app_name(/c/) or
-		androguard.app_name("Materialize Your App")
-}
+
 rule aamo_str_enc_nop_a: obfuscator
 {
   meta:
@@ -868,22 +772,6 @@ rule aamo_a: obfuscator
     $b = { 00 14 67 65 74 53 74 6f 72 61 67 65 45 6e 63 72 79 70 74 69 6f 6e 00 } //getStorageEncryption
   condition:
     $a and $b
-}
-rule g: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$a1 = /lib\/[x86\_64|armeabi\-v7a|arm64\-v8a|x86]\/libapkprotect\.so/
-		$a2 = "assets/apkprotect.bin"
-		$a3 = "assets/apkprotect/classes.dex.bin"
-		$a4 = "apkprotect-build.properties"
-		$v1  = "Protected-by: ApkProtector 6.5"
-		$v2  = "Protected-by: ApkProtector 6.4"
-		$v3  = "Protected-by: ApkProtector 6."
-	condition:
-		1 of ($v*) and 2 of ($a*)
 }
 rule aamotest_a
 {
@@ -958,16 +846,7 @@ rule chornclickers_b: packer
   condition:
     all of them
 }
-rule h: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-	strings:
-		$a = {33 35 2e 31 39 38 2e 31 39 37 2e 31 31 39 0a}
-		$b = {33 35 2e 31 39 38 2e 31 39 37 2e 31 31 39 3a 38 30 38 30 2f 61 64 73 73 65 72 76 65 72 2d 76 33 2f 63 6c 69 65 6e 74 5f 63 6f 6e 66 69 67}
-	condition:
-		$a or $b
-}
+
 rule fortnite_appclone_a
 {
 	meta:
@@ -1015,17 +894,7 @@ rule Android_Trojan_ChatStealer_a
 		and androguard.receiver(/eight\.eightre/i) 
 		and androguard.permission(/com\.android\.browser\.permission\.READ_HISTORY_BOOKMARKS/i)
 }
-rule i: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$ = "OpenSSL 1.0.1"
-		$ = "OpenSSL 1.0.0"
-	condition:
-		any of them
-}
+
 rule adwind_a
 {
 	meta:
@@ -1058,8 +927,6 @@ rule jiagu_apktoolplus_a: packer
 {
     meta:
         description = "Jiagu (ApkToolPlus)"
-        sample      = ""
-        url         = ""
     strings:
         $a = "assets/jiagu_data.bin"
         $b = "assets/sign.bin"
@@ -1182,32 +1049,13 @@ rule android_joker_b {
     condition:
         ($c and $cerr) or $net or $ip 
 }
-rule k: official
-{
-	meta:
-		description = "First rule used to detect certain permissions"
-	condition:
-		androguard.permission(/android.permission.BIND_ACCESSIBILITY_SERVICE/)
-}
+
 rule l: official
 {
 	condition:
 		androguard.url(/abcdserver\.com/) 
 }
-rule m: official
-{
-	meta:
-		description = "First rule used to detect certain permissions"
-	condition:
-		androguard.permission(/android.permission.INTERNET/)
-}
-rule n: official
-{
-	meta:
-		description = "First rule used to detect certain permissions"
-	condition:
-		androguard.permission(/android.permission.SYSTEM_ALERT_WINDOW/)
-}
+
 rule ZoopOneSDKTracker_a
 {
 	meta:
@@ -1231,8 +1079,7 @@ rule zipnach_detect_a
 	strings:
 		$a = "http://uat1.zipnach.com"
 	condition:
-		$a and
-		androguard.permission(/android.permission.INTERNET/)		
+		$a and androguard.permission(/android.permission.INTERNET/)
 }
 rule bbps_detect_a
 {
@@ -1243,8 +1090,7 @@ rule bbps_detect_a
 		$b = "bbps/BillFetchRequest/1.0/"
 		$c = "bbps/BillPaymentRequest/1.0"
 	condition:
-		($a or $b or $c) and
-		androguard.permission(/android.permission.INTERNET/)		
+		($a or $b or $c) and androguard.permission(/android.permission.INTERNET/)
 }
 rule bancocam_a {
 	strings:
@@ -1325,18 +1171,7 @@ rule digitimeTest_a
 	condition:
 		(androguard.receiver(/Rvc$/) and androguard.service(/Svc$/)) or (any of ($key*)) or $fnv or $dtInfo
 }
-rule test_rule_a
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$a ="yywvdeuznmksaqrrgbknzgzhtycwpzcoyuzmibagol"
-	condition:
-		androguard.app_name("Chrome") and
-		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED"/) and
-		$a 
-}
+
 rule BITTER_a
 {
 	meta:
@@ -1489,17 +1324,6 @@ rule androidmonitor_a
         androguard.package_name("com.ibm.fb") or androguard.certificate.sha1("92EBDB7D7C18A34705A6918B5F327DDB0E8C8452") or androguard.certificate.sha1("558765849658a3821fe4054ed2c1ff6e28b4b8a0") or androguard.url(/\.androidmonitor\.com/)
 }
 
-rule o: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$a = ".method public LoadWeb()V"
-		$b = ".method private loadWebsite()V"
-	condition:
-		any of them
-}
 rule nastyAdware_jan2020_a
 {
 	meta:
@@ -1656,17 +1480,7 @@ rule android_joker_c {
     condition:
         ($c and $cerr) or $net or $ip 
 }
-rule p: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-	strings:
-		$a = /taskAffinity\s*=/
-		$b = /allowTaskReparenting\s*=/
-		$file = "AndroidManifest.xml"
-	condition:
-		$file and ($a or $b)
-}
+
 rule Android_Trojan_Ransomware_Coin_a
 {  
 	meta:
@@ -1680,18 +1494,6 @@ rule Android_Trojan_Ransomware_Coin_a
 		$a1 and $a2 and $a3
 }
 
-rule checks_device_id_a: anti_vm
-{
-  meta:
-    description = "device ID check"
-    sample = "9c6b6392fc30959874eef440b6a83a9f5ef8cc95533037a6f86d0d3d18245224"
-  strings:
-    $a = {00 0B 67 65 74 44 65 76 69 63 65 49 64 00}
-    $b = {00 0F 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 00}
-  condition:
-    uses_telephony_class
-    and all of them
-}
 rule rosy_strings_plus_manifest
 {
         meta:
@@ -1856,15 +1658,7 @@ rule Suspect_a
 	condition:
 		1 of them
 }
-rule r: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	condition:
-		androguard.package_name("com.h") and
-		androguard.permission(/android.app.action.DEVICE_ADMIN_ENABLED/) 
-}
+
 rule sample_b
 {
 	meta:
@@ -1936,20 +1730,7 @@ rule Similar_radio_apps_a: radio
 		$j = "android.permission.INTERNET"
 		$k = "radio"
 	condition:
-		($a or $b or $c or $d or $e or $f or $g) and $h and $i and $j and $k
-}
-rule s: official
-{
-	meta:
-		authors = "Amr Adwan & Jingwen Liu"
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "7bc14c496a29bedbba6cad5a47d4c23f"
-	strings:
-		$a = "http://cdn.appnext.com/tools/services/4.7.1/config.json"
-		$b = "http://imgs1.e-droid.net/android-app-creator/icos_secc/"
-		$c = "https://facebook.com/device?user_code=%1$s&qr=1"
-	condition:
-		any of them
+		all of them
 }
 rule dinoapp_a: official
 {
@@ -1989,22 +1770,7 @@ rule blockrogue_a: detect
 		androguard.min_sdk >= 8 and
         androguard.target_sdk <= 14 
 }
-rule identity_a
-{
-	meta:
-		authors = "Casper Jol and Christian Steennis"
-		description = "Rule to identify apk"
-		date = "18-11-2020"
-	strings:
-		$perm_a = "android.permission.ACCESS_NETWORK_STATE"
-		$perm_b = "android.permission.GET_TASKS"
-		$perm_c = "android.permission.WAKE_LOCK"
-		$perm_d = "android.permission.ACCESS_WIFI_STATE"
-		$perm_e = "android.permission.READ_PHONE_STATE"
-		$perm_f = "android.permission.BLUETOOTH"
-	condition:
-		$perm_a and $perm_b and $perm_c and $perm_d and $perm_e and $perm_f 
-}
+
 rule detect_a: Dinosim
 {
 	meta:
@@ -2434,16 +2200,6 @@ rule Trojan_Droidjack_b
   condition:
       androguard.package_name("net.droidjack.server") or androguard.activity(/net.droidjack.server/i)
 }
-rule u: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "8907e44c44753482ca1dd346c8282ae546a554c210dd576a3b1b467c25994c0a"
-	strings:
-	  $mrat_domain = "fdddt.pw"
-	condition:
-		$mrat_domain
-}
 
 rule GhostFrameWork_EventDex_a
 {
@@ -2465,22 +2221,7 @@ rule basebridge_a
 	condition:
 		all of them
 }
-rule v: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	condition:
-		androguard.permission(/android.permission.BIND_DEVICE_ADMIN/)
-}
-rule w: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	condition:
-		androguard.permission(/android.permission.INSTALL_PACKAGES/)
-}
+
 rule lokibot_grotez_a
 {
 	meta:
@@ -2529,14 +2270,7 @@ rule Banks_Strings_BOI_a {
 	condition:
 		1 of ($string_*)
 }
-rule x: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	condition:
-		androguard.package_name("/amaq/")
-}
+
 rule Ransomware_a
 {
 	strings:
@@ -2726,15 +2460,6 @@ rule BHIMAadhaarUPITrackerActivity_a
 		description = "All TCS AePS UPI apps"	
 	condition:
 		androguard.activity("com.tcs.merchant.cags.UPIPaymentFragment")		
-}
-
-rule ysssa
-{
-	strings:
-		$ai = "com.google.android.gms.ads.InterstitialAd"
-		$b = "co.tmobi.com.evernote.android.job.JobRescheduleService"
-	condition:
-		1 of them
 }
 
 rule banker_Dew18_2_a
@@ -3118,14 +2843,7 @@ rule Trojan_c: apt36
 			or androguard.permission(/android.permission.READ_SMS/)
 		)
 }
-rule fakeapps009_a
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	condition:
-		androguard.certificate.sha1("61ED377E85D386A8DFEE6B864BD85B0BFAA5AF81")
-}
+
 rule Ahmyth_test_a
 {
 	meta:
@@ -3146,7 +2864,7 @@ rule WhatsApp_a: Virus
 	condition:
 	   androguard.url("google.com/iidKZ.KxZ/=-Z[")
 }
-rule AppInstaller_a
+rule AppInstaller
 {
     meta:
 	description = "The app installs other apps or at least interested in newly installed Apps"
@@ -3154,7 +2872,7 @@ rule AppInstaller_a
 	androguard.filter(/com.android.vending.INSTALL_REFERRER/) or
 	androguard.permission(/INSTALL_PACKAGES/)
 }
-rule Keylogger_a
+rule Keylogger
 {
     meta:
 	description = "A potential Keylogger. looking for filter cuz andoguard cannot detect the inline permission"
@@ -3162,7 +2880,7 @@ rule Keylogger_a
 	androguard.filter(/accessibilityservice.AccessibilityService/) or
 	androguard.permission(/BIND_ACCESSIBILITY_SERVICE/)
 }
-rule DeviceAdmin_a
+rule DeviceAdmin
 {
     meta:
         description = "Checks for Device Admin filters, enables the app to control the device"
@@ -3170,7 +2888,7 @@ rule DeviceAdmin_a
 	androguard.filter(/ACTION_DEVICE_ADMIN/) or
 	androguard.permission(/BIND_DEVICE_ADMIN/)
 }
-rule Veri5DigitalTracker_a
+rule Veri5DigitalTracker
 {
 	meta:
 		description = "This rule detects Veri5 Digital SDK"
@@ -3181,7 +2899,7 @@ rule Veri5DigitalTracker_a
 		($a or $b)  and
 		androguard.permission(/android.permission.INTERNET/)
 }
-rule riltok_koo_a
+rule riltok_koo
 {
     strings:
         $s1 = "librealtalk-jni.so"
@@ -3191,7 +2909,7 @@ rule riltok_koo_a
         all of them
 }
 
-rule video_player_a:fake
+rule video_player:fake
 { 	
 	meta:
 		description = "Determine if apk is a fake Video Player"
@@ -3211,7 +2929,7 @@ rule ca: official
 	condition:
 		($a and $b) and (androguard.permission(/RECEIVE_SMS/) or androguard.permission(/READ_SMS/) or androguard.permission(/SEND_SMS/) or $c) 
 }
-rule apperhand_a: trojan
+rule apperhand: trojan
 {
 	meta:
 		description = "This rule detects the apperhand SDK aggressive adware."
@@ -3228,7 +2946,7 @@ rule apperhand_a: trojan
 		or
 		androguard.permission(/android.permission.SET_TIME_ZONE/))
 }
-rule Minecraft_a
+rule Minecraft
 {
 	meta:
 		description = "A rule to detect malicious Minecraft APKS. Minecraft should not do anything with SMSes and should not need phone information such as boot completed. It should also not do https requests and access elemnts of the page."
@@ -3270,7 +2988,7 @@ rule ea: official
 	condition:
 		$MD5 or $SHA1 or $AppName or $Developer
 }
-rule quickshortcuu_a
+rule quickshortcuu
 {
 	meta:
 		description = "rule to detect a repackage of quickshortcut using the quickshortcuu name"
@@ -3282,29 +3000,8 @@ rule quickshortcuu_a
 		($a or $b) and
 		androguard.app_name("QuickShortcutMaker")
 }
-rule fa: official
-{
-    meta:
-        description = "detect potential malware"
-    condition:
-        androguard.permission(/android.permission.WRITE_EXTERNAL_STORAGE/) and 
-        androguard.permission(/android.permission.ACCESS_COARSE_LOCATION/) and 
-        androguard.permission(/android.permission.RECORD_AUDIO/) and 
-		androguard.permission(/android.permission.INTERNET/)
-}
-rule Downloader_a
-{
-    meta:
-        description = "This rule detects the Downloader app from Koodous"
-    strings: 
-    $md5 = {226b9a8e0da1a93fba65247a73ae6f8504f6c65a97336c4a3a2db9fb4f1df6a6}
-	$sha1 = {896bdf295a7ee8089349426b7950615f2a0d41e9}
-	$package = "com.ossibussoftware.deadpixeltest"
-	$method = "com/google/android/gms/ads/identifier/AdvertisingIdClient$Info;->isLimitAdTrackingEnabled()Z"
-    condition:
-        $md5 and $sha1 and $package and $method
-}
-rule tiffintomsus_a
+
+rule tiffintomsus
 {
 	meta:
 		description = "This rule detects suspicious tiffintom activity"
@@ -3313,7 +3010,7 @@ rule tiffintomsus_a
 		androguard.activity(/\.tiffintom\./) or
     	androguard.activity("com.tiffintom.tiffintom.sdk.activity.PermissionsActivity") 
 }
-rule fake_updater_a
+rule fake_updater
 {
 	meta:
 		description = "This rule detects malicious software based on a fake google play store updater"
@@ -3329,7 +3026,7 @@ rule fake_updater_a
 	condition:
 		all of them
 }
-rule apkDetect_a
+rule apkDetect
 {
 	meta:
 		description = "This rule detects Ransomware"
@@ -3364,7 +3061,7 @@ rule ga: official
 		androguard.permission(/android.permission.ADD_VOICEMAIL/) and
 		androguard.certificate.sha1("1dab0a0d4123f6fc17b78ee327b1b219b951f546")
 }
-rule Igexin2252_a
+rule Igexin2252
 {
 	meta:
 		description = "igexin2.2.2."
@@ -3393,7 +3090,7 @@ rule dowgin_a:adware android
     condition:
         all of them
 }
-rule leadbolt_a: advertising
+rule leadbolt: advertising
 {
 	meta:
 		description = "Leadbolt"
@@ -3401,7 +3098,7 @@ rule leadbolt_a: advertising
 		androguard.url(/http:\/\/ad.leadbolt.net/)
 }
 
-rule android_mazarBot_z_a: android
+rule android_mazarBot_z: android
 {
 	meta:
 	  author = "https://twitter.com/5h1vang"
@@ -3426,16 +3123,7 @@ rule android_mazarBot_z_a: android
 		androguard.permission(/android.permission.CALL_PHONE/) and
 		all of ($str_*)
 }
-rule ha: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$l = "dp.mp3"
-	condition:
-		any of them
-}
+
 rule MazarBot_b
 {
 	meta:
@@ -3460,14 +3148,8 @@ rule MazarBot_b
 		(($string_9 or $string_10) and ($string_11 or $string_12)) or
 		(($string_5 or $string_6) and ($string_7 or $string_8)) 
 }
-rule test_b
-{
-    condition:
-        androguard.target_sdk >= 23 or
-		androguard.max_sdk >= 23 or
-		androguard.min_sdk >= 23
-}
-rule FakeApp_a
+
+rule FakeApp
 {
 	meta:
 		description = "FakeApp installer from fake developers"
@@ -3482,7 +3164,7 @@ rule FakeApp_a
 	androguard.certificate.subject(/Attacker Inc\./) or
 	androguard.certificate.subject(/Attacker corp\./)
 }
-rule AddsDomains_a
+rule AddsDomains
 {
 	meta:
 		description = "Fraudulent domains used in Ads Campaigns"
@@ -3511,7 +3193,7 @@ rule AddsDomains_a
 		cuckoo.network.dns_lookup(/leno.ml/) or
 		cuckoo.network.dns_lookup(/winbv.nl/)		
 }
-rule koler_domains_a
+rule koler_domains
 {
 	meta:
 		description = "Old Koler.A domains examples"
@@ -3525,7 +3207,7 @@ rule koler_domains_a
 		cuckoo.network.dns_lookup(/video-sartex.us/) or 
 		cuckoo.network.dns_lookup(/policemobile.biz/)
 }
-rule koler_builds_a
+rule koler_builds
 {
 	meta:
 		description = "Koler.A builds"
@@ -3545,7 +3227,7 @@ rule koler_strings_a
 	condition:
 		1 of them
 }
-rule koler_class_a
+rule koler_class
 {
 	meta:
 		description = "Koler.A class"
@@ -3555,7 +3237,7 @@ rule koler_class_a
 	condition:
 		all of them
 }
-rule koler_D_a
+rule koler_D
 {
 	meta:
 		description = "Koler.D class"
@@ -3565,7 +3247,7 @@ rule koler_D_a
 	condition:
 		all of them
 }
-rule BankingPhisher_a: string
+rule BankingPhisher: string
 {
 	meta:
 		description = "This rule detects APKs in BankingPhisher Malware"
@@ -3576,7 +3258,7 @@ rule BankingPhisher_a: string
 	condition:
 		$string_1 or $string_2
 }
-rule MobiDash_a
+rule MobiDash
 {
 	meta:
 		description = "MobiDash Adware evidences"
@@ -3949,12 +3631,6 @@ rule Android_Triada_a: android
 	    androguard.activity("com.cy.pay.TiantianSMPay")
  }
 
-rule single_section_a
-{
-    condition:
-        elf.number_of_sections >= 1
-}
-
 rule Anubis_b: abc
 {
 	meta:
@@ -4194,15 +3870,6 @@ rule ma: official
 		any of them
 }
 
-rule na: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"	
-	condition:		
-		androguard.permission(/android.permission.BIND_DEVICE_ADMIN/) and
-		androguard.permission(/android.permission.RECEIVE_SMS/)
-}
 rule NqShield_a
 {
 	meta:
@@ -4214,7 +3881,7 @@ rule NqShield_a
 	condition:
         any of them 
 }
-rule sandrorat_a
+rule sandrorat
 {
 	meta:
 		description = "This rule detects SandroRat samples"
@@ -4444,18 +4111,7 @@ rule android_asacub_b
 		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/) and
 		all of ($str_*)
 }
-rule Banker_a
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "26d704d3a84a1186ef9c94ccc6d9fbaf, efe11f32c6b02370c7a98565cadde668"
-	strings:
-		$a = "http://xxxmobiletubez.com/video.php"
-		$b = "http://adultix.ru/index.php"
-		$c = "http://adultix.ru/forms/index.php"
-	condition:
-		all of them
-}
+
 rule ransomware_a
 {
 	meta:
@@ -4753,13 +4409,16 @@ rule gustuff_a: malware
 		androguard.filter(/android.intent.action.QUICKBOOT_POWERON/) and
 		androguard.filter(/android.intent.action.BOOT_COMPLETED/)
 }
-rule adware_hide_ikon_a {
-strings: 
-$ = /Cryopiggy/
-$ = /Cryopiggy/ nocase wide
-condition:
-1 of them
+
+rule adware_hide_ikon
+{
+     strings:
+        $ = /Cryopiggy/
+        $ = /Cryopiggy/ nocase wide
+    condition:
+        1 of them
 }
+
 rule OxyLabs_a
 {
 	meta:
@@ -4813,7 +4472,7 @@ rule FakeAV_Jan2020_a
 	condition:
 		all of ($a*)
 }
-rule String_search_a
+rule String_search
 {
         strings:
                 $c2_1 = /sabadell\.com/ nocase
@@ -4836,16 +4495,7 @@ rule HypervergeSDKTracker_a
 		androguard.activity("co.hyperverge.hypersnapsdk.activities.HVFaceActivity") or
 		androguard.activity("co.hyperverge.hvinstructionmodule.activities.FaceInstructionActivity")
 }
-rule sa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$a = /org.spongycastle.crypto.generators./
-	condition:
-		any of them
-}
+
 rule joker_notif_a
 {
     strings:
@@ -4930,20 +4580,7 @@ rule Target_Instagram_a: official
 	condition:
 	($string_target_fbmessenger)
 }
-rule Target_FBMessenger_a: official
-{
-	strings:
-		$string_target_fbmessenger = "com.facebook.orca"
-	condition:
-	($string_target_fbmessenger)
-}
-rule Target_Facebook_a: official
-{
-	strings:
-		$string_target_facebook = "com.facebook.katana"
-	condition:
-	($string_target_facebook)
-}
+
 rule Target_Bank_DB_a: official
 {
 	strings:
@@ -4965,16 +4602,7 @@ rule Target_Bank_CA_a: official
 	condition:
 	($string_target_bank_ca)
 }
-rule ta: official
-{
-	meta:
-		description = "First rule used to detect certain permissions"
-	condition:
-		androguard.permission(/android.permission.INTERNET/) and
-		androguard.permission(/android.permission.WAKE_LOCK/) and
-		androguard.permission(/android.permission.ACCESS_NETWORK_STATE/) and
-		androguard.permission(/android.permission.ACCESS_WIFI_STATE/)
-}
+
 rule Generic_b: Banker
 {
 	meta:
@@ -4998,29 +4626,7 @@ rule Generic_b: Banker
 		androguard.permission(/android.permission.READ_SMS/) and
 		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/)	
 }
-rule ua: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	condition:
-		androguard.package_name("com.koodous.android") and
-		androguard.app_name("Koodous") and
-		androguard.activity(/Details_Activity/i) and
-		androguard.permission(/android.permission.INTERNET/) and
-		androguard.certificate.sha1("8399A145C14393A55AC4FCEEFB7AB4522A905139") and
-		androguard.url(/koodous\.com/)
-}
-rule va: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$a = /155552155(54|56|58|60|62|66|64|68|70|72)/
-	condition:
-		$a
-}
+
 rule BankbotAlpha_a
 {
 	meta:
@@ -5086,29 +4692,6 @@ rule FalseGuide_a
 	  androguard.certificate.sha1("630CC5A2192230B02BE7ED89164514D1E971E4BA") or
 	  androguard.certificate.sha1("D0A83D20D80C29F35A84FBDE45F61E2B867C199B")
 }
-rule wa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules 	potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$a = "debuggerpattern__rdtsc" 
-		$b = "ft_jar" 
-		$c = "ft_zip"
-		$d = "zip_file" 
-		$e = "debuggerpattern__cpuid"
-	condition:
-		 $a and $b and $c and $d and $e //Yes, we use crashlytics to debug our app!
-}
-rule xa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-	strings:
-		$a = "FIN_ GIFT"
-	condition:
-		$a		
-}
 rule Jkdkdkd_Apps_a
 {
 	meta:
@@ -5128,8 +4711,8 @@ rule ya: official
 		$b = "msky/*/phonecall/"
 	condition:
 		androguard.certificate.sha1("5312c4f491cbb55f890e8b4206c890fd48ab49c5") 
-		or $a
-		or $b
+		and $a
+		and $b
 }
 rule AnubisVariant_a: Bankbot
 {
@@ -5182,18 +4765,7 @@ rule BITTER_b
 		androguard.package_name("com.picture.guard.view") or
 		androguard.package_name("com.android.settings") 
 }
-rule za: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-	strings:
-		$a = "DataSync" nocase
-		$b = "SlideShow" nocase
-      $c = "IMEI Number"  nocase
-      $d = "ImageView" nocase
-	condition:
-		3 of them
-}
+
 rule baa: official
 {
 	meta:
@@ -5257,11 +4829,7 @@ rule zooking_a: official
 		androguard.certificate.sha1("5cf396ef252bc129affdb6c6f6915461bfc36205") and
 		$a and $b and $c and $d and $e
 }
-rule videogames_b
-{
-    condition:
-		androguard.permission(/android.permission.INTERNET/)
-}
+
 rule Adware_b: SnakeRecipes
 {
     meta:
@@ -5336,20 +4904,7 @@ rule SaveMe_a
 		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/) and
 		androguard.url("http://xxxxmarketing.com")
 }
-rule daa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules 	potential"
-	strings:
-		$a = "com.mobidisplay.advertsv1.AdvService"
-		$b = "AdvService Started"
-	condition:
-		androguard.package_name("com.mobidisplay.advertsv1") or
-		androguard.permission(/android.permission.WRITE_EXTERNAL_STORAGE/) and
-		androguard.permission(/android.permission.READ_PHONE_STATE/) and
-		$a and
-		$b
-}
+
 rule virus1_a
 {
 	meta:
@@ -5384,28 +4939,7 @@ rule virus1_a
 		$s_message_to_3 and
 		$s_message_to_4
 }
-rule eaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "2a401f97cba6b6fcfdb849efff9835b613d691a7a68cf86ed2a9e6ecf733c998"
-	strings:
-	$a = {23 43 DC C2 32 F2 51 AE AA 00 88 88 E2 6B D1 29 63}
-	condition:
-		androguard.package_name("com.dotgears.flappybird") and
-		androguard.app_name("Flappy Bird") or
-		androguard.activity(/Details_Activity/i) and
-		androguard.permission(/android.permission.RECORD_AUDIO/) and
-		androguard.permission(/android.permission.SEND_SMS/) and
-		androguard.permission(/android.permission.CAMERA/) and
-		androguard.permission(/android.permission.RECORD_AUDIO/) and
-		androguard.permission(/android.permission.READ_CONTACTS/) and
-		androguard.permission(/android.permission.ACCESS_FINE_LOCATION/) and
-		androguard.permission(/android.permission.READ_CALL_LOG/) and
-		androguard.permission(/android.permission.PHONE_STATE/) and
-		androguard.permission(/android.permission.READ_SMS/) and
-		$a 
-}
+
 rule faa: official
 {
 	condition:
@@ -5447,17 +4981,12 @@ rule gaa: official
 {
 	meta:
 		description = "frida check"
-		sample = ""
 	strings:
 	    $a = { FC 6F BA A9 FA 67 01 A9 F8 5F 02 A9 F6 57 03 A9 F4 4F 04 A9 FD 7B 05 A9 FD 43 01 91 FF 0F 40 D1 FF 83 3A D1 F5 0F 40 91 B5 2A 06 91 F6 0B 40 91 }
 	condition:
 		all of them
 }
-rule accessbt_a: unknown
-{
-	condition:
-		androguard.permission(/android.permission.BIND_ACCESSIBILITY_SERVICE/)
-}
+
 rule Monokle_a: lookout
 {
 	meta:
@@ -5549,24 +5078,7 @@ rule Android_Trojan_SuspiciousPermission_LauncherMiss_Change1_a
 	condition:
 		#permission >= 10 and $hexstr_targetSdkVersion and not ($LauncherMissing) and not (any of ($exclude_*)) and 2 of ($a*) and 2 of ($b*)
 }
-rule AndHooklib_a: hooker framework
-{
-	meta:
-		description = "AndHook FrameWork"
-	strings:
-		$a = "AndHook"
-	condition:
-		$a
-}
-rule libprotectClass_a: packer
-{
-	meta:
-		description = "AndHook Class"
-	strings:
-		$a = "AndHook"
-	condition:
-		$a
-}
+
 rule certificates_a
 {
 	meta:
@@ -5765,7 +5277,6 @@ rule Porn_a: official
 {
 	meta:
 		description = "Experimental rule about Porn samples"
-		sample = "-"
 	strings:
 		$a = "porn" nocase
 	condition:
@@ -5848,19 +5359,7 @@ rule  practica4_slempo_a
 	condition:
 		$a and $b and $c
 }
-rule test_obfuscated_marcher_a
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$b_1 = "vi?rus"
-		$b_2 = "a?v?g"
-		$b_3 = "a?nt?i"
-		$b_4 = "v?i?ru?s"
-	condition:
-		any of ($b_*)
-}
+
 rule YARA_Act4_DG_a
 {
 	meta:
@@ -5993,16 +5492,6 @@ rule Simplelocker_Rule_a
 		$text_string4 and
 		$text_in_hex4
 }
-rule Packer_i360_a
-{
-	meta:
-		description = "i360"
-    strings:
-		$i360_1 = "libjiagu.so"
-		$i360_2 = "libjiagu_art.so"
-	condition:
-        any of them 
-}
 rule loveads_a
 {
     meta:
@@ -6120,16 +5609,6 @@ rule kiro_a: otherpacker
   condition:
      $kiro_lib and $sbox
 }
-rule jiagu_a: otherpacker
-{
-  meta:
-    description = "Jiagu"
-  strings:
-    $main_lib = "libjiagu.so"
-    $art_lib = "libjiagu_art.so"
-  condition:
-     ($main_lib or $art_lib)
-}
 rule qdbh_packer_a: otherpacker
 {
   meta:
@@ -6220,16 +5699,7 @@ rule approov_a: otherpacker
   condition:
      $lib and $sdk_config
 }
-rule jaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	condition:
-		androguard.url(/pstatp\.com/) or
-		androguard.url(/pglstatp-toutiao\.com/) or
-		androguard.url(/pangolin-sdk-toutiao\.com/)
-}
+
 
 rule PornHubAPK_a
 {
@@ -6245,15 +5715,7 @@ rule PornHubAPK_a
     condition:
         $a and $b and $c and $d
 }
-rule DexClassLoader_a
-{
-	meta:
-		description = "DexClassLoader"
-	strings:
-		$a = "Ldalvik/system/DexClassLoader;"
-	condition:
-		$a 
-}
+
 rule kaa: official
 {
 	meta:
@@ -6295,13 +5757,13 @@ rule Cajino_b
 		description = "This rule tries to detects push notification malware also kwnown as Cajino"
 		sample = "31801dfbd7db343b1f7de70737bdbab2c5c66463ceb84ed7eeab8872e9629199"
 	condition:
-		androguard.package_name("Cajino_B3814CA9E42681B32DAFE4A52E5BDA7A") or
-		androguard.app_name("Cajino") or
+		androguard.package_name("Cajino_B3814CA9E42681B32DAFE4A52E5BDA7A") and
+		androguard.app_name("Cajino") and
         androguard.activity("com.package.name.sendSMS") and
 		androguard.activity("com.baidu.android.pushservice.action.MESSAGE") and
 		androguard.activity("com.baidu.android.pushservice.action.RECIEVE") and
 		androguard.activity("com.baidu.android.pushservice.action.notification.CLICK")and
-		androguard.activity("android.intent.action.VIEW") or
+		androguard.activity("android.intent.action.VIEW") and
 		androguard.permission(/RECORD_AUDIO/) and
 		androguard.permission(/ACCESS_FINE_LOCATION/) 
 }
@@ -6351,17 +5813,7 @@ rule MobileSpy_a: simple
 	 	androguard.package_name("com.retina.smileyweb.ui") or
 		androguard.certificate.sha1("ADDCAD719274B94AE233E33F5923D6B9BB78A417B34B851527A0B857A616A2E4")
 }
-rule maa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-	strings:
-		$ = /OpenSSL 1\.0\.1[a-g]/
-		$ = /OpenSSL 1\.0\.0[a-l]/
-		$ = /OpenSSL 0\.9\.8[a-x]/
-	condition:
-		any of them
-}
+
 rule LockerIns_a{
 meta:
 	description="Detects Locker samples that encrypt the device files"
@@ -6413,16 +5865,7 @@ rule lionmobi_a
 	condition:
 		androguard.activity(/com\.example\.lakes/)
 		}
-rule oaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$a = "Virbox Protector"
-	condition:
-		all of them
-}
+
 rule paann: official
 {
 	meta: 
@@ -6439,7 +5882,7 @@ rule Advertisement_a {
 		$e = "airpush"
 		$f = "apperhand"
 	condition:
-		($c and $d and $e and $f) or (		
+		($c and $d and $e and $f) and (
 			androguard.permission(/ACCESS_NETWORK_STATE/) and
 			androguard.permission(/INTERNET/) and
 			androguard.permission(/WRITE_EXTERNAL_STORAGE/)) or
@@ -6503,7 +5946,7 @@ rule qaa: official
 		androguard.app_name(/covid/i)) and
 		androguard.filter("android.accessibilityservice.AccessibilityService")
 }
-rule collectors_a
+rule collectors
 {
 	meta:
 		description = "Filter for private information collecting malwares"
@@ -6583,21 +6026,7 @@ rule wipelocker_a_a
 		$a
 }
 
-rule Feabme_a: spy
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$string_a = "Android.Hardware.Usb9"
-		$string_b = "<PrivateImplementationDetails>{05ec9a1c-bc7f-4614-8c3d-8a1df63a8265}"
-		$string_c = "<UrlLogin>k__BackingField"
-		$string_d = "txtPassword"
-		$string_e = "getFacebook"
-		$hex_a = { 23 00 27 00 61 73 73 65 6D 62 6C 69 65 73 2F 54 69 6E 6B 65 72 41 63 63 6F 75 6E 74 4C 69 62 72 61 72 79 2E 64 6C 6C 0A 00 20 }
-	condition:
-		any of ($string_*) and all of ($hex_*)
-}
+
 rule WapCash_a: official
 {
 	meta:
@@ -6735,15 +6164,6 @@ rule Marcher_ObfuscatedStr_a
 		$b or
 		$c
 }
-rule walleteros_a
-{
-	meta:
-		description = "Detects Bitcoin wallet.dat manipulation"
-	strings:
-		$a = "wallet.dat"
-	condition:
-		$a
-}
 
 rule ransomware_b
 {
@@ -6826,13 +6246,7 @@ rule Trojan_Dendroid_a
   condition:
       3 of them
 }
-rule bas64_a
-{
-  strings:
-      $b64 = "base64_decode"
-  condition:
-      $b64    
-}
+
 rule Metasploit_Payload_a
 {
   meta:
@@ -6968,46 +6382,7 @@ rule Banker3_a
 	condition:
 	1 of them
 }
-rule taa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "04df74589825e8d93f44a5713769c5a732282c5af9ac699663943824903dfe2b"
-	strings:
-		$a = "FRENCH_CUISINE"
-	condition:
-		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/) and $a
-}
-rule uaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "04df74589825e8d93f44a5713769c5a732282c5af9ac699663943824903dfe2b"
-	strings:
-		$a = "french_cuisine"
-	condition:
-		androguard.permission(/android.permission.KILL_BACKGROUND_PROCESSES/) and $a
-}
-rule vaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "04df74589825e8d93f44a5713769c5a732282c5af9ac699663943824903dfe2b"
-	strings:
-		$a = "french_cuisine"
-	condition:
-		androguard.permission(/android.permission.INTERNET/) and $a
-}
-rule waa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "04df74589825e8d93f44a5713769c5a732282c5af9ac699663943824903dfe2b"
-	strings:
-		$a = "ASadsdk"
-	condition:
-		androguard.permission(/android.permission.INTERNET/) and $a
-}
+
 rule Rule_EliteVPN_a
 {
     meta:
@@ -7051,56 +6426,7 @@ rule Clipper_a: DordyRule
 		androguard.permission(/WRITE_EXTERNAL_STORAGE/) and
 		androguard.url("api.telegram.org")
 }
-rule own_a: test
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential This is for test features of Koodous"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	condition:
-	androguard.app_name("Facebook") and
-		not androguard.package_name(/com.facebook.katana/) and 
-		not androguard.certificate.issuer(/O=Facebook Mobile/)
-}
-rule xaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "4ad3af0e45727888230eaded3d319445ad60f57102feb33f2a62ef9a5c331e7d"
-	strings:
-		$a = "Killing all background processes..."
-	condition:
-		androguard.permission(/android.permission.KILL_BACKGROUND_PROCESSES/) and $a
-}
-rule yaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "4ad3af0e45727888230eaded3d319445ad60f57102feb33f2a62ef9a5c331e7d"
-	strings:
-		$a = "with android:layout_height=\x22wrap_content\x22"
-		$b = "Points are coincident"
-	condition:
-		androguard.permission(/android.permission.KILL_BACKGROUND_PROCESSES/) and ($a or $b)
-}
-rule zaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "4ad3af0e45727888230eaded3d319445ad60f57102feb33f2a62ef9a5c331e7d"
-	strings:
-		$a = "33d68e8b-7186-454f-8c2a-eebb526ae5e9"
-	condition:
-		androguard.permission(/android.permission.KILL_BACKGROUND_PROCESSES/) and
-		$a
-}
-rule baaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "4ad3af0e45727888230eaded3d319445ad60f57102feb33f2a62ef9a5c331e7d"
-	condition:
-		androguard.permission(/android.permission.KILL_BACKGROUND_PROCESSES/)
-}
+
 rule Trojan_e: BankBot
 {
 	meta:
@@ -7172,17 +6498,17 @@ rule Trojan_4_b: BankBot
 			or androguard.permission(/android.permission.READ_SMS/)
 		)
 }
-rule AVG_free_a
+rule AVG_free
 {
 	meta:
 		description = "This rule detects the AVG free version malware"
 		sample = "0ed6f99dadb9df5354f219875bf268c3e1d5dbee9a4754bb1b2c7026aa37ce93"
 	condition:
-		androguard.package_name("com.applecakerecipes.QueenStudio") or
-		androguard.app_name("AVG AntiVirus 2020 for Android Security FREE") or
+		androguard.package_name("com.applecakerecipes.QueenStudio") and
+		androguard.app_name("AVG AntiVirus 2020 for Android Security FREE") and
 		androguard.permission(/android.permission.INTERNET/) and
 		androguard.permission(/android.permission.READ_PHONE_STATE/) and
-		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/) or
+		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/) and
 		androguard.certificate.sha1("1e1b347f62f980e4eea6051d85c203a1eeeff1a8")
 }
 rule caaa: official
@@ -7191,19 +6517,6 @@ rule caaa: official
 		description = "This rule detects weird permission"
 	condition:
 		androguard.permission(/com.im.im.qingliao.push.permission.MESSAGE/)
-}
-rule daaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e85cba233a555a2ecb0956c6b6fa040ad12fd9cb496fcff3d3b3a80dfe6758dc"
-	strings:
-		 $a1 = "U2VuZF9HT19TTVM="
-       $a2 = "QUxMU0VUVElOR1NHTw=="
-       $b1 = "Send_GO_SMS"
-       $b2 = "del_sws"
-	condition:
-		all of ($a*) or all of ($b*)
 }
 
 rule Developers_with_known_malicious_apps_a
@@ -7248,42 +6561,6 @@ rule Cerberus_Permissions_a
         androguard.permission(/android.permission.WRITE_EXTERNAL_STORAGE/)   
 }
 
-rule vkey_protector_a: obfuscator
-{
-  meta:
-    description = "V-Key"
-  strings:
-    $l1_1 = "lib/arm64-v8a/libvosWrapperEx.so"
-    $l1_2 = "lib/armeabi-v7a/libvosWrapperEx.so"
-    $l1_3 = "lib/armeabi/libvosWrapperEx.so"
-    $l1_4 = "lib/mips/libvosWrapperEx.so"
-    $l1_5 = "lib/mips64/libvosWrapperEx.so"
-    $l1_6 = "lib/x86/libvosWrapperEx.so"
-    $l1_7 = "lib/x86_64/libvosWrapperEx.so"
-    $l2_1 = "lib/arm64-v8a/libchecks.so"
-    $l2_2 = "lib/armeabi-v7a/libchecks.so"
-    $l2_3 = "lib/armeabi/libchecks.so"
-    $l2_4 = "lib/mips/libchecks.so"
-    $l2_5 = "lib/mips64/libchecks.so"
-    $l2_6 = "lib/x86/libchecks.so"
-    $l2_7 = "lib/x86_64/libchecks.so"
-    $l3_1 = "lib/arm64-v8a/libpki.so"
-    $l3_2 = "lib/armeabi-v7a/libpki.so"
-    $l3_3 = "lib/armeabi/libpki.so"
-    $l3_4 = "lib/mips/libpki.so"
-    $l3_5 = "lib/mips64/libpki.so"
-    $l3_6 = "lib/x86/libpki.so"
-    $l3_7 = "lib/x86_64/libpki.so"
-    $l4_1 = "lib/arm64-v8a/libloadTA.so"
-    $l4_2 = "lib/armeabi-v7a/libloadTA.so"
-    $l4_3 = "lib/armeabi/libloadTA.so"
-    $l4_4 = "lib/mips/libloadTA.so"
-    $l4_5 = "lib/mips64/libloadTA.so"
-    $l4_6 = "lib/x86/libloadTA.so"
-    $l4_7 = "lib/x86_64/libloadTA.so"
-  condition:
-    any of them and is_apk
-}
 rule eaaa: official
 {
 	meta:
@@ -7298,14 +6575,7 @@ rule eaaa: official
 		androguard.permission(/android.permission.RECORD_AUDIO/) and
 		androguard.permission(/android.permission.READ_SMS/)
 }
-rule Safetracker_a
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	condition:
-		androguard.package_name(/safetracker/i)
-}
+
 rule baiduprotect_a
 {
     condition:
@@ -7411,23 +6681,7 @@ rule gaaa: official
  		$a and $b and $c and $d and $e and
 		androguard.permission(/android.permission.INTERNET/) 
 }
-rule haaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$a = ".php"
-	condition:
-		(androguard.app_name("atualiza") or androguard.app_name("whatsapp")) and
-		androguard.permission(/android.permission.INTERNET/) and
-	    androguard.permission(/android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS/) and
-        androguard.permission(/android.permission.SYSTEM_ALERT_WINDOW/) and
-		androguard.permission(/android.permission.ACCESS_NETWORK_STATE/) and
-		androguard.permission(/android.permission.WAKE_LOCK/) and
-		androguard.permission(/android.permission.GET_ACCOUNTS/) and
-		$a		
-}
+
 rule test_crypto_clipper_a
 {
 	meta:
@@ -7710,18 +6964,6 @@ rule redalert2_a
 		androguard.service("westr.service_rvetdi5xh.McdxService_efv3web")) or androguard.url("https://ttwitter.com/")
 }
 
-rule banker_R_a: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$a = "icici"
-		$c = "setComponentEnabledSetting"
-		$d = "android.app.action.ADD_DEVICE_ADMIN"
-	condition:
-		$a and $c and $d
-}
 rule smsriskware_a
 {
 	meta:
@@ -7887,18 +7129,6 @@ rule apkfiles_a: official
 		description = "Accede a un repositorio de apks"
 	condition:
 		androguard.url(/www\.apkfiles\.com/)
-}
-rule miner_suspicious_a
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "22581e7e76a09d404d093ab755888743b4c908518c47af66225e2da991d112f0"
-	strings:
-		$a_1 = "miner.start()"
-		$b_2 = "libcpuminer.so"
-		$b_3 = "libcpuminerpie.so"
-	condition:
-		$a_1 or any of ($b_*)
 }
 rule bankingsha_a: versi0ne
 {
@@ -8205,16 +7435,6 @@ rule qihoo360_a: packer
     $a = "libprotectClass.so"
   condition:
     $a
-}
-rule jiagu_b: packer
-{
-  meta:
-    description = "Jiagu"
-  strings:
-    $main_lib = "libjiagu.so"
-    $art_lib = "libjiagu_art.so"
-  condition:
-    ($main_lib or $art_lib)
 }
 rule qdbh_packer_b: packer
 {
@@ -8542,7 +7762,7 @@ rule Title_Santander_a {
 		$string_3 = /SmartBank/
 		$string_4 = /Flite/
 	condition:
-	1 of ($string_*)
+	4 of ($string_*)
 }
 rule Androguard_Santander_a {
 	meta:
@@ -8688,56 +7908,7 @@ rule taskhijack3_a: official
 	condition:
 		$file and ($a or $b)
 }
-rule naaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$l = "com.citi.citimobile"
-		$m = "com.citibank.mobile.au"
-	condition:
-		any of them
-}
-rule possible_miner_test_a
-{
-	meta:
-		description = "This rule detects adb miner "
-		sample = "412874e10fe6d7295ad7eb210da352a1"
-	strings:
-		$a_1 = "loadUrl"
-		$a_2 = "file"
-		$a_3 = "android_asset"
-		$a_4 = "html"
-		$a_5 = "webView"
-	condition:
-		all of ($a_*)
-}
-rule oaaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$l = "android.intent.action.MULTI_CSC_CLEAR"
-		$m = "lgeWapService.prov.persister.INSTALL_BROWSER"
-		$k = "android.htc.intent.action.CUSTOMIZATION_CHANGE"
-	condition:
-		any of them
-}
-rule paaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "https://blog.fortinet.com/2017/01/26/deep-analysis-of-android-rootnik-malware-using-advanced-anti-debug-and-anti-hook-part-i-debugging-in-the-scope-of-native-layer"
-	strings:
-		$a = /com.secshell/
-		$b = "secData0.jar"
-		$c = "DexInstall"
-		$d = "libSecShell.so"
-	condition:
- 		2 of them
-}
+
 rule SuspiciousAdds_a
 {
 	meta:
@@ -8745,13 +7916,7 @@ rule SuspiciousAdds_a
 	condition:
 		androguard.activity(/com.startapp.android.publish.OverlayActivity/i) or androguard.activity(/com.greystripe.sdk.GSFullscreenActivity/i)
 }
-rule crypto_a: jcarneiro
-{
-	strings:
-		$a = "xmr"
-	condition:
-		$a
-}
+
 rule FakeAngribirds_a
 {
 	meta:
@@ -8760,16 +7925,6 @@ rule FakeAngribirds_a
 		androguard.activity(/com.rovio.fusion/i) and not
 		androguard.certificate.sha1("66DA9177253113474F6B3043B89E0667902CF115") 
 }
-rule qaaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$l = "event_prepared_begin_install"
-	condition:
-		any of them
-		}
 rule crypto_b: jcarneiro
 {
 	strings:
@@ -8777,58 +7932,7 @@ rule crypto_b: jcarneiro
 	condition:
 		$a
 }
-rule raaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$l = "L_V_loadDone"
-	condition:
-		any of them
-		}
-rule saaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$l = "r_root_true"
-	condition:
-		any of them
-		}
-rule taaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$l = "ptrace"
-	condition:
-		any of them
-}
-rule uaaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$l = "ptrace_attach"
-	condition:
-		any of them
-}
-rule vaaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$l = "PPP begin"
-		$k = "PPP end"
-		$m = "PPP Error"
-	condition:
-		any of them
-}
+
 rule FaceAdware_a
 {
 	meta:
@@ -8847,19 +7951,7 @@ rule waaa: official
     condition:
         androguard.package_name(/com\.app\.attacker\../)
 }
-rule fanta_a
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$a = "commandObServer"
-		$b = "ussd(): "
-		$c = "const_id_send_sms"
-		$d = "const_task_id_send_sms"
-	condition:
-		all of them
-}
+
 rule CyberPolice_ransomware_a
 {
 	meta:
@@ -9156,24 +8248,6 @@ rule zaaa: official
 	condition:
 		androguard.certificate.sha1("C2:E4:C2:C7:AA:E9:ED:9C:C9:4B:B0:12:BA:DB:52:26:D1:27:87:42") or $a
 }
-rule taskhijack4_a: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-	strings:
-		$a = "allowTaskReparenting"
-	condition:
-		$a 
-}
-rule taskhijack3_b: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-	strings:
-		$a = "taskAffinity"
-	condition:
-		$a 
-}
 
 rule Posible_bypass_Screenlock_a
 {
@@ -9318,22 +8392,6 @@ rule FakeFlashPlayer_a
 		androguard.app_name("Flash_Player") or
 		androguard.app_name("Flash update")
 }
-rule AntiVM_a
-{
-	meta:
-		description = "This rule detects any application that checks VM environment"
-	strings:
-		$a = /emulator/i
-		$b = /goldfish/i
-		$c = "DEVICE_ID_EMULATOR"
-		$e = "X11 terminal emulator"
-		$f = "com/google/android/gms/internal"
-		$g = "Only emulators with Google APIs include Google Play Services"
-		$h = "com/google/android/gms/ads"
-		$i = "com/mixpanel/android/viewcrawler/ViewCrawler$LifecycleCallbacks"
-	condition:
-		($a or $b or $c) and not ($e or $f or $g or $h or $i)
-}
 rule fakeInstaller_c
 {
 	meta:
@@ -9406,7 +8464,7 @@ rule collectors_b
 		and androguard.permission(/android.permission.ACCESS_WIFI_STATE/)
 		and androguard.permission(/android.permission.ACCESS_NETWORK_STATE/)
 		and androguard.permission(/android.permission.WRITE_EXTERNAL_STORAGE/)
-		and not androguard.permission(/android.permission.SEND_SMS/)
+		and androguard.permission(/android.permission.SEND_SMS/)
 }
 rule sms_malwares_nograiny_a
 {
@@ -9979,20 +9037,7 @@ rule caaaa: official
     condition:
                 all of ($*)
 }
-rule construct_a: official
-{
-	meta:
-		description = "looking for root exploit - constructeur"
-		sample = "16de78a5bbd91255546bfbb3565fdbe4c9898a16062c87dbb1cf24665830bbe"
-	strings:
-                $_1 = "asus"
-                $_2 = "huawei"
-                $_3 = "zte"
-                $_4 = "htc"
-                $_5 = "sonyericsson"
-    condition:
-                all of ($_*)
-}
+
 rule sensual_woman_b: chinese
 {
 	condition:
@@ -10023,20 +9068,7 @@ rule SMSSend2_c
 	condition:
 		all of them
 }
-rule AntiDebugger_a
-{
-	strings:
-		$a = "/proc/%d/mem"
-		$b = "/proc/%d/pagemap"
-		$c = "inotify_init"
-		$d = "strace"
-		$e = "gdb"
-		$f = "ltrace"
-		$g = "android_server"
-		$h = "dvmDbgActive"
-	condition:
-		($a or $b or $c) or ($d and $e and $f) or $g or $h
-}
+
 rule Agent_a: official
 {
 	meta:
@@ -10503,15 +9535,6 @@ rule metasploit_obsfuscated_a
 		all of them
 }
 
-rule DexClassLoader_b
-{
-	meta:
-		description = "Ldalvik/system/DexClassLoader;"
-	strings:
-		$a = "Ldalvik/system/DexClassLoader;"
-	condition:
-		$a 
-}
 rule qihoo360_b: packer
 {
 	meta:
@@ -11148,16 +10171,7 @@ rule Slocker_components_a
 	condition:
 		1 of them
 }
-rule koodousgaaaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$a = "Yeahmobi_Trackping"
-	condition:
-		all of them
-}
+
 rule cellspy_a: monitor
 {
 	meta:
@@ -11213,21 +10227,6 @@ rule Godlike_a
 		$b = "lib/armeabi-v7a/libgodlikelib.so"
 	condition:
 		$a or $b
-}
-rule koodoushaaaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$a = "HELLO"
-		$b = "PONG"
-		$c = "SLEEP"
-		$d = "WAIT"
-		$e = "CREATE"
-		$f = "HELLO\n"
-	condition:
-		all of them
 }
 rule downloader_c
 {
@@ -11567,16 +10566,6 @@ rule packers_h: tencent
 	condition:
 		2 of them
 }
-rule packers_i: i360
-{
-	meta:
-		description = "This rule detects packers based on files used by them"
-	strings:
-		$i360_1 = "libjiagu.so"
-		$i360_2 = "libjiagu_art.so"
-	condition:
-		2 of them
-}
 rule packers_j: baidu
 {
 	meta:
@@ -11851,16 +10840,10 @@ rule risky_android_certificates_a {
 		androguard.certificate.issuer(/Alex Popov/) or
 		androguard.certificate.sha1("E0:30:A3:1B:E3:12:FF:93:8A:AF:3F:31:49:34:B1:E9:2A:F2:5D:60") or 
 		androguard.certificate.issuer(/hjgjhg/) or
-androguard.certificate.sha1("DB:87:39:0F:55:B3:FE:B6:D7:A0:5C:64:6B:F0:97:91:67:13:73:CC") or
-androguard.certificate.sha1("06:14:68:81:20:29:0A:8F:6F:88:8A:A6:EC:24:72:AF:A6:3E:8B:66")
+        androguard.certificate.sha1("DB:87:39:0F:55:B3:FE:B6:D7:A0:5C:64:6B:F0:97:91:67:13:73:CC") or
+        androguard.certificate.sha1("06:14:68:81:20:29:0A:8F:6F:88:8A:A6:EC:24:72:AF:A6:3E:8B:66")
 }
-rule koodousmaaaa: official
-{
-	strings:
-		$droidplugin = "droidplugin"
-	condition:
-		$droidplugin
-}
+
 rule koodousnaaaa: official
 {
 	meta:
@@ -12278,7 +11261,7 @@ rule Trojan_f: Obscuro Banking Trojan
 		2 of ($c2_*)
 		and (
 			androguard.permission(/android.permission.BIND_ACCESSIBILITY_SERVICE/) 
-			or androguard.permission(/android.permission.FOREGROUND_SERVICE/)) or
+			and androguard.permission(/android.permission.FOREGROUND_SERVICE/)) or
 		androguard.certificate.sha1("E7BA28ECA0760524411B2D2476BDAE65C274B46A") or
 		androguard.certificate.sha1("6DB41284B29ADF5FCFFFB3712D827161E26B504A") or
 		androguard.certificate.sha1("E5029BA773B141CDD9C7352EA5BC63275B975303") or
@@ -12325,27 +11308,6 @@ rule TractorSMS_a
 		$c = "http://10.0.0.172"
 	condition:
 		$a and $b and $c and androguard.app_name("com.safetest.tractor")
-}
-rule NoobHost_a
-{
-	meta:
-		Author= "Anna and Felicia"
-		email = "s1958410@vuw.leidenuniv.nl"
-		reference= "https://koodous.com/apks/c1a3e1a372df344b138e2edb541fdc1d7c1842726ca85a38137ca902a0e5dc6b"
-		sample = "c1a3e1a372df344b138e2edb541fdc1d7c1842726ca85a38137ca902a0e5dc6b"
-		date = "03/11/2020"
-		description = "This is a basic YARA rule for CEO fraud."
-	strings:
-		$a = "_mips.so"
-		$b = "jiagu"
-		$c = "jiagu_x86"
-		$d = "mips"
-		$e = "_a64.so"
-		$f = "https://t.me/POLICEryn2"
-	condition:
-		($a or $b or $c or $d or $e or $f) or
-		androguard.package_name("noob.yt.team") or
-	  	androguard.certificate.sha1("66ebe8f6a719790a2194c34b1f1bfb8df344f870")
 }
 rule Anubis_Variant_a: BankBot
 {
@@ -12477,17 +11439,7 @@ rule SMSPay2_a
 	condition:
 		androguard.certificate.sha1("6818663E1B038E42D7B8CBCF63CF3D470DA90124")
 }
-rule koodoussaaaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$pass = "MyDifficultPassw"
-		$exec = "EncExc"
-	condition:
-		$pass and $exec
-}
+
 rule Acecard_b
 {
 	meta:
@@ -12580,16 +11532,6 @@ rule Jiaguo_a
 		$b = "assets/libjiagu_x86.so"
 	condition:
 		$a and $b
-}
-rule koodousvaaaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$a = "com.loki.sdk.ILokiListene"
-	condition:
-		any of them
 }
 rule pokemongo_a: fake
 {
@@ -12754,24 +11696,6 @@ rule AdultAdware_a: official
 	condition:
 		$a and $b and $c and $d and $e and $f  
 }
-rule koodouswaaaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$l = "libhooker.so"
-	condition:
-		any of them
-}
-rule guiasitio_a: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	condition:
-		androguard.url(/guiasitio\.com.*/)
-}
 rule eicar_a
 {
 	meta:
@@ -12793,26 +11717,8 @@ rule syringe_a
 	condition:
 		all of them
 }
-rule koodousyaaaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$l = "ActivityManager$RunningTaskInfo;->topActivity"
-	condition:
-		any of them
-}
-rule zkoodousaaaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$l = "getRunningForegroundApps"
-	condition:
-		any of them
-}
+
+
 rule fakeGames_a
 {
 	meta:
@@ -12999,60 +11905,7 @@ rule Crymore_a
 	condition:
 		any of ($a*)
 }
-rule koodousbaaaaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$ = "QD_SUBID"
-		$ = "ASt20180731"
-		$ = "bHgSwitch"
-		$ = "HeguSDK"
-		$ = "sviptodo"
-		$ = "android.intent.ss.rbcm"
-		$ = "adv.google-global.com"
-		$ = "moast.zip"
-		$ = "android.intent.start.dta"
-		$ = "instance_taskcontainer"
-		$ = "android.intent.action.stopsp"
-		$ = "aHR0cHM6Ly9hcGkubml1bW9iaS5jb20vYWEvbmM="
-		$ = "api.jsian.com"
-	condition:
-		any of them or
-		androguard.url(/google-global.com/) or
-		androguard.url("198.11.177.209") or
-		androguard.url("47.254.56.0") or
-		androguard.url("47.88.10.168") or
-		androguard.url(/adv.gmscenter.org/) or
-		androguard.url(/adv.google-global.com/) or
-		androguard.url(/api.jsian.com/) or
-		androguard.url(/rcv.ilabtap.com/) or
-		cuckoo.network.dns_lookup(/google-global.com/) or
-		cuckoo.network.dns_lookup(/adv.gmscenter.org/) or
-		cuckoo.network.dns_lookup(/jsian.com/)
-}
-rule koodouscaaaaa: official
-{
-	meta:
-		description = "Obfuscation going on"
-	strings:
-		$yes_1 = "obfuscate" nocase
-		$yes_2 = "obfuscation" nocase
-		$yes_3 = "obfuscated" nocase
-		$yes_4 = "deobfuscat" nocase
-		$no1 = "obfuscatedIdentifier" nocase
-		$no2 = "com.android.vending.licensing.AESObfuscator-1" nocase
-		$no3 = "ObfuscatedCall"
-		$no4 = "ObfuscatedCallP"
-		$no5 = "ObfuscatedCallRet"
-		$no6 = "ObfuscatedCallRetP"
-		$no7 = "ObfuscatedFunc"
-		$no8 = "ObfuscatedAddress"
-		$no9 = "LVLObfusca"
-	condition:
-		any of ($yes_*) and not any of ($no*)
-}
+
 rule avdobfuscator_a: obfuscator
 {
   meta:
@@ -13066,7 +11919,7 @@ rule avdobfuscator_a: obfuscator
     $o6 = "ObfuscatedCallRetP"
     $o7 = "ObfuscatedFunc"
   condition:
-    1 of ($o*) //and $elf_magic at 0
+    1 of ($o*)
 }
 rule HeroBot_a
 {
@@ -13087,150 +11940,7 @@ rule HeroBot_a
 		and androguard.receiver(/OS\.callreceiver/i) 
 		and androguard.receiver(/OS\.booton/i)
 }
-rule koodousdaaaaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$ = "downloader_center_instance"
-		$ = "ww_proj"
-		$ = "1fa78cfb99fbdb144751ccd9a086e65e"
-		$ = "f3c744d950bf70dfc8c7cbcae23f26fa"
-		$ = "ck2@13!4"
-	condition:
-		any of them
-		or cuckoo.network.dns_lookup(/xuenya.net/)
-		or cuckoo.network.dns_lookup(/os-1253691939.file.myqcloud.com/)
-		or androguard.url(/os-1253691939.file.myqcloud.com/)		
-}
-rule koodouseaaaaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-		url = " https://www.yangzhi968.com/20171112/du2.html?source=1"
-	condition:
-		androguard.package_name(/com.abel.abel/) or
-		androguard.package_name(/com.ansun.IosFirstfang/) or
-		androguard.package_name(/com.ansun.IosV2/) or
-		androguard.package_name(/com.ansun.IosV2qp/) or
-		androguard.package_name(/com.ansun.firstfang/) or
-		androguard.package_name(/com.ansun.firstfangFr/) or
-		androguard.package_name(/com.ansun.v2/) or
-		androguard.package_name(/com.ansun.v2Fr/) or
-		androguard.package_name(/com.app8412.IosIebbs/) or
-		androguard.package_name(/com.app8412.LobbyGame/) or
-		androguard.package_name(/com.app8412.SinBaGame/) or
-		androguard.package_name(/com.app8412.iebbs/) or
-		androguard.package_name(/com.app8412.iebbsFr/) or
-		androguard.package_name(/com.bingo.IosBingo/) or
-		androguard.package_name(/com.bingo.bingo/) or
-		androguard.package_name(/com.bingo.bingoFr/) or
-		androguard.package_name(/com.chester.NF0043/) or
-		androguard.package_name(/com.chester.NF0043Fr/) or
-		androguard.package_name(/com.chuxuan.chuxuan/) or
-		androguard.package_name(/com.chuxuan.chuxuanFr/) or
-		androguard.package_name(/com.duniang.IosDuniang/) or
-		androguard.package_name(/com.duniang.IosDuniang2/) or
-		androguard.package_name(/com.duniang.duniang/) or
-		androguard.package_name(/com.duniang.duniangFr/) or
-		androguard.package_name(/com.fd0371.AllFun/) or
-		androguard.package_name(/com.fd0371.AllFun5Fr/) or
-		androguard.package_name(/com.fd0371.AllFunFr/) or
-		androguard.package_name(/com.fd0371.IceGame/) or
-		androguard.package_name(/com.fd0371.IceGame9/) or
-		androguard.package_name(/com.fd0371.IceGameFr/) or
-		androguard.package_name(/com.fengniao.fengniao/) or
-		androguard.package_name(/com.fengniao.fengniaoFr/) or
-		androguard.package_name(/com.fuhao.IosFlbhqy/) or
-		androguard.package_name(/com.fuhao.IosHqy/) or
-		androguard.package_name(/com.fuhao.IosHqy3/) or
-		androguard.package_name(/com.fuhao.flbhqy/) or
-		androguard.package_name(/com.fuhao.flbhqyFr/) or
-		androguard.package_name(/com.fuhao.hqy/) or
-		androguard.package_name(/com.fuhao.hqyFr/) or
-		androguard.package_name(/com.handui1026.LobbyGame/) or
-		androguard.package_name(/com.haoyun.IosLucky/) or
-		androguard.package_name(/com.haoyun.lucky/) or
-		androguard.package_name(/com.haoyunqipai.haoyunqipai/) or
-		androguard.package_name(/com.haoyunqipai.haoyunqipaiFr/) or
-		androguard.package_name(/com.hch029.IosLobby/) or
-		androguard.package_name(/com.hch029.LobbyDebug/) or
-		androguard.package_name(/com.hch029.LobbyGame/) or
-		androguard.package_name(/com.hch029.QLLobbyGame/) or
-		androguard.package_name(/com.hiapps.HiappsBluePeak/) or
-		androguard.package_name(/com.hiapps.HiappsDuniang/) or
-		androguard.package_name(/com.hiapps.HiappsEagle/) or
-		androguard.package_name(/com.hiapps.HiappsPaiquFr/) or
-		androguard.package_name(/com.hiapps.HiappsTianyun/) or
-		androguard.package_name(/com.hiapps.HiappsWinasking/) or
-		androguard.package_name(/com.hiapps.HiappsYixiu/) or
-		androguard.package_name(/com.hongyun.IosWinAsKing/) or
-		androguard.package_name(/com.hongyun.WinAsKing/) or
-		androguard.package_name(/com.hongyun.WinAsKingFr/) or
-		androguard.package_name(/com.ianetest.dandanzhuan/) or
-		androguard.package_name(/com.jinzun123.jinzun123/) or
-		androguard.package_name(/com.jinzun123.jinzun123Fr/) or
-		androguard.package_name(/com.jixiuqinga.jixiuqinga/) or
-		androguard.package_name(/com.jixiuqinga.jixiuqingaFr/) or
-		androguard.package_name(/com.jjqp.IosJiujiu/) or
-		androguard.package_name(/com.jjqp.jiujiu/) or
-		androguard.package_name(/com.jjqp.jiujiuFr/) or
-		androguard.package_name(/com.juying.IosEagle/) or
-		androguard.package_name(/com.juying.eagle/) or
-		androguard.package_name(/com.juying.eagleFr/) or
-		androguard.package_name(/com.jxqp.IosJixiang/) or
-		androguard.package_name(/com.jxqp.jixiang/) or
-		androguard.package_name(/com.jxqp.jixiangFr/) or
-		androguard.package_name(/com.landing.IosBluePeak/) or
-		androguard.package_name(/com.landing.blue_peak/) or
-		androguard.package_name(/com.landing.blue_peak4/) or
-		androguard.package_name(/com.landing.blue_peak40$/) or
-		androguard.package_name(/com.landing.bluepeakFr/) or
-		androguard.package_name(/com.leg1077.LobbyGame/) or
-		androguard.package_name(/com.paiqu.IosPaiqu/) or
-		androguard.package_name(/com.pearq12.LobbyGame/) or
-		androguard.package_name(/com.qbqp.Ios7bao/) or
-		androguard.package_name(/com.qbqp.Ios7baoFr/) or
-		androguard.package_name(/com.qbqp.qibao/) or
-		androguard.package_name(/com.qbqp.qibaoFr/) or
-		androguard.package_name(/com.qbqp.qibao_001/) or
-		androguard.package_name(/com.qyqp.IosQuying/) or
-		androguard.package_name(/com.qyqp.quying/) or
-		androguard.package_name(/com.qyqp.quyingFr/) or
-		androguard.package_name(/com.sbxgame.IosLobbyGameFr/) or
-		androguard.package_name(/com.sbxgame.LobbyDebug/) or
-		androguard.package_name(/com.sbxgame.LobbyDemo/) or
-		androguard.package_name(/com.sbxgame.LobbyGame/) or
-		androguard.package_name(/com.sbxgame.LobbyGame0Fr/) or
-		androguard.package_name(/com.sbxgame.LobbyGameFr/) or
-		androguard.package_name(/com.soso.soso/) or
-		androguard.package_name(/com.soso.sosoFr/) or
-		androguard.package_name(/com.taizi.IosTz/) or
-		androguard.package_name(/com.taizi.tz/) or
-		androguard.package_name(/com.taizi.tzFr/) or
-		androguard.package_name(/com.thai.TestSkin/) or
-		androguard.package_name(/com.tianyun.IosHonor/) or
-		androguard.package_name(/com.tianyun.IosHonor2/) or
-		androguard.package_name(/com.tianyun.honor/) or
-		androguard.package_name(/com.tianyun.liluo/) or
-		androguard.package_name(/com.u9.IosPostive/) or
-		androguard.package_name(/com.u9.positive02/) or
-		androguard.package_name(/com.u9.postive/) or
-		androguard.package_name(/com.u9.postiveFr/) or
-		androguard.package_name(/com.unionasone.IosYixiu/) or
-		androguard.package_name(/com.unionasone.yixiu/) or
-		androguard.package_name(/com.unionasone.yixiuFr/) or
-		androguard.package_name(/com.vip2002.vip2002/) or
-		androguard.package_name(/com.vip2002.vip2002Fr/) or
-		androguard.package_name(/com.wangzhe.cnty/) or
-		androguard.package_name(/com.wangzhe.cntyFr/) or
-		androguard.package_name(/com.wangzhe.thekingdom/) or
-		androguard.package_name(/com.wangzhe.thekingdomFr/) or
-		cuckoo.network.http_request(/\/route\/test/) or
-		cuckoo.network.http_request(/\/service\/conf\/init?t=/)
-}
+
 rule Android_Marcher_a
 {
 	meta:
@@ -13433,20 +12143,7 @@ rule ollvm: obfuscator
     not ollvm_v6_0 and
     not ollvm_v6_0_strenc
 }
-rule koodousfaaaaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$a = {63 6F 6D 24 6B 6F 6F 64 6F 75 73 24 61 6E 64 72 6F 69 64}
-	condition:
-	    all of them and
-		androguard.package_name("com.koodous.android") and
-		androguard.app_name("Koodous") and
-		androguard.activity(/Details_Activity/i) and
-		androguard.permission(/android.permission.INTERNET/)
-}
+
 
 rule koodouszxs: official
 {
@@ -13782,30 +12479,7 @@ rule secenh_a: packer
 	1 of ($a*) 
 	and 1 of ($b*)
 }
-rule koodouslaaaaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$a = "ativar o servi"
-		$b = "acessiblidade"
-	condition:
-		$a and $b
-}
-rule koodousmaaaaa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$a = "Falha na comunica"
-		$b = "Carregando..."
-		$c = "com servidor."
-		$d = "aplicada com sucesso"
-	condition:
-		$a and $b and $c and $d
-}
+
 rule marcher_v2_b
 {
 	meta:
@@ -13816,14 +12490,7 @@ rule marcher_v2_b
 		androguard.service(/\.p0[0-9]{2}[a-z]\b/) and
 		androguard.receiver(/\.p0[0-9]{2}[a-z]\b/)
 }
-rule koodousnaaaaa: official
-{
-	meta:
-		description = "This rule detects apps with bluetooth permissions"
-	condition:
-		androguard.permission(/android.permission.BLUETOOTH/) or
-		androguard.permission(/android.permission.BLUETOOTH_ADMIN/)
-}
+
 rule storage_a
 {
 	meta:
@@ -13868,13 +12535,7 @@ rule findbutton_a
 		cuckoo.network.dns_lookup(/api.smallkoo.com/) or
 		cuckoo.network.dns_lookup(/cdn.jesgoo.com/)
 }
-rule koodousqaaaaa: official
-{
-	meta:
-		description = "This rule detects the overdraw applications"
-	condition:
-		androguard.permission(/android.permission.SYSTEM_ALERT_WINDOW/)
-}
+
 rule koodousraaaaa: official
 {
 	meta:
@@ -13965,99 +12626,6 @@ rule AndroidAdServer_a
 		androguard.url(/123\.56\.205\.151/) or
 		androguard.url("123.56.205.151") or
 		cuckoo.network.dns_lookup(/123\.56\.205\.151/)
-}
-rule testRule_a
-{
-	condition:
-		androguard.permission(/com.massage.aptoide.permission.C2D_MESSAGE/) or
-		androguard.permission(/android.permission.SET_ANIMATION_SCALE/) or
-		androguard.permission(/org.catrobat.catroid.generated27539.permission.C2D_MESSAGE/) or
-		androguard.permission(/com.massage.aptoide.permission.C2D_MESSAGE/) or
-		androguard.permission(/android.permission.READ_APP_BADGE/) or
-		androguard.permission(/me.everything.badger.permission.BADGE_COUNT_READ/) or
-		androguard.permission(/me.everything.badger.permission.BADGE_COUNT_WRITE/) or
-		androguard.permission(/com.mytriber.me.Tb565fa76620d4290a8d317d3f38e82da.permission.C2D_MESSAGE/) or
-		androguard.permission(/com.gamedevltd.modernstrike.bgtdfg.permission.C2D_MESSAGE/) or
-		androguard.permission(/com.jumpgames.pacificrim.permission.C2D_MESSAGE/) or
-		androguard.permission(/io.wifimap.wifimap.gcm.permission.C2D_MESSAGE/) or
-		androguard.permission(/nullsclash.night.rel.permission.C2D_MESSAGE/) or
-		androguard.permission(/com.yd.android.mtstrikeru.permission.JPUSH_MESSAGE/) or
-		androguard.permission(/com.yd.android.mtstrikeru.permission.C2D_MESSAGE/) or
-		androguard.permission(/com.hecorat.screenrecorder.free.permission.C2D_MESSAGEdf/) or
-		androguard.permission(/com.sec.enterprise.permission.MDM_PROXY_ADMIN_INTERNAL/) or
-		androguard.permission(/android.permission.BIND_DEVICE_ADMIN/) or
-		androguard.permission(/android.permission.sec.ENTERPRISE_DEVICE_ADMIN/) or
-		androguard.permission(/com.sec.enterprise.knox.permission.KNOX_ATTESTATION/) or
-		androguard.permission(/android.permission.sec.MDM_APP_BACKUP/) or
-		androguard.permission(/com.sec.enterprise.mdm.permission.BROWSER_PROXY/) or
-		androguard.permission(/android.permission.ACCESS_MOCK_LOCATION/) or
-		androguard.permission(/android.permission.SET_PROCESS_LIMIT/) or
-		androguard.permission(/com.sec.enterprise.knox.cloudmdm.smdms.permission.SAMSUNG_MDM_SERVICE/) or
-		androguard.permission(/android.permission.sec.MDM_APP_MGMT/) or
-		androguard.permission(/android.permission.sec.MDM_APP_PERMISSION_MGMT/) or
-		androguard.permission(/android.permission.sec.MDM_BLUETOOTH/) or
-		androguard.permission(/android.permission.sec.MDM_INVENTORY/) or
-		androguard.permission(/android.permission.sec.MDM_EXCHANGE/) or
-		androguard.permission(/android.permission.sec.MDM_ROAMING/) or
-		androguard.permission(/android.permission.sec.MDM_WIFI/) or
-		androguard.permission(/android.permission.sec.MDM_SECURITY/) or
-		androguard.permission(/android.permission.sec.MDM_HW_CONTROL/) or
-		androguard.permission(/android.permission.sec.MDM_RESTRICTION/) or
-		androguard.permission(/android.permission.sec.MDM_LOCATION/) or
-		androguard.permission(/android.permission.sec.MDM_CALLING/) or
-		androguard.permission(/android.permission.sec.MDM_EMAIL/) or
-		androguard.permission(/android.permission.sec.MDM_VPN/) or
-		androguard.permission(/android.permission.sec.MDM_APN/) or
-		androguard.permission(/android.permission.sec.MDM_PHONE_RESTRICTION/) or
-		androguard.permission(/android.permission.sec.MDM_BROWSER_SETTINGS/) or
-		androguard.permission(/android.permission.sec.MDM_DATE_TIME/) or
-		androguard.permission(/android.permission.sec.MDM_ENTERPRISE_VPN/) or
-		androguard.permission(/android.permission.sec.MDM_FIREWALL/) or
-		androguard.permission(/android.permission.sec.MDM_REMOTE_CONTROL/) or
-		androguard.permission(/android.permission.sec.MDM_KIOSK_MODE/) or
-		androguard.permission(/android.permission.sec.MDM_AUDIT_LOG/) or
-		androguard.permission(/android.permission.sec.MDM_CERTIFICATE/) or
-		androguard.permission(/android.permission.sec.MDM_SMARTCARD/) or
-		androguard.permission(/android.permission.sec.MDM_SEANDROID/) or
-		androguard.permission(/android.permission.sec.MDM_LDAP/) or
-		androguard.permission(/android.permission.sec.MDM_LOCKSCREEN/) or
-		androguard.permission(/android.permission.sec.MDM_GEOFENCING/) or
-		androguard.permission(/android.permission.sec.MDM_BLUETOOTH_SECUREMODE/) or
-		androguard.permission(/android.permission.sec.MDM_MULTI_USER_MGMT/) or
-		androguard.permission(/android.permission.sec.MDM_LICENSE_LOG/) or
-		androguard.permission(/android.permission.sec.MDM_DUAL_SIM/) or
-		androguard.permission(/android.permission.sec.MDM_ENTERPRISE_SSO/) or
-		androguard.permission(/android.permission.sec.MDM_ENTERPRISE_ISL/) or
-		androguard.permission(/android.permission.sec.MDM_ENTERPRISE_CONTAINER/) or
-		androguard.permission(/android.permission.sec.ENTERPRISE_MOUNT_UNMOUNT_ENCRYPT/) or
-		androguard.permission(/android.permission.sec.ENTERPRISE_CONTAINER/) or
-		androguard.permission(/com.sec.enterprise.knox.KNOX_GENERIC_VPN/) or
-		androguard.permission(/com.sec.enterprise.knox.permission.KNOX_DEACTIVATE_LICENSE/) or
-		androguard.permission(/com.sec.enterprise.knox.permission.KNOX_CCM/) or
-		androguard.permission(/android.permission.sec.MDM_UMC_INTERNAL/) or
-		androguard.permission(/com.sec.enterprise.knox.permission.KNOX_CERTENROLL/) or
-		androguard.permission(/com.sec.enterprise.mdm.permission.MDM_SSO/) or
-		androguard.permission(/com.sec.enterprise.knox.KNOX_CONTAINER_VPN/) or
-		androguard.permission(/com.samsung.android.gencertservice.permission.SERVICE_BIND/) or
-		androguard.permission(/com.sec.android.SAMSUNG_AASASERVICE/) or
-		androguard.permission(/com.fde.avpevolution.bfgtwe.permission.C2D_MESSAGE/) or
-		androguard.permission(/com.rsupport.mobizen.live.permission.C2D_MESSAGE/) or
-		androguard.permission(/com.gameloft.android.ANMP.GloftLBCR.permission.C2D_MESSAGEzy/) or
-		androguard.permission(/glshare.permission.ACCESS_SHARED_DATAzy/) or
-		androguard.permission(/com.paradoxplaza.prisonarchitect.permission.C2D_MESSAGE/) or
-		androguard.permission(/com.gameloft.android.ANMP.GloftG4HM.bddf.permission.C2D_MESSAGE/) or
-		androguard.permission(/android.launcher.permission.INSTALL_SHORTCUT/) or
-		androguard.permission(/com.kilooclash.clashofclans.permission.C2D_MESSAGE/) or
-		androguard.permission(/com.rockstargames.bully.bfgtwe.permission.C2D_MESSAGE/) or
-		androguard.permission(/com.giantssoftware.fs18.google.permission.C2D_MESSAGE/) or
-		androguard.permission(/com.tct.launcher.permission.READ_SETTINGS/) or
-		androguard.permission(/com.tct.launcher.permission.WRITE_SETTINGS/) or
-		androguard.permission(/com.tct.launcher.permission.RECEIVE_LAUNCH_BROADCASTS/) or
-		androguard.permission(/com.tct.launcher.permission.RECEIVE_FIRST_LOAD_BROADCAST/) or
-		androguard.permission(/android.permission.ACCESS_OTA_DATA/) or
-		androguard.permission(/com.tct.email.permission.ACCESS_PROVIDER/) or
-		androguard.permission(/com.tct.launcher.permission.C2D_MESSAGE/) or
-		androguard.permission(/com.supercell.clashofclans.permission.C2D_MESSAGEpgxu/)
 }
 rule mobby_a
 {
@@ -14294,7 +12862,7 @@ rule Trojan_g: trojans_ttp
 		$c2_7 = "b0z" nocase
 		$c2_8 = "bolsonaro" nocase
 	condition:
-      androguard.package_name("com.itau") or any of them
+      androguard.package_name("com.itau") and any of them
 }
 rule android_bankbot_a
 {
@@ -14395,23 +12963,7 @@ rule BankBot_c: banker
 	condition:
 		2 of ($strings_*)
 }
-rule koodousba: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$service1="TTT.Sberbank"
-		$service2="TTT.CardService"
-		$service3="MainService"
-		$service4="TTT.Avito"
-		$service5="TTT.Alpha"
-		$service6="TTT.Ali"
-		$service7="TTT.vtb24"
-		$service8="TTT.ural"
-	condition:
-	any	of them and  androguard.filter("android.app.action.DEVICE_ADMIN_ENABLED") and androguard.filter(/ACTION_DEVICE_ADMIN_DISABLED/)
-	}
+
 rule SmsFraudUsingUrls_a: smsfraud
 {
 	meta:
@@ -14677,27 +13229,7 @@ rule MUK_Banks_Trojan_a
 		1 of them
 		and androguard.package_name("com.acronic")	
 }
-rule Spynote_a
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$b_1 = "screamHacker"
-	condition:
-		any of ($b_*)
-}
-rule BOI_a
-{
-	meta:
-		description = "This rule detects the BOI applications, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$l = "com.bankofireland.mobilebanking"
-		$m = "com.boi.tablet365"
-	condition:
-		any of them
-}
+
 rule Trojan_BankBot_7878_a {
 	strings:
 		$a0 = "twitter.com"
@@ -14827,16 +13359,6 @@ strings:
       $ = "SHA1-Digest: sBLBhcd7IpCFfuuLRAuBOzOQ4J4="
 	condition:
 		2 of them
-}
-rule koodousea: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$a = "service.adb.tcp.port"
-	condition:
-		$a	
 }
 rule dxshield_c: packer
 {
@@ -15653,14 +14175,7 @@ rule koodouska: official
 		not androguard.permission(/android.permission.CHANGE_WIFI_STATE/) and
 		not androguard.permission(/android.permission.BLUETOOTH_ADMIN/)
 }
-rule koodousla: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	condition:
-		androguard.package_name("com.h.M")  
-}
+
 rule Downloader_b {
 	condition:
 		androguard.package_name("com.mopub") and
@@ -16062,15 +14577,7 @@ rule Bot_a
 	condition:
 		all of them
 }
-rule Bot2_a
-{
-	strings:
-		$a = "/download" ascii wide
-		$b = "/delete" ascii wide
-		$c = "/upload" ascii wide
-	condition:
-		all of them
-}
+
 rule adw_a
 {
 	meta:
@@ -16346,22 +14853,7 @@ rule SMSRegister_a
 	condition:
 		($key and $ip) and (any of ($number*))
 }
-rule locker_c
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "45b74b69378429e7670e50e3e4d502baf701cf33fbbf341125b998dc8c316369"
-		sample2 = "76187efe8a59128b5becb4f13812b846edda58e270579b6938269ce24d2b2e9b"
-		sample3 = "50f39306f85f4f26c272c46068bdc995fec3433d7671fdb68506e5777c983043"
-		sample4 = "f467d7e0c0fc8b5a02859ab40545205baf92919fa391a24fc38b4ccb54d919ed"
-	strings:
-		$a = "4Landroid/hardware/camera2/CameraCharacteristics$Key;"
-		$b = "yYE-[xX>i"
-		$c = "/You device will be unprotectable. Are you sure?"
-		$d = "8android.app.action.ACTION_DEVICE_ADMIN_DISABLE_REQUESTED"
-	condition:
-		all of them
-}
+
 rule boibaSender_a
 {
 	meta:
@@ -16468,18 +14960,6 @@ rule smsSender_b
 	condition:
 		androguard.package_name("com.software.application") and ($mfprice or $price2)
 }
-rule packers_m
-{
-	meta:
-		description = "packers"
-		thread_level = 3
-		in_the_wild = true
-	strings:
-		$strings_b = "StubApplication"
-		$strings_c = "libjiagu"
-	condition:
-		$strings_b or $strings_c
-}
 rule dropperMapin_a
 {
 	meta:
@@ -16493,34 +14973,7 @@ rule dropperMapin_a
 	condition:
 		all of them
 }
-rule adware_f
-{
-	meta:
-		description = "This rule detects ad application, used to show all Yara rules potential"
-		sample = "33c61bf9ec395953851594d4595d33e004414ec17044f66858610cdac79b6946"
-		sample2 = "d33b7e67696d0f30f4e2c360ce76b56f2ca78f181c456004ed395aaffd7c7f24"
-		sample3 = "39b993dc0866075b2d489e98552cbf4f57b810c432b75a9a5df7599901318f4f"
-	strings:
-		$a = "MobclickAgent"
-		$b = "Landroid/graphics/NinePatch;"
-		$c = "#FloatService.createFloat(=========)"
-	condition:
-		all of them
-}
-rule adware2_a
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "33c61bf9ec395953851594d4595d33e004414ec17044f66858610cdac79b6946"
-		sample2 = "d33b7e67696d0f30f4e2c360ce76b56f2ca78f181c456004ed395aaffd7c7f24"
-		sample3 = "39b993dc0866075b2d489e98552cbf4f57b810c432b75a9a5df7599901318f4f"
-	strings:
-		$a = "missing appkey"
-		$b = "/download/.um"
-		$c = "noiconads.jar"
-	condition:
-		all of them
-}
+
 rule ghostpush_a
 {
 	meta:
@@ -16787,16 +15240,7 @@ rule Godless_malware_a
 	condition:
 		$a and $b and $c
 }
-rule Moreclasses_a: findingfiles
-{
-	meta:
-		description = "This rule detects if the app contains more than one classes file."
-	strings:
-		$a = "classes2.dex"
-		$b = "classes3.dex"
-	condition:
-		any of them
-}
+
 rule koodousqa: official
 {
 	meta:
@@ -17031,31 +15475,6 @@ rule koodoussa: official
 		androguard.permission(/android.permission.CAMERA/) and
 		androguard.permission(/android.permission.RECORD_AUDIO/) and 
 		$a 
-}
-rule DroidKungFu_a
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "881ee009e90d7d70d2802c3193190d973445d807"
-	strings:
-		$trigger = "adb pull /data/data/com.allen.mp/shared_prefs/sstimestamp.xml"
-		$j1 = "onCreate.java"
-		$j2 = "updateInfo.java"
-		$j3 = "cpLegacyRes.java"
-		$j4 = "decrypt.java"
-		$j5 = "doExecuteTask.java"
-		$j6 = "deleteApp.java"
-	condition:
-		androguard.package_name("com.koodous.android") and
-		androguard.app_name("DroidKungFu1") and
-		$trigger and
-		$j1 and
-		$j2 and
-		$j3 and
-		$j4 and
-		$j5 and
-		$j6 and
-		cuckoo.network.dns_lookup(/settings.crashlytics.com/)
 }
 rule Tojan_a: SMS
 {
@@ -17292,16 +15711,7 @@ rule ScamCampaign_ModifiedPaymentGateway_a
 		androguard.activity("md552a6ea15d8d57b628a7925702f10e901.Cameraaa") or
 		androguard.activity("md5d8359e76a35968359354b626b6df299b.listchanels")		
 }
-rule koodousta: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$a = {63 6F 6D 24 6B 6F 6F 64 6F 75 73 24 61 6E 64 72 6F 69 64}
-	condition:
-        all of them
-}
+
 rule edwin_a: malware
 {
 	meta:
@@ -17332,18 +15742,7 @@ rule RootedCheck_a
 		$l = "/system/xbin/which"
 		$m = "which su"
 	condition:
-		$a or
-		$b or
-		$c or
-		$d or
-		$e or
-		$f or
-		$g or
-		$h or
-		$i or
-		$j or
-		$k or
-		$l or $m
+		all of them
 }
 rule cordova_a
 {
@@ -18253,14 +16652,14 @@ rule MetaMaskClipper_a {
 		$methodName = "onPrimaryClipChanged"
 		$setterName = "setPrimaryClip"		
 	condition:
-		$ethAddress or 
-		$btcAddress or 
+		$ethAddress and
+		$btcAddress and
 		($methodName and $setterName) or (
-			androguard.app_name("MetaMask") and		
-			androguard.permission(/ACCESS_NETWORK_STATE/) and
-			androguard.permission(/INTERNET/) and
-			androguard.permission(/WRITE_EXTERNAL_STORAGE/) and		
-			androguard.url(/api\.telegram\.org/)) or
+		androguard.app_name("MetaMask") and
+		androguard.permission(/ACCESS_NETWORK_STATE/) and
+		androguard.permission(/INTERNET/) and
+		androguard.permission(/WRITE_EXTERNAL_STORAGE/) and
+		androguard.url(/api\.telegram\.org/)) or
 		androguard.certificate.sha1("14F52769440E01A4CEF3991FB081637CD10BDBB3")
 }
 rule covid19ransom_a
@@ -18285,15 +16684,6 @@ rule SMSTrojan_a
 		$d = "com.android.install"
 	condition:
 		all of them
-}
-rule aliyuncs_a: generic
-{
-	meta:
-		description = "Try to detect Aliyunics related apps."
-	strings:
-		$url = /\.aliyuncs\.com/ nocase  // Privacy policy links use this
-	condition:
-		$url
 }
 rule ijoysoft_a
 {
@@ -20384,28 +18774,7 @@ rule shuanet_c:dropper
 	condition:
 		all of them
 }
-rule baasa: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-	$a = /\cp.{1,} \/system\/app/
-	$b = /\cat.{1,} \/system\/app/
-	$c = /cp [0-9a-zA-Z] {1,}\/system\/app/
-    $d = /cat [0-9a-zA-Z] {1,}\/system\/app/
-	condition:
-		any of them
-}
-rule drop_a
-{
-	meta:
-		description = "This rule detects references to other applications"
-	strings:
-		$a = "Landroid/os/FileObserver"
-	condition:
-		$a
-}
+
 rule banker_ip_control_a: banker candc
 {
 	meta:
@@ -21036,50 +19405,7 @@ rule smsreg_b
 	condition:
 		all of them
 }
-rule skyhook_a: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-	$b = "http://www.com-09.net"
-	$a = "3638730086354773/3927194040"
-	$c = "eecbb06a479c4d519669a98494abb5b2"
-	$d = "am9objpkb2Ux"
-	$e = "53eb59ddb6a0f38e0d000019"
-	$f = "fff5c02d3e614bd39d0bc2e8996980ae"
-	$g = "59e0bb580dc7bdc0b04cb092961c7ec28b963e74"
-	$h = "5FCJZKVGVDRH3PBMFGD9"
-	$j = "d4fd7c90-25ad-4bed-b53b-9feb8342217e"
-	$k = "e60a9197-f6d2-4d92-90bb-3d5ba7dd84fe"
-	$l = "miqkib227014"
-	$m = "d637ec136c6b958bcdc5d799251f3b9d"
-	condition:
-		any of them
-}
-rule skyhook_b: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-	$a = "_sdka"
-	$b = "_sdkab"
-	$c = "_sdkzf"
-	$d = "_sdkyc"
-	condition:
-		all of them
-}
-rule fabric_a: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-	$b = "io.fabric.sdk.android:fabric"
-	condition:
-		any of them
-}
+
 rule clicker_c: url
 {
 	meta:
@@ -21298,32 +19624,7 @@ rule MysteryBot_a
 		and androguard.permission(/PACKAGE_USAGE_STATS/i)
 		and androguard.filter(/android\.app\.action\.DEVICE_ADMIN_DISABLED/i) 
 }
-rule daagfbrt: official
-{
-	strings:
-		$ = "whb"
-		$="com.epost.psf.sdsi"
-		$="com.hanabank.ebk.channel.android.hananbank"
-		$="com.ibk.neobanking"
-		$="com.kbstar.kbbank"
-		$="com.kftc.kjbsmb"
-		$="com.ncsoft.lineagem"
-		$="com.sc.danb.scbankapp"
-		$="com.shinhan.sbanking"
-		$="com.smg.spbs"
-		$="nh.smart"
-		$="com.atsolution.android.uotp2"
-		$="com.ncsoft.lineagem19"
-		$="com.nexon.axe"
-		$="com.nexon.nxplay"
-		$="com.webzen.muorigin.google"
-		$="com.wooribank.pib.smart"
-		$="kr.co.happymoney.android.happymoney"
-		$="kr.co.neople.neopleotp"
-		$="https://www.baidu.com/p/%s/detail"
-	condition:
-		any of them
-}
+
 rule POB_1_b
 {
 	meta:
@@ -21412,16 +19713,6 @@ rule VikingMalware_a
 		androguard.url(/reportreward10\.info/) or
 		cuckoo.network.dns_lookup(/185\.159\.81\.155/)
 }
-rule eaarthr: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	condition:
-		androguard.url(/umeng\.info/) or
-		cuckoo.network.dns_lookup(/umeng.info/) or
-		cuckoo.network.http_request(/45.77.25.109/)	
-}
 rule ransomware_h
 {
 	meta:
@@ -21443,18 +19734,7 @@ rule Chineseporn_3_a
 		(androguard.receiver(/lx\.Asver/) and
 		 androguard.receiver(/lx\.Csver/))
 }
-rule faarhef: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$a = "06741d050adeb395"
-		$b = "351451208401216"
-		$c = "00:26:37:17:3C:71"
-	condition:
-		any of them
-}
+
 rule allatori_a: obfuscator
 {
   meta:
@@ -21632,18 +19912,6 @@ rule Similar_to_Facebook_Free_Basics_a
 		androguard.permission(/android.permission.WRITE_SMS/) and
 		androguard.permission(/android.permission.RECIEVE_SMS/)	
 }
-rule AndroidKungFu1_a
-{
-	meta:
-		description = "This rule detects DroidKungFu1."
-		sample = "881ee009e90d7d70d2802c3193190d973445d807"
-		reference = "http://kharon.gforge.inria.fr/dataset/malware_DroidKungFu1.html"
-	condition:
-		androguard.permission(/android.permission.INTERNET/) and
-		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/) and
-		androguard.permission(/android.permission.WRITE_EXTERNAL_STORAGE/) and
-		androguard.permission(/android.permission.REQUEST_INSTALL_PACKAGES/)
-}
 rule Hack_game_candy_a
 {
     meta:
@@ -21770,70 +20038,7 @@ rule bicho_a {
 		androguard.permission(/android.permission.INTERNET/) and 
 		androguard.permission(/android.permission.ACCESS_NETWORK_STATE/)
 }
-rule RedAlert2_a: Banker
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$exec_0 = "/system/bin/toolbox ps -p - P -x -c"
-		$str_10_0 = "LAUNCH_APP"
-		$str_10_1 = "launchApp"
-		$str_12_0 = "SEND_USSD"
-		$str_12_1 = "sendUssd"
-		$res_0 = "146.0.72.85:7878"
-		$res_1 = "146.0.72.85"
-		$res_2 = "url_dcsiv4t"
-		$res_3 = "url_dhfcyseu437"
-		$res_4 = "twitter response is NOT OK!"
-		$res_5 = "tweet-text"
-		$str_5_0 = "RESET_DEFAULT_SMS"
-		$str_5_1 = "resetDefaultSms"
-		$str_4_0 = "SET_DEFAULT_SMS"
-		$str_4_1 = "setDefaultSms"
-		$str_7_0 = "GET_CALL_LIST"
-		$str_7_1 = "getCallList"
-		$str_6_0 = "GET_SMS_LIST"
-		$str_6_1 = "getSmsList"
-		$str_1_0 = "START_SMS_INTERCEPTION"
-		$str_1_1 = "startSmsInterception"
-		$str_3_0 = "SEND_SMS"
-		$str_3_1 = "sendSms"
-		$str_2_0 = "STOP_SMS_INTERCEPTION"
-		$str_2_1 = "stopSmsInterception"
-		$str_9_0 = "SET_ADMIN"
-		$str_9_1 = "setAdmin"
-		$str_8_0 = "GET_CONTACT_LIST"
-		$str_8_1 = "getContactList"
-	condition:
-		any of ($res_*) or
-		all of ($exec_*) or
-		all of ($str_10_*) or
-		all of ($str_12_*) or
-		all of ($str_5_*) or
-		all of ($str_4_*) or
-		all of ($str_7_*) or
-		all of ($str_6_*) or
-		all of ($str_1_*) or
-		all of ($str_3_*) or
-		all of ($str_2_*) or
-		all of ($str_9_*) or
-		all of ($str_8_*)
-}
-rule readsms_a
-{
-	meta:
-		description = "This rule detects read_sms"
-	condition:
-		androguard.permission(/android.permission.READ_SMS/)
-}
-rule storage_b
-{
-	meta:
-		description = "This rule detects READ_EXTERNAL_STORAGE"
-	condition:
-		androguard.permission(/android.permission.READ_EXTERNAL_STORAGE/)
-}
+
 rule Malicious_certificate_a
 {
 	meta:
@@ -21902,14 +20107,7 @@ rule packers_t: NS
 	condition:
 		$launcher
 }
-rule maahk: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	condition:
-		androguard.package_name("com.byl.sms")
-}
+
 rule FakeGoogleUpdate_a
 {
 	meta:
@@ -24215,16 +22413,7 @@ rule mkero_cert_a
 	condition:
 		androguard.certificate.sha1("49A6EFC6A9BA3DE7ECB265E7B4C43E454ABDA05D")
 }
-rule caaafd: official
-{
-	meta:
-		description = "This rule detects the koodous application, used to show all Yara rules potential"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-	strings:
-		$l = "dp.arm-v8.so.dat"
-	condition:
-		any of them
-}
+
 rule slempo_d: package
 {
   meta:
@@ -24233,102 +22422,14 @@ rule slempo_d: package
   condition:
     androguard.package_name("org.slempo.service")
 }
-rule sandrorat_d
-{
-	meta:
-		description = "This rule detects SandroRat samples"
-	strings:
-		$a = "SandroRat" 
-	condition:
-		$a
-}
-rule sandrorat_e
-{
-	meta:
-		description = "This rule detects Sandrorat samples"
-	strings:
-		$a = "SandroRat"
-	condition:
-		$a		
-}
-rule sandrorat_f
-{
-	meta:
-		description = "This rule detects SandroRat samples"
-	strings:
-		$a = "SandroRat"
-	condition:
-		$a
-}
-rule sandrorat_g
-{
-	meta:
-		description = ""
-	strings:
-		$a = "sandrorat" nocase
-	condition:
-		$a
-}
-rule sandrorat_h
-{
-	meta:
-		description = "This rule detects SandroRat samples"
-	strings:
-		$a = "sandrorat" nocase
-	condition:
-		$a
-}
-rule sandrorat_i
-{
-	meta:
-		description = "Example"
-	strings:
-		$a = "Sandro"
-	condition:
-		$a
-}
-rule sandrorat_j
-{
-	meta:
-		description = "This rule detects SandroRat samples"
-	strings:
-		$a = "sandrorat" nocase
-	condition:
-		$a
-}
-rule sandrorat_k
-{
-	meta:
-		description = "This rule detects SandroRat samles"
-	strings:
-		$a = "SandroRat" nocase
-	condition:
-		$a
-}
-rule sandrorat_l
-{
-	meta:
-		description="This rule detects SandroRat samples"
-	strings:
-		$a="SandroRat"
-	condition:
-		$a
-}
+
 rule prueba_a
 {
-meta: description = "Prueba"
-strings:
-$a = "giving me your money"
-condition: $a
+    meta: description = "Prueba"
+    strings:
+        $a = "giving me your money"
+    condition: $a
 }
-rule sandrorat_m
-{
-	meta:
-		description = "This rule detects SandroRat samples"
-	strings:
-		$a = "SandroRat"
-	condition:
-		$a
-}
+
 
 
