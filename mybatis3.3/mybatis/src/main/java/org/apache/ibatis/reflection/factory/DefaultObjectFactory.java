@@ -31,7 +31,7 @@ import java.util.TreeSet;
 import org.apache.ibatis.reflection.ReflectionException;
 
 /**
- * mybatis提供的默认对象工厂
+ * mybatis提供的简单对象工厂，快速创建对象
  * @author Clinton Begin
  */
 public class DefaultObjectFactory implements ObjectFactory, Serializable {
