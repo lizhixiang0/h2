@@ -44,24 +44,27 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
   }
 
   /**
-   * 根据接口创建具体的类
+   * 说到底就这么一个核心方法：创建对象！！！
    */
   @SuppressWarnings("unchecked")
   @Override
   public <T> T create(Class<T> type, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
-    //1.解析接口，获取对应的实现类
+    //1.获取对应的实现类
     Class<?> classToCreate = resolveInterface(type);
     //2.实例化类、类型是可分配的
     return (T) instantiateClass(classToCreate, constructorArgTypes, constructorArgs);
   }
 
   /**
-   * 1、解析接口,将接口转为对应的实现类
-   * 例如：list、Collection、Iterable 对应着 ArrayList
+   * 1、解析出具体类型,如果是接口则转为对应的实现类
+   *
+   * 例如：
+   *      如果不是接口最好，返回自己的类型，如果是接口则分情况讨论
+   *      list、Collection、Iterable 对应着 ArrayList
    *      Map  对应着 HashMap
    *      Set   对应着 HashSet
    *      SortedSet 对应着 TreeSet
-   *  如果都不是就返回自身。
+   *
    */
   protected Class<?> resolveInterface(Class<?> type) {
     Class<?> classToCreate;
