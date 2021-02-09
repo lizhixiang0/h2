@@ -18,17 +18,14 @@ package org.apache.ibatis.reflection.property;
 import java.lang.reflect.Field;
 
 /**
- * 属性复制器
+ * 属性复制器,将一个对象的属性值全部赋值给另一个对象
+ * 类似于apache commons beanutil 的BeanUtils.copyProperties
  * @author Clinton Begin
  */
 public final class PropertyCopier {
 
   private PropertyCopier() {}
 
-  /**
-   * 复制属性,将一个对象的属性值全部赋值给另一个对象
-   * 类似于apache commons beanutil 的BeanUtils.copyProperties
-   */
   public static void copyBeanProperties(Class<?> type, Object sourceBean, Object destinationBean) {
     Class<?> parent = type;
     while (parent != null) {

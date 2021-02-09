@@ -22,7 +22,7 @@ import org.apache.ibatis.reflection.wrapper.DefaultObjectWrapperFactory;
 import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
 
 /**
- * 一些系统级别的元对象
+ * 系统元对象 ，提供了创建MetaObject的方法 ，初始化了一些默认对象 ！（统一管理）
  * @author Clinton Begin
  */
 public final class SystemMetaObject {

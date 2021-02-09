@@ -21,6 +21,7 @@ import org.apache.ibatis.reflection.ReflectionException;
 
 /**
  * getter、setter 处理器
+ * 例如  isFlag 、getName , setName  ,去掉前缀
  * @author Clinton Begin
  */
 public final class PropertyNamer {

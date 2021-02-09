@@ -32,6 +32,9 @@ public class ReflectorTest {
     /*public Long getId() {
       return id;
     }*/
+    public Number actionPrice(double d) {
+      return d;
+    }
 
     public void setId(Long id) {
       this.id = id;
@@ -43,6 +46,11 @@ public class ReflectorTest {
     public Section(Long id){
       super.setId(id);
     };
+
+    @Override
+    public Double actionPrice(double d) {
+      return d;
+    }
 
     public Section(){}
   }
