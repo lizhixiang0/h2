@@ -42,7 +42,7 @@ import org.apache.ibatis.reflection.invoker.SetFieldInvoker;
 import org.apache.ibatis.reflection.property.PropertyNamer;
 
 /**
- *   Reflector是Mybatis中反射模块的基础，每个Reflector对象都对应一个类。
+ *   Reflector是Mybatis中反射模块的基础，每个Reflector对象都对应着一个类。
  * @blog "https://blog.csdn.net/hou_ge/article/details/100666259
  * @author Clinton Begin
  */
@@ -54,7 +54,7 @@ public class Reflector {
   private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
   //这里使用了一个Map来做缓存，注意使用的是ConcurrentHashMap,保证线程安全
-  private static final Map<Class<?>, Reflector> REFLECTOR_MAP = new ConcurrentHashMap<Class<?>, Reflector>();
+  private static final Map<Class<?>, Reflector> REFLECTOR_MAP = new ConcurrentHashMap<>();
 
   private Class<?> type;
 
@@ -76,7 +76,7 @@ public class Reflector {
   private Map<String, String> caseInsensitivePropertyMap = new HashMap<>();
 
   /**
-   * 在构造函数中，主要是对类的元信息进行解析和缓存，即初始化相关字段数据。下面分别分析数据初始化的过程。其中，type字段就是class
+   * 在私有构造函数中，主要是对类的元信息进行解析，同时初始化相关字段数据。下面分别分析数据初始化的过程。其中，type字段就是class
    * @param clazz 类
    */
   private Reflector(Class<?> clazz) {
@@ -87,12 +87,12 @@ public class Reflector {
     addGetMethods(clazz);
     //处理clazz中的setter方法，填充setMethods集合和setTypes集合
     addSetMethods(clazz);
-    //处理没有getter/setter方法的字段
+    //处理没有getter/setter方法的字段,最后也是填充到setMethods和getMethods里去
     addFields(clazz);
     //根据getMethods/setMethods集合，初始化可读/写属性的名称集合
     readablePropertyNames = getMethods.keySet().toArray(new String[0]);
     writeablePropertyNames = setMethods.keySet().toArray(new String[0]);
-    //初始化caseInsensitivePropertyMap集合，其中记录了所有大写格式的属性名称,这里为了能找到某一个属性，就把他变成大写作为map的key。。。
+    //初始化caseInsensitivePropertyMap集合，其中记录了所有大写格式的属性名称
     for (String propName : readablePropertyNames) {
       caseInsensitivePropertyMap.put(propName.toUpperCase(Locale.ENGLISH), propName);
     }
@@ -103,14 +103,16 @@ public class Reflector {
 
   private void addDefaultConstructor(Class<?> clazz) {
     Constructor<?>[] consts = clazz.getDeclaredConstructors();
-    //循环，查询符合条件的构造函数
+    //循环，找到没有入参的构造函数
     for (Constructor<?> constructor : consts) {
       if (constructor.getParameterTypes().length == 0) {
         if (canAccessPrivateMethods()) {
           try {
+            // 关闭权限校验
             constructor.setAccessible(true);
           } catch (Exception ignored) {}
         }
+        // isAccessible() 判断是否关闭权限校验
         if (constructor.isAccessible()) {
           this.defaultConstructor = constructor;
         }
@@ -125,10 +127,11 @@ public class Reflector {
     for (Method method : methods) {
       String name = method.getName();
       if (name.startsWith("get") && name.length() > 3) {
-        //只有getParameterTypes().length == 0 的方法才会被塞到conflictingGetters里去。
+        //没有参数的get方法才是我们需要的，这是一层筛选
         if (method.getParameterTypes().length == 0) {
           // getName ---> name
           name = PropertyNamer.methodToProperty(name);
+          // 用computeIfAbsent来去重
           addMethodConflict(conflictingGetters, name, method);
         }
       } else if (name.startsWith("is") && name.length() > 2) {
@@ -139,6 +142,7 @@ public class Reflector {
         }
       }
     }
+    // 收集到所有get()方法信息后开始处理
     resolveGetterConflicts(conflictingGetters);
   }
 
@@ -151,7 +155,7 @@ public class Reflector {
   }
 
   private void resolveGetterConflicts(Map<String, List<Method>> conflictingGetters) {
-    // 循环遍历Map集合，如果name对应的Method集合里只有一个元素，那就直接调用addGetMethod(name,method)方法
+    // 循环遍历Map集合，如果Value里只有一个元素（method），那就直接调用addGetMethod(name,method)方法
     // 如果对应的Method集合里有多个元素，则需要判断方法的返回值类型，（会把父类或者接口的也拿过来，此时需要筛选出当前类属性真正匹配的get方法）
     // 没有入参，所以不需要判断入参的类型
     for (String propName : conflictingGetters.keySet()) {
@@ -252,30 +256,31 @@ public class Reflector {
       if (canAccessPrivateMethods()) {
         try {
           field.setAccessible(true);
-        } catch (Exception e) {
-          // Ignored. This is only a final precaution, nothing we can do.
-        }
+        } catch (Exception ignored) {}
       }
       if (field.isAccessible()) {
+        // 处理没有set方法的属性
         if (!setMethods.containsKey(field.getName())) {
-          // issue #379 - removed the check for final because JDK 1.5 allows
-          // modification of final fields through reflection (JSR-133). (JGB)
-          // pr #16 - final static can only be set by the classloader
+          // 返回属性的修饰符。  例如 public static   @blog "https://www.yiibai.com/javareflect/javareflect_field_getmodifiers.html
           int modifiers = field.getModifiers();
+          // 不能是finale和static修饰的
           if (!(Modifier.isFinal(modifiers) && Modifier.isStatic(modifiers))) {
             addSetField(field);
           }
         }
+        // 处理没有get方法的属性
         if (!getMethods.containsKey(field.getName())) {
           addGetField(field);
         }
       }
     }
     if (clazz.getSuperclass() != null) {
+      // 父类也不放过，递归处理，爷爷也不放过
       addFields(clazz.getSuperclass());
     }
   }
 
+  // 我以为木有set方法的属性就不管了，没想到木有set的属性待遇更高，直接给他构造Invoker，黄袍加身！！
   private void addSetField(Field field) {
     if (isValidPropertyName(field.getName())) {
       setMethods.put(field.getName(), new SetFieldInvoker(field));
@@ -283,6 +288,7 @@ public class Reflector {
     }
   }
 
+  // 木有get方法的属性也是
   private void addGetField(Field field) {
     if (isValidPropertyName(field.getName())) {
       getMethods.put(field.getName(), new GetFieldInvoker(field));
@@ -291,23 +297,24 @@ public class Reflector {
   }
 
   /**
-   * 再次对属性名进行确认，另外两个我不晓得，但是serialVersionUID确实会出现
+   * 对属性名进行筛选
+   * 另外两个我不晓得，但是serialVersionUID确实会出现，这个么得用
    */
   private boolean isValidPropertyName(String name) {
     return !(name.startsWith("$") || "serialVersionUID".equals(name) || "class".equals(name));
   }
 
   /*
-   * 得到所有方法，包括private方法，包括父类方法.包括接口方法
+   * 得到所有方法，包括private方法，包括父类方法.包括接口方法,但是不要桥接方法（这玩意是编译器生成的）
    */
   private Method[] getClassMethods(Class<?> cls) {
     Map<String, Method> uniqueMethods = new HashMap<>();
     Class<?> currentClass = cls;
     //这个用了一个while循环,里面是getSuperclass(),这是把父类的方法也都搞出来了
     while (currentClass != null) {
-      //1、getDeclaredMethods,该方法是获取本类中的所有声明的方法,包括私有的(private、protected、默认以及public)的方法
+      //1、获取本类中所有声明的方法,包括私有的(private、protected、默认以及public)的方法
       addUniqueMethods(uniqueMethods, currentClass.getDeclaredMethods());
-      //2、we also need to look for interface methods ,because the class may be abstract  接口方法也都弄出来了
+      //2、获取接口方法
       Class<?>[] interfaces = currentClass.getInterfaces();
       for (Class<?> anInterface : interfaces) {
         addUniqueMethods(uniqueMethods, anInterface.getMethods());
@@ -320,33 +327,38 @@ public class Reflector {
 
   private void addUniqueMethods(Map<String, Method> uniqueMethods, Method[] methods) {
     for (Method currentMethod : methods) {
+      //判断是不是桥接方法，如果是则不去理会
+      //理解什么是桥接方法：https://blog.csdn.net/jiaobuchong/article/details/83722193
+      //https://www.cnblogs.com/wuqinglong/p/9456193.html
       if (!currentMethod.isBridge()) {
           //取得签名
         String signature = getSignature(currentMethod);
-        // check to see if the method is already known
-        // if it is known, then an extended class must have
-        // overridden a method
+        //这个知道签名是用来去重的
         if (!uniqueMethods.containsKey(signature)) {
           if (canAccessPrivateMethods()) {
             try {
+              //使用时取消该方法的访问权限检查
               currentMethod.setAccessible(true);
-            } catch (Exception e) {
-              // Ignored. This is only a final precaution, nothing we can do.
-            }
+            } catch (Exception ignored) {}
           }
-
           uniqueMethods.put(signature, currentMethod);
         }
       }
     }
   }
 
+  /**
+   * java中对方法签名的定义,由方法名称和参数列表(方法的参数的顺序和类型)组成。但不包括返回值类型和访问修饰符 ！！！
+   * 这里是mybatis自己构造的方法签名
+   */
   private String getSignature(Method method) {
     StringBuilder sb = new StringBuilder();
     Class<?> returnType = method.getReturnType();
     if (returnType != null) {
+      // 1、添加返回值
       sb.append(returnType.getName()).append('#');
     }
+    // 2、添加方法名称
     sb.append(method.getName());
     Class<?>[] parameters = method.getParameterTypes();
     for (int i = 0; i < parameters.length; i++) {
@@ -355,6 +367,7 @@ public class Reflector {
       } else {
         sb.append(',');
       }
+      //3、添加参数名称
       sb.append(parameters[i].getName());
     }
     return sb.toString();
@@ -362,7 +375,8 @@ public class Reflector {
 
   /**
    *
-   * 是否屏蔽了java对字段和方法的各种访问权限校验,默认屏蔽了
+   * 查看用户是否允许屏蔽对字段和方法的访问权限校验
+   * 通常我们没有对这个进行设置，默认是屏蔽的
    *
    */
   private static boolean canAccessPrivateMethods() {
@@ -397,12 +411,6 @@ public class Reflector {
     return method;
   }
 
-  /*
-   * Gets the type for a property setter
-   *
-   * @param propertyName - the name of the property
-   * @return The Class of the propery setter
-   */
   public Class<?> getSetterType(String propertyName) {
     Class<?> clazz = setTypes.get(propertyName);
     if (clazz == null) {
@@ -411,12 +419,6 @@ public class Reflector {
     return clazz;
   }
 
-  /*
-   * Gets the type for a property getter
-   *
-   * @param propertyName - the name of the property
-   * @return The Class of the propery getter
-   */
   public Class<?> getGetterType(String propertyName) {
     Class<?> clazz = getTypes.get(propertyName);
     if (clazz == null) {
@@ -425,42 +427,24 @@ public class Reflector {
     return clazz;
   }
 
-  /*
-   * Gets an array of the readable properties for an object
-   *
-   * @return The array
-   */
+
   public String[] getGetablePropertyNames() {
     return readablePropertyNames;
   }
 
-  /*
-   * Gets an array of the writeable properties for an object
-   *
-   * @return The array
-   */
+
   public String[] getSetablePropertyNames() {
     return writeablePropertyNames;
   }
 
-  /*
-   * Check to see if a class has a writeable property by name
-   *
-   * @param propertyName - the name of the property to check
-   * @return True if the object has a writeable property by the name
-   */
+
   public boolean hasSetter(String propertyName) {
-    return setMethods.keySet().contains(propertyName);
+    return setMethods.containsKey(propertyName);
   }
 
-  /*
-   * Check to see if a class has a readable property by name
-   *
-   * @param propertyName - the name of the property to check
-   * @return True if the object has a readable property by the name
-   */
+
   public boolean hasGetter(String propertyName) {
-    return getMethods.keySet().contains(propertyName);
+    return getMethods.containsKey(propertyName);
   }
 
   public String findPropertyName(String name) {
@@ -470,7 +454,6 @@ public class Reflector {
   /*
    * Gets an instance of ClassInfo for the specified class.
    * 得到某个类的反射器，是静态方法，而且要缓存，又要多线程，所以REFLECTOR_MAP是一个ConcurrentHashMap
-   *
    * @param clazz The class for which to lookup the method cache.
    * @return The method cache for the class
    */
@@ -492,6 +475,7 @@ public class Reflector {
   public static  boolean isClassCacheEnabled(){
     return classCacheEnabled;
   }
+
   public static void setClassCacheEnabled(boolean classCacheEnabled){
     Reflector.classCacheEnabled = classCacheEnabled;
   }

@@ -19,11 +19,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * @author Clinton Begin
- */
-/**
  * getter调用者
- *
+ * @author Clinton Begin
  */
 public class GetFieldInvoker implements Invoker {
   private Field field;
@@ -32,9 +29,9 @@ public class GetFieldInvoker implements Invoker {
     this.field = field;
   }
 
-  //就是调用Field.get
   @Override
-  public Object invoke(Object target, Object[] args) throws IllegalAccessException, InvocationTargetException {
+  public Object invoke(Object target, Object[] args) throws IllegalAccessException {
+    //就是调用Field.get
     return field.get(target);
   }
 

@@ -19,12 +19,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 /**
+ * setter调用者
  * @author Clinton Begin
  */
-/**
- * setter调用者
- *
- */
+
 public class SetFieldInvoker implements Invoker {
   private Field field;
 
@@ -32,9 +30,9 @@ public class SetFieldInvoker implements Invoker {
     this.field = field;
   }
 
-  //就是调用Field.set
   @Override
-  public Object invoke(Object target, Object[] args) throws IllegalAccessException, InvocationTargetException {
+  public Object invoke(Object target, Object[] args) throws IllegalAccessException {
+    //这也是一种属性赋值的方法 ,调用Field.set
     field.set(target, args[0]);
     return null;
   }
