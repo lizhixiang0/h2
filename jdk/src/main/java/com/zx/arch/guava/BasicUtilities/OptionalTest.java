@@ -39,6 +39,10 @@ public class OptionalTest {
         // 传入的参数是null直接报NullPointerException,当然也可以使用ofNullable()方法，这样使用时需要调用isPresent()判断下
         java.util.Optional<String> possible = java.util.Optional.of(null);
         // 2、介绍map()      将optional中的对象 t 映射成另外一个对象 u (通常是调用对象t自己的方法生成u)，并将 u 存放到一个新的optional容器中。
+        java.util.Optional<String> optional = java.util.Optional.of("aa").map(i ->i+"bb");
+        // 8、flatMap()方法,map和flatMap均要求optional对象非空才执行mapper方法，二者均返回Optional对象。但是map会将计算结果封装为Optional对象，而flatMap则不是,一般使用flatMap来避免出现嵌套Optional
+        // @blog https://blog.csdn.net/dengnanhua/article/details/101610604
+
         // 3、介绍orElse()   如果optional不为空，则直接返回optional中的对象；为null，则返回"s"这个默认值
         String  temp = possible.map(String::toString).orElse("S");
         // 4、介绍orElseGet(supplier) ,如果possible包装的是个null,就会调用supplier的get方法来计算默认值
@@ -50,11 +54,8 @@ public class OptionalTest {
         possible.ifPresent(list::add);
         // 7、JDK9 介绍ifPresentOrElse(Consumer1,Consumer2) , 存在就执行Consumer1的accept,不存在就执行Consumer2的accept
         possible.ifPresentOrElse(list::add,()->log.error("cant find ..."));
-        // 8、flatMap()方法,flatMap中的方法返回值必须是Optional类型,一般用于前面“list存在某个方法的返回值是Optional类型”，可以用这个flatMap方法直接调用
-        java.util.Optional.ofNullable(list).flatMap(java.util.Optional::of);
-        // 9、Optional直接转化成流
+        // 9、Optional直接转化成流，stream方法会将Optional转化成stream流，这个方法配合stream.flatMap有奇效
         java.util.Optional.of(list).stream();
-        // 上面的8、9俩个方法配合stream用比较ok
 
     }
 

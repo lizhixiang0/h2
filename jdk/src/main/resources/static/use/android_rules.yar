@@ -3268,7 +3268,7 @@ rule MobiDash
 	condition:
 		all of them
 }
-rule MobiDash_v3_a
+rule MobiDa
 {
 	meta:
 		description = "MobiDash Adware evidences v3"
