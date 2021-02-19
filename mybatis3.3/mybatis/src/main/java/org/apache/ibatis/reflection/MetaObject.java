@@ -84,7 +84,7 @@ public class MetaObject {
    */
   public static MetaObject forObject(Object object, ObjectFactory objectFactory, ObjectWrapperFactory objectWrapperFactory) {
     if (object == null) {
-        //处理一下null,将null包装起来
+        //处理一下null,将null包装起来,直接返回null么得意义
       return SystemMetaObject.NULL_META_OBJECT;
     } else {
       return new MetaObject(object, objectFactory, objectWrapperFactory);
@@ -136,7 +136,7 @@ public class MetaObject {
     return MetaObject.forObject(value, objectFactory, objectWrapperFactory);
   }
 
-  //取得值
+  //根据属性名获得属性对象
   public Object getValue(String name) {
     PropertyTokenizer prop = new PropertyTokenizer(name);
     if (prop.hasNext()) {

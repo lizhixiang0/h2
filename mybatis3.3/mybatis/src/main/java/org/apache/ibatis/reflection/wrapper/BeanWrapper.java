@@ -42,31 +42,39 @@ public class BeanWrapper extends BaseWrapper {
   private MetaClass metaClass;
 
   public BeanWrapper(MetaObject metaObject, Object object) {
+    // 元对象传递给父类干啥？
     super(metaObject);
     this.object = object;
     this.metaClass = MetaClass.forClass(object.getClass());
   }
 
+  /**
+   * person[0]
+   * @param prop
+   * @return
+   */
   @Override
   public Object get(PropertyTokenizer prop) {
-      //如果有index(有[]括号),说明是集合，那就要解析集合,调用的是BaseWrapper.resolveCollection 和 getCollectionValue
+      //如果有index(只要有[]括号就不会为null，即为集合或数组)
     if (prop.getIndex() != null) {
+      //调用的是BaseWrapper.resolveCollection来获得当前集合&数组
       Object collection = resolveCollection(prop, object);
       return getCollectionValue(prop, collection);
     } else {
-        //否则，getBeanProperty
+        //否则，直接getBeanProperty
       return getBeanProperty(prop, object);
     }
   }
 
   @Override
   public void set(PropertyTokenizer prop, Object value) {
-      //如果有index,说明是集合，那就要解析集合,调用的是BaseWrapper.resolveCollection 和 setCollectionValue
+      //如果有index,说明是集合或数组
     if (prop.getIndex() != null) {
+      //调用的是BaseWrapper.resolveCollection来获得当前集合&数组
       Object collection = resolveCollection(prop, object);
       setCollectionValue(prop, collection, value);
     } else {
-        //否则，setBeanProperty
+        //不是集合，直接setBeanProperty
       setBeanProperty(prop, object, value);
     }
   }
