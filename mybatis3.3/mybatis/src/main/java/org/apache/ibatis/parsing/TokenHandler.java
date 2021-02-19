@@ -16,7 +16,7 @@
 package org.apache.ibatis.parsing;
 
 /**
- * 标记处理器
+ * 标记处理器，定义核心方法
  * @author Clinton Begin
  * @blog "https://blog.csdn.net/hou_ge/article/details/100139261
  */

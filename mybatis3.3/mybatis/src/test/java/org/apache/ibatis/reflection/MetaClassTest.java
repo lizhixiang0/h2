@@ -127,7 +127,7 @@ public class MetaClassTest {
   @Test
   public void shouldFindPropertyName() {
     MetaClass meta = MetaClass.forClass(RichType.class);
-    assertEquals("richField", meta.findProperty("RICHfield"));
+    assertEquals("richType.richField", meta.findProperty("richType.RICHfield"));
   }
 
 }

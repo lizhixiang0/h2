@@ -29,8 +29,8 @@ import org.apache.ibatis.reflection.wrapper.ObjectWrapper;
 import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
 
 /**
- *  MetaObject ,作用是访问和设置对象属性 。
- *  通过它可以简化代码、不需要try/catch各种reflect异常，同时它支持对JavaBean、Collection、Map三种类型对象的操作
+ *  MetaObject ,原理是通过反射直接操作对象属性。
+ *  支持对普通JavaBean、Collection类、Map类三种类型对象的操作
  *  可以参考MetaObjectTest来跟踪调试，基本上用到了reflection包下所有的类
  * @author Clinton Begin
  */
@@ -56,7 +56,7 @@ public class MetaObject {
     this.objectFactory = objectFactory;
     this.objectWrapperFactory = objectWrapperFactory;
 
-    // ##最重要的就是找到对应的包装器##
+    // ##最重要的就是找到对应的包装器，主要是通过包装器来操作对象##
     if (object instanceof ObjectWrapper) {
         //如果对象本身已经是ObjectWrapper型，则直接赋给objectWrapper
       this.objectWrapper = (ObjectWrapper) object;

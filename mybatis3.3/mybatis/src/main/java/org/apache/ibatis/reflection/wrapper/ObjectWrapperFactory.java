@@ -18,19 +18,19 @@ package org.apache.ibatis.reflection.wrapper;
 import org.apache.ibatis.reflection.MetaObject;
 
 /**
- * 对象包装器工厂,定义了两个方法
+ * 包装器工厂接口,定义了包装器工厂的行为
  * @author Clinton Begin
  */
 public interface ObjectWrapperFactory {
     /**
-     * 1、有没有包装器提供给当前对象
+     * 1、判断有没有对象包装器
      * @param object obj
      * @return boolean
      */
   boolean hasWrapperFor(Object object);
 
     /**
-     * 2、得到包装器用来包装当前对象
+     * 2、用来获得包装器
      * @param metaObject obj
      * @param object obj
      * @return boolean

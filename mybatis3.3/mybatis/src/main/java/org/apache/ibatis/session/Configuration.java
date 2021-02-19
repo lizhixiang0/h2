@@ -97,7 +97,7 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 public class Configuration {
 
   /**
-   *  1、环境
+   *  1、环境变量
    */
   protected Environment environment;
   public Configuration(Environment environment) {

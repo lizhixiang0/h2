@@ -27,14 +27,11 @@ import org.apache.ibatis.reflection.invoker.MethodInvoker;
 import org.apache.ibatis.reflection.property.PropertyTokenizer;
 
 /**
- * 元类
+ * 元类,其实就是类的信息聚合成我们易操作的样子,可以看到方法基本都是委派给了Reflector
  * @author Clinton Begin
  */
 public class MetaClass {
 
-  /**
-   * 可以看到方法基本都是再次委派给了Reflector
-   */
   private Reflector reflector;
 
   private MetaClass(Class<?> type) {
@@ -53,16 +50,53 @@ public class MetaClass {
     Reflector.setClassCacheEnabled(classCacheEnabled);
   }
 
+  // 获得类中属性的元类，这个方法解决了Reflector的局限性，Reflector值解析当前类的属性，但是不会解析属性的属性
   public MetaClass metaClassForProperty(String name) {
     Class<?> propType = reflector.getGetterType(name);
     return MetaClass.forClass(propType);
   }
+  /**
+   * 根据给定的name ,来构建类属性的全路径,暂时不晓得这个方法的作用
+   * 例如 Person类中有个School属性,School有属性address
+   * @param name  person.school.address
+   * @param builder  person.school.address
+   * @return
+   */
+  private StringBuilder buildProperty(String name, StringBuilder builder) {
+    PropertyTokenizer prop = new PropertyTokenizer(name);
+    if (prop.hasNext()) {
+      String propertyName = reflector.findPropertyName(prop.getName());
+      if (propertyName != null) {
+        builder.append(propertyName);
+        builder.append(".");
+        MetaClass metaProp = metaClassForProperty(propertyName);
+        metaProp.buildProperty(prop.getChildren(), builder);
+      }
+    } else {
+      String propertyName = reflector.findPropertyName(name);
+      if (propertyName != null) {
+        builder.append(propertyName);
+      }
+    }
+    return builder;
+  }
 
+  /**
+   * 根据字符串查找类中属性，这个给多深就能查多深
+   * @param name person.school.address
+   * @return person.school.address
+   */
   public String findProperty(String name) {
     StringBuilder prop = buildProperty(name, new StringBuilder());
     return prop.length() > 0 ? prop.toString() : null;
   }
 
+  /**
+   * 将user_name转化成username,且因为reflector里面存储的是USERNAME:userName数据格式，所以这里不需要进行驼峰处理，直接把'_'去掉即可
+   * @param name
+   * @param useCamelCaseMapping
+   * @return
+   */
   public String findProperty(String name, boolean useCamelCaseMapping) {
     if (useCamelCaseMapping) {
       name = name.replace("_", "");
@@ -78,6 +112,9 @@ public class MetaClass {
     return reflector.getSetablePropertyNames();
   }
 
+  /*
+  * 这个方法麻烦在给定的不一定是 person  ,可能是person.name
+   */
   public Class<?> getSetterType(String name) {
     PropertyTokenizer prop = new PropertyTokenizer(name);
     if (prop.hasNext()) {
@@ -88,6 +125,11 @@ public class MetaClass {
     }
   }
 
+  /**
+   *
+   * @param name  richList[0]
+   * @return
+   */
   public Class<?> getGetterType(String name) {
     PropertyTokenizer prop = new PropertyTokenizer(name);
     if (prop.hasNext()) {
@@ -105,15 +147,21 @@ public class MetaClass {
 
   private Class<?> getGetterType(PropertyTokenizer prop) {
     Class<?> type = reflector.getGetterType(prop.getName());
+    //判断类型是不是Collection的子类或者子接口
     if (prop.getIndex() != null && Collection.class.isAssignableFrom(type)) {
+      // 现在returnType是个Collection类型，例如ArrayList<String> 或者 直接就是 List
       Type returnType = getGenericGetterType(prop.getName());
+      // 判断是不是参数化类型,例如ArrayList<String> ,这个用来获取泛型类型，例如ArrayList<String> 的泛型类型是 String
       if (returnType instanceof ParameterizedType) {
         Type[] actualTypeArguments = ((ParameterizedType) returnType).getActualTypeArguments();
+        // 再验证一次，Collection类型即使存在泛型也只有一个
         if (actualTypeArguments != null && actualTypeArguments.length == 1) {
           returnType = actualTypeArguments[0];
           if (returnType instanceof Class) {
+            // 如果泛型是个普通类型就直接转化成class返回
             type = (Class<?>) returnType;
           } else if (returnType instanceof ParameterizedType) {
+            // 如果泛型还是参数化类型，那就转化成参数化类型返回
             type = (Class<?>) ((ParameterizedType) returnType).getRawType();
           }
         }
@@ -122,6 +170,11 @@ public class MetaClass {
     return type;
   }
 
+  /**
+   * 属性有的GetInvoker类有两种可能,MethodInvoker和GetFieldInvoker  ,需要分开讨论
+   * @param propertyName
+   * @return
+   */
   private Type getGenericGetterType(String propertyName) {
     try {
       Invoker invoker = reflector.getGetInvoker(propertyName);
@@ -136,12 +189,16 @@ public class MetaClass {
         Field field = (Field) _field.get(invoker);
         return field.getGenericType();
       }
-    } catch (NoSuchFieldException e) {
-    } catch (IllegalAccessException e) {
+    } catch (NoSuchFieldException | IllegalAccessException ignored) {
     }
     return null;
   }
 
+  /**
+   * 这个方法麻烦在给定的不一定是 person  ,可能是person.name
+   * @param name
+   * @return
+   */
   public boolean hasSetter(String name) {
     PropertyTokenizer prop = new PropertyTokenizer(name);
     if (prop.hasNext()) {
@@ -156,6 +213,11 @@ public class MetaClass {
     }
   }
 
+  /**
+   * 这个方法麻烦在给定的不一定是 person  ,可能是person.name
+   * @param name
+   * @return
+   */
   public boolean hasGetter(String name) {
     PropertyTokenizer prop = new PropertyTokenizer(name);
     if (prop.hasNext()) {
@@ -176,25 +238,6 @@ public class MetaClass {
 
   public Invoker getSetInvoker(String name) {
     return reflector.getSetInvoker(name);
-  }
-
-  private StringBuilder buildProperty(String name, StringBuilder builder) {
-    PropertyTokenizer prop = new PropertyTokenizer(name);
-    if (prop.hasNext()) {
-      String propertyName = reflector.findPropertyName(prop.getName());
-      if (propertyName != null) {
-        builder.append(propertyName);
-        builder.append(".");
-        MetaClass metaProp = metaClassForProperty(propertyName);
-        metaProp.buildProperty(prop.getChildren(), builder);
-      }
-    } else {
-      String propertyName = reflector.findPropertyName(name);
-      if (propertyName != null) {
-        builder.append(propertyName);
-      }
-    }
-    return builder;
   }
 
   public boolean hasDefaultConstructor() {

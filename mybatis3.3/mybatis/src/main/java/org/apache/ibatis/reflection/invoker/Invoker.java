@@ -18,10 +18,12 @@ package org.apache.ibatis.reflection.invoker;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * 调用者
+ * 属性值操作接口，如果该对象属性没有set和get方法，就自己构造一个
  * @author Clinton Begin
  */
 public interface Invoker {
+
   Object invoke(Object target, Object[] args) throws IllegalAccessException, InvocationTargetException;
+
   Class<?> getType();
 }

@@ -49,8 +49,13 @@ import org.apache.ibatis.reflection.property.PropertyNamer;
 @Data
 public class Reflector {
 
+  /**
+   * 默认开启缓存
+   */
   private static boolean classCacheEnabled = true;
-
+  /**
+   * toArray用的
+   */
   private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
   //这里使用了一个Map来做缓存，注意使用的是ConcurrentHashMap,保证线程安全
@@ -83,8 +88,7 @@ public class Reflector {
    */
   public static Reflector forClass(Class<?> clazz) {
     if (classCacheEnabled) {
-      // synchronized (clazz) removed see issue #461
-      //对于每个类来说，我们假设它是不会变的，这样可以考虑将这个类的信息(构造函数，getter,setter,字段)加入缓存，以提高速度
+      // 这里是使用到缓存的，所以先从缓存中获取，拿不到才去构造
       Reflector cached = REFLECTOR_MAP.get(clazz);
       if (cached == null) {
         cached = new Reflector(clazz);
@@ -111,9 +115,9 @@ public class Reflector {
     //处理没有getter/setter方法的字段,最后也是填充到setMethods和getMethods里去
     addFields(clazz);
     //根据getMethods/setMethods集合，初始化可读/写属性的名称集合
-    readablePropertyNames = getMethods.keySet().toArray(new String[0]);
-    writeablePropertyNames = setMethods.keySet().toArray(new String[0]);
-    //初始化caseInsensitivePropertyMap集合，其中记录了所有大写格式的属性名称
+    readablePropertyNames = getMethods.keySet().toArray(EMPTY_STRING_ARRAY);
+    writeablePropertyNames = setMethods.keySet().toArray(EMPTY_STRING_ARRAY);
+    //初始化caseInsensitivePropertyMap集合，其中记录了属性名称,USERNAME:userName
     for (String propName : readablePropertyNames) {
       caseInsensitivePropertyMap.put(propName.toUpperCase(Locale.ENGLISH), propName);
     }
@@ -479,5 +483,9 @@ public class Reflector {
 
   public static void setClassCacheEnabled(boolean classCacheEnabled){
     Reflector.classCacheEnabled = classCacheEnabled;
+  }
+
+  public static void main(String[] args) {
+    System.out.println("userName".toUpperCase(Locale.ENGLISH));
   }
 }

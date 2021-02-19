@@ -3,7 +3,7 @@ import "cuckoo"
 import "hash"
 import "elf"
 
-rule shedun_a
+rule shedun
 {
 	meta:
 		description = "Detects libcrypt_sign used by shedun"
@@ -85,15 +85,6 @@ rule bankbot_discoverer
 		androguard.permission(/WRITE_EXTERNAL_STORAGE/) and
 		androguard.permission(/READ_CONTACTS/) and
 		androguard.permission(/READ_SMS/)
-}
-
-rule b: official
-{
-	meta:
-		description = "mono - network"
-	condition:
-		androguard.service(/ir.mono/i) or
-		androguard.url(/api.\mono\.ir/)
 }
 
 rule clonedfdroid: pua
@@ -1408,41 +1399,7 @@ rule Trojan_2_a: BankBot
 		and 1 of ($cmd_*)
 		and	androguard.permission(/android.permission.RECEIVE_SMS/)
 }
-rule Trojan_3_a: BankBot
-{
-	meta:
-		sample = "ade518199cc4db80222403439ef6c7ee37cd57f820167cf59ee0fcdf5dcd2613"
-	strings:
-		$c2_1 = "settings.php" nocase
-		$c2_2 = "set_data.php" nocase
-		$c2_3 = "add_log.php" nocase
-		$c2_4 = "activity_inj" nocase
-		$cmd_1 = "/proc/%d/cmdline" nocase
-		$cmd_2 = "/proc/%d/cgroup" nocase
-	condition:
-		2 of ($c2_*)
-		and 1 of ($cmd_*)
-		and (
-			androguard.permission(/android.permission.RECEIVE_SMS/) 
-			or androguard.permission(/android.permission.READ_SMS/)
-		)
-}
-rule Trojan_4_a: BankBot
-{
-	meta:
-		description = "Bankbot - Sample is obfuscated with Allatori // 2017-08-03"
-		sample = "787531c2b1bd8051d74ace245e0153938936a0d43137e207e32f7bbc6eb38e1d"
-	strings:
-		$c_0 = "activity_go_adm"
-		$c_1 = "activity_inj"
-		$c_2 = "device_admin.xml"
-	condition:
-		all of ($c_*)
-		and (
-			androguard.permission(/android.permission.RECEIVE_SMS/) 
-			or androguard.permission(/android.permission.READ_SMS/)
-		)
-}
+
 rule callerapp_a: first
 {
 	condition:
@@ -6463,41 +6420,7 @@ rule Trojan_2_b: BankBot
 		and 1 of ($cmd_*)
 		and	androguard.permission(/android.permission.RECEIVE_SMS/)
 }
-rule Trojan_3_b: BankBot
-{
-	meta:
-		sample = "ade518199cc4db80222403439ef6c7ee37cd57f820167cf59ee0fcdf5dcd2613"
-	strings:
-		$c2_1 = "settings.php" nocase
-		$c2_2 = "set_data.php" nocase
-		$c2_3 = "add_log.php" nocase
-		$c2_4 = "activity_inj" nocase
-		$cmd_1 = "/proc/%d/cmdline" nocase
-		$cmd_2 = "/proc/%d/cgroup" nocase
-	condition:
-		2 of ($c2_*)
-		and 1 of ($cmd_*)
-		and (
-			androguard.permission(/android.permission.RECEIVE_SMS/) 
-			or androguard.permission(/android.permission.READ_SMS/)
-		)
-}
-rule Trojan_4_b: BankBot
-{
-	meta:
-		description = "Bankbot - Sample is obfuscated with Allatori // 2017-08-03"
-		sample = "787531c2b1bd8051d74ace245e0153938936a0d43137e207e32f7bbc6eb38e1d"
-	strings:
-		$c_0 = "activity_go_adm"
-		$c_1 = "activity_inj"
-		$c_2 = "device_admin.xml"
-	condition:
-		all of ($c_*)
-		and (
-			androguard.permission(/android.permission.RECEIVE_SMS/) 
-			or androguard.permission(/android.permission.READ_SMS/)
-		)
-}
+
 rule AVG_free
 {
 	meta:
@@ -9769,14 +9692,7 @@ rule androrat_a
      condition:  
          all of them  
  }
-rule slempo_b: package
-{
-	meta:
-		description = "This rule detects the slempo (slembunk) variant malwares by using package name and app name comparison"
-		sample = "24c95bbafaccc6faa3813e9b7f28facba7445d64a9aa759d0a1f87aa252e8345"
-	condition:
-		androguard.package_name("org.slempo.service")
-		}
+
 rule slempo_c
 {
 	meta:
@@ -9808,7 +9724,7 @@ rule HiddenApp_a {
 	condition:
 		1 of them
 }
-rule New_Marcher_May_17_a
+rule New_Marcher_May_17
 {
 	meta:
 		description = "This rule detects new Marcher samples with jumbled Receiver and Service names"
@@ -9842,7 +9758,7 @@ rule DetectOverlayMaleware_a
 	condition:
 		$a and $b and $c and $d and $e and $f and $g
 }
-rule InjectionService_a
+rule InjectionService
 {
 	meta:
 		description = "This rule detects samples with possible malicious injection service"
@@ -9876,14 +9792,14 @@ rule BadAccents_a: ccm
     condition:
         all of them
 }
-rule simplerule_a
+rule simplerule
 {
 	meta:
 		description = "This rule detects a SMS Fraud malware"
 	condition:
 		androguard.package_name("com.hsgame.")
 }
-rule badaccents_a
+rule badaccents
 {
 	meta:
 		description = "This rule detects badaccents"
@@ -9931,24 +9847,8 @@ rule ransomware_c
 		androguard.url(/api33\/api\.php/) or 
 		$a
 }
-rule xolosale_a
-{
-	strings:
-		$ = "919211722715"
-		$ = "servernumber"
-		$ = "xolo"
-	condition:
-		( androguard.url(/pu6b.vrewap.com:1337/i) or
-		androguard.url(/pu6a.vrewap.com:1337/i) ) 
-		or 
-		all of them
-}
-rule SMS_Skunk_a
-{
-	condition:
-		androguard.package_name(/org.skunk/) and
-		androguard.permission(/SEND_SMS/)
-}
+
+
 rule smspay_a
 {
 	meta:
@@ -9962,35 +9862,11 @@ rule smspay_a
 	condition:
 		all of them
 }
-rule Feecode_a: Payment
-{
-	condition:
-		cuckoo.network.dns_lookup(/viapayplugdl\.feecode\.cn/) and
-		not androguard.app_name("\xe8\xa5\xbf\xe7\x93\x9c\xe6\x88\x90\xe4\xba\xba\xe7\x89\x88") // xi gua cheng ren ban
-}
-rule PaPaVideo_a
-{   
-	meta:
-		sha256 = "e6e362a100906988a68b322e28874d8234a03c1147b5bab8fb80867db3ce08a5"
-	condition:
-		cuckoo.network.dns_lookup(/tyuio\.127878\.com/) or
-		cuckoo.network.dns_lookup(/www\.ayroe\.pw/)
-}
-rule MeiHuoVideo_a
-{
-	meta:
-		sha256 = "452b79e21757af4c38735845b70a143fdbdef21c9e5b7a829f7a670192fbda8f"
-	condition:
-		cuckoo.network.dns_lookup(/app\.97aita\.com/) or
-		cuckoo.network.dns_lookup(/sx\.ifanhao\.cc/) or 
-		cuckoo.network.dns_lookup(/qubo\.kandou\.cc/) or 
-		cuckoo.network.dns_lookup(/imgtu\.chnhtp\.com/)
-}
+
 rule Dowgin_a: URL
 {
 	meta:
 		description = "This rule detects Dowgin Related Samples by network traffic keywords, like cd.ld.clspw.cn/app/20160518/201605181740719.apk"
-		sample = ""
 	condition:
 		androguard.url(/cd.ld.clspw.cn/) or
 		cuckoo.network.http_request(/cd.ld.clspw.cn/) or
@@ -10043,7 +9919,7 @@ rule Dowgin_a: URL
 		androguard.url(/s.d.133166.cn/) or
 		cuckoo.network.http_request(/s.d.133166.cn/)
 }
-rule OtakuVideo_a: chinese_porn
+rule OtakuVideo: chinese_porn
 {
 	meta:
 		sample = "449a9fc0694b483a4c1935b33eea433268560784d819f0d63bf66080f5529df8"
@@ -10053,45 +9929,7 @@ rule OtakuVideo_a: chinese_porn
 		cuckoo.network.dns_lookup(/home\.qidewang\.com/) or
 		cuckoo.network.dns_lookup(/img\.gdhjkm\.com/)
 }
-rule Levida_a
-{
-	condition:
-		androguard.url(/safe\-server\-click\.com/) or 
-		cuckoo.network.dns_lookup(/safe\-server\-click\.com/)
-}
-rule Mmsk_a: Downloader
-{
-	meta:
-		sha1 = "2c2d28649ba525f8b9ae8521f6c5cd0ba2f8bb88"
-    condition:
-		androguard.url(/911mmsk\.com/) or
-		cuckoo.network.dns_lookup(/cdn\.angrydigital\.com/) or
-		cuckoo.network.dns_lookup(/911mmsk\.com/) or
-		cuckoo.network.http_request(/dws\.mobiappservice\.net:8080/) or
-		cuckoo.network.http_request(/211.137.56.201\/videoplayer/) or
-		cuckoo.network.http_request(/c\.91fuxin\.com/) or
-		cuckoo.network.http_request(/cdn\.gahony\.com\/apk/) or
-		cuckoo.network.http_request(/dl\.cline\.net\.cn/) or
-		cuckoo.network.http_request(/jkl\.cjoysea\.com:8080/)
-}
-rule PimentoRoot_b: rootkit
-{
-	condition:
-		androguard.url(/http:\/\/webserver\.onekeyrom\.com\/GetJson\.aspx/)
-}
-rule Clevernet_a: Adware
-{
-	condition:
-		androguard.url(/clevernet/)
-}
-rule UrlDownloader_a: Downloader
-{
-	condition:
-		androguard.url(/stat\.siza\.ru/) or 
-		androguard.url(/4poki\.ru/) or 
-		androguard.url(/dating\-club\.mobie\.in/) or 
-		androguard.url(/systems\.keo\.su/)
-}
+
 rule koodousfaaaa: official
 {
 	meta:
@@ -10120,7 +9958,7 @@ rule JinBoShiPin_a: chinese_porn
 	condition:
 		androguard.app_name("\xe7\xa6\x81\xe6\x92\xad\xe8\xa7\x86\xe9\xa2\x91") // jin bo shi pin 277b8320ceb8481a46198f7b9491aef5e9cf54ecda32ca419d0f1aaa422f34cd
 }
-rule SLocker_a
+rule SLocker
 {
 	meta:
         description = "SLocker variant ransomware gates/IP evidences"
@@ -10162,25 +10000,8 @@ rule ZerUnOkLoK_detect_a
 	condition:
 		$a
 }
-rule Slocker_components_a
-{
-	meta:
-		sample = "cbf11c080a27986f7583e7838a580bd0f59d5a32ed00717c6d4a6eff58322822"
-	strings:
-		$1 = "com/android/commonwallsense/LockActivity"
-	condition:
-		1 of them
-}
 
-rule cellspy_a: monitor
-{
-	meta:
-		sample = "2b1b61cc6e0e291c53bce9db0e20b536d3c8371ce92cad5fc1dec4fa3f9d06c3"
-	condition:
-		androguard.url(/cellspy.mobi/) or
-		cuckoo.network.dns_lookup(/cellspy\.mobi/)
-}
-rule luluvideo_a: chinese_porn
+rule luluvideo: chinese_porn
 {
 	meta:
 		sample = "f243a64965619acc4523e8e738846a3983ad91650bd41ce463a3a3ff104ddfd1"
@@ -10198,25 +10019,7 @@ rule PornPlayer_URL_a
 		androguard.url(/\/ckplayer\/style\.swf/) or
 		cuckoo.network.http_request(/\/ckplayer\/style\.swf/)
 }
-rule clicksummer_a
-{
-	meta:
-		description = "test clicksummer"
-	strings:
-		$a = "statsevent.clickmsummer.com:80/log"
-		$b = "54.149.205.221:8080/MobiLog/log"
-	condition:
- 		1 of them
-}
-rule SMS1_a
-{
-	meta:
-		description = "test com.pigeon.pimento.pimple"
-	strings:
-		$a = "SHA1-Digest: Itv2yusaL6KWWE/TLZFej7FVCO0="
-	condition:
- 		1 of them
-}
+
 rule Godlike_a
 {
 	meta:
@@ -10734,15 +10537,7 @@ rule Trojan_Banker_a:Marcher {
 	condition:
 		all of them
 }
-rule non_named_a
-{
-	meta:
-	description = "This rule detects something"
-	strings:
-		$a = "SHA1-Digest: D1KOexBGmlpJS53iK7KjJcyzt7o="
-	condition:
-		all of them
-}
+
 rule android_metasploit_a: android
 {
 	meta:
@@ -14374,25 +14169,7 @@ rule EwindTrojan_a
 		androguard.package_name("com.gus.pizzapaxbielefeld") and
 		androguard.permission(/android.permission.GET_TASKS/)
 }
-rule Antivirus_a
-{
-	strings:
-		$a = "http://"
-		$b = "http://checkip.amazonaws.com/"
-		$c = "http://example.com"
-		$d = "http://play.google.com/store/apps/%s?%s"
-		$e = "http://vignette2.wikia.nocookie.net/logopedia/images/d/d2/Google_icon_2015.png"
-		$f = "http://www.whoishostingthis.com/tools/user-agent/"
-		$g = "https://mir-s3-cdn-cf.behance.net/project_modules/disp/3fd50115627063.562951a013590.jpg"
-		$h = "https://play.google.com/store/apps/details?id=org.mightyfrog.android."
-	condition:
-		androguard.package_name("demo.restaurent.ingeniumbd.demorestaurant") or
-		androguard.app_name("AVG AntiVirus 2020 for Android Security FREE") or
-		androguard.permission(/android.permission.WRITE_EXTERNAL-STORAGE/) and
-		androguard.permission(/android.permission.READ_PHONE_STATE/) and
-		androguard.permission(/android.permission.SYSTEM_ALERT_WINDOW/) and
-		$a and $b and $c and $d and $e and $f and $g and $h
-}
+
 rule koodousoa: official
 {
 	meta:
@@ -14424,21 +14201,9 @@ rule find_SimpLocker_a
 	condition:
 		($a and $b and $c and $d and $e and $f and $g)
 }
-rule xbot007_a
-{
-	meta:
-		source = "https://github.com/maldroid/maldrolyzer/blob/master/plugins/xbot007.py"
-	strings:
-		$a = "xbot007"
-	condition:
-		any of them
-}
-
 rule Android_Malware_b: iBanking
 {
 	meta:
-		author = "Xylitol xylitol@malwareint.com"
-		date = "2014-02-14"
 		description = "Match first two bytes, files and string present in iBanking"
 		reference = "http://www.kernelmode.info/forum/viewtopic.php?f=16&t=3166"
 	strings:
@@ -14458,17 +14223,9 @@ rule feckeny_a
 		androguard.certificate.issuer(/feckeny/) 
 		or androguard.certificate.subject(/feckeny/)
 }
-rule InfoStealer_a
-{
-	condition:
-		androguard.package_name(/com.samples.servicelaunch/) and
-		androguard.app_name(/ss/)
-}
 rule Android_Malware_c: iBanking
 {
 	meta:
-		author = "Xylitol xylitol@malwareint.com"
-		date = "2014-02-14"
 		description = "Match first two bytes, files and string present in iBanking"
 		reference = "http://www.kernelmode.info/forum/viewtopic.php?f=16&t=3166"
 	strings:
@@ -14479,103 +14236,6 @@ rule Android_Malware_c: iBanking
 		$string2 = "type_password2"
 	condition:
 		($pk at 0 and 2 of ($file*) and ($string1 or $string2))
-}
-rule dropper_e:realshell {
-	meta:
-		source = "https://blog.malwarebytes.org/mobile-2/2015/06/complex-method-of-obfuscation-found-in-dropper-realshell/"
-	strings:
-		$a = "hexKey:"
-		$b = "Decrypt.malloc.memset.free.pluginSMS_encrypt.Java_com_skymobi_pay_common_util_LocalDataDecrpty_Encrypt.strcpy"
-	condition:
-		any of them
-}
-rule silent_banker_i: banker
-{
-	meta:
-		description = "This is just an example"
-		thread_level = 3
-		in_the_wild = true
-	strings:
-		$a = {6A 40 68 00 30 00 00 6A 14 8D 91}
-		$b = {8D 4D B0 2B C1 83 C0 27 99 6A 4E 59 F7 F9}
-		$c = "UVODFRYSIHLNWPEJXQZAKCBGMT"
-	condition:
-		$a or $b or $c
-}
-rule silent_banker_j: banker
-{
-	meta:
-		description = "This is just an example"
-		thread_level = 3
-		in_the_wild = true
-	strings:
-		$a = {6A 40 68 00 30 00 00 6A 14 8D 91}
-		$b = {8D 4D B0 2B C1 83 C0 27 99 6A 4E 59 F7 F9}
-		$c = "UVODFRYSIHLNWPEJXQZAKCBGMT"
-	condition:
-		$a or $b or $c
-}
-rule silent_banker_k: banker
-{
-	meta:
-		description = "This is just an example"
-		thread_level = 3
-		in_the_wild = true
-	strings:
-		$a = {6A 40 68 00 30 00 00 6A 14 8D 91}
-		$b = {8D 4D B0 2B C1 83 C0 27 99 6A 4E 59 F7 F9}
-		$c = "UVODFRYSIHLNWPEJXQZAKCBGMT"
-	condition:
-		$a or $b or $c
-}
-rule silent_banker_l: banker
-{
-	meta:
-		description = "This is just an example"
-		thread_level = 3
-		in_the_wild = true
-	strings:
-		$a = {6A 40 68 00 30 00 00 6A 14 8D 91}
-		$b = {8D 4D B0 2B C1 83 C0 27 99 6A 4E 59 F7 F9}
-		$c = "UVODFRYSIHLNWPEJXQZAKCBGMT"
-	condition:
-		$a or $b or $c
-}
-rule silent_banker_m: banker
-{
-	meta:
-		description = "This is just an example"
-		thread_level = 3
-		in_the_wild = true
-	strings:
-		$a = {6A 40 68 00 30 00 00 6A 14 8D 91}
-		$b = {8D 4D B0 2B C1 83 C0 27 99 6A 4E 59 F7 F9}
-		$c = "UVODFRYSIHLNWPEJXQZAKCBGMT"
-	condition:
-		$a or $b or $c
-}
-rule silent_banker_n: banker
-{
-	meta:
-		description = "This is just an example"
-		thread_level = 3
-		in_the_wild = true
-	strings:
-		$a = {6A 40 68 00 30 00 00 6A 14 8D 91}
-		$b = {8D 4D B0 2B C1 83 C0 27 99 6A 4E 59 F7 F9}
-		$c = "UVODFRYSIHLNWPEJXQZAKCBGMT"
-	condition:
-		$a or $b or $c
-}
-rule Bot_a
-{
-	strings:
-		$a = "/dodownload" ascii wide
-		$b = "/dodelete" ascii wide
-		$c = "/doupload" ascii wide
-		$d = "/doprogress" ascii wide
-	condition:
-		all of them
 }
 
 rule adw_a
@@ -14620,16 +14280,7 @@ rule virus_de_la_policia_a
 	condition:
 		all of them
 }
-rule RootApp_a
-{
-	meta:
-		description = "Root app"
-	strings:
-		$a = "ROOT_ERROR_FAILED"
-		$b = "STEP_EXECUTE"
-	condition:
-		all of them
-}
+
 rule appaction_a
 {
 	meta:
@@ -14640,19 +14291,7 @@ rule appaction_a
 	condition:
 		all of them
 }
-rule remotehost_a
-{
-	strings:
-		$a = "http://221.12.6.198:8010/APP/GetFeePoint.aspx"
-		$b = "http://221.12.6.198:8010/APP/AppPaylog.aspx"
-		$c = "http://221.12.6.198:8010/APP/AppPayResultLog.aspx"
-		$d = "http://221.12.6.198:8010/WoRead/GetOrder.aspx?AppId=2&MyOrderId="
-		$e = "http://221.12.6.198:8010/CMRead/GetOrder.aspx?MyOrderId="
-		$f = "http://61.130.247.175:8080/portalapi/enable/getMdnFromIMSI?IMSI="
-		$g = "http://211.136.165.53/wap/mh/p/sy/kj/cz/index.jsp"
-	condition:
-			any of them 
-}
+
 rule rusSMSfraud_a
 {
 	meta:
@@ -14746,54 +14385,7 @@ rule rusSMS_a
 	condition:
 		$a and $b
 }
-rule gunpoderType1_a
-{
-	meta:
-		sample = "4a0da8da1116fbc6d85057110d1d8580dcc5f2746e492415f0f6c19965e71c9c"
-		sample2 = "68d3548306c9667b4d1a6e483cbf2d2f7566213a639316512d4958ff0b2e8f94"
-		sample3 = "77ee18a207bb79c86fa5976b9f5a4fe36f4ecd429dc9846fa71c6585b6df85b5"
-		sample4 = "844ba4b96b7f1df89a3e31544cf22bac9acf1ab97a4d9972daf8aa3fbb149c37"
-		reference = "http://researchcenter.paloaltonetworks.com/2015/07/new-android-malware-family-evades-antivirus-detection-by-using-popular-ad-libraries"
-	strings:
-		$a = "stopWaitSMS"
-		$b = "saldo de PayPal o su tarjeta de"
-		$c = "name=\"cc_card_expires\">Expires MM"
-		$d = "CardIOActivity"
-	condition:
-		all of them
-}
-rule gunpoderType2_a
-{
-	meta:
-		sample = "2788c90a320f3cd8fac34a223b868c830ce2b3702b648bcecc21b3d39d3618f3"
-		sample2 = "99ad2bb26936a7178bc876f1cdc969c8b0697f4f63f3bdd29b0fff794af4b43c"
-		sample3 = "2c5251ce74342d0329dd8acc5a38c2a96a1d6ee617857aca8d11e2e818e192ce"
-		sample4 = "bac759e73bf3b00a25ff9d170465219cb9fb8193adf5bbc0e07c425cc02a811d"
-		reference = "http://researchcenter.paloaltonetworks.com/2015/07/new-android-malware-family-evades-antivirus-detection-by-using-popular-ad-libraries"
-	strings:
-		$a = "\"Return of the Invaders\""
-		$b = "cmd_proxy_destroy"
-		$c = "mhtu119.bin"
-		$d = "robocopu  \"Robocop (US revision 1)\""
-	condition:
-		all of them
-}
-rule gunpoderType3_a
-{
-	meta:
-		sample = "00872f2b17f2c130c13ac3f71abb97a9f7d38406b3f5ed1b0fc18f21eaa81b50"
-		sample2 = "28b3bd3b9eb52257c0d7709c1ca455617d8e51f707721b834efe1ad461c083f0"
-		sample3 = "df411483f2b57b42fd85d4225c6029000e96b3d203608a1b090c0d544b4de5b0"
-		sample4 = "72c5fd8b77e6e02396ff91887ba4e622ab8ee4ea54786f68b93a10fcfa32f926"
-		reference = "http://researchcenter.paloaltonetworks.com/2015/07/new-android-malware-family-evades-antivirus-detection-by-using-popular-ad-libraries"
-	strings:
-		$a = "email_md5"
-		$b = "10.0.0.172"
-		$c = "66The lastest version has been downloaded, install now ?"
-		$d = "0aHR0cHM6Ly9hcGkuYWlycHVzaC5jb20vdjIvYXBpLnBocA=="
-	condition:
-		all of them
-}
+
 rule smsPaym_a
 {
 	meta:
@@ -14865,26 +14457,7 @@ rule boibaSender_a
 	condition:
 		$a or $b or $c
 }
-rule smssend_b:fakeins
-{
-	meta:
-		sample = "04531241e81c7d928e7bc42b049eb0b4f62ecd1a1c516051893ba1167467354c"
-	condition:
-		androguard.certificate.sha1("405E03DF2194D1BC0DDBFF8057F634B5C40CC2BD")
-}
-rule smssend2_a:fakeins
-{
-	meta:
-		sample = "2edf40289ee591e658730f6d21538729e0e3e1c832ae76acf207d449cfa91979"
-		sample2 = "9378c6c10454b958384e0832a45eb37b58e725528e13bee1e3efe585e18e016a"
-		sample3 = "4650d0f08dc2fa69516906b44119361b3cdcab429301aa5f16c7b8bfd95069c3"
-	strings:
-		$a = "SHA1-Digest: flyZ6fARO6a2PCu0CLg0cZExbNo="
-		$b = "<br/>9800 - 296.61 RUR"
-		$c = "<br/>3352 - 90.00 RUR"
-	condition:
-		all of them
-}
+
 rule droidcollector_a
 {
 	meta:
@@ -14940,16 +14513,6 @@ rule potential_malware_a
 		$a and $b
 }
 
-rule RootApp_b
-{
-	meta:
-		description = "Root app"
-	strings:
-		$a = "ROOT_ERROR_FAILED"
-		$b = "STEP_EXECUTE"
-	condition:
-		all of them
-}
 rule smsSender_b
 {
 	meta:
@@ -14974,16 +14537,6 @@ rule dropperMapin_a
 		all of them
 }
 
-rule ghostpush_a
-{
-	meta:
-		sample = "bf770e42b04ab02edbb57653e4e0c21b2c983593073ad717b82cfbdc0c7d535b"
-	strings:
-		$a = "assets/import.apkPK"
-		$b = "assets/protect.apkPK"
-	condition:
-		all of them
-}
 rule Lockerpin2_a: ransomware
 {
 	meta:
@@ -15071,11 +14624,7 @@ rule simplelocker_a_a
 	condition:
 		$a
 }
-rule gaga01_a:SMSSender
-{
-	condition:
-		cuckoo.network.dns_lookup(/gaga01\.net/)
-}
+
 rule Ransomware_b: banker
 {
 	meta:
@@ -15088,17 +14637,6 @@ rule Ransomware_b: banker
 		$strings_c = "t2222222222229222Q^SAAWA"
 	condition:
 		any of ($strings_*)
-}
-rule shiny_adware_a
-{
-	condition:
-		androguard.package_name(/com.shiny*/) and cuckoo.network.http_request(/http:\/\/fingertise\.com/)
-}
-rule FakePlayerSMS_a
-{
-	condition:
-		androguard.app_name(/PornoPlayer/) and
-		androguard.permission(/SEND_SMS/)		
 }
 rule koler_domains_b
 {
@@ -15114,17 +14652,7 @@ rule koler_domains_b
 		cuckoo.network.dns_lookup(/video-sartex.us/) or 
 		cuckoo.network.dns_lookup(/policemobile.biz/)
 }
-rule koler_builds_b
-{
-	meta:
-		description = "Koler.A builds"
-	strings:
-		$0 = "buildid"
-		$a = "DCEF055EEE3F76CABB27B3BD7233F6E3"
-		$b = "C143D55D996634D1B761709372042474"
-	condition:
-		$0 and ($a or $b)
-}
+
 rule koler_class_b
 {
 	meta:
@@ -15320,28 +14848,8 @@ rule volcman_dropper_a
 		or cuckoo.network.dns_lookup(/woltrezmhapplemouse\.com/)
 		or cuckoo.network.dns_lookup(/aerovolcman\.com/)
 }
-rule protank_url_a: adware
-{
-	meta:
-		description = ""
-		sample = ""
-	condition:
-		androguard.url(/pro-tank-t34\.ru/) 
-}
-rule protank_package_name_a: adware
-{
-	meta:
-		description = ""
-		sample = ""
-	condition:
-		androguard.app_name("PlayMob Market")
-}
-rule FakeUpdate_a
-{
-    condition:
-        androguard.certificate.sha1("45167886A1C3A12212F7205B22A5A6AF0C252239")
-}
-rule SlemBunk_a
+
+rule SlemBunk
 {
 	meta:
 		description = "Rule to detect trojans imitating banks of North America, Eurpope and Asia"
@@ -15356,37 +14864,16 @@ rule SlemBunk_a
 	condition:
 		all of them
 }
-rule kdjlk
-{
-    strings:
-        $re1 = /scripts\/action_request.php$/
-    condition:
-        $re1
-}
-rule QuadRooter_a
+rule QuadRooter
 {
 	meta:
 		description = "QuadRooter"
-		sample = ""
 	strings:
 		$a = "/dev/kgsl-3d0"
 	condition:
 		$a
 }
-rule HummingBad_b: malware
-{
-	meta:
-		description = "https://www.checkpoint.com/downloads/resources/wp-hummingbad-research-report.pdf"
-	strings:
-		$a = "com.android.vending.INSTALL_REFERRER"
-		$b = "Superuser.apk"
-	condition:
-		(androguard.package_name("Com.andr0id.cmvchinme") or
-		androguard.package_name("Com.swiping.whale") or
-		androguard.package_name("Com.andr0id.cmvchinmf") or
-		androguard.package_name("com.quick.launcher")) and
-		$a and $b
-}
+
 rule BadNews_a: official
 {
 	meta:
@@ -15403,12 +14890,10 @@ rule BadNews_a: official
 		$b and
 		$c
 }
-rule cajino_a
+rule cajino
 {
 	meta:
 		description = "This rule is made to identify Cajino or apps that are similar to Cajino"
-		author = "LjmK"
-		date = "09/11/2020"
 	strings:
 		$a = "com.baidu.android.pushservice.action.MESSAGE" nocase
 		$b = "com.baidu.android.pushservice.action.RECEIVE" nocase
@@ -15421,8 +14906,6 @@ rule CHEAT_a
 {
 	meta:
 		description = "YARA rule assignment 2 Itcs, cheat APK"
-		author = "Tessff"
-		date = "9/11/2020"
 	strings:
 		$a = "READ_CONTACTS"
 		$b = "SEND_SMS"
@@ -15462,20 +14945,7 @@ rule Potential_Cajino_Variant_a
     condition:
         $a or $b 
 }
-rule koodoussa: official
-{
-	meta:
-		name = "Lennard Hordijk, Teun de Mast"
-		studentnumber = "2716143, 2656566"
-		sample = "804a0963b2df68d86b468ea776ef784ab9223135659673a0991c30114ef522e2"
-	strings:
-		$a = "http://s.appjiagu.com:80/pkl16.html"
-	condition:
-		androguard.permission(/android.permission.ACCESS_COARSE_LOCATION/) and
-		androguard.permission(/android.permission.CAMERA/) and
-		androguard.permission(/android.permission.RECORD_AUDIO/) and 
-		$a 
-}
+
 rule Tojan_a: SMS
 {
 	meta:
@@ -15516,8 +14986,6 @@ rule Potential_BankBot_a
 rule BadNewsAPK_a
 {
     meta:
-        Author = "Wessel van Putten and Niels Cluistra"
-        email = "s2600889@vuw.leidenuniv.nl"
         description = "A rule to detect the malicious BadNews APK"
     strings:
         $a= "fillPostDate.java" 
@@ -15527,45 +14995,10 @@ rule BadNewsAPK_a
     condition:
         $a and $b and $c and $d
 }
-rule Batterysaver_a
-{
-    meta:
-        Author = "F.S. Hessels"
-        Email = "florishessels@gmail.com"
-        Date = "08/11/2020"
-        Description = "This is a basic YARA rule "
-		Reference = "https://www.virustotal.com/gui/file/41fcb61c88f86092e6b302251cd6d6e12f26a8781f6df559859c2daa394ccecd/details"
-        Sample = "f5abe3a486de57ce82dcc89e1a63376a"
-    strings:
-		$a = "http://ad.flurry.com/getAndroidApp.do"
-        $b = "http://ad.flurry.com/getCanvas.do"
-        $c = "http://d371dlrbpeyd2.cloudfront.net/upgrade/"
-        $d = "http://data.flurry.com/aap.do"
-        $e = "http://github.com/droidfu/schema"
-        $f = "http://lp.mobsqueeze.com/"
-        $g = "http://moba.rsigma.com/Localytics/Upload/%s"
-        $h = "http://sigma.sgadtracker.com/Event/Put/"
-        $i = "http://www.androiddoctor.com/help"
-        $j = "https://bugsense.appspot.com/api/errors"
-        $k = "https://chart.googleapis.com/chart?cht=p3&chs=250x300&chd=t:"
-        $l = "https://data.flurry.com/aap.do"
-        $m = "https://market.android.com/details?id="
-        $n = "https://ws.tapjoyads.com/"
-        $o = "https://ws.tapjoyads.com/connect?"
-        $p = "https://ws.tapjoyads.com/offer_completed?"
-        $q = "https://ws.tapjoyads.com/set_publisher_user_id?"
-        $r = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8246419"
-    condition:
-        all of them
-}
 rule Cajino_c
 {
     meta:
-        Author = "F.S. Hessels"
-        Email = "florishessels@gmail.com"
-        Date = "08/11/2020"
         Description = "This is a basic YARA rule "
-		Reference = "https://www.virustotal.com/gui/file/41fcb61c88f86092e6b302251cd6d6e12f26a8781f6df559859c2daa394ccecd/details"
         Sample = "f5abe3a486de57ce82dcc89e1a63376a"
     strings:
 		$a = "http://ad.flurry.com/getAndroidApp.do"
@@ -15592,10 +15025,6 @@ rule Cajino_c
 rule Cajino_d
 {
     meta:
-        Author = "R.R.J. Schreuder"
-        Email = "rickie.schreuder@gmail.com"
-        Reference = "http://kharon.gforge.inria.fr/dataset/malware_Cajino.html"
-        Date = "05/11/2020"
         Description = "This is a basic YARA rule for a CEO fraud with Caijno"
         Sample = "B3814CA9E42681B32DAFE4A52E5BDA7A"
     strings:
@@ -15772,7 +15201,7 @@ rule bazdidyabScamCampaign_a
 	condition:
 		androguard.url(/^https?:\/\/([\w\d]+\.)?bazdidyabtelgram\.com\/?.*$/)
 }
-rule OmniRAT_a: RAT
+rule OmniRAT: RAT
 {
 	meta:
 		description = "OmniRAT"
@@ -15793,60 +15222,7 @@ rule OmniRAT_a: RAT
 		and androguard.filter(/android.provider.Telephony.SMS_RECEIVED/)
 		and androguard.filter(/android.intent.action.BOOT_COMPLETED/)
 }
-rule koodousua: official
-{
-	meta:
-		description = "pegasus"
-	strings:
-		$a = "coldboot_init"
-		$b = "/csk"
-	condition:
-		$a and $b
-}
-rule chrysaor_pegasus_a {
-	meta:
-		sample = "ade8bef0ac29fa363fc9afd958af0074478aef650adeb0318517b48bd996d5d5"
-		description = "https://info.lookout.com/rs/051-ESQ-475/images/lookout-pegasus-android-technical-analysis.pdf"
-		author = "A.Sanchez <asanchez@koodous.com>"
-	strings:
-		$md5_pad = {B6 27 DB 21 5C 7D 35 E4}
-		$file_1 = "/upgrade/uglmt.dat"
-		$file_2 = "/upgrade/cuvmnr.dat"
-		$file_3 = "/upgrade/zero.mp3"
-		$d = "pm uninstall com.sec.android.fotaclient"
-	condition:
-		all of them
-}
-rule chrysaor_pegasus2_a {
-	meta:
-		sample = "3474625e63d0893fc8f83034e835472d95195254e1e4bdf99153b7c74eb44d86"
-		description = "https://info.lookout.com/rs/051-ESQ-475/images/lookout-pegasus-android-technical-analysis.pdf"
-		author = "A.Sanchez <asanchez@koodous.com>"
-	strings:
-		$file_1 = "/mnt/obb/.coldboot_init"
-		$library = "libsgn.so"
-		$url = "/adinfo?gi=%s&bf=%s"
-		$function_1 = "random_hexlified_md5" 
-		$function_2 = "get_mac_address"
-	condition:
-		all of them
-}
-rule Ransomware_c
-{
-	meta:
-		description = "https://www.zscaler.de/blogs/research/new-android-ransomware-bypasses-all-antivirus-programs"
-	strings:
-		$a = "SHA1-Digest: xIzMBOypVosF45yRiV/9XQtugE0=" nocase
-	condition:
-		1 of them
-}
-rule Locker_b
-{
-	strings:
-		$a = "SHA1-Digest: CbQPkm4OYwAEh3NogHhWeN7dA/o=" nocase
-	condition:
-		1 of them
-}
+
 rule ransomware_f
 {
 	meta:
@@ -15865,7 +15241,6 @@ rule Malicious_iFrame_a
 {
 	meta:
 		description = "This rule detectes apps with hidden malicious iframe"
-		sample = "d6289fa1384fab121e730b1dce671f404950e4f930d636ae66ded0d8eb751678"
 	strings:
 		$e = "Brenz.pl"
 		$a = "iframe style=\"height:1px"
@@ -15874,11 +15249,7 @@ rule Malicious_iFrame_a
 		($e and androguard.certificate.sha1("69CE857378306A329D1DCC83A118BC1711ABA352")) or
 		($a and $b and $e)
 }
-rule FakeCMSecurity_a: Certs
-{
-    condition:
-        androguard.certificate.sha1("2E66ED3E9EE51D09A8EFCE00D32AE5E078F1F1B6")
-}
+
 rule AirPush_b
 {
 	meta:
@@ -15908,12 +15279,7 @@ rule Developers_with_known_malicious_apps_b
 		($d and androguard.certificate.sha1("4CC79D06E0FE6B0E35E5B4C0CB4F5A61EEE4E2B8")) or
 		($e and androguard.certificate.sha1("69CE857378306A329D1DCC83A118BC1711ABA352")) 
 }
-rule Banker_e
-{
-	condition:
-		androguard.certificate.issuer(/@attentiontrust\.[a-z]{2,3}/) and
-		androguard.certificate.issuer(/Attention Trust/)
-}
+
 rule Trojan_h: BankBot
 {
 	meta:
@@ -15934,6 +15300,7 @@ rule Trojan_h: BankBot
 rule Trojan_2_c: BankBot
 {
 	meta:
+	    description = "Trojan targeting Banks with Overlays"
 		sample = "b314e54a1161deccb2f582aaf6356f2e66a2f983dd1c1ebf7a5c5d9f5a873dba"
 	strings:
 		$sms_1 = "Sms Is Deleted !" nocase
@@ -15950,41 +15317,8 @@ rule Trojan_2_c: BankBot
 		and 1 of ($cmd_*)
 		and	androguard.permission(/android.permission.RECEIVE_SMS/)
 }
-rule Trojan_3_c: BankBot
-{
-	meta:
-		sample = "ade518199cc4db80222403439ef6c7ee37cd57f820167cf59ee0fcdf5dcd2613"
-	strings:
-		$c2_1 = "settings.php" nocase
-		$c2_2 = "set_data.php" nocase
-		$c2_3 = "add_log.php" nocase
-		$c2_4 = "activity_inj" nocase
-		$cmd_1 = "/proc/%d/cmdline" nocase
-		$cmd_2 = "/proc/%d/cgroup" nocase
-	condition:
-		2 of ($c2_*)
-		and 1 of ($cmd_*)
-		and (
-			androguard.permission(/android.permission.RECEIVE_SMS/) 
-			or androguard.permission(/android.permission.READ_SMS/)
-		)
-}
-rule Trojan_4_c: BankBot
-{
-	meta:
-		description = "Bankbot - Sample is obfuscated with Allatori // 2017-08-03"
-		sample = "787531c2b1bd8051d74ace245e0153938936a0d43137e207e32f7bbc6eb38e1d"
-	strings:
-		$c_0 = "activity_go_adm"
-		$c_1 = "activity_inj"
-		$c_2 = "device_admin.xml"
-	condition:
-		all of ($c_*)
-		and (
-			androguard.permission(/android.permission.RECEIVE_SMS/) 
-			or androguard.permission(/android.permission.READ_SMS/)
-		)
-}
+
+
 rule marcher_a
 {
 	meta:
@@ -16009,10 +15343,10 @@ rule PayNimoActivity_a
 	condition:
 		androguard.activity("com.paynimo.android.payment.PaymentActivity")
 }
-rule mobstspy_a
+rule mobstspy
 {
 	meta:
-		description = "#MOBSTSPY"
+		description = "mobstspy"
 		sample = "32b5d73c3f88d07abb0527f44136dedf13c8d728d9ec37321b40246ffb272aa8"
 	strings:
 		$a = "moc.ppatratsibom.www//:ptth"
@@ -16050,9 +15384,9 @@ rule FingPayActivity_a
 rule KhoslaSDKTrackerActivity_a
 {
         meta:
-                description = "All Khosla SDK Apps"
+             description = "All Khosla SDK Apps"
         condition:
-                androguard.activity("com.khoslalabs.aadhaarbridge.AadhaarBridge")
+             androguard.activity("com.khoslalabs.aadhaarbridge.AadhaarBridge")
 }
 rule AxisMerchantSDKActivity_a
 {
@@ -16100,28 +15434,7 @@ rule SignDeskESignSDKTrackerActivity_a
 	condition:
 		androguard.activity("in.signdesk.esignsdk.esign.eSign")
 }
-rule Flutter_a
-{
-	meta:
-		description = "Detect APK using flutter runtime"
-		sample = "8fce0488c977c88710a9a769956543ccd900682bbb8989a23a193bfc2a8f0a92"
-	strings:
-		$a = "environmentChecksXamarin"
-		$b = "doProbe"
-		$c = "positiveRootCheck"
-	condition:
-		any of them
-}
-rule Flutter_b
-{
-	meta:
-		description = "Detect APK using flutter runtime"
-		sample = "8fce0488c977c88710a9a769956543ccd900682bbb8989a23a193bfc2a8f0a92"
-	strings:
-		$a = "libflutter.so"
-	condition:
-		any of them
-}
+
 rule Gen_AIDE_a
 {
 	meta:
@@ -16217,6 +15530,8 @@ rule Slempo_b: targeting installed Apps
 }
 rule Slempo_2_a: targeting MastercardData
 {
+    meta:
+    	description = "Banker 'Slempo' targeting installed Apps with Overlay"
 	strings:
 		$command_1 = "#intercept_sms_start"
 		$command_2 = "#intercept_sms_stop"
@@ -16270,47 +15585,7 @@ rule Dropper_a: OmniRAT Dropper
 		androguard.permission(/android.permission.WRITE_EXTERNAL_STORAGE/) 
 		and androguard.activity(/net.filsh.youtubeconverter.MainActivity/)
 }
-rule PUA_b: Ozzie
-{
-	condition:
-		androguard.certificate.sha1("c24d1b4c81226bad788c0d266bba520ec0d8c2f7") 
-}
-rule safe_a: Alitalia
-{
-	condition:
-		androguard.certificate.sha1("e58eacbcb251314d8afcb5a267dd247c9311afd2") 
-}
-rule MonTransitApps_a: safe
-{
-	condition:
-		androguard.certificate.sha1("ee6bb0756a02113fd46f2c434a06ebd5d04ff639")
-}
-rule safe_b: PayU
-{
-	condition:
-		androguard.certificate.sha1("bbb54a9135199f225e8a10e571d264a0e51601ef") 
-}
-rule Safe_a: Creativeglance
-{
-	condition:
-		androguard.certificate.sha1("2f0bd554308b8193c3486aec1d3841c70b13c866")
-}
-rule PUA_c: ASDD
-{
-	condition:
-		androguard.certificate.sha1("ed9a1ce1f18a1097dccc5c0cb005e3861da9c34a") 
-}
-rule vage: UC_Safe
-{
-	condition:
-		androguard.package_name("com.uc.iflow") and
-		androguard.certificate.sha1("8399A145C14393A55AC4FCEEFB7AB4522A905139")  
-}
-rule samsung_Safe
-{
-	condition:
-		androguard.certificate.sha1("9ca5170f381919dfe0446fcdab18b19a143b3163")
-}
+
 rule Android_Switcher_a
 {
 	meta:
@@ -16361,17 +15636,7 @@ rule xafe: official
 		$str_1 and 
 		androguard.receiver(/\.AppBoot$/)		
 }
-rule FBI_a: ransomware
-{
-	meta:
-		sample = "d7c5cb817adfa86dbc9d9c0d401cabe98a3afe85dad02dee30b40095739c540d"
-	strings:
-		$a = "close associates will be informed by the authorized FBI agents" wide ascii
-		$b = "ed on the FBI Cyber Crime Department's Datacenter" wide ascii
-		$c = "All information listed below successfully uploaded on the FBI Cyber Crime Depar" wide ascii
-	condition:
-		all of them
-}
+
 rule Android_pinkLocker_a
 {
 	meta:
@@ -16418,7 +15683,6 @@ rule pokemongo_b: fake
 {
 	meta:
 		description = "This rule detects fakes Pokemon Go apps "
-		sample = ""
 	condition:
 		(androguard.package_name("com.nianticlabs.pokemongo") or androguard.app_name("Pokemon GO")) and not
 		androguard.certificate.sha1("321187995BC7CDC2B5FC91B11A96E2BAA8602C62")
@@ -16434,23 +15698,6 @@ rule Android_Banker_Sberbank_a
 		androguard.service(/MasterInterceptor/i) and 
 		androguard.receiver(/MasterBoot/i) and 
 		androguard.filter(/ACTION_POWER_DISCONNECTED/i)
-}
-rule tinhvan_a
-{
-	meta:
-		sample = "0f7e995ff7075af2d0f8d60322975d610e888884922a89fda9a61c228374c5c5"
-	condition:
-		androguard.certificate.sha1("0DFBBDB7735517748C3DEF3B6DEC2A800182D1D5")
-}
-rule AoHaHa_a: SMSSender
-{
-	condition:
-		androguard.certificate.sha1("79A25BCBF6FC9A452292105F0B72207C3381F288")
-}
-rule fake_installer_a: orggoogleapp
-{
-	condition:
-		androguard.certificate.sha1("86718264E68A7A7C0F3FB6ECCB58BEC546B33E22")				
 }
 rule BaDoink_a: official
 {
@@ -16673,17 +15920,6 @@ rule covid19ransom_a
 		androguard.permission(/android.permission.BIND_DEVICE_ADMIN/) and
 		cuckoo.network.http_request(/https:\/\/qmjy6\.bemobtracks\.com\/go\/4286a004-62c6-43fb-a614-d90b58f133e5/)
 		)
-}
-rule SMSTrojan_a
-{
-	meta:
-		description = "Rule to detect SMS trojans in APK files"
-		sample = "ff8ccead81eca2154cf9e891e15f52c8a154ea3aba5e62498b11fb843135837f"
-		source = "http://pastebin.com/rLPux7ts"
-	strings:
-		$d = "com.android.install"
-	condition:
-		all of them
 }
 rule ijoysoft_a
 {
@@ -18995,7 +18231,7 @@ rule TencentLocation_b: spy
 	condition:
 		all of ($a*)
 }
-rule Kemoge_a: Adware Rooter
+rule Kemoge: Adware Rooter
 {
 	meta:
 		description = "Tries to detect Kemoge adware, based on the C&C url"
@@ -19351,10 +18587,10 @@ rule SMSReg_b
 }
 rule BaDoink_b
 {
-		meta:
-		author = "Fernando Denis https://twitter.com/fdrg21"
-		reference = "https://koodous.com/"
-		description = "Virus de la Policia - android"
+	meta:
+        author = "Fernando Denis https://twitter.com/fdrg21"
+        reference = "https://koodous.com/"
+        description = "Virus de la Policia - android"
 		sample = "9bc0fb0f05bbf25507104a4eb74e8066b194a8e6a57670957c0ad1af92189921"
 	strings:
 		$a = /asem\/[0-9a-zA-Z_\-\.]{0,32}\.apkPK/
@@ -19489,39 +18725,7 @@ rule SilverBox_a:Bot
 		androguard.permission(/android.permission.RECEIVE_SMS/) and
 		androguard.permission(/android.permission.READ_CONTACTS/)
 }
-rule adclicker_a
-{
-    meta:
-        description = "https://www.riskiq.com/blog/interesting-crawls/battery-saving-mobile-scam-app/?utm_source=twitter&utm_medium=social-media&utm_campaign=ad-clicking-scam-app&utm_content=blog"
-    condition:
-        cuckoo.network.dns_lookup(/aerowizard.me/) or
-        cuckoo.network.dns_lookup(/virgintraffic.xyz/) or
-        cuckoo.network.dns_lookup(/luxurytraffic.me/) or
-        cuckoo.network.dns_lookup(/bosstrack.xyz/) or
-        cuckoo.network.dns_lookup(/postbackmylove.xyz/) or
-        cuckoo.network.dns_lookup(/releasetraf.xyz/) or
-        cuckoo.network.dns_lookup(/yeahguru.me/) or
-        cuckoo.network.dns_lookup(/iamtomato.xyz/) or
-        cuckoo.network.dns_lookup(/knossos.xyz/) or
-        cuckoo.network.dns_lookup(/mediapostback.xyz/) or
-        cuckoo.network.dns_lookup(/conversioncap.xyz/) or
-        cuckoo.network.dns_lookup(/exo-click.xyz/) or
-        cuckoo.network.dns_lookup(/trafficreach.xyz/) or
-        cuckoo.network.dns_lookup(/trackthisurl.xyz/) or
-        cuckoo.network.dns_lookup(/visitidtrk.xyz/) or
-        cuckoo.network.dns_lookup(/focusrates.xyz/) or
-        cuckoo.network.dns_lookup(/shopgroup.xyz/) or
-        cuckoo.network.dns_lookup(/cashplugin.xyz/) or
-        cuckoo.network.dns_lookup(/secretdroid.xyz/) or
-        cuckoo.network.dns_lookup(/newyearpage.xyz/) or
-        cuckoo.network.dns_lookup(/moneroxmr.xyz/) or
-        cuckoo.network.dns_lookup(/moonleaders.me/) or
-        cuckoo.network.dns_lookup(/rocketdrive.me/) or
-        cuckoo.network.dns_lookup(/callthepiggy.xyz/) or
-		cuckoo.network.dns_lookup(/109.169.85.117/) or
-		cuckoo.network.dns_lookup(/109.169.85.119/) or
-		cuckoo.network.dns_lookup(/109.169.87.58/)
-}
+
 rule Trojan_j: BankBot
 {
 	meta:
@@ -19577,22 +18781,7 @@ rule Trojan_3_d: BankBot
 			or androguard.permission(/android.permission.READ_SMS/)
 		)
 }
-rule Trojan_4_d: BankBot
-{
-	meta:
-		description = "Bankbot - Sample is obfuscated with Allatori // 2017-08-03"
-		sample = "787531c2b1bd8051d74ace245e0153938936a0d43137e207e32f7bbc6eb38e1d"
-	strings:
-		$c_0 = "activity_go_adm"
-		$c_1 = "activity_inj"
-		$c_2 = "device_admin.xml"
-	condition:
-		all of ($c_*)
-		and (
-			androguard.permission(/android.permission.RECEIVE_SMS/) 
-			or androguard.permission(/android.permission.READ_SMS/)
-		)
-}
+
 rule Android_OverSeer_a
 {
 	meta:
@@ -20587,6 +19776,7 @@ rule Trojan_2_e: BankBot
 {
 	meta:
 		sample = "b314e54a1161deccb2f582aaf6356f2e66a2f983dd1c1ebf7a5c5d9f5a873dba"
+		description = "Trojan targeting Banks with Overlays"
 	strings:
 		$sms_1 = "Sms Is Deleted !" nocase
 		$sms_2 = "SMS is NOT DELETED" nocase
@@ -20602,29 +19792,12 @@ rule Trojan_2_e: BankBot
 		and 1 of ($cmd_*)
 		and	androguard.permission(/android.permission.RECEIVE_SMS/)
 }
-rule Trojan_3_e: BankBot
-{
-	meta:
-		sample = "ade518199cc4db80222403439ef6c7ee37cd57f820167cf59ee0fcdf5dcd2613"
-	strings:
-		$c2_1 = "settings.php" nocase
-		$c2_2 = "set_data.php" nocase
-		$c2_3 = "add_log.php" nocase
-		$c2_4 = "activity_inj" nocase
-		$cmd_1 = "/proc/%d/cmdline" nocase
-		$cmd_2 = "/proc/%d/cgroup" nocase
-	condition:
-		2 of ($c2_*)
-		and 1 of ($cmd_*)
-		and (
-			androguard.permission(/android.permission.RECEIVE_SMS/) 
-			or androguard.permission(/android.permission.READ_SMS/)
-		)
-}
+
+
 rule Trojan_4_e: BankBot
 {
 	meta:
-		description = "Bankbot - Sample is obfuscated with Allatori // 2017-08-03"
+		description = "Bankbot - Sample is obfuscated with Allatori"
 		sample = "787531c2b1bd8051d74ace245e0153938936a0d43137e207e32f7bbc6eb38e1d"
 	strings:
 		$c_0 = "activity_go_adm"
@@ -20637,591 +19810,7 @@ rule Trojan_4_e: BankBot
 			or androguard.permission(/android.permission.READ_SMS/)
 		)
 }
-rule no_FPs
-{
-	condition:
-	    androguard.certificate.sha1("9CA5170F381919DFE0446FCDAB18B19A143B3163")
-}
-rule coudw_b: amtrckr
-{
-	meta:
-		family = "coudw"
-	condition:
-		androguard.url(/s\.cloudsota\.com/)
-}
-rule z3core_a: amtrckr
-{
-	meta:
-		family = "z3core"
-	condition:
-		androguard.url(/lexsmilefux\.link/)
-}
-rule thoughtcrime_b: amtrckr
-{
-	meta:
-		family = "thoughtcrime"
-	condition:
-		androguard.url(/edda-mally\.at/) or 
-		androguard.url(/www\.oguhtell\.ch/) or 
-		androguard.url(/szaivert-numis\.at/) or 
-		androguard.url(/clubk-ginza\.net/) or 
-		androguard.url(/losbalonazos\.com/)
-}
-rule marcher_c: amtrckr
-{
-	meta:
-		family = "marcher"
-	condition:
-		androguard.url(/104\.238\.176\.9/) or 
-		androguard.url(/golioni\.tk/) or 
-		androguard.url(/poloclubs\.tk/) or 
-		androguard.url(/thejcb\.ru/) or 
-		androguard.url(/shgt\.tk/) or 
-		androguard.url(/pologt\.tk/) or 
-		androguard.url(/108\.61\.211\.219/) or 
-		androguard.url(/vipcoon\.com/) or 
-		androguard.url(/firenzonne\.com/) or 
-		androguard.url(/extgta\.tk/) or 
-		androguard.url(/manaclubs\.tk/) or 
-		androguard.url(/151\.248\.126\.183/) or 
-		androguard.url(/188\.209\.49\.198/)
-}
-rule lenovo_reaper_a: amtrckr
-{
-	meta:
-		family = "lenovo_reaper"
-	condition:
-		androguard.url(/uefsr\.lenovomm\.com/)
-}
-rule unknown_c: amtrckr
-{
-	meta:
-		family = "unknown"
-	condition:
-		androguard.url(/222\.76\.213\.20/) or 
-		androguard.url(/103\.38\.42\.236/) or 
-		androguard.url(/103\.243\.181\.41/) or 
-		androguard.url(/123\.1\.157\.4/)
-}
-rule jagonca_a: amtrckr
-{
-	meta:
-		family = "jagonca"
-	condition:
-		androguard.url(/abra-k0dabra\.com/) or 
-		androguard.url(/heibe-titten\.com/)
-}
-rule gtalocker_a: amtrckr
-{
-	meta:
-		family = "gtalocker"
-	condition:
-		androguard.url(/niktoegoneyznaet0kol\.pw/)
-}
-rule slocker_a: amtrckr
-{
-	meta:
-		family = "slocker"
-	condition:
-		androguard.url(/aerofigg\.org/)
-}
-rule infostealer_a: amtrckr
-{
-	meta:
-		family = "infostealer"
-	condition:
-		androguard.url(/koko02\.ru/)
-}
-rule pornlocker_a: amtrckr
-{
-	meta:
-		family = "pornlocker"
-	condition:
-		androguard.url(/playmarketcheck\.com/) or 
-		androguard.url(/pornigy\.biz/)
-}
-rule droidian_a: amtrckr
-{
-	meta:
-		family = "droidian"
-	condition:
-		androguard.url(/z0\.tkurd\.net/)
-}
-rule androrat_b: amtrckr
-{
-	meta:
-		family = "androrat"
-	condition:
-		androguard.url(/haiderhacer12\.no-ip\.biz/) or 
-		androguard.url(/toyman6699\.no-ip\.info/) or 
-		androguard.url(/aerror\.no-ip\.biz/) or 
-		androguard.url(/androrat\.servegame\.com/) or 
-		androguard.url(/197\.35\.22\.37/) or 
-		androguard.url(/androrat1\.no-ip\.biz/) or 
-		androguard.url(/151\.72\.17\.61/) or 
-		androguard.url(/recycled\.no-ip\.org/) or 
-		androguard.url(/gert44\.duckdns\.org/) or 
-		androguard.url(/78\.169\.63\.163/) or 
-		androguard.url(/hash0r\.no-ip\.biz/) or 
-		androguard.url(/alpheron\.duckdns\.org/) or 
-		androguard.url(/cricbot\.no-ip\.info/) or 
-		androguard.url(/hazhar77\.no-ip\.biz/) or 
-		androguard.url(/aleem\.top7@gmail\.com/) or 
-		androguard.url(/murryapplicazione\.no-ip\.org/) or 
-		androguard.url(/helloandroid\.no-ip\.org/) or 
-		androguard.url(/79\.170\.54\.154/) or 
-		androguard.url(/xyz2145\.ddns\.net/) or 
-		androguard.url(/mohammad2002\.no-ip\.biz/) or 
-		androguard.url(/1756mostacc\.ddns\.net/) or 
-		androguard.url(/shakaky\.ddns\.net/) or 
-		androguard.url(/danialmostafaei\.no-ip\.biz/) or 
-		androguard.url(/109\.95\.56\.22/) or 
-		androguard.url(/dagohack\.no-ip\.me/) or 
-		androguard.url(/pruebasernesto\.ddns\.net/) or 
-		androguard.url(/androjan\.ddns\.net/) or 
-		androguard.url(/132\.72\.81\.164/) or 
-		androguard.url(/zongkahani\.no-ip\.biz/) or 
-		androguard.url(/florian-pc\.ksueyuj0mtxpt6gn\.myfritz\.net/) or 
-		androguard.url(/kontolanime\.no-ip\.biz/) or 
-		androguard.url(/redcode\.ddns\.net/) or 
-		androguard.url(/gentel901\.no-ip\.org/) or 
-		androguard.url(/anonimousdre180\.ddns\.net/) or 
-		androguard.url(/sajadianh\.ddns\.net/) or 
-		androguard.url(/195\.2\.239\.147/) or 
-		androguard.url(/vipmustafa\.no-ip\.info/) or 
-		androguard.url(/martin123456\.no-ip\.org/) or 
-		androguard.url(/alihoseini\.no-ip\.biz/) or 
-		androguard.url(/aymen1852\.ddns\.net/) or 
-		androguard.url(/zola123\.no-ip\.biz/) or 
-		androguard.url(/androrat143\.no-ip\.biz/) or 
-		androguard.url(/sabbah\.duckdns\.org/) or 
-		androguard.url(/89\.95\.11\.159/) or 
-		androguard.url(/telegram-tools\.no-ip\.biz/) or 
-		androguard.url(/androrat1226\.ddns\.net/) or 
-		androguard.url(/84\.241\.6\.106/) or 
-		androguard.url(/linonymousami\.no-ip\.org/) or 
-		androguard.url(/alldebrid\.duckdns\.org/) or 
-		androguard.url(/187\.180\.186\.181/) or 
-		androguard.url(/411022356/) or 
-		androguard.url(/93\.82\.129\.5/) or 
-		androguard.url(/mikestar\.no-ip\.biz/) or 
-		androguard.url(/sherlockholmes\.duckdns\.org/) or 
-		androguard.url(/adelxxbx\.no-ip\.biz/) or 
-		androguard.url(/r3cxw\.ddns\.net/) or 
-		androguard.url(/matgio\.duckdns\.org/) or 
-		androguard.url(/glaive24\.no-ip\.biz/) or 
-		androguard.url(/41\.143\.69\.230/) or 
-		androguard.url(/151\.56\.227\.79/) or 
-		androguard.url(/shahabhacker\.ddns\.net/) or 
-		androguard.url(/186\.81\.50\.145/) or 
-		androguard.url(/kasofe123123aa\.no-ip\.biz/) or 
-		androguard.url(/tanha\.sit@gmail\.com/) or 
-		androguard.url(/persir\.no-ip\.biz/) or 
-		androguard.url(/androidupdate\.ddns\.net/) or 
-		androguard.url(/charifo1310tok\.no-ip\.biz/) or 
-		androguard.url(/securepurpose\.no-ip\.info/) or 
-		androguard.url(/vpn0\.ddns\.net/) or 
-		androguard.url(/usa20002015\.ddns\.net/) or 
-		androguard.url(/duyguseliberkay\.no-ip\.biz/) or 
-		androguard.url(/miltin2\.no-ip\.org/) or 
-		androguard.url(/droidjack228\.ddns\.net/) or 
-		androguard.url(/mjhooollltuuu\.no-ip\.biz/) or 
-		androguard.url(/nexmopro830\.ddns\.net/) or 
-		androguard.url(/rustyash\.no-ip\.biz/) or 
-		androguard.url(/atsizinoglu\.duckdns\.org/) or 
-		androguard.url(/goog2\.no-ip\.biz/) or 
-		androguard.url(/testan\.ddns\.net/) or 
-		androguard.url(/androrat\.zapto\.org/) or 
-		androguard.url(/blackghostdc\.duckdns\.org/) or 
-		androguard.url(/191\.239\.107\.56/) or 
-		androguard.url(/kalinne\.ddns\.net/) or 
-		androguard.url(/samy777\.no-ip\.biz/) or 
-		androguard.url(/hackcam\.zapto\.org/) or 
-		androguard.url(/kalizinho\.no-ip\.org/) or 
-		androguard.url(/46\.223\.99\.222/) or 
-		androguard.url(/karasqlee9\.no-ip\.org/) or 
-		androguard.url(/andro0161\.no-ip\.info/) or 
-		androguard.url(/84\.101\.0\.49/) or 
-		androguard.url(/msupdate\.myvnc\.com/) or 
-		androguard.url(/zal75zk\.ddns\.net/) or 
-		androguard.url(/nassahsliman\.ddns\.net/) or 
-		androguard.url(/mohsenfaz\.ddns\.net/) or 
-		androguard.url(/moha55\.no-ip\.biz/) or 
-		androguard.url(/106\.219\.57\.228/) or 
-		androguard.url(/android\.no-ip\.org/) or 
-		androguard.url(/161\.202\.108\.108/) or 
-		androguard.url(/hamker\.ddns\.net/) or 
-		androguard.url(/92\.243\.68\.167/) or 
-		androguard.url(/vikas\.no-ip\.biz/) or 
-		androguard.url(/68\.189\.1\.254/) or 
-		androguard.url(/bmt96\.noip\.me/) or 
-		androguard.url(/newxor2\.no-ip\.org/) or 
-		androguard.url(/2\.190\.167\.83/) or 
-		androguard.url(/hackme\.no-ip\.org/) or 
-		androguard.url(/mohammedwasib\.ddns\.net/) or 
-		androguard.url(/24\.172\.28\.155/) or 
-		androguard.url(/120\.0\.0\.1/) or 
-		androguard.url(/simbabweratte\.hopto\.org/) or 
-		androguard.url(/100\.1\.254\.38/) or 
-		androguard.url(/222\.168\.1\.2/) or 
-		androguard.url(/189\.174\.125\.60/) or 
-		androguard.url(/61\.131\.121\.195/) or 
-		androguard.url(/suckmordecock\.duckdns\.org/) or 
-		androguard.url(/201\.124\.95\.7/) or 
-		androguard.url(/svn-01\.ddns\.net/) or 
-		androguard.url(/jNkey\.ddns\.net/) or 
-		androguard.url(/131\.117\.235\.35/) or 
-		androguard.url(/justarat\.noip\.me/) or 
-		androguard.url(/dangerlove\.no-ip\.biz/) or 
-		androguard.url(/bahoom\.no-ip\.biz/) or 
-		androguard.url(/183\.82\.99\.133/) or 
-		androguard.url(/hatam\.no-ip\.org/) or 
-		androguard.url(/37\.239\.8\.89/) or 
-		androguard.url(/c1\.no-ip\.biz/) or 
-		androguard.url(/141\.255\.144\.72/) or 
-		androguard.url(/juanblackhak\.ddns\.net/) or 
-		androguard.url(/saiber-far68\.ddns\.net/) or 
-		androguard.url(/qwerty1212\.ddns\.net/) or 
-		androguard.url(/androratbtas\.no-ip\.info/) or 
-		androguard.url(/servidor23\.ddns\.net/) or 
-		androguard.url(/replace\.duckdns\.org/) or 
-		androguard.url(/war10ck\.serveftp\.com/) or 
-		androguard.url(/myonline\.no-ip\.biz/) or 
-		androguard.url(/anonsa\.ddns\.net/) or 
-		androguard.url(/dogecoinspeed\.zapto\.org/) or 
-		androguard.url(/174\.127\.99\.232/) or 
-		androguard.url(/invisibleghost\.no-ip\.biz/) or 
-		androguard.url(/elgen1\.no-ip\.biz/) or 
-		androguard.url(/habbo\.no-ip\.org/) or 
-		androguard.url(/makarand\.no-ip\.org/) or 
-		androguard.url(/94\.212\.118\.115/) or 
-		androguard.url(/41\.38\.56\.81/) or 
-		androguard.url(/misty255\.no-ip\.org/) or 
-		androguard.url(/volnado\.sytes\.net/) or 
-		androguard.url(/asadhashmi\.ddns\.net/) or 
-		androguard.url(/asosha4ed\.no-ip\.biz/) or 
-		androguard.url(/losever2\.no-ip\.biz/) or 
-		androguard.url(/80\.136\.103\.51/) or 
-		androguard.url(/drrazikhan\.no-ip\.info/) or 
-		androguard.url(/thekillers\.ddns\.net/) or 
-		androguard.url(/isamdonita\.no-ip\.org/) or 
-		androguard.url(/anagliz\.ddns\.net/)
-}
-rule sandrorat_c: amtrckr
-{
-	meta:
-		family = "sandrorat"
-	condition:
-		androguard.url(/tak\.no-ip\.info/) or 
-		androguard.url(/jomo\.zapto\.org/) or 
-		androguard.url(/sondres1\.ddns\.net/) or 
-		androguard.url(/mehost\.ddns\.net/) or 
-		androguard.url(/toyman6699\.no-ip\.info/) or 
-		androguard.url(/hax\.no-ip\.info/) or 
-		androguard.url(/31\.210\.117\.132/) or 
-		androguard.url(/fairylow\.no-ip\.biz/) or 
-		androguard.url(/changyu231\.ddns\.net/) or 
-		androguard.url(/cjbks0u0\.no-ip\.org/) or 
-		androguard.url(/mohammed22468\.no-ip\.biz/) or 
-		androguard.url(/46\.186\.155\.219/) or 
-		androguard.url(/jockerhackerxnxx\.ddns\.net/) or 
-		androguard.url(/41\.251\.251\.7/) or 
-		androguard.url(/engrid\.no-ip\.biz/) or 
-		androguard.url(/megalol\.chickenkiller\.com/) or 
-		androguard.url(/188\.166\.76\.144/) or 
-		androguard.url(/sarahwygan\.no-ip\.biz/) or 
-		androguard.url(/injectman\.no-ip\.info/) or 
-		androguard.url(/aasxzxdsc12324\.no-ip\.biz/) or 
-		androguard.url(/khantac\.ddns\.net/) or 
-		androguard.url(/alfazaai99\.ddns\.net/) or 
-		androguard.url(/dantehack\.zapto\.org/) or 
-		androguard.url(/droidjack1\.sytes\.net/) or 
-		androguard.url(/th3expert\.3utilities\.com/) or 
-		androguard.url(/mohamed46565656\.no-ip\.biz/) or 
-		androguard.url(/chrisfo\.no-ip\.org/) or 
-		androguard.url(/jkgytgasjg12\.serveftp\.com/) or 
-		androguard.url(/hazhar77\.no-ip\.biz/) or 
-		androguard.url(/31\.146\.202\.169/) or 
-		androguard.url(/njesra\.ddns\.net/) or 
-		androguard.url(/hamidoranis\.no-ip\.biz/) or 
-		androguard.url(/yorkiepet\.ddns\.net/) or 
-		androguard.url(/mrgnet\.ddns\.net/) or 
-		androguard.url(/droy\.zapto\.org/) or 
-		androguard.url(/93\.104\.213\.217/) or 
-		androguard.url(/amarok58\.no-ip\.biz/) or 
-		androguard.url(/server4update\.serveftp\.com/) or 
-		androguard.url(/zaliminxx\.duckdns\.org/) or 
-		androguard.url(/anonymo9s\.ddns\.net/) or 
-		androguard.url(/htmp\.sytes\.net/) or 
-		androguard.url(/khalid-2016\.noip\.me/) or 
-		androguard.url(/mahasiswa\.no-ip\.biz/) or 
-		androguard.url(/kaddress\.ddns\.net/) or 
-		androguard.url(/sharmayash\.no-ip\.biz/) or 
-		androguard.url(/shabbushah\.duckdns\.org/) or 
-		androguard.url(/osammer0asmam3a\.ddns\.net/) or 
-		androguard.url(/themayhen23\.no-ip\.org/) or 
-		androguard.url(/wxf2009817\.f3322\.net/) or 
-		androguard.url(/miioolinase\.ddns\.net/) or 
-		androguard.url(/motoshi\.zapto\.org/) or 
-		androguard.url(/88\.150\.149\.91/) or 
-		androguard.url(/info\.bounceme\.net/) or 
-		androguard.url(/samira\.no-ip\.biz/) or 
-		androguard.url(/mohamednjrat111\.no-ip\.biz/) or 
-		androguard.url(/31\.210\.69\.156/) or 
-		androguard.url(/futurasky\.no-ip\.biz/) or 
-		androguard.url(/rat\.capsulelab\.us/) or 
-		androguard.url(/fruby\.zapto\.org/) or 
-		androguard.url(/samsung\.apps\.linkpc\.net/) or 
-		androguard.url(/eldiablo\.no-ip\.biz/) or 
-		androguard.url(/system32\.com/) or 
-		androguard.url(/alkingahmed555\.ddns\.net/) or 
-		androguard.url(/haker33sadekgafer\.no-ip\.biz/) or 
-		androguard.url(/droidjack258\.bounceme\.net/) or 
-		androguard.url(/fazoro66\.ddns\.net/) or 
-		androguard.url(/androidalbums\.ddns\.net/) or 
-		androguard.url(/tedy1993\.ddns\.net/) or 
-		androguard.url(/alaa-1982\.no-ip\.biz/) or 
-		androguard.url(/facrbook\.redirectme\.net/) or 
-		androguard.url(/androidan\.ddns\.net/) or 
-		androguard.url(/learnxea\.duckdns\.org/) or 
-		androguard.url(/audreysaradin\.no-ip\.org/) or 
-		androguard.url(/microsoft-office\.ddns\.net/) or 
-		androguard.url(/178\.124\.182\.38/) or 
-		androguard.url(/mobiles0ft\.no-ip\.org/) or 
-		androguard.url(/cybercrysis\.ddns\.net/) or 
-		androguard.url(/playstore\.ddns\.net/) or 
-		androguard.url(/amran-pc\.no-ip\.biz/) or 
-		androguard.url(/chanks\.no-ip\.biz/) or 
-		androguard.url(/lomo\.com/) or 
-		androguard.url(/ayadd19\.no-ip\.org/) or 
-		androguard.url(/bitoandroid\.no-ip\.info/) or 
-		androguard.url(/androidtool\.ddns\.net/) or 
-		androguard.url(/authd\.ddns\.net/) or 
-		androguard.url(/carapuce-2015\.no-ip\.biz/) or 
-		androguard.url(/aliyusef6\.no-ip\.biz/) or 
-		androguard.url(/bannding\.ddns\.net/) or 
-		androguard.url(/wogusnb\.no-ip\.info/) or 
-		androguard.url(/noussa\.no-ip\.biz/) or 
-		androguard.url(/droidjackv5\.ddns\.net/) or 
-		androguard.url(/mzgerges\.no-ip\.biz/) or 
-		androguard.url(/androidrat21\.ddns\.net/) or 
-		androguard.url(/RATForAndroid\.ddns\.net/) or 
-		androguard.url(/178\.20\.230\.44/) or 
-		androguard.url(/strateg\.ddns\.net/) or 
-		androguard.url(/hasn9999\.ddns\.net/) or 
-		androguard.url(/mahdi3141\.ddns\.net/) or 
-		androguard.url(/fucks\.ddns\.net/) or 
-		androguard.url(/shahidsajan\.no-ip\.biz/) or 
-		androguard.url(/spicymemes\.duckdns\.org/) or 
-		androguard.url(/hackermoqtada\.no-ip\.biz/) or 
-		androguard.url(/andro\.no-ip\.biz/) or 
-		androguard.url(/goggle\.sytes\.net/) or 
-		androguard.url(/anonymous666\.zapto\.org/) or 
-		androguard.url(/dnsdynamic\.org/) or 
-		androguard.url(/maskaralama\.ddns\.net/) or 
-		androguard.url(/adobflash\.hopto\.org/) or 
-		androguard.url(/iqram85spy\.ddns\.net/) or 
-		androguard.url(/moussa-hak\.no-ip\.biz/) or 
-		androguard.url(/shoo2018\.no-ip\.org/) or 
-		androguard.url(/22134520\.ddns\.net/) or 
-		androguard.url(/109\.122\.41\.237/) or 
-		androguard.url(/137\.0\.0\.1/) or 
-		androguard.url(/droidjack\.hopto\.org/) or 
-		androguard.url(/brave-hacker\.no-ip\.org/) or 
-		androguard.url(/huntergold\.no-ip\.biz/) or 
-		androguard.url(/hakeerali2\.ddns\.net/) or 
-		androguard.url(/seven1\.ddns\.net/) or 
-		androguard.url(/younix\.ddns\.net/) or 
-		androguard.url(/dkms\.ddns\.net/) or 
-		androguard.url(/abdouoahmed\.ddns\.net/) or 
-		androguard.url(/hehe\.duckdns\.org/) or 
-		androguard.url(/hardstyleraver\.no-ip\.org/) or 
-		androguard.url(/85\.136\.243\.80/) or 
-		androguard.url(/sarasisi\.no-ip\.org/) or 
-		androguard.url(/yelp01\.f3322\.org/) or 
-		androguard.url(/teolandia\.no-ip\.biz/) or 
-		androguard.url(/jokerbabel\.no-ip\.biz/) or 
-		androguard.url(/cccamd\.myftp\.biz/) or 
-		androguard.url(/109\.165\.69\.25/) or 
-		androguard.url(/vb\.blogsyte\.com/) or 
-		androguard.url(/karrarhuseein82\.ddns\.net/) or 
-		androguard.url(/applecenikosmos\.hldns\.ru/) or 
-		androguard.url(/madov-matrix25\.no-ip\.org/) or 
-		androguard.url(/1349874791\.gnway\.cc/) or 
-		androguard.url(/bapforall\.ddns\.net/) or 
-		androguard.url(/mahamadmahmod\.ddns\.net/) or 
-		androguard.url(/42\.236\.159\.93/) or 
-		androguard.url(/msn-web\.ddnsking\.com/) or 
-		androguard.url(/draagon\.ddns\.net/) or 
-		androguard.url(/winlogen\.duckdns\.org/) or 
-		androguard.url(/albash2222\.ddns\.net/) or 
-		androguard.url(/ahmed2012\.dynu\.com/) or 
-		androguard.url(/188\.3\.13\.98/) or 
-		androguard.url(/clashdroid\.no-ip\.biz/) or 
-		androguard.url(/hardik\.no-ip\.info/) or 
-		androguard.url(/asdqqq\.bounceme\.net/) or 
-		androguard.url(/housam\.linkpc\.net/) or 
-		androguard.url(/hackhack2016\.no-ip\.info/) or 
-		androguard.url(/pars\.ddns\.net/) or 
-		androguard.url(/noiphackk\.ddns\.net/) or 
-		androguard.url(/islam2020libya\.no-ip\.biz/) or 
-		androguard.url(/dodee97dodee\.ddns\.net/) or 
-		androguard.url(/anonymousip\.no-ip\.org/) or 
-		androguard.url(/haxor\.hopto\.org/) or 
-		androguard.url(/zokor-zokor\.ddns\.net/) or 
-		androguard.url(/xzoro2016\.no-ip\.info/) or 
-		androguard.url(/81\.177\.33\.218/) or 
-		androguard.url(/107\.151\.193\.126/) or 
-		androguard.url(/bassamzeyad\.ddns\.net/) or 
-		androguard.url(/momo2015\.duckdns\.org/) or 
-		androguard.url(/scropion20078\.no-ip\.biz/) or 
-		androguard.url(/106\.51\.163\.232/) or 
-		androguard.url(/fuckyou\.duckdns\.org/) or 
-		androguard.url(/zakifr\.no-ip\.biz/) or 
-		androguard.url(/82\.223\.31\.121/) or 
-		androguard.url(/2\.25\.171\.244/) or 
-		androguard.url(/85\.202\.29\.79/) or 
-		androguard.url(/mariorossi2013\.homepc\.it/) or 
-		androguard.url(/hackcam\.zapto\.org/) or 
-		androguard.url(/dexonic\.duckdns\.org/) or 
-		androguard.url(/mokhter222029\.ddns\.net/) or 
-		androguard.url(/win32\.ddns\.net/) or 
-		androguard.url(/ggwasgeht\.ddns\.net/) or 
-		androguard.url(/randsnaira\.dnsdynamic\.com/) or 
-		androguard.url(/coxiamigo\.myq-see\.com/) or 
-		androguard.url(/googles\.servemp3\.com/) or 
-		androguard.url(/ospr\.publicvm\.com/) or 
-		androguard.url(/karasqlee9\.no-ip\.org/) or 
-		androguard.url(/haa7aah\.no-ip\.biz/) or 
-		androguard.url(/omar\.no-ip\.biz/) or 
-		androguard.url(/goldeneagle1112\.ddns\.net/) or 
-		androguard.url(/yuosaf1993\.ddns\.net/) or 
-		androguard.url(/88\.164\.37\.97/) or 
-		androguard.url(/indusv00\.duckdns\.org/) or 
-		androguard.url(/droid\.deutsche-db-bank\.ru/) or 
-		androguard.url(/unknownuser\.no-ip\.biz/) or 
-		androguard.url(/oneriakosa\.ddns\.net/) or 
-		androguard.url(/gcafegood\.noip\.me/) or 
-		androguard.url(/rockrock\.ddns\.net/) or 
-		androguard.url(/188\.24\.119\.27/) or 
-		androguard.url(/93\.157\.235\.248/) or 
-		androguard.url(/komplevit-rat\.ddns\.net/) or 
-		androguard.url(/pianotiles2\.ddns\.net/) or 
-		androguard.url(/tobytori18\.myftp\.org/) or 
-		androguard.url(/105\.106\.49\.154/) or 
-		androguard.url(/moonmar10\.no-ip\.biz/) or 
-		androguard.url(/100009755836320\.no-ip\.biz/) or 
-		androguard.url(/kararkarar0780\.ddns\.net/) or 
-		androguard.url(/foxfeline\.no-ip\.org/) or 
-		androguard.url(/kskdt\.ddns\.net/) or 
-		androguard.url(/fati43030\.no-ip\.biz/) or 
-		androguard.url(/freeann\.sytes\.net/) or 
-		androguard.url(/a\.tomx\.xyz/) or 
-		androguard.url(/r90\.no-ip\.biz/) or 
-		androguard.url(/41\.38\.56\.81/) or 
-		androguard.url(/46\.45\.207\.81/) or 
-		androguard.url(/warrirrs\.no-ip\.org/) or 
-		androguard.url(/azert123\.ddns\.net/) or 
-		androguard.url(/soso\.noip\.us/) or 
-		androguard.url(/hassanabd1233\.ddns\.net/) or 
-		androguard.url(/thaer\.no-ip\.biz/) or 
-		androguard.url(/baby\.webhop\.me/) or 
-		androguard.url(/zero228\.ddns\.net/) or 
-		androguard.url(/reddemon\.ddns\.net/) or 
-		androguard.url(/viagra\.jumpingcrab\.com/) or 
-		androguard.url(/domira\.ddns\.net/) or 
-		androguard.url(/nassahsliman\.ddns\.net/) or 
-		androguard.url(/magemankoktelam\.ddns\.net/) or 
-		androguard.url(/somenormalguy\.duckdns\.org/) or 
-		androguard.url(/usa2222\.ddns\.net/) or 
-		androguard.url(/aaaaaaaaaabbbbb\.hopto\.org/) or 
-		androguard.url(/cardangi\.no-ip\.org/) or 
-		androguard.url(/151\.246\.230\.21/) or 
-		androguard.url(/79\.141\.163\.20/) or 
-		androguard.url(/mezoo32\.no-ip\.biz/) or 
-		androguard.url(/hack1111\.noip\.me/) or 
-		androguard.url(/kingdom\.no-ip\.biz/) or 
-		androguard.url(/x300x300xx\.no-ip\.org/) or 
-		androguard.url(/puplicdsl\.ddns\.net/) or 
-		androguard.url(/shanks\.no-ip\.biz/) or 
-		androguard.url(/teda11\.zapto\.org/) or 
-		androguard.url(/testsss\.ddns\.net/) or 
-		androguard.url(/185\.32\.221\.23/) or 
-		androguard.url(/topmax\.myq-see\.com/) or 
-		androguard.url(/iraqn6777\.ddns\.net/) or 
-		androguard.url(/pimpdaddy\.myq-see\.com/) or 
-		androguard.url(/villevalo\.chickenkiller\.com/) or 
-		androguard.url(/hhamokcha\.ddns\.net/) or 
-		androguard.url(/jastn\.ddns\.net/) or 
-		androguard.url(/flashplayerxx\.no-ip\.org/) or 
-		androguard.url(/sniperyakub\.ddns\.net/) or 
-		androguard.url(/elisou19\.ddns\.net/) or 
-		androguard.url(/88\.247\.226\.120/) or 
-		androguard.url(/aaaa\.com/) or 
-		androguard.url(/moep004\.no-ip\.org/) or 
-		androguard.url(/liquidixen\.ddns\.net/) or 
-		androguard.url(/rok13198666\.no-ip\.biz/) or 
-		androguard.url(/mamal9921\.ddns\.net/) or 
-		androguard.url(/droidjack33\.no-ip\.biz/) or 
-		androguard.url(/diceedicee\.ddns\.net/) or 
-		androguard.url(/e777kx47\.ddns\.net/) or 
-		androguard.url(/evilcasper\.ddns\.net/) or 
-		androguard.url(/black1990\.ddns\.net/) or 
-		androguard.url(/appmarket\.servehttp\.com/) or 
-		androguard.url(/thegangsterrap\.noip\.me/) or 
-		androguard.url(/ala6a\.no-ip\.biz/) or 
-		androguard.url(/myaw\.no-ip\.biz/) or 
-		androguard.url(/nademhack\.no-ip\.org/) or 
-		androguard.url(/shop10\.ddns\.net/) or 
-		androguard.url(/xos1982\.ddns\.net/) or 
-		androguard.url(/93\.185\.151\.217/) or 
-		androguard.url(/203\.189\.232\.237/) or 
-		androguard.url(/zxczxczxc\.ddns\.net/) or 
-		androguard.url(/07726657423zaion\.no-ip\.biz/) or 
-		androguard.url(/blind1234\.ddns\.net/) or 
-		androguard.url(/myfrenid2x\.zapto\.org/) or 
-		androguard.url(/winserver\.dlinkddns\.com/) or 
-		androguard.url(/alanbkey\.no-ip\.org/) or 
-		androguard.url(/williettinger\.cc/) or 
-		androguard.url(/silenthunter3021\.no-ip\.org/) or 
-		androguard.url(/1337ace\.ddns\.net/) or 
-		androguard.url(/test\.no-ip\.org/) or 
-		androguard.url(/snopi\.no-ip\.biz/) or 
-		androguard.url(/andver18\.no-ip\.biz/) or 
-		androguard.url(/kilasx\.ddns\.net/) or 
-		androguard.url(/109\.73\.68\.114/) or 
-		androguard.url(/owsen\.ddns\.net/) or 
-		androguard.url(/android1\.ddns\.net/) or 
-		androguard.url(/81\.4\.104\.129/) or 
-		androguard.url(/bambi\.no-ip\.biz/) or 
-		androguard.url(/egytiger\.myftp\.org/) or 
-		androguard.url(/gold5000\.ddns\.net/) or 
-		androguard.url(/makarand\.no-ip\.org/) or 
-		androguard.url(/93\.79\.212\.194/) or 
-		androguard.url(/denishul\.hldns\.ru/) or 
-		androguard.url(/hacker-81\.no-ip\.biz/) or 
-		androguard.url(/noipjajaja\.ddns\.net/) or 
-		androguard.url(/samoomalik\.no-ip\.biz/) or 
-		androguard.url(/tataline\.hopto\.org/) or 
-		androguard.url(/abedjaradat1177\.no-ip\.org/) or 
-		androguard.url(/voda\.no-ip\.org/) or 
-		androguard.url(/dadadadadaprivet\.ddns\.net/) or 
-		androguard.url(/darweshfis\.no-ip\.org/) or 
-		androguard.url(/5\.189\.137\.186/) or 
-		androguard.url(/79\.137\.223\.139/) or 
-		androguard.url(/love2014\.ddns\.net/) or 
-		androguard.url(/momen-swesi\.no-ip\.biz/) or 
-		androguard.url(/xmohcine\.ddns\.net/) or 
-		androguard.url(/alabama192837\.no-ip\.org/)
-}
-rule ibanking_a: amtrckr
-{
-	meta:
-		family = "ibanking"
-	condition:
-		androguard.url(/www\.irmihan\.ir/) or 
-		androguard.url(/emberaer\.com/)
-}
+
 rule hacking_team_b: stcert
 {
 	meta:
@@ -21250,7 +19839,7 @@ rule hacking_team_b: stcert
 		androguard.certificate.sha1("C4CF31DBEF79393FD2AD617E79C27BFCF19EFBB3") or
 		androguard.certificate.sha1("2125821BC97CF4B7591E5C771C06C9C96D24DF8F")
 }
-rule Android_Bankosy_a
+rule Android_Bankosy
 {
 	meta:
 		description = "This rule detects Android.Bankosy"
@@ -21321,6 +19910,7 @@ rule Kemoge_b: official
 	condition:
 		$a and $b and $c and $d and $e and $f
 }
+
 rule Kemoge_2_a: official
 {
 	meta:
@@ -21334,92 +19924,7 @@ rule Kemoge_2_a: official
 	condition:
 		$a and $b and $c and $d
 }
-rule whatsapp_b:fake
-{
-	condition:
-		androguard.app_name("WhatsApp") and
-		not androguard.certificate.sha1("38A0F7D505FE18FEC64FBF343ECAAAF310DBD799")
-}
-rule king_games_b:fake
-{
-	condition:
-		(androguard.app_name("AlphaBetty Saga")
-		or androguard.app_name("Candy Crush Soda Saga")
-		or androguard.app_name("Candy Crush Saga")
-		or androguard.app_name("Farm Heroes Saga")
-		or androguard.app_name("Pet Rescue Saga")
-		or androguard.app_name("Bubble Witch 2 Saga")
-		or androguard.app_name("Scrubby Dubby Saga")
-		or androguard.app_name("Diamond Digger Saga")
-		or androguard.app_name("Papa Pear Saga")
-		or androguard.app_name("Pyramid Solitaire Saga")
-		or androguard.app_name("Bubble Witch Saga")
-		or androguard.app_name("King Challenge"))
-		and not androguard.certificate.sha1("9E93B3336C767C3ABA6FCC4DEADA9F179EE4A05B")
-		and not androguard.certificate.sha1("F22BD3F8C24AB1451ABFD675788B953C325AB550")
-}
 
-rule instagram_b:fake
-{
-	condition:
-		androguard.app_name("Instagram")
-		and not androguard.certificate.sha1("C56FB7D591BA6704DF047FD98F535372FEA00211")
-}
-rule BankBot_d
-{
-	meta:
-		sample = "82541c1afcc6fd444d0e8c07c09bd5ca5b13316913dbe80e8a7bd70e8d3ed264"
-	strings:
-		$ = "/inj/"
-		$ = "activity_inj"
-		$ = /tuk/
-		$ = /cmdlin/
-	condition:
-		androguard.filter("android.app.action.DEVICE_ADMIN_ENABLED") and
-		3 of them
-}
-rule BankBot2_b
-{
-	strings:
-		$a0 = "/private/set_data.php"
-		$a1 = "/private/settings.php"
-		$a2 = "/private/add_log.php"
-		$b = "/private/tuk_tuk.php"
-	condition:
-		$b and 1 of ($a*)
-}
-rule BankBot3_a
-{
-	strings:
-		$ = "chins.php"
-		$ = "live.php"
-		$ = "add.php"
-	condition:
-		all of them
-}
-rule libyan_scorpions_a
-{
-	meta:
-		source = "https://cyberkov.com/wp-content/uploads/2016/09/Hunting-Libyan-Scorpions-EN.pdf"
-		sample = "e66d795d0c832ad16381d433a13a2cb57ab097d90e9c73a1178a95132b1c0f70"
-		dropped = "4e656834a93ce9c3df40fe9a3ee1efcccc728e7ea997dc2526b216b8fd21cbf6"
-	strings:
-		$ip_1 = "41.208.110.46" ascii wide
-		$domain_1 = "winmeif.myq-see.com" ascii wide nocase
-		$domain_2 = "wininit.myq-see.com" ascii wide nocase
-		$domain_3 = "samsung.ddns.me" ascii wide nocase
-		$domain_4 = "collge.myq-see.com" ascii wide nocase
-		$domain_5 = "sara2011.no-ip.biz" ascii wide nocase
-	condition:
-		androguard.url(/41\.208\.110\.46/) or cuckoo.network.http_request(/41\.208\.110\.46/) or
-		androguard.url(/winmeif.myq-see.com/i) or cuckoo.network.dns_lookup(/winmeif.myq-see.com/i) or
-		androguard.url(/wininit.myq-see.com/i) or cuckoo.network.dns_lookup(/wininit.myq-see.com/i) or
-		androguard.url(/samsung.ddns.me/i) or cuckoo.network.dns_lookup(/samsung.ddns.me/i) or
-		androguard.url(/collge.myq-see.com/i) or cuckoo.network.dns_lookup(/collge.myq-see.com/i) or
-		androguard.url(/sara2011.no-ip.biz/i) or cuckoo.network.dns_lookup(/sara2011.no-ip.biz/i) or
-		any of ($domain_*) or any of ($ip_*) or
-		androguard.certificate.sha1("DFFDD3C42FA06BCEA9D65B8A2E980851383BD1E3")
-}
 rule andr_tordow_a
 {
 	meta:
@@ -21553,7 +20058,7 @@ rule Trojan_Banker_Marcher_a {
 }
 rule Trojan_Banker_Marcher2_a {
 	meta:
-	description = "Trojan-Banker targeting Erste Bank Austria, and many others (Marcher)"
+	    description = "Trojan-Banker targeting Erste Bank Austria, and many others (Marcher)"
 	strings:
 		$a = "Name: res/raw/blfs.key"
 		$b = "Name: res/raw/config.cfg"
@@ -21674,16 +20179,7 @@ rule porn_a: chinese
 		cuckoo.network.dns_lookup(/androd2\.video\.daixie800\.com/) or
 		cuckoo.network.dns_lookup(/www\.4006000790\.com/)
 }
-rule towelhacking_behaviour_a
-{
-	meta:
-		description = "Search probably apks relationships"
-		sample = ""
-	condition:
-		androguard.certificate.sha1("180ADFC5DE49C0D7F643BD896E9AAC4B8941E44E") or 
-		( androguard.activity(/net.prospectus.*/i) and androguard.permission(/android.permission.WRITE_CONTACT/) and
-		androguard.permission(/android.permission.ACCESS_COARSE_UPDATES/))
-}
+
 rule towelhacking_analysis_a
 {
 	meta:
@@ -21700,7 +20196,6 @@ rule towelhacking_cromosome_a
 {
 	meta:
 		description = "From cromosome.py"
-		sample = ""
 	strings:
 		$cromosome_a = "res/xml/device_admin_data.xml]"
 	  	$cromosome_b = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACABAMAAAAxEHz4AAAAGFBMVEVMaXGUwUWTwEaTwEaTwEaTwEaVwUWTwEalNfqIAAAAB3RSTlMALozOuetYmPN8xgAAAbFJREFUeF7t2E9L+zAcx/FP1i3n7PfHXauivW7K3HWAY1dFoNci2l61Lvs8fUOxZYW22RdBBub1AN4kX7KQDqcvCILgDC0aUlcGhzaQ+j/HAb2HlC5buTXEEoMGlgZikzkAledTAKM95HSJPxs6T9eYrSGHZMMvuyXkoLZs2AxyCQ98GEi9sqWEkGYb1/INMGUtFW9iRDLWdWGhtuQCEgW5a+ZIgwn5AQFVjQ0zViwQkYwFgYjVCorDFfBdtgMyU80MkFC2h5SOXfGLXbIqyg9B2xzHGrODZAgzdioFM+y0E5zjThbHurzthl9Bb24M8HLfzQCXT+cYsiX3QMJuBn9Jazz3CLOBwIrko+8IzvsDmk7pO4Lv/YExPT/rxBOI6NjTCIRACIRACITA2BeY0XnoD4x8D5WITtwfUKnnraVScof+AArfk/cfbTwU0CveYdDUYCgANYXPYKBx+oEQKL772I7YaS/+cG+zMY6m8vyFDnOnqpV5nkFkVI+tvmWAXxkIgRDQdGxzO7xBSqX1B9qEzhpiBcmHei3WQEyn9d9fr+QCcji7yFDB8zV+QhAEQfAJcs5K2TAQqxAAAAAASUVORK5CYII="
@@ -21710,16 +20205,7 @@ rule towelhacking_cromosome_a
 	condition:
 		($cromosome_a and $cromosome_b) or ($cromosome_c and $cromosome_d and $cromosome_e)
 }
-rule cloudsota_a
-{
-	meta:
-		description = "http://www.cmcm.com/blog/en/security/2015-11-09/842.html"
-		sample = "ff10aca93c95bb9c17e0fce10d819210907fcf84cfb061cdba4bd5ce47fd11d3"
-	condition:
-		androguard.certificate.sha1("FD2FF510E7896EB93840B6DFE8A109850F640CA9") or
-		androguard.certificate.sha1("B03DB174D2643B2A7C23D6403169345D225DDB4F") or
-		androguard.certificate.sha1("C3AA1AC48D59E56189BD1F1B09BD1C3FE2A33CB0")
-}
+
 rule kemoge_b
 {
 	meta:
@@ -21799,49 +20285,7 @@ rule Cajino_g
 	condition:
 		all of them
 }
-rule qq_a: malicious apk
-{
-	meta:
-		description = "This rule detects the apk qq[NOT DETECTED] and similar apks"
-		sample = "b09efef6d7ebd0f793fc7584cfa73181b54c3861fa7c00e7e172b889cd50102d"
-	strings:
-        $interesting_string = "xmlpull.org/v1/doc/features.html#indent-output" nocase
-		$http_request = "data.flurry.com/aap.do"
-		$calls_highlighted_1 = "android.location.LocationManager.getLastKnownLocation" nocase
-		$calls_highlighted_2 = "android.telephony.TelephonyManager.getNetworkOperator" nocase
-		$calls_highlighted_3 = "android.telephony.TelephonyManager.getNetworkOperatorName" nocase
-		$calls_highlighted_4 = "android.util.Base64.decode" nocase
-		$calls_highlighted_5 = "android.util.Base64.encode" nocase
-		$calls_highlighted_6 = "javax.crypto.Cipher.doFinal" nocase
-		$cryptographical_algorithms_observed = "AES" nocase
-		$cryptographical_keys_observed = "UYGy723!Po-efjve"
-		$encoding_algorithms_observed = "base64" nocase
-		$decoded_text = "com.tencent.igx" nocase
-		$highlighted_text_1 = "Enter password" nocase
-		$highlighted_text_2 = "password-input" nocase
-		$highlighted_text_3 = "Cancel" nocase
-		$highlighted_text_4 = "OK" nocase
-	condition:
-		androguard.package_name("com.hughu") or
-		androguard.app_name("qq[NOT DETECTED]") or
-		androguard.certificate.sha1("967fad7b875343b14a84d3c240210941074e6cb7") or 
-		(
-			androguard.activity("com.applisto.appremium.classes.PasswordActivity") and
-			androguard.activity("com.koushikdutta.superuser.RequestActivity") and
-			androguard.permission(/android.permission.INTERNET/) and
-			androguard.permission(/android.permission.ACCESS_NETWORK_STATE/) and
-			(
-				$interesting_string or
-				$http_request or
-				any of ($calls_highlighted_*) or
-				$cryptographical_algorithms_observed or
-				$cryptographical_keys_observed or
-				$encoding_algorithms_observed or
-				$decoded_text or
-				all of ($highlighted_text_*)
-			)
-		)			
-}
+
 rule SimpLocker_c: official
 {
 	meta:
@@ -22009,24 +20453,24 @@ rule Trojan_n: WipeLocker
 		androguard.permission(/android.permission.WRITE_EXTERNAL_STORAGE/)
 }
 rule CAJINO_a {
-meta:
-  author 		= "Matthijs en Nils"
-  date 			= "10/11/2020"
-  description 	= "This is a YARA rule for Cajino"
-strings:
-  $register = "getApplicationContext()"
-  $phone 	= "getSystemService(\"phone\")"
-  $feature1 = "getContact"
-  $feature2 = "getCallLog"
-  $feature3 = "getMessage"
-  $feature4 = "getLocation"
-  $feature5 = "sendTextMessage"
-  $feature6 = "getPhoneInfo"
-  $feature7 = "listFileByPath"
-  $feature8 = "recorder.prepare()"
-  $feature9 = "installApk"
-condition:
-  $register and $phone and 1 of ($feature*)
+    meta:
+      author 		= "Matthijs en Nils"
+      date 			= "10/11/2020"
+      description 	= "This is a YARA rule for Cajino"
+    strings:
+      $register = "getApplicationContext()"
+      $phone 	= "getSystemService(\"phone\")"
+      $feature1 = "getContact"
+      $feature2 = "getCallLog"
+      $feature3 = "getMessage"
+      $feature4 = "getLocation"
+      $feature5 = "sendTextMessage"
+      $feature6 = "getPhoneInfo"
+      $feature7 = "listFileByPath"
+      $feature8 = "recorder.prepare()"
+      $feature9 = "installApk"
+    condition:
+      $register and $phone and 1 of ($feature*)
 }
 rule baaafd: official
 {
@@ -22119,19 +20563,7 @@ rule koler_domains_c: android
 		cuckoo.network.dns_lookup(/video-sartex.us/) or 
 		cuckoo.network.dns_lookup(/policemobile.biz/)
 }
-rule koler_builds_c: android
-{
-	meta:
-		author = "https://twitter.com/jsmesa"
-		reference = "https://koodous.com/"
-		description = "Koler.A builds"
-	strings:
-		$0 = "buildid"
-		$a = "DCEF055EEE3F76CABB27B3BD7233F6E3"
-		$b = "C143D55D996634D1B761709372042474"
-	condition:
-		$0 and ($a or $b)
-}
+
 rule koler_class_c: android
 {
 	meta:
@@ -22169,19 +20601,7 @@ rule nang_a
 	condition:
 		all of them
 }
-rule silent_banker_o: banker
-{
-    meta:
-        description = "This is just an example"
-        thread_level = 3
-        in_the_wild = true
-    strings:
-        $a = {6A 40 68 00 30 00 00 6A 14 8D 91}
-        $b = {8D 4D B0 2B C1 83 C0 27 99 6A 4E 59 F7 F9}
-        $c = "UVODFRYSIHLNWPEJXQZAKCBGMT"
-    condition:
-        $a or $b or $c
-}
+
 rule SMSSender_a
 {
 	meta:
@@ -22297,29 +20717,22 @@ rule PornClicker_a
 	condition:
 			any of them 
 }
-rule PornClickerAndro_a: Androguard {
-	condition: 
-	androguard.url("http://ultra16.eu") or androguard.url("http://ultra17.eu") or androguard.url("http://ultra18.eu") or androguard.url("http://ultra19.eu") or androguard.url("http://ultra20.eu") or androguard.url("http://ultra3.lol") or androguard.url("http://ultra4.lol") or androguard.url("http://ultra6.lol") or androguard.url("http://ultra7.lol") or androguard.url("http://ultra8.lol") or androguard.url("http://ultra11.lol") or androguard.url("http://ultra12.lol") or androguard.url("http://ultra13.lol") or androguard.url("http://ultra14.lol") or androguard.url("http://ultra15.lol") or androguard.url("http://ultra1.xyz") or androguard.url("http://ultra2.xyz") or androguard.url("http://ultra4.xyz") or androguard.url("http://ultra6.xyz") or androguard.url("http://ultra7.xyz") or androguard.url("http://ultra8.xyz") or androguard.url("http://ultra9.xyz") or androguard.url("http://ultra10.xyz") or androguard.url("http://ultra11.xyz") or androguard.url("http://ultra13.xyz") or androguard.url("http://ultra14.xyz") or androguard.url("http://ultra16.xyz") or androguard.url("http://ultra17.xyz") or androguard.url("http://ultra18.xyz") or androguard.url("http://ultra19.xyz") or androguard.url("http://ultra20.xyz") or androguard.url("http://tranminhlaseriko.nailedporn.net") or androguard.url("http://tranminhlaseriko.milfsexhd.com") or androguard.url("http://www.ultrahdizle.com") or androguard.url("http://camlinhjaseriko.agonalia.com") or androguard.url("http://goptrecamut.dmba.us") or androguard.url("http://elm.eakalin.net") or androguard.url("http://goptrecamut.goglatube.com") or androguard.url("http://hatungrecasimpore.osmanlidasex.org") or androguard.url("http://vinhtoanrekozase.skyclocker.com") or androguard.url("http://wallpapers535.in") or androguard.url("http://derya.amateursexxe.com") or androguard.url("http://letrangzumkariza.pienadipiacere.mobi") or androguard.url("http://ngotrieuzalokari.sgcqzl.com") or androguard.url("http://hongvugarajume.pornsesso.net") or androguard.url("http://xuanchinhsalojare.italiano-films.net") or androguard.url("http://trucnhirezoka.kizsiktim.com") or androguard.url("http://w.bestmobile.mobi") or androguard.url("http://nguyendaozenrusa.sibelkekilii.com") or androguard.url("http://thuanzanposela.havuzp.net") or androguard.url("http://leminhzaderiko.osmanlipadisahlari.net") or androguard.url("http://palasandoreki.filmsme.net") or androguard.url("http://art.hornymilfporna.com") or androguard.url("http://cinar.pussyteenx.com") or androguard.url("http://diyar.collegegirlteen.com") or androguard.url("http://van.cowteen.com") or androguard.url("http://pop.oin.systems") or androguard.url("http://erfelek.coplugum.com") or androguard.url("http://sptupumgoss.cosmicpornx.com") or androguard.url("http://laserinozonre.dcambs.info") or androguard.url("http://mecaguoolrean.xrabioso.com") or androguard.url("http://merzifon.coplugum.com") or androguard.url("http://dkuraomtuna.hdfunysex.com") or androguard.url("http://vuongdungjaseriko.passionne.mobi") or androguard.url("http://ellroepzzmen.alohatubehd.com") or androguard.url("http://thanhquocsocard.filmsts.net") or androguard.url("http://cide.cncallgirls.com") or androguard.url("http://tranminhlaseriko.nailedporn.net") or androguard.url("http://ellroepzzmen.alohatubehd.com") or androguard.url("http://kendo.teenpornxx.com") or androguard.url("http://lucasnguyenthe.viergeporn.com") or androguard.url("http://trucnhirezoka.kizsiktim.com") or androguard.url("http://kendo.teenpornxx.com") or androguard.url("http://lh.oxti.org") or androguard.url("http://bvn.bustech.com.tr") or androguard.url("http://memr.oxti.org") or androguard.url("http://juhaseryzome.orgasmhq.xyz") or androguard.url("http://posenryphamzi.pornnhd.xyz") or androguard.url("http://mawasenrikim.redtubexx.xyz") or androguard.url("http://magarenikoperu.pornicom.xyz") or androguard.url("http://magerinuzemu.youpornx.xyz") or androguard.url("http://krn.dortuc.net") or androguard.url("http://molletuome.21sextury.xyz") or androguard.url("http://pemabetom.adulttpornx.com") or androguard.url("http://osman.dortucbilisim.org") or androguard.url("http://hanlienjawery.sexpornhq.xyz") or androguard.url("http://seyhan.mobileizle.com") or androguard.url("http://d.benapps3.xyz") or androguard.url("http://tools.8782.net/stat.php?ac=uperr&did=%s&tg=%s&er=%s") or androguard.url("http://coco.zhxone.com/tools/datatools")
-	}
-rule PornClickerHTTP_a: Reequests {
-	condition:
-	cuckoo.network.http_request(/http:\/\/ultra16\.eu/) or cuckoo.network.http_request(/http:\/\/ultra17\.eu/) or cuckoo.network.http_request(/http:\/\/ultra18\.eu/) or cuckoo.network.http_request(/http:\/\/ultra19\.eu/) or cuckoo.network.http_request(/http:\/\/ultra20\.eu/) or cuckoo.network.http_request(/http:\/\/ultra3\.lol/) or cuckoo.network.http_request(/http:\/\/ultra4\.lol/) or cuckoo.network.http_request(/http:\/\/ultra6\.lol/) or cuckoo.network.http_request(/http:\/\/ultra7\.lol/) or cuckoo.network.http_request(/http:\/\/ultra8\.lol/) or cuckoo.network.http_request(/http:\/\/ultra11\.lol/) or cuckoo.network.http_request(/http:\/\/ultra12\.lol/) or cuckoo.network.http_request(/http:\/\/ultra13\.lol/) or cuckoo.network.http_request(/http:\/\/ultra14\.lol/) or cuckoo.network.http_request(/http:\/\/ultra15\.lol/) or cuckoo.network.http_request(/http:\/\/ultra1\.xyz/) or cuckoo.network.http_request(/http:\/\/ultra2\.xyz/) or cuckoo.network.http_request(/http:\/\/ultra4\.xyz/) or cuckoo.network.http_request(/http:\/\/ultra6\.xyz/) or cuckoo.network.http_request(/http:\/\/ultra7\.xyz/) or cuckoo.network.http_request(/http:\/\/ultra8\.xyz/) or cuckoo.network.http_request(/http:\/\/ultra9\.xyz/) or cuckoo.network.http_request(/http:\/\/ultra10\.xyz/) or cuckoo.network.http_request(/http:\/\/ultra11\.xyz/) or cuckoo.network.http_request(/http:\/\/ultra13\.xyz/) or cuckoo.network.http_request(/http:\/\/ultra14\.xyz/) or cuckoo.network.http_request(/http:\/\/ultra16\.xyz/) or cuckoo.network.http_request(/http:\/\/ultra17\.xyz/) or cuckoo.network.http_request(/http:\/\/ultra18\.xyz/) or cuckoo.network.http_request(/http:\/\/ultra19\.xyz/) or cuckoo.network.http_request(/http:\/\/ultra20\.xyz/) or cuckoo.network.http_request(/http:\/\/tranminhlaseriko\.nailedporn\.net/) or cuckoo.network.http_request(/http:\/\/tranminhlaseriko\.milfsexhd\.com/) or cuckoo.network.http_request(/http:\/\/www\.ultrahdizle\.com/) or cuckoo.network.http_request(/http:\/\/camlinhjaseriko\.agonalia\.com/) or cuckoo.network.http_request(/http:\/\/goptrecamut\.dmba\.us/) or cuckoo.network.http_request(/http:\/\/elm\.eakalin\.net/) or cuckoo.network.http_request(/http:\/\/goptrecamut\.goglatube\.com/) or cuckoo.network.http_request(/http:\/\/hatungrecasimpore\.osmanlidasex\.org/) or cuckoo.network.http_request(/http:\/\/vinhtoanrekozase\.skyclocker\.com/) or cuckoo.network.http_request(/http:\/\/wallpapers535\.in/) or cuckoo.network.http_request(/http:\/\/derya\.amateursexxe\.com/) or cuckoo.network.http_request(/http:\/\/letrangzumkariza\.pienadipiacere\.mobi/) or cuckoo.network.http_request(/http:\/\/ngotrieuzalokari\.sgcqzl\.com/) or cuckoo.network.http_request(/http:\/\/hongvugarajume\.pornsesso\.net/) or cuckoo.network.http_request(/http:\/\/xuanchinhsalojare\.italiano-films\.net/) or cuckoo.network.http_request(/http:\/\/trucnhirezoka\.kizsiktim\.com/) or cuckoo.network.http_request(/http:\/\/w\.bestmobile\.mobi/) or cuckoo.network.http_request(/http:\/\/nguyendaozenrusa\.sibelkekilii\.com/) or cuckoo.network.http_request(/http:\/\/thuanzanposela\.havuzp\.net/) or cuckoo.network.http_request(/http:\/\/leminhzaderiko\.osmanlipadisahlari\.net/) or cuckoo.network.http_request(/http:\/\/palasandoreki\.filmsme\.net/) or cuckoo.network.http_request(/http:\/\/art\.hornymilfporna\.com/) or cuckoo.network.http_request(/http:\/\/cinar\.pussyteenx\.com/) or cuckoo.network.http_request(/http:\/\/diyar\.collegegirlteen\.com/) or cuckoo.network.http_request(/http:\/\/van\.cowteen\.com/) or cuckoo.network.http_request(/http:\/\/pop\.oin\.systems/) or cuckoo.network.http_request(/http:\/\/erfelek\.coplugum\.com/) or cuckoo.network.http_request(/http:\/\/sptupumgoss\.cosmicpornx\.com/) or cuckoo.network.http_request(/http:\/\/laserinozonre\.dcambs\.info/) or cuckoo.network.http_request(/http:\/\/mecaguoolrean\.xrabioso\.com/) or cuckoo.network.http_request(/http:\/\/merzifon\.coplugum\.com/) or cuckoo.network.http_request(/http:\/\/dkuraomtuna\.hdfunysex\.com/) or cuckoo.network.http_request(/http:\/\/vuongdungjaseriko\.passionne\.mobi/) or cuckoo.network.http_request(/http:\/\/ellroepzzmen\.alohatubehd\.com/) or cuckoo.network.http_request(/http:\/\/thanhquocsocard\.filmsts\.net/) or cuckoo.network.http_request(/http:\/\/cide\.cncallgirls\.com/) or cuckoo.network.http_request(/http:\/\/tranminhlaseriko\.nailedporn\.net/) or cuckoo.network.http_request(/http:\/\/ellroepzzmen\.alohatubehd\.com/) or cuckoo.network.http_request(/http:\/\/kendo\.teenpornxx\.com/) or cuckoo.network.http_request(/http:\/\/lucasnguyenthe\.viergeporn\.com/) or cuckoo.network.http_request(/http:\/\/trucnhirezoka\.kizsiktim\.com/) or cuckoo.network.http_request(/http:\/\/kendo\.teenpornxx\.com/) or cuckoo.network.http_request(/http:\/\/lh\.oxti\.org/) or cuckoo.network.http_request(/http:\/\/bvn\.bustech\.com\.tr/) or cuckoo.network.http_request(/http:\/\/memr\.oxti\.org/) or cuckoo.network.http_request(/http:\/\/juhaseryzome\.orgasmhq\.xyz/) or cuckoo.network.http_request(/http:\/\/posenryphamzi\.pornnhd\.xyz/) or cuckoo.network.http_request(/http:\/\/mawasenrikim\.redtubexx\.xyz/) or cuckoo.network.http_request(/http:\/\/magarenikoperu\.pornicom\.xyz/) or cuckoo.network.http_request(/http:\/\/magerinuzemu\.youpornx\.xyz/) or cuckoo.network.http_request(/http:\/\/krn\.dortuc\.net/) or cuckoo.network.http_request(/http:\/\/molletuome\.21sextury\.xyz/) or cuckoo.network.http_request(/http:\/\/pemabetom\.adulttpornx\.com/) or cuckoo.network.http_request(/http:\/\/osman\.dortucbilisim\.org/) or cuckoo.network.http_request(/http:\/\/hanlienjawery\.sexpornhq\.xyz/) or cuckoo.network.http_request(/http:\/\/seyhan\.mobileizle\.com/) or cuckoo.network.http_request(/http:\/\/d\.benapps3\.xyz/)
-}
-rule AgeWap_a
+
+rule AgeWap
 {
 	meta:
 		description ="Rule to detect AgeWap apps. They send fraudulent SMS - Very small size always."
 	condition:
 		androguard.certificate.issuer(/C=RU\/ST=Unknown\/L=Moscow\/O=AgeWap\/OU=AgeWap Corp\.\/CN=AgeWap/) and androguard.permission(/android.permission.SEND_SMS/)
 }
-rule Londaniga_a
+rule Londaniga
 {
 	meta:
 		description = "Rule to detect Londaniga fake apps. SMS Fraud in most."
 	condition:
 		androguard.certificate.issuer(/lorenz@londatiga.net/) and androguard.permission(/android.permission.SEND_SMS/)		
 }
-rule Londaniga2_a: urls
+rule Londaniga2: urls
 {
 	meta: 
 		description = "IPs receiving info from user in Londaniga apps." 
@@ -22329,7 +20742,7 @@ rule Londaniga2_a: urls
 	condition:
 		all of them
 }
-rule gsr_a
+rule gsr
 {
 	meta:
 		description = "Fakes Apps (Instagram Hack) and adds very intrusive ads"
@@ -22337,7 +20750,7 @@ rule gsr_a
 	condition:
 		androguard.certificate.sha1("943BC6E0827F09B050B02830685A76734E566168")
 }
-rule smsReg_a {
+rule smsReg {
 	strings:
 		$mmmm = "http://zhxone.com/"
 		$oooo = "http://coco.zhxone.com"
@@ -22352,7 +20765,7 @@ rule smsReg_a {
 	condition:
 		any of them
 }
-rule PornSMS_a {
+rule PornSMS {
 	 condition:
 	 	androguard.package_name("com.shenqi.video.ycef.svcr") or 
 		androguard.package_name("com.shenqi.video.tjvi.dpjn)") or
@@ -22408,27 +20821,14 @@ rule mkero_a
 	condition:
 		all of them
 }
-rule mkero_cert_a
-{
-	condition:
-		androguard.certificate.sha1("49A6EFC6A9BA3DE7ECB265E7B4C43E454ABDA05D")
-}
-
-rule slempo_d: package
-{
-  meta:
-    description = "This rule detects the slempo (slembunk) variant malwares by using package name and app name comparison"
-    sample = "24c95bbafaccc6faa3813e9b7f28facba7445d64a9aa759d0a1f87aa252e8345"
-  condition:
-    androguard.package_name("org.slempo.service")
-}
 
 rule prueba_a
 {
     meta: description = "Prueba"
     strings:
         $a = "giving me your money"
-    condition: $a
+    condition:
+        $a
 }
 
 

@@ -44,7 +44,9 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
   }
 
   /**
-   * 说到底就这么一个核心方法：创建对象！！！
+   * 创建对象就两步，
+   *  1、找到对象类型
+   *  2、通过反射实例化对象
    */
   @SuppressWarnings("unchecked")
   @Override
@@ -103,7 +105,7 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
       }
       return constructor.newInstance(constructorArgs.toArray(new Object[0]));
     } catch (Exception e) {
-        //如果出错，包装一下，重新抛出自己的异常
+      //将构造参数类型和参数值 拼装起来交给ReflectionException抛出
       StringBuilder argTypes = new StringBuilder();
       if (constructorArgTypes != null) {
         for (Class<?> argType : constructorArgTypes) {
