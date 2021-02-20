@@ -1,7 +1,16 @@
 package com.zx.arch.stream.toUse;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.nio.file.Path;
+import java.time.Period;
 import java.util.*;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -110,28 +119,52 @@ public class UpdateStream {
     }
 
     /**
-     * 收集经过流处理后的结果
+     * 收集经过流处理后的数据
      */
     public static void collect(){
         Stream<Integer> stream = Stream.of(5,6,4,1,2,3);
-        // 按任意顺序遍历元素
+        // 1、按任意顺序遍历元素
         stream.forEach(System.out::println);
-        // 按流中顺序遍历元素
+        // 2、按流中顺序遍历元素
         stream.forEachOrdered(System.out::println);
-        // 将流转化成数组，注意传入数组的正确类型
+        // 3、将流转化成数组，注意传入数组的正确类型
         stream.toArray(Integer[]::new);
-        // 将流转化成迭代器
+        // 4、将流转化成迭代器
         Iterator<Integer> iterator = stream.iterator();
-        // 使用Collectors收集器，将流转化成list集合
+        // 5、使用Collectors收集器，将流转化成list集合
         List<Integer> list = stream.collect(Collectors.toList());
-        // 使用Collectors收集器，将流转化成set集合
+        // 6、使用Collectors收集器，将流转化成set集合
         Set<Integer> set = stream.collect(Collectors.toSet());
-        // 可以使用Collectors.toCollection来控制集合的种类
+        // 7、可以使用Collectors.toCollection来控制集合的种类
         TreeSet<Integer> treeSet = stream.collect(Collectors.toCollection(TreeSet::new));
-        // 可以使用Collectors.joining来连接流中所有字符串(可以添加分隔符),如果流对象不是字符串使用toString转换
+        // 8、可以使用Collectors.joining来连接流中所有字符串(可以添加分隔符),如果流对象不是字符串使用toString转换
         stream.map(Object::toString).collect(Collectors.joining(","));
-        // 可以使用Collectors.summarizingInt来获取流结果的总和|数量|平均值|最大值|最小值
+        // 9、可以使用Collectors.summarizingInt来获取流结果的总和|数量|平均值|最大值|最小值
         double d = stream.map(Object::toString).collect(Collectors.summarizingInt(String::length)).getMax();
+    }
+
+    /**
+     * 将流中元素收集到映射表中，也是使用收集器，但是这个比较特殊，所以单独拿出来
+     */
+    public static void map(){
+        @Data
+        @AllArgsConstructor
+        class Person{
+            String name;
+            int age;
+        }
+        Stream<Person> stream = Stream.of(
+                new Person("李白",12),
+                new Person("杜甫",13),
+                new Person("苏轼",14),
+                new Person("王勃",14)
+        );
+        // 数据准备完毕
+        // 1、以年龄为key,Person为value ,将元素放到一个Map中
+        // Map<Integer, Person> map = stream.collect(Collectors.toMap(Person::getAge, Function.identity()));
+        // 2、上面语句会报错IllegalStateException ,因为14岁的有两位,所以得加入第三个函数引元啦来处理特殊情况,即如果新元素产生的key在Map中已经出现过了，第三个参数就会定义解决的办法
+        // @blog "https://www.cnblogs.com/ampl/p/10904306.html
+        Map<Integer, Person> map = stream.collect(Collectors.toMap(Person::getAge, Function.identity(), (existing, replacement) ->{throw new IllegalStateException();}));
     }
 
 
@@ -140,7 +173,7 @@ public class UpdateStream {
 
 
     public static void main(String[] args) {
-        b();
+        map();
     }
 
 }
