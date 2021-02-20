@@ -43,6 +43,7 @@ public class CreateStream {
     private static void createStream(){
         // 1、使用静态的of()可以直接对字符串创建stream ,如果参数是null 则报错,如果需要为null时不报错，则使用ofNullable()
         stream = Stream.of("a","b","a");
+        //  这个方法结合flatMap可以快速排除为null的元素
         stream  = Stream.ofNullable(null);
 
         // 2、集合工具类Arrays也可以创建stream流(并且只取数组中一部分元素)

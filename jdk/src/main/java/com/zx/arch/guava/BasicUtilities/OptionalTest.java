@@ -40,7 +40,7 @@ public class OptionalTest {
         java.util.Optional<String> possible = java.util.Optional.of(null);
         // 2、介绍map()      将optional中的对象 t 映射成另外一个对象 u (通常是调用对象t自己的方法生成u)，并将 u 存放到一个新的optional容器中。
         java.util.Optional<String> optional = java.util.Optional.of("aa").map(i ->i+"bb");
-        // 8、flatMap()方法,map和flatMap均要求optional对象非空才执行mapper方法，二者均返回Optional对象。但是map会将计算结果封装为Optional对象，而flatMap则不是,一般使用flatMap来避免出现嵌套Optional
+        // 2.1、flatMap()方法,map和flatMap均要求optional对象非空才执行mapper方法，二者均返回Optional对象。但是map会将计算结果封装为Optional对象，而flatMap则不是,一般使用flatMap来避免出现嵌套Optional
         // @blog https://blog.csdn.net/dengnanhua/article/details/101610604
 
         // 3、介绍orElse()   如果optional不为空，则直接返回optional中的对象；为null，则返回"s"这个默认值
@@ -56,7 +56,8 @@ public class OptionalTest {
         possible.ifPresentOrElse(list::add,()->log.error("cant find ..."));
         // 9、Optional直接转化成流，stream方法会将Optional转化成stream流，这个方法配合stream.flatMap有奇效
         java.util.Optional.of(list).stream();
-
+        // 10、介绍empty()表示空值
+        java.util.Optional.empty();
     }
 
     private static void e() {

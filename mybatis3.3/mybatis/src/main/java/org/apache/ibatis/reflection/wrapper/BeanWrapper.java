@@ -79,6 +79,7 @@ public class BeanWrapper extends BaseWrapper {
     }
   }
 
+  //user_name
   @Override
   public String findProperty(String name, boolean useCamelCaseMapping) {
     return metaClass.findProperty(name, useCamelCaseMapping);
@@ -94,6 +95,7 @@ public class BeanWrapper extends BaseWrapper {
     return metaClass.getSetterNames();
   }
 
+  //person[0].birthDate
   @Override
   public Class<?> getSetterType(String name) {
     PropertyTokenizer prop = new PropertyTokenizer(name);
@@ -109,6 +111,7 @@ public class BeanWrapper extends BaseWrapper {
     }
   }
 
+  //person[0].birthDate
   @Override
   public Class<?> getGetterType(String name) {
     PropertyTokenizer prop = new PropertyTokenizer(name);
@@ -124,6 +127,7 @@ public class BeanWrapper extends BaseWrapper {
     }
   }
 
+  //person[0].birthDate
   @Override
   public boolean hasSetter(String name) {
     PropertyTokenizer prop = new PropertyTokenizer(name);
@@ -143,6 +147,8 @@ public class BeanWrapper extends BaseWrapper {
     }
   }
 
+
+  //person[0].birthDate
   @Override
   public boolean hasGetter(String name) {
     PropertyTokenizer prop = new PropertyTokenizer(name);

@@ -129,10 +129,10 @@ public class MetaObject {
   }
 
 
-  //为某个属性生成元对象
   public MetaObject metaObjectForProperty(String name) {
-    //实际是递归调用
+    //获得属性名对应的对象
     Object value = getValue(name);
+    //为该属性生成元对象
     return MetaObject.forObject(value, objectFactory, objectWrapperFactory);
   }
 

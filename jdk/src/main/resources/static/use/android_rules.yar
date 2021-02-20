@@ -47,22 +47,6 @@ rule Android_Trojan_FakeAd_B
 		2 of ($a*) and $b
 }
 
-rule Example_a: Malware
-{
-	meta:
-		description = "This rule detects custom URL suspicious C&C"
-		sample = ""
-		author = "Augusto Morales"
-	strings:
-		$domain_1 = "adspot.tfgapps.com"
-		$domain_2 = "subscriptions-verifier.tfgapps.com"
-		$domain_3 = "https://adspot.tfgapps.com/webview/"
-		$ip_1 = "52.72.88.181" ascii wide
-		$ip_2 = "34.227.145.183" ascii wide
-	condition:
-		any of ($domain_*) or any of ($ip_*)
-}
-
 rule bankbot_discoverer
 {
 	meta:
@@ -3150,60 +3134,7 @@ rule AddsDomains
 		cuckoo.network.dns_lookup(/leno.ml/) or
 		cuckoo.network.dns_lookup(/winbv.nl/)		
 }
-rule koler_domains
-{
-	meta:
-		description = "Old Koler.A domains examples"
-		sample = "2e1ca3a9f46748e0e4aebdea1afe84f1015e3e7ce667a91e4cfabd0db8557cbf"
-	condition:
-		cuckoo.network.dns_lookup(/police-scan-mobile.com/) or
-		cuckoo.network.dns_lookup(/police-secure-mobile.com/) or
-		cuckoo.network.dns_lookup(/mobile-policeblock.com/) or
-		cuckoo.network.dns_lookup(/police-strong-mobile.com/) or
-		cuckoo.network.dns_lookup(/video-porno-gratuit.eu/) or
-		cuckoo.network.dns_lookup(/video-sartex.us/) or 
-		cuckoo.network.dns_lookup(/policemobile.biz/)
-}
-rule koler_builds
-{
-	meta:
-		description = "Koler.A builds"
-	strings:
-		$0 = "buildid" wide ascii
-		$a = "DCEF055EEE3F76CABB27B3BD7233F6E3" wide ascii
-		$b = "C143D55D996634D1B761709372042474" wide ascii
-	condition:
-		$0 and ($a or $b)
-}
-rule koler_strings_a
-{
-	meta:
-		description = "Koler strings"
-	strings:
-		$0 = "You device will be unprotectable. Are you sure?" wide ascii
-	condition:
-		1 of them
-}
-rule koler_class
-{
-	meta:
-		description = "Koler.A class"
-	strings:
-		$0 = "FIND_VALID_DOMAIN" wide ascii
-		$a = "6589y459" wide ascii
-	condition:
-		all of them
-}
-rule koler_D
-{
-	meta:
-		description = "Koler.D class"
-	strings:
-		$0 = "ZActivity" wide ascii
-		$a = "Lcom/android/zics/ZRuntimeInterface" wide ascii
-	condition:
-		all of them
-}
+
 rule BankingPhisher: string
 {
 	meta:
@@ -4313,16 +4244,7 @@ rule MapinDropper_a
 	condition:
 		$a or $b or $e or $f
 }
-rule Ransom_a {
-	meta: 
-		description = "ransomwares"	
-	strings:
-		$a = "!2,.B99^GGD&R-"
-		$b = "22922222222222222222Q^SAAWA"
-	condition:
-		$a or $b
-}
-rule fakeInstalls_a {
+rule fakeInstalls {
 	meta:
 	 description = "creates fake apps (usually low sized) for malicious purposes."
 	condition:
@@ -4331,8 +4253,7 @@ rule fakeInstalls_a {
 rule Shuanet_a: official
 {
 	meta:
-		description = "This rule detects Shuanet aggresive Adware (https://blog.lookout.com/blog/2015/11/04/trojanized-adware/)"
-		sample = "-"
+		description = "This rule detects Shuanet aggresive Adware"
 	strings:
 		$a = {4C 4F 43 41 4C 5F 44 4F 57 4E 5F 43 4F 4E 46 49 47}
 		$b = {4E 6F 74 69 66 79 43 65 6E 74 65 72 41 49 44 4C}
@@ -4341,74 +4262,11 @@ rule Shuanet_a: official
 	condition:
 		$a and $b and $c and $d
 }
-rule certifigate_a: teamviewer
-{
-	meta:
-		description = "This rule detects applications with the same serial number than TeamViewer certificate"
-		sample = "db1ee3a8af6fc808aecc0fbe1a36c04c8f9a28a744dc540e21669b493375aacd" //TeamViewer official app
-		source = "https://www.blackhat.com/docs/us-15/materials/us-15-Bobrov-Certifi-Gate-Front-Door-Access-To-Pwning-Millions-Of-Androids.pdf"
-	strings:
-		$a = {03 02 01 02 02 04 4C C0 1B 8D} 
-	condition:
-		$a
-		and not androguard.certificate.sha1("3E22144E1BA9151C08838D4C5EFF236DB48AAA32") //Excluding TV official
-}
-rule gustuff_a: malware
-{
-    condition:
-		androguard.permission(/android.permission.SEND_SMS/) and
-		androguard.permission(/android.permission.READ_SMS/) and
-		androguard.permission(/android.permission.INTERNET/) and
-        androguard.permission(/android.permission.WAKE_LOCK/) and
-		androguard.filter(/android.intent.action.MAIN/) and
-        androguard.filter(/android.provider.Telephony.SMS_RECEIVED/) and
-        androguard.filter(/android.net.conn.CONNECTIVITY_CHANGE/) and
-		androguard.filter(/android.intent.action.QUICKBOOT_POWERON/) and
-		androguard.filter(/android.intent.action.BOOT_COMPLETED/)
-}
 
-rule adware_hide_ikon
-{
-     strings:
-        $ = /Cryopiggy/
-        $ = /Cryopiggy/ nocase wide
-    condition:
-        1 of them
-}
-
-rule OxyLabs_a
+rule FakeAV2_Jan2020
 {
 	meta:
-		description = "This rule detects what Norman say"
-	strings: 
-	$src1="oxylabs.io"
-	$src2 = "us-pr.oxylabs.io"
-	condition:
-	$src1 or $src2
-}
-
-rule qa: official
-{
-	meta:
-		description = "This rule detects some packer"
-	strings:
-		$a = {45 70 6F 6E 61 57 68 69 74 65 62 6F 78}
-	condition:
-		$a
-}
-rule ra: official
-{
-	meta:
-		description = "This rule detects some packer"
-	strings:
-		$a = {45 70 6F 6E 61 57 68 69 74 65 42 6F 78}
-	condition:
-		$a
-}
-rule FakeAV2_Jan2020_a
-{
-	meta:
-		description = "This rule detects Fake Av"
+		description = "This rule detects Fake antivirus"
 	strings:
 		$a1 = "whitelist" nocase
         $a2 = "blacklistpackages" nocase
@@ -4417,80 +4275,15 @@ rule FakeAV2_Jan2020_a
 	condition:
 		all of ($a*)
 }
-rule FakeAV_Jan2020_a
-{
-	meta:
-		description = "This rule detects Fake Av"
-	strings:
-		$a1 = "whiteList"
-        $a2 = "blackListPackages"
-        $a3 = "blackListActivities"
-        $a4 = "permissions"
-	condition:
-		all of ($a*)
-}
-rule String_search
-{
-        strings:
-                $c2_1 = /sabadell\.com/ nocase
-                $c2_2 = /tsb\.uk\.co/ nocase
-                $c2_3 = /mx\.bancosabadel/ nocase
-                $c2_4 = /bancosabadell/ nocase
-                $c2_5 = /bancsabadell/ nocase
-                $c2_6 = /activobank/ nocase
-                $c2_7 = /uk\.co\.tsb/ nocase
-                $c2_8 = /bancosabadell\.mx/ nocase
-                $c2_9 = /sabadell/ nocase
-        condition:
-                1 of ($c2_*)
-}
-rule HypervergeSDKTracker_a
-{
-	meta:
-		description = "All Hyperverge SDK Apps"
-	condition:
-		androguard.activity("co.hyperverge.hypersnapsdk.activities.HVFaceActivity") or
-		androguard.activity("co.hyperverge.hvinstructionmodule.activities.FaceInstructionActivity")
-}
 
-rule joker_notif_a
-{
-    strings:
-        $notif_op = 
-        { 
-        6e 10 ?? ?? 0a 00 
-        0c 00 
-        6e 10 ?? ?? 00 00 
-        0c 00 
-        6e 10 ?? ?? 0a 00 
-        0c 01 
-        54 11 ?? 00 
-        6e 10 ?? ?? 0a 00 
-        0c 02 
-        62 03 ?? ?? 
-        71 10 ?? ?? 03 00 
-        0c 03 
-        12 44 
-        23 44 ?? ?? 
-        1c 05 ?? ?? 
-        12 06 
-        4d 05 04 06 
-        1c 05 ?? ?? 
-        12 17 
-        4d 05 04 07 
-        1c 05 ?? ?? 12 28 4d 05 04 08 12 35 1c 09 ?? ?? 4d 09 04 05 71 54 ?? ?? 10 32 0c 00 62 01 ?? ?? 71 10 ?? ?? 01 00 0c 01 62 02 ?? ?? 23 73 ?? ?? 1c 04 ?? ?? 4d 04 03 06 6e 30 ?? ?? 21 03 0c 01 23 72 ?? ?? 62 03 ?? ?? 4d 03 02 06 6e 30 ?? ?? 01 02 0c 00 1f 00 ?? ?? ?? ?? ?? ?? 23 82 ?? ?? 1c 03 ?? ?? 4d 03 02 06 1c 03 ?? ?? 4d 03 02 07 6e 30 ?? ?? 10 02 0c 00 12 01 23 82 ?? ?? 4d 0b 02 06 4d 0a 02 07 6e 30 ?? ?? 10 02 
-        }
-    condition:
-        $notif_op
-}
-rule disruptive1_a
+rule disruptive1
 {
 	meta:
 		description = "searching for disruptive ads"
 	strings:
 		$a = /google-ads-admob/ nocase
 	condition:
-		(androguard.activity(/OnBackedPressed/i) or 	 androguard.activity(/doubleBackToExitPressedOnce/i)) and
+		(androguard.activity(/OnBackedPressed/i) or  androguard.activity(/doubleBackToExitPressedOnce/i)) and
 		androguard.permission(/android.permission.INTERNET/) 
 		and $a
 }
@@ -4507,7 +4300,7 @@ rule disruptive2_a
 		($a or $b) and
 		$c
 }
-rule Trojan_Banker4_a:Marcher {
+rule Trojan_Banker4:Marcher {
 	strings:
 		$ = "a!v!g.!a!n!t!i!vi!ru!s"
 		$ = "a!vg!.!a!n!t!i!v!i!r!u!s"
@@ -4538,28 +4331,6 @@ rule Target_Instagram_a: official
 	($string_target_fbmessenger)
 }
 
-rule Target_Bank_DB_a: official
-{
-	strings:
-		$string_target_bank_db = "com.db.mm.deutschebank"
-	condition:
-	($string_target_bank_db)
-}
-rule Target_Bank_Paypal_a: official
-{
-	strings:
-		$string_target_bank_paypal = "com.paypal.android.p2pmobile"
-	condition:
-	($string_target_bank_paypal)
-}
-rule Target_Bank_CA_a: official
-{
-	strings:
-		$string_target_bank_ca = "fr.creditagricole.androidapp"
-	condition:
-	($string_target_bank_ca)
-}
-
 rule Generic_b: Banker
 {
 	meta:
@@ -4584,7 +4355,7 @@ rule Generic_b: Banker
 		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/)	
 }
 
-rule BankbotAlpha_a
+rule BankbotAlpha
 {
 	meta:
 		description = "This rule detects BankBot alpha samples"
@@ -4607,7 +4378,7 @@ rule BankbotAlpha_a
 		$a and 
 		any of ($b_*)
 }
-rule FakeAppCampaign1_a
+rule FakeAppCampaign1
 {
 	meta:
 		description = "This rule detects fake application with only the payment gateway delivering no service"
@@ -4618,10 +4389,10 @@ rule FakeAppCampaign1_a
 	condition:
 		$url1 or $url2
 }
-rule FalseGuide_a
+rule FalseGuide
 {
 	meta:
-		description = "http://blog.checkpoint.com/2017/04/24/falaseguide-misleads-users-googleplay/"
+		description = "FalseGuide creates a silent botnet out of the infected devices for adware purposes"
 		sample = "9d8888f3e8a3ce16108827333af3447c"
 	condition:
 	  (androguard.filter("android.app.action.DEVICE_ADMIN_ENABLED")and
@@ -4649,15 +4420,7 @@ rule FalseGuide_a
 	  androguard.certificate.sha1("630CC5A2192230B02BE7ED89164514D1E971E4BA") or
 	  androguard.certificate.sha1("D0A83D20D80C29F35A84FBDE45F61E2B867C199B")
 }
-rule Jkdkdkd_Apps_a
-{
-	meta:
-		description = "This rule detects the Jkdkdkd application"
-	strings:
-		$a = "Jkdkdkd"
-	condition:
-		$a
-}
+
 rule ya: official
 {
 	meta:
@@ -4671,7 +4434,7 @@ rule ya: official
 		and $a
 		and $b
 }
-rule AnubisVariant_a: Bankbot
+rule AnubisVariant: Bankbot
 {
     meta:
         description = "Anubis Variant : Bankbot"
@@ -4700,16 +4463,7 @@ rule Trojan_d: BankBot
 			and androguard.permission(/android.permission.ACCESS_NETWORK_STATE/)
 		)
 }
-rule mspy_b: internalstring
-{
-	meta:
-		desc = "a$ is string we found in the sample"
-		sample = "8074902e0abbfcff2f23c6f6e47384ae15bc9e1aa1cabc0cc300604cdac66879"
-	strings:
-		$a = "MSPY_PACKAGE_NAME"
-	condition:
-		$a 
-}
+
 rule BITTER_b
 {
 	meta:
@@ -6434,15 +6188,8 @@ rule AVG_free
 		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/) and
 		androguard.certificate.sha1("1e1b347f62f980e4eea6051d85c203a1eeeff1a8")
 }
-rule caaa: official
-{
-	meta:
-		description = "This rule detects weird permission"
-	condition:
-		androguard.permission(/com.im.im.qingliao.push.permission.MESSAGE/)
-}
 
-rule Developers_with_known_malicious_apps_a
+rule Developers_with_known_malicious_apps
 {
 	meta:
 		description = "This rule lists app from developers with a history of malicious apps"
@@ -6460,30 +6207,6 @@ rule Developers_with_known_malicious_apps_a
 		($e and androguard.certificate.sha1("69CE857378306A329D1DCC83A118BC1711ABA352")) 
 }
 
-rule Cerberus_Permissions_a
-{
-	meta:
-		description = "Test Rule For Cerberus Permissions"
-	condition:
-		androguard.permission(/android.permission.ACCESS_NETWORK_STATE/) and
-        androguard.permission(/android.permission.CALL_PHONE/) and
-        androguard.permission(/android.permission.FOREGROUND_SERVICE/) and 
-        androguard.permission(/android.permission.GET_ACCOUNTS/) and
-        androguard.permission(/android.permission.INTERNET/) and
-        androguard.permission(/android.permission.READ_CONTACTS/) and
-        androguard.permission(/android.permission.READ_EXTERNAL_STORAGE/) and  
-        androguard.permission(/android.permission.READ_PHONE_STATE/) and 
-        androguard.permission(/android.permission.READ_SMS/) and 
-        androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/) and 
-        androguard.permission(/android.permission.RECEIVE_SMS/) and 
-        androguard.permission(/android.permission.RECORD_AUDIO/) and
-        androguard.permission(/android.permission.REQUEST_DELETE_PACKAGES/) and 
-        androguard.permission(/android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS/) and 
-    	androguard.permission(/android.permission.SEND_SMS/) and
-        androguard.permission(/android.permission.USE_FULL_SCREEN_INTENT/) and
-        androguard.permission(/android.permission.WRITE_EXTERNAL_STORAGE/)   
-}
-
 rule eaaa: official
 {
 	meta:
@@ -6499,12 +6222,6 @@ rule eaaa: official
 		androguard.permission(/android.permission.READ_SMS/)
 }
 
-rule baiduprotect_a
-{
-    condition:
-        androguard.service("com.baidu.xshield.XshieldService") or
-        androguard.service("com.baidu.xshield.XshieldJobService")
-}
 rule Stage1_a
 {
     meta:
@@ -6515,51 +6232,7 @@ rule Stage1_a
     condition:
         1 of them
 }
-rule coudw_a: amtrckr
-{
-	meta:
-		family = "coudw"
-	condition:
-		androguard.url(/s\.cloudsota\.com/)
-}
-rule Play_a
-{
-	strings:
-		$a = "setComponentEnabledSetting"
-		$b = "sendTextMessage"
-		$c = "sendMultipartTextMessage"
-		$d = "android.app.action.DEVICE_ADMIN_ENABLED"
-	condition:
-		androguard.permission(/android.permission.INTERNET/) and $a and ($b or $c) and $d and
-		androguard.permission(/android.permission.SYSTEM_ALERT_WINDOW/) and
-		androguard.permission(/android.permission.SEND_SMS/) and
-		androguard.filter("android.app.action.DEVICE_ADMIN_DISABLED") and 
-		androguard.filter("android.app.action.DEVICE_ADMIN_ENABLED")
-}
-rule downloader_b: official
-{
-	strings:
-		$a = "setComponentEnabledSetting"
-		$b = "android.app.extra.DEVICE_ADMIN"
-		$c = "application/vnd.android.package-archive"
-		$d = "getClassLoader"
-	condition:
-		$a and $b and $c and $d and 
-		androguard.filter("android.app.action.DEVICE_ADMIN_DISABLED") and 
-		androguard.filter("android.app.action.DEVICE_ADMIN_ENABLED")
-}
-rule IDFCUPICLTracker_a
-{
-	meta:
-		description = "All IDFC UPI SDK Apps"
-	condition:
-		androguard.activity("com.fss.idfc.idfcupicl")
-}
-rule testwahaha2_a
-{
-	condition:
-		androguard.url("https://www.google.com.hk/")
-}
+
 rule ibers_a {
   strings:
 	$string_1 = /scottishpower\.com/
@@ -6605,7 +6278,7 @@ rule gaaa: official
 		androguard.permission(/android.permission.INTERNET/) 
 }
 
-rule test_crypto_clipper_a
+rule test_crypto_clipper
 {
 	meta:
 		description = "Crypto clipper"
@@ -6876,16 +6549,6 @@ rule anubis_downloader_a
 	condition:
 		all of ($a_*)
 }
-rule redalert2_a
-{
-	meta:
-		description = "RedAlert2.0"
-		family = "Red Alert"
-	condition:
-		(androguard.url(/:7878/) or androguard.url(/:6280/)) or
-		(androguard.service("westr.USSDService") and androguard.service("westr.service_rvetdi5xh.MessageBltService_df3jhtrgft43") and  androguard.service("westr.service_rvetdi5xh.WldService_dfgvgfd") and
-		androguard.service("westr.service_rvetdi5xh.McdxService_efv3web")) or androguard.url("https://ttwitter.com/")
-}
 
 rule smsriskware_a
 {
@@ -7039,20 +6702,7 @@ rule YaYaGhostPush_a {
 		androguard.service("com.android.wp.net.log.UpService") and 
 		androguard.service("com.android.wp.net.log.service.ActivateService")
 }
-rule vpn_a
-{
-	strings:
-		$a = "android.permission.BIND_VPN_SERVICE"
-	condition:
-		$a 
-}
-rule apkfiles_a: official
-{
-	meta:
-		description = "Accede a un repositorio de apks"
-	condition:
-		androguard.url(/www\.apkfiles\.com/)
-}
+
 rule bankingsha_a: versi0ne
 {
 	meta:
@@ -7271,114 +6921,6 @@ rule cryptoshell_apkguard_a: packer
     $attachBaseContextOpcodes
 }
 
-rule appguard_a: packer
-{
-  meta:
-    description = "AppGuard"
-  strings:
-    $stub = "assets/appguard/"
-    $encrypted_dex = "assets/classes.sox"
-  condition:
-    ($stub and $encrypted_dex)
-}
-rule dxshield_b: packer
-{
-  meta:
-    description = "DxShield"
-  strings:
-    $decryptlib = "libdxbase.so"
-    $res = "assets/DXINFO.XML"
-  condition:
-    ($decryptlib and $res)
-}
-rule secneo_b: packer
-{
-  meta:
-    description = "SecNeo"
-  strings:
-    $encryptlib1 = "libDexHelper.so"
-    $encryptlib2 = "libDexHelper-x86.so"
-    $encrypted_dex = "assets/classes0.jar"
-  condition:
-    any of ($encrypted_dex, $encryptlib2, $encryptlib1)
-}
-rule dexprotector_b: packer
-{
-  meta:
-    author = "Jasi2169"
-    description = "DexProtector"
-  strings:
-    $encrptlib = "assets/dp.arm.so.dat"
-    $encrptlib1 = "assets/dp.arm-v7.so.dat"
-    $encrptlib2 = "assets/dp.arm-v8.so.dat"
-    $encrptlib3 = "assets/dp.x86.so.dat"
-    $encrptcustom = "assets/dp.mp3"
-  condition:
-    any of ($encrptlib, $encrptlib1, $encrptlib2, $encrptlib3) and $encrptcustom
-}
-rule apkprotect_a: packer
-{
-  meta:
-    description = "APKProtect"
-  strings:
-    $key = "apkprotect.com/key.dat"
-    $dir = "apkprotect.com/"
-    $lib = "libAPKProtect.so"
-  condition:
-    ($key or $dir or $lib)
-}
-rule bangcle_a: packer
-{
-  meta:
-    description = "Bangcle"
-  strings:
-    $main_lib = "libsecexe.so"
-    $second_lib = "libsecmain.so"
-    $container = "assets/bangcleplugin/container.dex"
-    $encrypted_jar = "bangcleclasses.jar"
-    $encrypted_jar2 = "bangcle_classes.jar"
-  condition:
-    any of ($main_lib, $second_lib, $container, $encrypted_jar, $encrypted_jar2)
-}
-rule kiro_b: packer
-{
-  meta:
-    description = "Kiro"
-  strings:
-    $kiro_lib = "libkiroro.so"
-    $sbox = "assets/sbox"
-  condition:
-    $kiro_lib and $sbox
-}
-rule qihoo360_a: packer
-{
-  meta:
-    description = "Qihoo 360"
-  strings:
-    $a = "libprotectClass.so"
-  condition:
-    $a
-}
-rule qdbh_packer_b: packer
-{
-  meta:
-    description = "'qdbh' (?)"
-  strings:
-    $qdbh = "assets/qdbh"
-  condition:
-    $qdbh
-}
-rule unknown_packer_lib_b: packer
-{
-  meta:
-    description = "'jpj' packer (?)"
-  strings:
-    $pre_jar = { 00 6F 6E 43 72 65 61 74 65 00 28 29 56 00 63 6F 6D 2F 76 }
-    $jar_data = { 2E 6A 61 72 00 2F 64 61 74 61 2F 64 61 74 61 2F 00 2F }
-    $post_jar = { 2E 6A 61 72 00 77 00 6A 61 76 61 2F 75 74 69 6C 2F 4D 61 70 00 67 65 74 49 6E 74 00 }
-  condition:
-    ($pre_jar and $jar_data and $post_jar)
-}
 rule unicom_loader_b: packer
 {
   meta:
@@ -7420,138 +6962,7 @@ rule nqshield_b: packer
   condition:
     any of ($lib, $lib_sec1, $lib_sec2)
 }
-rule tencent_a: packer
-{
-  meta:
-    description = "Tencent"
-  strings:
-    $decryptor_lib = "lib/armeabi/libshell.so"
-    $zip_lib = "lib/armeabi/libmobisecy.so"
-    $classpath = "com/tencent/StubShell"
-    $mix_dex = "/mix.dex"
-  condition:
-    ($classpath or $decryptor_lib or $zip_lib or $mix_dex)
-}
-rule ijiami_a: packer
-{
-  meta:
-    description = "Ijiami"
-  strings:
-    $old_dat = "assets/ijiami.dat"
-    $new_ajm = "ijiami.ajm"
-    $ijm_lib = "assets/ijm_lib/"
-  condition:
-    ($old_dat or $new_ajm or $ijm_lib)
-}
-rule naga_a: packer
-{
-  meta:
-    description = "Naga"
-  strings:
-    $lib = "libddog.so"
-  condition:
-    $lib
-}
-rule alibaba_a: packer
-{
-  meta:
-    description = "Alibaba"
-  strings:
-    $lib = "libmobisec.so"
-  condition:
-    $lib
-}
-rule medusah_b: packer
-{
-  meta:
-    description = "Medusah"
-  strings:
-    $lib = "libmd.so"
-  condition:
-    $lib
-}
-rule medusah_appsolid_b: packer
-{
-  meta:
-    description = "Medusah (AppSolid)"
-  strings:
-    $encrypted_dex = "assets/high_resolution.png"
-  condition:
-    $encrypted_dex
-}
-rule baidu_a: packer
-{
-  meta:
-    description = "Baidu"
-  strings:
-    $lib = "libbaiduprotect.so"
-    $encrypted = "baiduprotect1.jar"
-  condition:
-    ($lib or $encrypted)
-}
-rule pangxie_a: packer
-{
-  meta:
-    description = "PangXie"
-  strings:
-    $lib = "libnsecure.so"
-  condition:
-    $lib
-}
-rule kony_b: packer
-{
-  meta:
-    description = "Kony"
-  strings:
-    $lib = "libkonyjsvm.so"
-    $decrypt_keys = "assets/application.properties"
-    $encrypted_js = "assets/js/startup.js"
-  condition:
-    $lib and $decrypt_keys and $encrypted_js
-}
-rule approov_b: packer
-{
-  meta:
-    description = "Aproov"
-  strings:
-    $lib = "libapproov.so"
-    $sdk_config = "assets/cbconfig.JSON"
-  condition:
-    $lib and $sdk_config
-}
-rule yidun_a: packer
-{
-  meta:
-    description = "yidun"
-  strings:
-    $anti_trick = "Lcom/_" // Class path of anti-trick
-    $entry_point = "Lcom/netease/nis/wrapper/Entry"
-    $jni_func = "Lcom/netease/nis/wrapper/MyJni"
-    $lib = "libnesec.so"
-  condition:
-    (#lib > 1) or ($anti_trick and $entry_point and $jni_func)
-}
-rule xposed_a: anti_hooking
-{
-	meta:
-		description = "Xposed"
-		info        = "xxxxxxx"
-		example     = ""
-	strings:
-		$a = "xposed"
-		$b = "rovo89"
-	condition:
-		all of them
-}
-rule rootbeer_a: anti_root
-{
-	strings:
-		$rb = "Lcom/scottyab/rootbeer/RootBeerNative;"
-		$cls = "RootBeerNative"
-		$str = "tool-checker"
-	condition:
-		all of them
-}
+
 rule bitwise_antiskid_a: obfuscator
 {
   meta:
@@ -7563,50 +6974,6 @@ rule bitwise_antiskid_a: obfuscator
     $truth2 = "Only skids can't get plaintext. Credits to Bitwise.\x00"
   condition:
     any of them
-}
-rule dexprotector_c: obfuscator
-{
-  meta:
-    description = "DexProtector"
-  strings:
-    $method = {
-      07 00 02 00 00 00 02 00 00 00 00 00 3E 00 00 00
-      12 01 13 00 0E 00 48 00 05 00 E0 00 00 10 01 12
-      39 02 2A 00 12 32 D5 63 FF 00 48 03 05 03 D5 33
-      FF 00 E1 04 06 08 D5 44 FF 00 48 04 05 04 D5 44
-      FF 00 E0 04 04 08 B6 43 E1 04 06 10 D5 44 FF 00
-      48 04 05 04 D5 44 FF 00 E0 04 04 10 B6 43 E1 04
-      06 18 D5 44 FF 00 48 00 05 04 E0 00 00 18 B6 30
-      0F 00 0D 02 39 01 FE FF 12 21 DD 02 06 7F 48 00
-      05 02 E1 00 00 08 28 F5 0D 03 28 CB 0D 00 00 00
-      20 00 ?? 00 37 00 00 00 02 00 ?? 00 02 01
-    }
-    $a = "getClass"
-    $b = "getDeclaredMethod"
-    $c = "invoke"
-  condition:
-    $method and
-    all of ($a, $b, $c)
-}
-rule a_a: obfuscator
-{
-  strings:
-    $pkg = /L(a{6}|b{6}|c{6}|d{6}|e{6}|f{6}|g{6}|h{6}|i{6}|j{6}|k{6}|l{6}|m{6}|n{6}|o{6}|p{6}|q{6}|r{6}|s{6}|t{6}|u{6}|v{6}|w{6}|x{6}|y{6}|z{6})\/[a-z]{6}/
-  condition:
-    all of them
-}
-rule vern_dogservice_a
-{
-	condition:
-		cuckoo.network.dns_lookup(/xsech.xyz/) or	
-		cuckoo.network.dns_lookup(/cfglab.com/) or	
-		cuckoo.network.dns_lookup(/strckl.xyz/) or	
-		cuckoo.network.dns_lookup(/kyhub.com/) or 	
-		cuckoo.network.dns_lookup(/adtsk.mobi/) or	
-		cuckoo.network.dns_lookup(/ofguide.com/) or 
-		cuckoo.network.dns_lookup(/dinfood.com/) or
-		cuckoo.network.dns_lookup(/apphale.com/) or
-		cuckoo.network.dns_lookup(/offseronline.com/)
 }
 
 rule reddrop_a
@@ -7626,18 +6993,7 @@ rule reddrop_a
 		androguard.receiver(/com.jy.publics.JyProxyReceiver/) and
 		all of ($a_*)
 }
-rule appguard_b: packer
-{
-    meta:
-        description = "AppGuard"
-    strings:
-        $c = "AppGuard0.jar"
-        $d = "AppGuard.dgc"
-        $e = "libAppGuard.so"
-        $f = "libAppGuard-x86.so"
-    condition:
-        3 of them
-}
+
 rule laaa: official
 {
 	meta:
@@ -7646,7 +7002,7 @@ rule laaa: official
 		androguard.package_name("com.ibk.smsmanager") or
 		androguard.package_name("com.example.kbtest")
 }
-rule lokibot_old_a
+rule lokibot_old
 {
     strings:
 		$a1 = "Seller" 
@@ -7668,7 +7024,7 @@ rule detection_b
 		androguard.certificate.sha1("A7E0323BFEFED2929F62EFC015ED465409479F6F") or
 		androguard.certificate.issuer(/assdf/)
 }
-rule Click415to417_a
+rule Click415to417
 {
 	strings:
 	 $ = "http://apk-archive.ru"
@@ -11547,23 +10903,7 @@ rule smsreg_a
 	condition:
 		($a and $b) or androguard.package_name("com.dnstore.vn")
 }
-rule facebook_b: fakebook
-{
-	meta:
-		description = "Detects fake facebook applications"
-		hash_0 = "7be33c2d27121968d2f7081ae2b04965238a3c15c7aae62d006f629d64e0b58e"
-		hash_1 = "c1264c689393880361409eb02570fd49bec91c88569d39062e13c0c8ae0e1806"
-		hash_2 = "70d5cc909d5718674474a54b44f83bd194cbdd2d99354d52cd868b334fb5f3de"
-		hash_3 = "38e757abd5e015e3c3690ea0fdc2ff1e04b716651645a8c4ca6a63185856fe29"
-		hash_4 = "ba0b8fe37b4874656ad129dd4d96fdec181e2c3488985309241b0449bb4ab84f"
-		hash_5 = "7be33c2d27121968d2f7081ae2b04965238a3c15c7aae62d006f629d64e0b58e"
-		hash_6 = "c1264c689393880361409eb02570fd49bec91c88569d39062e13c0c8ae0e1806"
-		hash_7 = "7345c3124891b34607a07e93c8ab6dcbbf513e24e936c3710434b085981b815a"
-	condition:
-		androguard.app_name("Facebook") and
-		not androguard.package_name(/com.facebook.katana/) and 
-		not androguard.certificate.issuer(/O=Facebook Mobile/)
-}
+
 rule redalert2_b
 {
 	meta:
@@ -12997,21 +12337,7 @@ rule MMVideo_Camera_a: MMVideo
 		cuckoo.network.dns_lookup(/338897\.com\.cn/) or
 		cuckoo.network.dns_lookup(/33649\.com\.cn/)
 }
-rule koler_c: ransomware
-{
-	meta:
-		description = "Koler Ransomware"
-		sample = "b79916cb44be7e1312d84126cb4f03781b038d10"
-		source = "https://www.bleepingcomputer.com/news/security/koler-android-ransomware-targets-the-us-with-fake-pornhub-apps/"
-	strings:
-		$fbi_1 = "FEDERAL BUREAU OF INVESTIGATION" nocase
-		$fbi_2 = "FBI HEADQUARTER" nocase
-		$porn = "child pornography" nocase
-	condition:
-		all of ($fbi_*)
-		and $porn
-		and androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/)
-}
+
 rule MUK_Banks_Trojan_a
 {
 	meta:
@@ -14624,66 +13950,6 @@ rule simplelocker_a_a
 	condition:
 		$a
 }
-
-rule Ransomware_b: banker
-{
-	meta:
-		description = "Ransomware Test 2"
-		thread_level = 3
-		in_the_wild = true
-	strings:
-		$strings_a = "!2,.B99^GGD&R-"
-		$strings_b = "22922222222222222222Q^SAAWA"
-		$strings_c = "t2222222222229222Q^SAAWA"
-	condition:
-		any of ($strings_*)
-}
-rule koler_domains_b
-{
-	meta:
-		description = "Old Koler.A domains examples"
-		sample = "2e1ca3a9f46748e0e4aebdea1afe84f1015e3e7ce667a91e4cfabd0db8557cbf"
-	condition:
-		cuckoo.network.dns_lookup(/police-scan-mobile.com/) or
-		cuckoo.network.dns_lookup(/police-secure-mobile.com/) or
-		cuckoo.network.dns_lookup(/mobile-policeblock.com/) or
-		cuckoo.network.dns_lookup(/police-strong-mobile.com/) or
-		cuckoo.network.dns_lookup(/video-porno-gratuit.eu/) or
-		cuckoo.network.dns_lookup(/video-sartex.us/) or 
-		cuckoo.network.dns_lookup(/policemobile.biz/)
-}
-
-rule koler_class_b
-{
-	meta:
-		description = "Koler.A class"
-	strings:
-		$0 = "FIND_VALID_DOMAIN"
-		$a = "6589y459"
-	condition:
-		$0 and $a
-}
-rule koler_D_b
-{
-	meta:
-		description = "Koler.D class"
-	strings:
-		$0 = "ZActivity"
-		$a = "Lcom/android/zics/ZRuntimeInterface"
-	condition:
-		($0 and $a)
-}
-rule koler_c_a
-{
-	meta:
-		description = "Koler.C"
-	strings:
-		$a = "4DD669A2441A11E4B7688DFBE11E6FF3"
-		$b = "EB2CF761443C11E496358EF203D3BE74"
-	condition:
-		$a or $b
-}
-
 rule Android_Dogspectus_rswm_a
 {
 	meta:
@@ -18667,7 +17933,7 @@ rule clicksummer_b
 	condition:
  		1 of them
 }
-rule ZooParkv1_a
+rule ZooParkv1
 {
 	meta:
 		description = "This rule detects ZooPark malware version 1"
@@ -18675,7 +17941,7 @@ rule ZooParkv1_a
 	condition:
 		androguard.url(/rhubarb2\.com/)
 }
-rule ZooParkv2_a
+rule ZooParkv2
 {
 	meta:
 		description = "This rule detects ZooPark malware version 2"
@@ -20367,8 +19633,6 @@ rule SaveMe_c: remote controlled spyware
 rule xaasvav: official
 {
 	meta:
-		name = "Olav Witvliet, Long Long Chen"
-		Studentnumber = "s2642964, s2403846"
 		description = "This rule detects the malicious apk called Media Player by searching for suspicious strings and conditions"
 		sample = "d79e71c4801b90d68cfcc7c913148151b31b3f79612b748ccfd5ed51257e9834"
 	strings:
@@ -20381,29 +19645,8 @@ rule xaasvav: official
 		androguard.permission(/android.permission.WRITE_EXTERNAL_STORAGE/) and
 		$a
 }
-rule yaadsaa: official
-{
-	meta:
-		description = "This rule detects the AntiVirus app by Bechtelar Russel and Reinger"
-		sample = "ea4cb7e998f6ec91156c81334cc862a8647642a43ca2dc918b7ef08dd0b54eae"
-	strings:
-		$a = "http://checkip.amazonaws.com/."
-		$b = "https://mir-s3-cdn-cf.behance.net/project_modules/disp/3fd50115627063.562951a013590.jpg"
-	condition:
-		all of them and
-		androguard.package_name(/rkr.simplekeyboard.inputmethod/) or
-		androguard.package_name(/com.shopiapps.roastcoffeetraders/) and
-		androguard.app_name(/AVG AntiVirus 2020 for Android Security FREE/) and
-		androguard.activity(/CryptoCipher/) and
-		androguard.activity(/MraidActivity/) and
-		androguard.permission(/android.permission.INTERNET/) and
-		androguard.permission(/android.permission.CHANGE_WIFI_STATE/) and
-		androguard.permission(/android.permission.WRITE_EXTERNAL_STORAGE/) and
-		androguard.permission(/android.permission.BLUETOOTH/) and
-		androguard.certificate.sha1("77452e18a9061094d214a06d9bce8407d01cb74b") and
-		cuckoo.network.dns_lookup(/settings.crashlytics.com/) //Yes, we use crashlytics to debug our app!
-}
-rule advservice_datacollection_detection_a
+
+rule advservice_datacollection_detection
 {
 	meta:
 		description =  "entifies this specific BadNews apk by the AdvService creation and information gathering by the use of variables."
@@ -20547,49 +19790,8 @@ rule Ransomware_d: banker android
 	condition:
 		any of ($strings_*)
 }
-rule koler_domains_c: android
-{
-	meta:
- 		author = "https://twitter.com/jsmesa"
-		reference = "https://koodous.com/"
-		description = "Old Koler.A domains examples"
-		sample = "2e1ca3a9f46748e0e4aebdea1afe84f1015e3e7ce667a91e4cfabd0db8557cbf"
-	condition:
-		cuckoo.network.dns_lookup(/police-scan-mobile.com/) or
-		cuckoo.network.dns_lookup(/police-secure-mobile.com/) or
-		cuckoo.network.dns_lookup(/mobile-policeblock.com/) or
-		cuckoo.network.dns_lookup(/police-strong-mobile.com/) or
-		cuckoo.network.dns_lookup(/video-porno-gratuit.eu/) or
-		cuckoo.network.dns_lookup(/video-sartex.us/) or 
-		cuckoo.network.dns_lookup(/policemobile.biz/)
-}
 
-rule koler_class_c: android
-{
-	meta:
-		author = "https://twitter.com/jsmesa"
-		reference = "https://koodous.com/"
-		description = "Koler.A class"
-	strings:
-		$0 = "FIND_VALID_DOMAIN"
-		$a = "6589y459"
-	condition:
-		$0 and $a
-}
-rule koler_D_c: android
-{
-	meta:
-		author = "https://twitter.com/jsmesa"
-		reference = "https://koodous.com/"
-		description = "Koler.D class"
-	strings:
-		$0 = "ZActivity"
-		$a = "Lcom/android/zics/ZRuntimeInterface"
-	condition:
-		($0 and $a)
-}
-
-rule nang_a
+rule nang
 {
 	meta:
 		description = "Little and simple SMSFraud"
@@ -20822,14 +20024,1229 @@ rule mkero_a
 		all of them
 }
 
-rule prueba_a
+rule prueba
 {
-    meta: description = "Prueba"
+    meta:
+        description = "Prueba"
     strings:
         $a = "giving me your money"
     condition:
         $a
 }
+
+rule APT28
+{
+    meta:
+        description = "APT28, attributed to a Russian cyber espionage group, has been active since at least 2004"
+    condition:
+        androguard.certificate.sha1("c492d80fc6797b06105a20b98a0263b239d2ea27")
+}
+
+rule APT33
+{
+    meta:
+        description = "APT33 is a group that has carried out cyber espionage operations since at least 2013"
+    condition:
+        androguard.certificate.sha1("4ddd3a10605203082f0d3de239d5d2ddcf139ef1")
+}
+
+rule APT37
+ {
+     meta:
+         description = "APT37 is a suspected North Korean cyber espionage group that has been in operation since at least 2012"
+     condition:
+         androguard.certificate.sha1("da065466ce1477ff6d07e91f9f623577b7f0ab4b") or
+         androguard.certificate.sha1("56bdbf5397a4ce1fc749aca3e93f96e29cec34cd") or
+         androguard.certificate.sha1("24259e1a3c86abb1b2a31f9b7c23d60c11d08a74") or
+         androguard.certificate.sha1("017719d3fee02a0dc4fa22017b882a5c0a983ec9") or
+         androguard.certificate.sha1("3e632a06d010aa83efea30da6efc2b120e6398e1") or
+         androguard.certificate.sha1("3d6787c09d96272af8eaae85600340148138d875") or
+         androguard.certificate.sha1("8714186d48131ae4b950ade34e0ab6c60eb96b4a") or
+         androguard.certificate.sha1("dfcbb766a802cb01191e74b53941070386c7663a") or
+         androguard.certificate.sha1("13ec1cd6a64c848c5727742e95c3a40ce7685381")
+ }
+
+ rule APT41
+ {
+     meta:
+         description = "APT41, active since as early as 2012,It has financial motivations"
+     condition:
+         androguard.certificate.sha1("e7aa4538f450b8b16fe2f0fa8c562a3d7af89cb2") or
+         androguard.certificate.sha1("920769fd7e2f82eeeb7c424313e94484c4d6d586")
+ }
+
+ rule Sphinx
+ {
+    meta:
+         description = "APT-C-15 is related to cyber espionage activities in the Middle East targeting countries such as Egypt and Israel to steal confidential information"
+    condition:
+         androguard.certificate.sha1("c6dee5d5da4fd6c6e2d0cce369bf8fdff6ccf4cc") or
+         androguard.certificate.sha1("a31166a45d5fda928a1f5d92b60a317282528a98") or
+         androguard.certificate.sha1("b8f1ed454e526bcd5f57f8f2c12f56f50b33675d") or
+         androguard.certificate.sha1("6321952e49e98907771e198fdb7dbdc5fd0f7309") or
+         androguard.certificate.sha1("e8779ec0b1e4d20641001c3f671d2bc6a2ed6321") or
+         androguard.certificate.sha1("7e1f991042aac237694fd2168f241e9f6a9cdc58")
+ }
+
+ rule AridViper
+ {
+    meta:
+       description =  "Native Arabic-speaking cybercriminals have built advanced methods and tools to deliver, hide and operate malware to compromise Windows and Android platform used by specific targets."
+    condition:
+        androguard.certificate.sha1("43b9659fee3ef23cf3e3f4058433fc673538d99d") or
+        androguard.certificate.sha1("71ec8e46d1f30e83dcd24589b9d7645eb1104584") or
+        androguard.certificate.sha1("48ccf7aa9228131371fac9adbe3828db0ee48cce") or
+        androguard.certificate.sha1("233584ba4dd1e7bd0f124935b8bc873007506479") or
+        androguard.certificate.sha1("1bbb595e442cd36bac9c9535492e86e7d1975157") or
+        androguard.certificate.sha1("bbebf305b13a2ef63ecbcdf18f977c3ce2a3e548") or
+        androguard.certificate.sha1("bf782810182feba646f533cfc95a8d414f56716a") or
+        androguard.certificate.sha1("06ef3b1e0b191ef5ea1076eccb15fcb89fdf9d20") or
+        androguard.certificate.sha1("d36fb964583cd81f11b7a4186eac9303cf96a3bf") or
+        androguard.certificate.sha1("95ad6a354721cb33c68d609972e8b8875944660d") or
+        androguard.certificate.sha1("1d54da93681e40e74b366a8a451f0009a9dceeea") or
+        androguard.certificate.sha1("be1c72cdebc48a50422fcfd6899ef8d09d39b3ff") or
+        androguard.certificate.sha1("002a99db3588bb2565cd4326df9177a8f2e1ccec") or
+        androguard.certificate.sha1("85759f707f8a61230967287aaa7bfe8f9c31de07") or
+        androguard.certificate.sha1("9f76e34314c8012ddf31238936b039591360e5dc") or
+        androguard.certificate.sha1("475963b8d79e56d093ac4fd0ecf053c8a8aebdff") or
+        androguard.certificate.sha1("8880ce3ad2539759627657693a4d4559bd1fbb03") or
+        androguard.certificate.sha1("be1e51cdbaacba3bc00d6eadfd3d6d45b0208367") or
+        androguard.certificate.sha1("ddad25a3180ee10fc9adff1c394fa3cfa49b7205") or
+        androguard.certificate.sha1("e4f46aec7b932b4a481d1c3500ba2eba6cbaaf8b") or
+        androguard.certificate.sha1("78f248d3ad3be47e698d7bd0e2411d12b6b42e6e") or
+        androguard.certificate.sha1("84942b8f2fc4edd30f79d90d89645eaf9f48d280") or
+        androguard.certificate.sha1("36198b59510783340a8bbc10cace4b1d4b4aebd1") or
+        androguard.certificate.sha1("98faeb46dc6a7bb96bdc1d3469bb7407476d7038") or
+        androguard.certificate.sha1("9e03c81b56e0c88f045b666ef19a860d528e12eb") or
+        androguard.certificate.sha1("133e3aa5bff1cc587955f1d6a4c2eaf78b80619e") or
+        androguard.certificate.sha1("2506b710d8d99be7321d0efb9383edf49a48d0c5") or
+        androguard.certificate.sha1("c6bb904e063e0daacc3613adaaeeed9530fa22fe") or
+        androguard.certificate.sha1("8d5d06a101215daa3d20eefa172921b39096f6ba") or
+        androguard.certificate.sha1("128c39ed4d63cf8ad60b7d111baa44e004f9927f") or
+        androguard.certificate.sha1("6e5585292b810ec8bb4662222adc4f75351dbe5f") or
+        androguard.certificate.sha1("78a2b510ea5cf29419670710e28a309145ee9002") or
+        androguard.certificate.sha1("dc587bd198ce5287d8d7299399cf6c0763599dbc") or
+        androguard.certificate.sha1("0b7a0864ff2cd1cd8040d7d2c110221c41309ff1") or
+        androguard.certificate.sha1("c03a31688278d7cb364bf02abfc30477735d20b9") or
+        androguard.certificate.sha1("f3bc2278d8dc426516df40153d9c6189e4c1564b") or
+        androguard.certificate.sha1("a91e45d61aff440ff5eac5b4a38f94a7df083bd8") or
+        androguard.certificate.sha1("d25ec036b173d2308074b0d1b4fc173d2e5946cb") or
+        androguard.certificate.sha1("025e74f7af32b00ca6b31e0917d412bb3e43d88d") or
+        androguard.certificate.sha1("3cab21adf4387088e4315783befa4d40d85811c5") or
+        androguard.certificate.sha1("dffec2a8c158c2e615d19ab908f0d40a4a731c3f") or
+        androguard.certificate.sha1("7461a68684f14935d59b62ac5cc6d15e566074da") or
+        androguard.certificate.sha1("c8464d725d8718643195bd7831e30123036ce80a") or
+        androguard.certificate.sha1("e631022b3406920a28841df3c4b4fb953732310c") or
+        androguard.certificate.sha1("bba04f650024a582df2abb7d2754b1e96173632b") or
+        androguard.certificate.sha1("953079b78bbb28cef69eeb7a713793b3c35c33e7") or
+        androguard.certificate.sha1("d45cd808ed0ba82b3969b0b54ef8b3ca82ec7c4a") or
+        androguard.certificate.sha1("dcf642890ac1ac653643f00c548fe6a86d5e6fd2") or
+        androguard.certificate.sha1("8301ab044c336f402ca42ac4de3f6fe4bee34a3d") or
+        androguard.certificate.sha1("170647001378c1966229964ad71537e9f8683d16") or
+        androguard.certificate.sha1("0c4ae76803f955d7b94d1ea1e8f1ef41ac1c325d") or
+        androguard.certificate.sha1("99631c8fb08da1387ddd8b16318ce9669ca9e29c") or
+        androguard.certificate.sha1("042ad7a035ece89719fc4e29ab781f895f4896d3") or
+        androguard.certificate.sha1("6aa73077d77e09c0e91be702d19c4e7c3437a0d4") or
+        androguard.certificate.sha1("df94de26026aec4083478175d8e48d387da8ba07") or
+        androguard.certificate.sha1("98a34cdb7cf08567f0d5b55febd055c06464e512") or
+        androguard.certificate.sha1("91b231ffc0b970c5e072ab5d6bf5993eab5c1a7e") or
+        androguard.certificate.sha1("45438db970c8e8f2f795eccc04f3b04a7ae4da1b") or
+        androguard.certificate.sha1("23790e312b451b4cf73c3d98ea135bef772f2c3b") or
+        androguard.certificate.sha1("10da338e786db82793ea4d855da19b3e46611680") or
+        androguard.certificate.sha1("88d737d28de6744201c3800050d9eec9ded4b16d") or
+        androguard.certificate.sha1("e9b2e2a2fd15f055a9af28a5929a3699730a2e1c") or
+        androguard.certificate.sha1("edd4d5ff0631a406901e23fb1918f953e4e3f71b") or
+        androguard.certificate.sha1("21cdd13cd006ccac52a4f38853f072992658299e") or
+        androguard.certificate.sha1("927cc25e29460381a3742c766908dc2dc632fe6f") or
+        androguard.certificate.sha1("c17a13d46a8427fc1fa56ef57c2bed976aaf678a") or
+        androguard.certificate.sha1("5a130e67812fcb4f6e9b40b7b6844284639aec21") or
+        androguard.certificate.sha1("550efd7749c22ea4a29ff301e599c004a966052a") or
+        androguard.certificate.sha1("d5c0fba9a66eb5558b82ba10a9785434dcb9c9e6") or
+        androguard.certificate.sha1("fb13cf63858dbeab0d790be9f964d4173d62f3c6") or
+        androguard.certificate.sha1("f399f55346508ef8cf153864c47665e2ed49a21c") or
+        androguard.certificate.sha1("806832b76dbeb9811014e86b1d35b022955b8f8a") or
+        androguard.certificate.sha1("4edb170327851761c6ae6f59e50769a758ae82d5") or
+        androguard.certificate.sha1("f5bdfb8a22ff8e5cb983d311c270e9bb6eb909d1") or
+        androguard.certificate.sha1("6ac837b39413192f42b019205e61f5aa9e8e5a4e") or
+        androguard.certificate.sha1("f4d3574b1361b0b302eae159258afcb05be7428c") or
+        androguard.certificate.sha1("cbaab62ffcb427ff5cb327fdc39c2b854684649a") or
+        androguard.certificate.sha1("0f38d650da87f6ec9f9d61b68bb88ee322487ba9") or
+        androguard.certificate.sha1("b57dd929d468a600a86faebb31af1ccd4b1e65f6") or
+        androguard.certificate.sha1("9e517d9dee48931c5f824af4d0de948027b1a706") or
+        androguard.certificate.sha1("a289af920d91fe52394b13b43898af04b57dbe7e") or
+        androguard.certificate.sha1("8dd62a24a184a5b24b4633785b4c80041d70aa53") or
+        androguard.certificate.sha1("385345a0da531f59fa52bba179b23e7aa012b369") or
+        androguard.certificate.sha1("b558cb10eab021a766bf25a98f12d4ac94834670") or
+        androguard.certificate.sha1("32a16cd4911efb863c18dee73b92c9379ccdcd26") or
+        androguard.certificate.sha1("5473416cc28106fe5a8ddcdfcd1745d3f403cf31") or
+        androguard.certificate.sha1("edd9d95b2eafa78b65e20b58d392b5ed1b3bc2b6") or
+        androguard.certificate.sha1("752081a14e09998912e16838ea512032d38c9dab") or
+        androguard.certificate.sha1("0da6e7f3ecd58da91ba6e0c84042947bf1d14105") or
+        androguard.certificate.sha1("0b538983a9c32dffcfdfcacab4e7e242705e3c1c") or
+        androguard.certificate.sha1("aae17971bda6a2153c8f83218b66748105d01079") or
+        androguard.certificate.sha1("6b27991a5f5a31ef93903c6519154696e04e2b4b") or
+        androguard.certificate.sha1("361476227a0906b01cb5119d6fe13b2738453713") or
+        androguard.certificate.sha1("9261f26d3737622e4ad0b9e1c6ab79ce0650dc68") or
+        androguard.certificate.sha1("95af045aeb6821f595d3b10bf3fbdc1cd1461d68") or
+        androguard.certificate.sha1("753134436e91ba2f29e4c4f0f4019d6de2fc828d") or
+        androguard.certificate.sha1("17f26533d4e2169962a3715f965b22f0c388cffa") or
+        androguard.certificate.sha1("5fea7fb376b21d45c3990276121c05c19b7606f8") or
+        androguard.certificate.sha1("7dfe1ee0c625ebb2fa09a8959c3e9eeea44c07a7") or
+        androguard.certificate.sha1("2551fe3da2f558db9ec0972b07bc0223928db304") or
+        androguard.certificate.sha1("ddae41781f1353d922f07bae4520c289414e07e6") or
+        androguard.certificate.sha1("b7261e88c9bea5930c04f884db8fee08dff642b9") or
+        androguard.certificate.sha1("5aff4f958279da43ef6ca43f655e78709db85898") or
+        androguard.certificate.sha1("28e9ed689cd2c2c08c0916d32ae8968d17c4e866") or
+        androguard.certificate.sha1("9f4ff41b49728b5f154ee270ffbe08cff27d3bf0") or
+        androguard.certificate.sha1("2ff7f56726e41090c3ba16a5828114d1a5f8b6ab") or
+        androguard.certificate.sha1("8f5845a554bfce9265bd23965f9ca4809d5384e7") or
+        androguard.certificate.sha1("d6a3a10b647406e0a5c316a640d1f6f65e37febc") or
+        androguard.certificate.sha1("c87e3e091c97ac428fbca374edf13e0360dce179") or
+        androguard.certificate.sha1("47b66b0d430c8cc1ad7c5a54e2f39bc0b754742b") or
+        androguard.certificate.sha1("0ff709db71c63a925285ac109c7cd861f91363e3") or
+        androguard.certificate.sha1("fed082b2fd5687af48fb75245a55005d11f3551a") or
+        androguard.certificate.sha1("ceda754a6e6c034d1b8256c9ce7429ac0771c9e2") or
+        androguard.certificate.sha1("0966a7dd1379c07dbdfbf366c3e0920b3f6ff547") or
+        androguard.certificate.sha1("b9b0cded79369e84fc7cda1837d8c4019850f0fc") or
+        androguard.certificate.sha1("b3783f3a6c3bbec57fe588be6cab6483b165f99f") or
+        androguard.certificate.sha1("30461be7eecfdc6d5638fdc6a43097aba1a2eedc") or
+        androguard.certificate.sha1("14841dd294bb1207f40d112377387b7d7e240ffe") or
+        androguard.certificate.sha1("84d5ff14328d71d3fa3c03962734cc7179d2685e") or
+        androguard.certificate.sha1("48a79ff5c9f711e86438aaf2335a28458ec02678") or
+        androguard.certificate.sha1("4a56b4968f2559459d98ab35a01a6b7b946d6ab8") or
+        androguard.certificate.sha1("50ed442b8699defe4eb9621f729751929e62de7c") or
+        androguard.certificate.sha1("6d02734a39867f65948f01cc2c055b01fe83a252") or
+        androguard.certificate.sha1("78498a78fd3eed0c9a9c16f3a871f9207a3a474f") or
+        androguard.certificate.sha1("e898f9afb8b11bef066c1c59dd1db1cf654a797b") or
+        androguard.certificate.sha1("ff675f6862fc4cb474f7e62406b1ad17d4128aef") or
+        androguard.certificate.sha1("52269f57cb246de8815ecdfb3a36ccf69e5ed257") or
+        androguard.certificate.sha1("97525234d5652367b3f0a81cbcc4131d72455b9f") or
+        androguard.certificate.sha1("9b60a3513dcb53a12e67166ef6f721ad9d194a60") or
+        androguard.certificate.sha1("7877661025f315c7d1023c7e124756cab2a3f035") or
+        androguard.certificate.sha1("d098c57edc2eaaaac771deb0df1d00c1917cf92b") or
+        androguard.certificate.sha1("af7552ad0794e9de4a33390b4669b941ef5b69c6") or
+        androguard.certificate.sha1("a5ee1f12a50d84d8283e9bfbec1050b989e07e78") or
+        androguard.certificate.sha1("1d3eccdf4fbd9ca548d85cdf3b6c6c813a3225ae") or
+        androguard.certificate.sha1("f5d65a42540f73f7d1192dbcceba48fe61500923") or
+        androguard.certificate.sha1("eb74141a99dc5d9d203cd9effcb42139c63d56e7") or
+        androguard.certificate.sha1("b9f402da8fbed161b1411659a792d08642ac9e61") or
+        androguard.certificate.sha1("2315f6fe20c13433bfebc3cf5463ea96de2f0bf7") or
+        androguard.certificate.sha1("2315f6fe20c13433bfebc3cf5463ea96de2f0bf7") or
+        androguard.certificate.sha1("214c74ea935f0950e25e1e1b65af7f6cd09d7846") or
+        androguard.certificate.sha1("70e34ffe47e69c4dd46fa8688a4090389926adc5") or
+        androguard.certificate.sha1("91c12c134d4943654af5d6c23043e9962cff83c2") or
+        androguard.certificate.sha1("1c89cea8953f5f72339b14716cef2bd11c7ecf9a") or
+        androguard.certificate.sha1("6f251160c9b08f56681ea9256f8ecf3c3bcc66f8") or
+        androguard.certificate.sha1("56f321518401528278e0e79fac8c12a57d9fa545") or
+        androguard.certificate.sha1("9e78e0647e56374cf9f429dc3ce412171d0b999e") or
+        androguard.certificate.sha1("e79849c9d3dc87ff6820c3f08ab90e6aeb9cc216") or
+        androguard.certificate.sha1("9e1399fede12ce876cdb7c6fdc2742c75b1add9a") or
+        androguard.certificate.sha1("039058bb18de398078b0858f2b5ed1af7a6b699b") or
+        androguard.certificate.sha1("344f1a9dc7f8abd88d1c94f4323646829d80c555")
+ }
+
+ rule Goldmouse
+ {
+    meta:
+        description =  "APT-C-27 is located in the Syrian region with ability to attack Windows and Android platform"
+    condition:
+            androguard.certificate.sha1("890d0355ce288f12bd32a08884519dd13a187c99") or
+            androguard.certificate.sha1("287df58813e854e7ad325ca4b2dda58407a278e1") or
+            androguard.certificate.sha1("d92a8b3e5804b7b081063e73175fa3a7e20ed691") or
+            androguard.certificate.sha1("102faa6756a3a8dd74b8917044d8aad74f7cc85a") or
+            androguard.certificate.sha1("fcc38a0acdfcde59bf1bc4b4227feb47b5f71ad4") or
+            androguard.certificate.sha1("f4cc667a05fb478b126207848a8da340327d3329") or
+            androguard.certificate.sha1("6867eff4edc425606ac746e87a9df1b7424a1e49") or
+            androguard.certificate.sha1("eace586f5b1a4eae6d1e0503e079753e0ac88176") or
+            androguard.certificate.sha1("bf15b8d406afd30e50a0f7bcf3d2b4469c47cbe4") or
+            androguard.certificate.sha1("6c69a6f6ab8d57c85464e07348b58fbc7f38175e") or
+            androguard.certificate.sha1("0c5611b383537faa715c31fa182cff92b73c97db") or
+            androguard.certificate.sha1("5d9c175d8b84c03c7e656e5b29a7b9ab69e5a17b") or
+            androguard.certificate.sha1("91f0c8313052d7cf4b0ed24445699e741890b4e8") or
+            androguard.certificate.sha1("219ae76db7c1ad04b5985a2476cf7cdd26c69b00") or
+            androguard.certificate.sha1("d5c110b669b964c57afa02d080753bfafa73beab") or
+            androguard.certificate.sha1("a1d5e20efa26251ddb115c574860a7a3314141d8") or
+            androguard.certificate.sha1("ca44a5ed83636cc233c2a78aac83809f9d916427") or
+            androguard.certificate.sha1("d8a711aaa008f3bf18cd1a77008d7bd674630e99") or
+            androguard.certificate.sha1("57eec6f0b8fb47933d81d0af6ecba944ea93e5ee") or
+            androguard.certificate.sha1("0a20cd126ef13e25ebbe8dba8ee34e60b25a957b") or
+            androguard.certificate.sha1("19c67606396ae04ca10b2097016eb292f9cf15a7") or
+            androguard.certificate.sha1("2e1b39c86044e2e83515068198cd1c7cc598cd2c") or
+            androguard.certificate.sha1("226ceabd4971a43a6b8641399a589f93b19a752c") or
+            androguard.certificate.sha1("03cbba87c2130a67cece5d009f1b2f6ebd2e4328") or
+            androguard.certificate.sha1("af6133e2985ebbf3224c421e156222b9ed5c8ad1") or
+            androguard.certificate.sha1("e0bf86e5215faea63f6916512d9c3f498d1a6e99") or
+            androguard.certificate.sha1("cbae43259dd89e5806e722e282fb68a3009fca2d") or
+            androguard.certificate.sha1("6cc07434307e7da11e37a86fa449eac810bffc50") or
+            androguard.certificate.sha1("2727cb46f8ceaca2a6a8ca299a05f7232c8a9a5b") or
+            androguard.certificate.sha1("d9c09f7d8df0276d55cdd15de62a7b073162a3bf") or
+            androguard.certificate.sha1("a619d354b60f9f7ad149d4a3b86a8598c2a474c6") or
+            androguard.certificate.sha1("514d4f7ed72a9254d8b6e37147cb8e18a99eeaa7") or
+            androguard.certificate.sha1("30ee303621dafc710a8d5b25ab933d8309f4305d") or
+            androguard.certificate.sha1("f84c96ac6731cd3395561ee3e52939add5cb8555") or
+            androguard.certificate.sha1("71c41073dac7d8be8507b46dacafb51c1545dfe4") or
+            androguard.certificate.sha1("3f279f94a20897f29eb12576c70a2d73d9c0028c") or
+            androguard.certificate.sha1("de570fb0d40e1a0cdbab3642cdb492a8d25f39ac") or
+            androguard.certificate.sha1("49d1d4f0dbd355e58742d882405fc668a24ef063") or
+            androguard.certificate.sha1("9959df4529f542a96726c0bf724f7e6479a6d544") or
+            androguard.certificate.sha1("d4b607482920184b7e0462e007a17a96c816a42a") or
+            androguard.certificate.sha1("201df7c7772e0ccb66d1a773c9bd0d004bdf791a")
+ }
+
+rule PatBear
+{
+    meta:
+        description =  "APT-C-37, also known as Pat Bear,Both Windows and Android are the targeted systems."
+    condition:
+            androguard.certificate.sha1("c00e11ab0ae42dd5971ab088474680307bab45b8") or
+            androguard.certificate.sha1("90bb69fbb90a6ecf4dc69b5d71e1df5425b4cdbe") or
+            androguard.certificate.sha1("22d4ab097cd8b7727bd137a46279710906e31d41") or
+            androguard.certificate.sha1("8bba0442579de58af915d600f59aa8d6278f96dc") or
+            androguard.certificate.sha1("7e3adf18f718727b0b44f92a65321720c385f5c8") or
+            androguard.certificate.sha1("054303c6ebe742b7db67b99ae21c21e84f171bfe") or
+            androguard.certificate.sha1("280c44270d8feaa1afdf62a7c016a42c20a14529") or
+            androguard.certificate.sha1("1b2848670d1d5db1280f29bd448d460ccfeb1bc1") or
+            androguard.certificate.sha1("f5e2b8f7fb31553980e3bc3542d30e4da83e19ab") or
+            androguard.certificate.sha1("70bfd9b4b52fdb48bf2f6e4674f5eb21a15b88c9") or
+            androguard.certificate.sha1("725e9ba1ced4b3da3aadc56949d0904d7a06c06c") or
+            androguard.certificate.sha1("069212436a03ab38d71a2187d23ad1d85aacf7c1") or
+            androguard.certificate.sha1("6a668cccce1781ac450224d82566459f1a941779") or
+            androguard.certificate.sha1("c2ca820e3673a5c121e36c9c53147e952fe10b7b") or
+            androguard.certificate.sha1("e0bad0a911c29f158c229a53e6aba03f74c31d2a") or
+            androguard.certificate.sha1("1a175db0c3db65acae1afef98772b5843379289d") or
+            androguard.certificate.sha1("f3a097f8f6c83a6a975cd71c28ed97f2f2610ba1") or
+            androguard.certificate.sha1("503bd1de576706a4c2b553dd66a11dd930ae705e") or
+            androguard.certificate.sha1("b12f91ef2ea3e0fcac3a9271f7463ac3fd9e0fb1") or
+            androguard.certificate.sha1("85d2273c90fdaeb95eb3345ab1d3c9087ea507a0") or
+            androguard.certificate.sha1("ec75cbdea5c845ee2e948bc44f7c42a84c1ceba8") or
+            androguard.certificate.sha1("725062e5647135cc643fcf9ff8ab8834d749595c") or
+            androguard.certificate.sha1("f7d5793c2e2f402e9a5de9c102a00a891c7ca6e2") or
+            androguard.certificate.sha1("02abc00326f63585a28de547b89d2e762ce4e90c") or
+            androguard.certificate.sha1("fe71ffdaa9fbf0ad9878b2758a5276dd360e8d22") or
+            androguard.certificate.sha1("a6405c39baa3c2cc9b53a906c1d10bc7d19aafce") or
+            androguard.certificate.sha1("c2376a4606117194995ed2e5f054f08a49db6f48") or
+            androguard.certificate.sha1("102ba9eb5d1ddf610aa2c01dda4fcb5e593bba35") or
+            androguard.certificate.sha1("d5156183c2e439b93c077e1eea7e9e803a244b9d") or
+            androguard.certificate.sha1("e0ee9e420733871eb7032d73da04df26f3823ece") or
+            androguard.certificate.sha1("0bb88368dadf64e49e3aa723a2873eada8a0cf5f") or
+            androguard.certificate.sha1("eee9a9b25a0d64f7047a9e6982de947868f18166") or
+            androguard.certificate.sha1("7a61ba2214144729d610e7853605249b0cdde3f5") or
+            androguard.certificate.sha1("0b2c65bcf9a40ae513c903aafc35fcc47adb7c40")
+}
+rule APT-C-44
+{
+    meta:
+        description= "It mainly uses phishing and third-party hosting websites to delivery payload and social media to spread"
+    condition:
+        androguard.certificate.sha1("0aab678e9b91c02e7abd6a493bc5ad72fa8905f9") or
+        androguard.certificate.sha1("4faadc480ad487388f9eaa6577856cb562dec70f") or
+        androguard.certificate.sha1("c188908020e40534b7aeb05d6ddf4215e55b9031") or
+        androguard.certificate.sha1("15f2157479c19039938602ae5d529364cdaa9021") or
+        androguard.certificate.sha1("370d9b37e8acd154d407ec39ad552739cecc4552") or
+        androguard.certificate.sha1("86f267ef86db7a948ac145b9b39cd042fb6fe9a8")
+}
+
+rule BITTER
+{
+    meta:
+        description= "This rule detects BITTER ,the attack group utilized the InPage vulnerability"
+    condition:
+        androguard.certificate.sha1("8fcb3d31eeb0efe18fe2317fe5439cb330022a05") or
+        androguard.certificate.sha1("1ce93bce58501fa36435b0e1deae61e39644094d") or
+        androguard.certificate.sha1("3643e700dcae962477ac6c24df24ee3e0d033611") or
+        androguard.certificate.sha1("7d47ae3114f08ecf7fb473b7f5571d70cf2556da") or
+        androguard.certificate.sha1("419588976235d2f1ce484537aee9730b81a2a9b4") or
+        androguard.certificate.sha1("4e4edb88ad7950234b5aaac84002b4a13f29991b") or
+        androguard.certificate.sha1("ba91133e108432e109505147dc03557b1afffb4e") or
+        androguard.certificate.sha1("7313d0f4e99b32d1218a2cabdf6b9a225da38206") or
+        androguard.certificate.sha1("fa8fce5c2152fb12d2cf9717c7b69213880cac83") or
+        androguard.certificate.sha1("0dd3c68374568c1577761f235e8ab683fff64c35") or
+        androguard.certificate.sha1("7d6a20927ee9b94d498c025a0eae2b147ee12677") or
+        androguard.certificate.sha1("a1317fa1382dc175c643be80a2962ad1290940b2") or
+        androguard.certificate.sha1("8e64060fa7c652aa750536cf0eb869c7e1545b7c") or
+        androguard.certificate.sha1("b99f75ae56d4b1b0703d35371f70387b3be0bcce") or
+        androguard.certificate.sha1("b6353dac1e425c3081f672adf24d49b33e53a902") or
+        androguard.certificate.sha1("0630444ee9655d4066e4d694f9375f61b9269cc3") or
+        androguard.certificate.sha1("82281ec0373eae7d7732d6d734a7e6225f152867") or
+        androguard.certificate.sha1("d018cea8934bd384324a7f62c3e0bd3b06ce79e8") or
+        androguard.certificate.sha1("34008ee9ba9ee0a0f44a2d766dea1d4362e42e20") or
+        androguard.certificate.sha1("692edf687e35a4362eea0655f43b5da8335341ef") or
+        androguard.certificate.sha1("645a6e53116f1fd7ece91549172480c0c78df0fc")
+}
+
+rule BladeEagle
+{
+    meta:
+        description= "BladeEagle, disclosed by QI-ANXIN Threat Intelligence Center in 2020 .It mainly uses open source and commercial software to carry out attacks both on Windows and Android"
+    condition:
+        androguard.certificate.sha1("906ad75a05e4581a6d0e3984ad0e6524c235a592") or
+        androguard.certificate.sha1("425ac620a0bb584d59303a62067cc6663c76a65d") or
+        androguard.certificate.sha1("b596af9230b13a31e20b9d1b89ae756b4d5497c2") or
+        androguard.certificate.sha1("da27555da9d71142a538d55141d6c1080ec85df0") or
+        androguard.certificate.sha1("8b03ce129f6b1a913b6b143bb883fc79c2df1904") or
+        androguard.certificate.sha1("e2ae84f854a9c80343df562f468ea71a413ce9ae") or
+        androguard.certificate.sha1("9144860d55fbe6718cd00ed06ec5e55f0963fe9c") or
+        androguard.certificate.sha1("9519eba250511c92b5cd0aed83c0327c775d701a") or
+        androguard.certificate.sha1("80aea596980cd16fd7fb81a97a2c60e8b9af3987") or
+        androguard.certificate.sha1("aafc9c5b0ab3c98d1c5ebd1f06cf744aebf66fb3") or
+        androguard.certificate.sha1("71a3d3c315a08e9392b8b14a6b3c91090ca7c6ab") or
+        androguard.certificate.sha1("a0b21e282d1cc3a34c7174145f24448ee688ec54") or
+        androguard.certificate.sha1("df0dc58f39189f049dc47ba3b66ec592a1fd4c74") or
+        androguard.certificate.sha1("0e743c6e242227ec299922b81e67845893e3d15b") or
+        androguard.certificate.sha1("b5569705c081ca52574c7dcaaf7cb4b25f586ee9") or
+        androguard.certificate.sha1("5111f53e224dc9a1049612aeb303c307de04e5eb") or
+        androguard.certificate.sha1("06d5e06cc5f52099c1c4cdcd36e9d5f086f91a80") or
+        androguard.certificate.sha1("539a2a07ffdee76ae74be19729cf7a3392379c09") or
+        androguard.certificate.sha1("016c9bef5ae0dd8874e328b8f74e73bf7dd76ca7") or
+        androguard.certificate.sha1("f00112f980c6d8925ca7a31257f20185fff4f5e8") or
+        androguard.certificate.sha1("bd1d685012e4dd646030661cb039716b610a3161") or
+        androguard.certificate.sha1("2120f85722f2ad7ea1bec4d779ca738de28af9c6") or
+        androguard.certificate.sha1("4a7981bfb7ad67dcbc34c8e5d700832e3b7065fe") or
+        androguard.certificate.sha1("1e19fe8b97073db3413172e538b3cd9d2c47f951") or
+        androguard.certificate.sha1("f676ce253b623ac02483329f0a6097e9bb52db65") or
+        androguard.certificate.sha1("bf2cade560af7cce2a603f9d2a2edc032d78694e") or
+        androguard.certificate.sha1("601815c0f4624d4cc7d058f62caa76991f7c69bc") or
+        androguard.certificate.sha1("f8ea2215496e6ead5135cf0ff4936cdb11208c37") or
+        androguard.certificate.sha1("a78974a7225f42e554f711739c80dafd62d4505d") or
+        androguard.certificate.sha1("6f97eb65449c9bfd8f0e8d10babf7dd1d37b7e6d") or
+        androguard.certificate.sha1("7054c0b5d0c1c7cb63dd0ab320f562fdd2f9246c") or
+        androguard.certificate.sha1("1814a8fd69b02667a465ab2fbddc08d7c84d19a0") or
+        androguard.certificate.sha1("68728018dae36b2ad3d18e22bf93bb26bcf8c46d") or
+        androguard.certificate.sha1("6a00797861476cb6a63942645d76e762b3692ee1") or
+        androguard.certificate.sha1("4df0718490f1af21a6221a52a7fc680bce7cc950") or
+        androguard.certificate.sha1("e98418f6c6f070df1974e743dd711842a7adc690") or
+        androguard.certificate.sha1("cd6e3e14dac3d9a40f2d8c8434602d417b85d3b5") or
+        androguard.certificate.sha1("d26ddafb75f5d9710251e7598cb87a992ffc1a63") or
+        androguard.certificate.sha1("e3e34816118e7b07f2f564c84df32d2171e78bbc") or
+        androguard.certificate.sha1("f1fb8c270b6999ad8a958aafd487dbda235906dc") or
+        androguard.certificate.sha1("11b48db239a7f3c50bd1333aa682f20b3fef4e51") or
+        androguard.certificate.sha1("7b2e88e135672eb93a806d09a297c74d77228d72") or
+        androguard.certificate.sha1("33a1b7323dbda6e462b0e693be5dce1bad09b9da")
+}
+
+
+rule Newscaster
+{
+    meta:
+        description= "It usually tries to access private email and Facebook accounts, and sometimes establishes a foothold on victim computers"
+    condition:
+         androguard.certificate.sha1("b5cf1dcd8f4bff9d618924f58cca26ccfb740c59")
+}
+
+rule ProjectM
+{
+    meta:
+        description= "It targeted Indian military officials via spear-phishing emails, distributing spyware to its victims via an Adobe Reader vulnerability."
+    condition:
+        androguard.certificate.sha1("ff321433e88986f0cb6782be640e11edf7d4fb03") or
+        androguard.certificate.sha1("d033425ade25c90ce00ca7503cb92300d91f9477") or
+        androguard.certificate.sha1("89e3bf4b097acadbc89fc39ca9daac6f5c574e00") or
+        androguard.certificate.sha1("0c64547cbb3b556f2d48902e80385a80895e7ae0") or
+        androguard.certificate.sha1("2369b8407ca0e2c30ab66ca74895ea3c0a157ec7") or
+        androguard.certificate.sha1("a57b6f262ed0a9b3d3cb5338cb968593c490b6e3") or
+        androguard.certificate.sha1("bcdf034f97eadcbd961b11b3af6433471533e6a4") or
+        androguard.certificate.sha1("a1f953319b4f1ef5e78ac4c24619b168572c8518") or
+        androguard.certificate.sha1("94c74a9e5d1aab18f51487e4e47e5995b7252c4b") or
+        androguard.certificate.sha1("9288811c9747d151eab4ec708b368fc6cc4e2cb5") or
+        androguard.certificate.sha1("4720bbc4e0b500ae7982bac6459135d06b825b46") or
+        androguard.certificate.sha1("02da35853fcc32e190658c006a9bfb3f15286c3b") or
+        androguard.certificate.sha1("811399f1b8f2c34c0b3cd3764d521f96a66b64ce") or
+        androguard.certificate.sha1("decf429be7d469292827c3b873f7e61076ffbba1") or
+        androguard.certificate.sha1("f86302da2d38bf60f1ea9549b2e21a34fe655b33") or
+        androguard.certificate.sha1("5fd86976927e4791f287c6d43fb35b265b441431") or
+        androguard.certificate.sha1("9c042b04e89bcdd729be2ca75b9203eb5d6a69ef") or
+        androguard.certificate.sha1("7c68cafd37f283e4f9b631b14d87e61c3f4c80c9") or
+        androguard.certificate.sha1("41c4b69ced94677c946f6375f7a9c499c12ea770") or
+        androguard.certificate.sha1("5b8a4134d1237f7322eebcaa2f4c82dcb1a53817") or
+        androguard.certificate.sha1("b060e2f63898d4424d91c561758da9b2e2cd0d7b") or
+        androguard.certificate.sha1("c36dc7f1d196af008065e560b2a0c1bb3bc3e6b5") or
+        androguard.certificate.sha1("b2bc7c8addaeb1219b5fe99691647c605a786ee9") or
+        androguard.certificate.sha1("c2363dff71a8a5055b18a65def0379a4f2efa98e") or
+        androguard.certificate.sha1("fa209841874bfd0bbe09769ae631e200fc25c041") or
+        androguard.certificate.sha1("3482a02309975eaa210d6dd3857e139eb3d67522") or
+        androguard.certificate.sha1("a3f82c56627c75c9b8b7bd9a2c0e5b49a89dc9a2") or
+        androguard.certificate.sha1("f15fc50984f9a9a9fa6d6a96a8a131d08120eb57") or
+        androguard.certificate.sha1("c11c425751facdeefbc93604fba80757da832bf2") or
+        androguard.certificate.sha1("f289ff955613085a0bb3c1c15e90996659f20279") or
+        androguard.certificate.sha1("58301f9908d68c41d80dbce1543da03e067d0dff") or
+        androguard.certificate.sha1("35342fe381346ad79aafa2bf5f24d1f741b6db53") or
+        androguard.certificate.sha1("a4926b9762998c55bb981a9d64f452988f28d105") or
+        androguard.certificate.sha1("7cbc68a3f2cd099feb925bb556852c7dd7ba5239") or
+        androguard.certificate.sha1("e34723715354b436513253e5edf2178220c6828f") or
+        androguard.certificate.sha1("286cb8d883b8eabfd8be0720dcdaa98bb6641f3a") or
+        androguard.certificate.sha1("bf3a5a8cbb6862ae58656a776ca18d17eddce6a9") or
+        androguard.certificate.sha1("275c9f8f6d5c109e579fc925641fe9af89c3024b") or
+        androguard.certificate.sha1("27b547dc8da8d32bd5a35e02d23179b70477659d") or
+        androguard.certificate.sha1("a9eefbef9b7c50b35c0eefafb3110dac01ddd881") or
+        androguard.certificate.sha1("e72f3739057a7eaecd591ce74df58ed97c7672d3") or
+        androguard.certificate.sha1("7b3bf413ce524de8edf88da8a99d3c6ec5034781") or
+        androguard.certificate.sha1("54cc3c736450cc2e655cdd475481e10b9cea4f1c") or
+        androguard.certificate.sha1("12774e2c8d6738ee7a76c40ecf19f5add32fdfac") or
+        androguard.certificate.sha1("88f6ea75610c6fd9f66ce75bf9c1a8ba81be7e39") or
+        androguard.certificate.sha1("b11e593a543afe41a95ee2e206036ee897141266") or
+        androguard.certificate.sha1("e1ce842b9aa374ace897592650f53bacf982c2f4") or
+        androguard.certificate.sha1("9e43c993a7dda89aa230523cfd8ab4e9feaa32f1") or
+        androguard.certificate.sha1("bdb18e501c12007fd7e6e85af0b2ed2f94135964") or
+        androguard.certificate.sha1("887912b74ed073ea9daa5a72d91c7248885eee88")
+}
+
+rule Confucius
+{
+    meta:
+        description= "Confucius campaigns were reportedly active as early as 2013 by Palo Alto"
+    condition:
+        androguard.certificate.sha1("6cf853efd0c0736812eb9dae3ee05edf23adcebc") or
+        androguard.certificate.sha1("45f93447963ff3a4e70eb6e4233edfac6f66f72f") or
+        androguard.certificate.sha1("cbc20e9e77e366ccb355b5c5285a6b51b82b80e7") or
+        androguard.certificate.sha1("7fe090b4914afcaf6bce687535426e07322bdc46") or
+        androguard.certificate.sha1("4652bf5091ce2f6fb36abd3c55f0259921db72d4") or
+        androguard.certificate.sha1("5ed414602f1fcb98f89ac5df552a214b5fe2df2b") or
+        androguard.certificate.sha1("6e5e7ecb929fdc29ba93058bf2f501842ac0f2c0") or
+        androguard.certificate.sha1("0550dad8d55446e5b5dbae61783cfb7c78ee10d2") or
+        androguard.certificate.sha1("00d000679baab456953b4302d8b2a1e65241ed12")
+}
+
+rule DarkCaracal
+{
+    meta:
+        description= "Hundreds of gigabytes of data have been exfiltrated since 2012, including enterprise intellectual property and personally identifiable information"
+    condition:
+        androguard.certificate.sha1("7d47da505f8d3ee153629b373f6792c8858f76e8") or
+        androguard.certificate.sha1("b0151434815f8b3796ab83848bf6969a2b2ad721") or
+        androguard.certificate.sha1("bfbe5218a1b4f8c55eadf2583a2655a49bf6a884") or
+        androguard.certificate.sha1("ed4754effda466b8babf87bcba2717760f112455") or
+        androguard.certificate.sha1("eaed6ce848e68d5ec42837640eb21d3bfd9ae692") or
+        androguard.certificate.sha1("309038fceb9a5eb6af83bd9c3ed28bf4487dc27d") or
+        androguard.certificate.sha1("47243997992d253f7c4ea20f846191697999cd57") or
+        androguard.certificate.sha1("edf037efc400ccb9f843500103a208fe1f254453") or
+        androguard.certificate.sha1("35b70d89af691ac244a547842b7c8dfd9a7233fe")
+}
+
+rule DomesticKitten
+{
+    meta:
+        description= "The malware collects data including contact lists stored on the victim’s mobile device, phone call records, SMS messages, browser history and bookmarks, geo-location of the victim, photos, surrounding voice recordings and more"
+    condition:
+        androguard.certificate.sha1("7555f5c5e70d3b33a35e9db9a6cb5554b38ad9f3") or
+        androguard.certificate.sha1("628d0bf29626fca8b66053597e310b2f842172d3") or
+        androguard.certificate.sha1("f79fd307847deb43025017da5821700d7d83bc3b") or
+        androguard.certificate.sha1("492ce8be3b90a2e586a67fc9095fc01b2ffe4981") or
+        androguard.certificate.sha1("3a799c0fc8fe06659b8d22d2332f24f18effe17d") or
+        androguard.certificate.sha1("e09c6fdc034da5c5cd1656a7b3b49116db575ac1") or
+        androguard.certificate.sha1("dc0220f9a43989a4628f4eabd5e963fd80d8f698") or
+        androguard.certificate.sha1("54e04523b7e77f44e77cb742fe87822f31388f90") or
+        androguard.certificate.sha1("1d497ae9e273441f1e800d3efafbf50119dd3242") or
+        androguard.certificate.sha1("2c61d60f8b1b52688b5642f646c89dad124f466e") or
+        androguard.certificate.sha1("5c04f724e1a5f2527f5062d103ceffb610e69eac") or
+        androguard.certificate.sha1("83ecf0b86946be794ed1565298d13a9b695ee299") or
+        androguard.certificate.sha1("1718bd35732587f87c756a62517d7ddff07e6e96") or
+        androguard.certificate.sha1("334171645f2d7011f5fc98b07286bbc231655d01") or
+        androguard.certificate.sha1("accdbdc724fbe4a45c4de5f9f0bdfc369e8fb35d") or
+        androguard.certificate.sha1("94037ffde778e4f0c49bc357d8e84a991f3baf6f") or
+        androguard.certificate.sha1("aaa004712a7ca0ed0d80294a02ab321996e4a363") or
+        androguard.certificate.sha1("ad451e4fc750c83a58fe8f7234f1766ad315a565") or
+        androguard.certificate.sha1("38aae6842bf2995e95c87d6c6fe8d173ac338d42") or
+        androguard.certificate.sha1("222bb71aecb45d4430cefa1bfa0a53c3fa4a67f0") or
+        androguard.certificate.sha1("c168f3ea7d0e2cee91612bf86c5d95167d26e69c") or
+        androguard.certificate.sha1("0fafeb1cbcd6b19c46a72a26a4b8e3ed588e385f") or
+        androguard.certificate.sha1("f1355dfe633f9e1350887c31c67490d928f4feec") or
+        androguard.certificate.sha1("d1f70c47c016f8a544ef240487187c2e8ea78339") or
+        androguard.certificate.sha1("a979f83a9ea44d06658189ada8501110043025b4") or
+        androguard.certificate.sha1("056ae0b297338bf97a289e88701b5d7613992371") or
+        androguard.certificate.sha1("248c8232e879a140bf09499fb06f6268c5bfad78") or
+        androguard.certificate.sha1("97d190f5c88a61508a30e7e77b4488dbc27df5bb") or
+        androguard.certificate.sha1("6e4078c3dd898769403e75afc58f92b6f63e3fdb") or
+        androguard.certificate.sha1("6e4078c3dd898769403e75afc58f92b6f63e3fdb") or
+        androguard.certificate.sha1("724cb07d53ea1ecf173b802f718fcd7343ba5ade") or
+        androguard.certificate.sha1("d7e03524249eacf1a3841e940d91278830536037") or
+        androguard.certificate.sha1("d73fd783bd5772fc169e002bf5daafb9b29ac019") or
+        androguard.certificate.sha1("5f6387ebb93d97b7a0a6e59a21bbd2a8bc600b10") or
+        androguard.certificate.sha1("444f8a87f7c6c07be063b3d0b62f4c6dba0773e9")
+}
+
+rule Donot
+{
+    meta:
+        description= "Donot, focusing on government agencies in South Asia, was named by ARBOR NETWORKS in January 2018"
+    condition:
+        androguard.certificate.sha1("817dbc17e9c5dd2a31727d9edca608920ec18826") or
+        androguard.certificate.sha1("c7c80588bead6a5baf167576ef8565735c51f419") or
+        androguard.certificate.sha1("0a780a3df8bf2add4c2052a9a497a2a48f9b22af") or
+        androguard.certificate.sha1("296cbc4cc8a6e87c5af4c50940fc00cfb7452650") or
+        androguard.certificate.sha1("647c94abc93775802a3f425cea92ac4637a1b6d0") or
+        androguard.certificate.sha1("e953fc8c0db0dbc44004bfd3699634dbee8dfe54") or
+        androguard.certificate.sha1("4f71b0e9442526c025e005d43e7ee0582ab2a224") or
+        androguard.certificate.sha1("d2cacaddb1ec8ebe996769bf09287768b43989e5") or
+        androguard.certificate.sha1("4f5eff9f03e373ca156a51f4f554a2d6068f1294") or
+        androguard.certificate.sha1("ac81b5ec5cde00ace02cf8a93b13552873602eb8") or
+        androguard.certificate.sha1("abcfe79ee85316c68c09440f17e4bd8d7a48ed47") or
+        androguard.certificate.sha1("fd5deb8ec23347691f9fe88275084c30933ec123") or
+        androguard.certificate.sha1("49e426518637da14f207e40b7d6ef596f0353527") or
+        androguard.certificate.sha1("8a5edb6f9f022c2f677a5b48e92c4e59f4c79194") or
+        androguard.certificate.sha1("9ea84c0e704f7eecb4feafeef166c82b0cead623") or
+        androguard.certificate.sha1("547f41cf853651eff2d25fd9095d7c24cf129d1f") or
+        androguard.certificate.sha1("34f5f9bd5a58e65f08ca1ddf1d21546c85e0295a") or
+        androguard.certificate.sha1("bb945f4a3e7f0c0477b99cee728272251e23ab70") or
+        androguard.certificate.sha1("2367fc3b992e74a48aac7292c94798956e50c28f") or
+        androguard.certificate.sha1("db313b03288827a7ecd3f6efe2e8ec7ff639e97b") or
+        androguard.certificate.sha1("3bbe8ba59481ecedc6012d4fd4b6cfb51b565b83") or
+        androguard.certificate.sha1("3fc93b5dbd1b34504d186c10a4d98c1124b5098a") or
+        androguard.certificate.sha1("8ac9ab3c62acd3e43eb2d5c9ae3f00902218892c") or
+        androguard.certificate.sha1("e635e0bb63d555edf1f2ae52cb7747b616398542") or
+        androguard.certificate.sha1("9f24a7386d0db814bacd304e39be922c736339d5") or
+        androguard.certificate.sha1("912caa57512e94126cbad3ce9b5f0c676363c2fc") or
+        androguard.certificate.sha1("2044e2d76bb67e3d47e5c2014bd6c5b398971b19") or
+        androguard.certificate.sha1("a3824ad7c3999c3d55b632eed01cab620f016446") or
+        androguard.certificate.sha1("a92b8fe659eb2178fa1dad174763851e497913cc") or
+        androguard.certificate.sha1("db1779c91ba7f4a50fed892634e8dade92b277d7") or
+        androguard.certificate.sha1("aa162e03cafbe4322c524fb2b3f2aabb7120b148") or
+        androguard.certificate.sha1("a6730c4ba67856f7efdb8e50b73bdf76c234a8bc") or
+        androguard.certificate.sha1("083e28c7fa6ed1bbb054a93439ceee5c77c8f374") or
+        androguard.certificate.sha1("29f90baccaf7de65f4c968cd7f91fa00a4d97137") or
+        androguard.certificate.sha1("07181166766b8fdf7296a402406c606bbbad2f90") or
+        androguard.certificate.sha1("e8b59a204b35e87a3de9822998453469fcb0f147") or
+        androguard.certificate.sha1("e214d5fd3b75579daf717e0484027b8106063dc3") or
+        androguard.certificate.sha1("b5ee6910f2b22d108805099c9b805929ae6b4360") or
+        androguard.certificate.sha1("0efd8ab6d9ad4d2dc5ad072bdbbd6a9cf15b9a41") or
+        androguard.certificate.sha1("9e70af4e59ebd8c5424ecfdde87882eca72a01aa") or
+        androguard.certificate.sha1("c4843b721fd1fa2275fffde97cba5450d80268ea") or
+        androguard.certificate.sha1("a889270246aba69ae0b41dbc159179b0c81ebc4d") or
+        androguard.certificate.sha1("46858bbeba252970c5f56814978ebcd966e7702e") or
+        androguard.certificate.sha1("b9631c764d39b6ba7bc5b0982a14caef0b0290b1") or
+        androguard.certificate.sha1("b7ef74a201352f1469e71a265e267a69bcd24687") or
+        androguard.certificate.sha1("5c89c3339ffcec2bc728474ec61394be33ec787c") or
+        androguard.certificate.sha1("2e7a3ed7f3e182614ca219ed46b9e4053cd2ee12") or
+        androguard.certificate.sha1("78bd739220e7647bd1f449971053ea9c9bfced96") or
+        androguard.certificate.sha1("9cb1414f126d7968687f9dedc6ffd02693f0518a") or
+        androguard.certificate.sha1("822ed9ab0aacce4797c6c6c555de4dbe3037a9bd") or
+        androguard.certificate.sha1("c9674974d8153785c2d3c5a3faf93b9eeef2f2ff") or
+        androguard.certificate.sha1("9103d7d33d17205e2f8bc52c005d9ed5bd868713") or
+        androguard.certificate.sha1("c91c1f3f54ebf202616a4fb004b854c93a734f00") or
+        androguard.certificate.sha1("96fb314f6a16bf1fe08f1df25b5e78b77f9cf6af") or
+        androguard.certificate.sha1("b92220916e0e8f7a36fcff6d0b80ad99fd8a7e6c") or
+        androguard.certificate.sha1("fde8d92245779377cce6ce801b1d0c59e7923118") or
+        androguard.certificate.sha1("4d984427db6c8853b1d74f5138d53949b3839a8f") or
+        androguard.certificate.sha1("8d141ade60c713bee37896268cd2f4cec8e61724") or
+        androguard.certificate.sha1("fcbada0b2953493fa962b78c6d9d9baa92c1dba6") or
+        androguard.certificate.sha1("773e3ab8c06ad1caa87311db1ef0f58ecc177f4f") or
+        androguard.certificate.sha1("dd28ea84861b77341be93eb3ac7a62ff40d53669") or
+        androguard.certificate.sha1("77d56be5551bfbd83afd9bcb1c8c165cd58c5b40") or
+        androguard.certificate.sha1("592db9d73ed5d6336a2ed4ceb4beeab814b056c6") or
+        androguard.certificate.sha1("f9987572f009d67fc210bc2c97edc4c8cbcc5db5") or
+        androguard.certificate.sha1("97e260611a6410c72f112146bc38a348254418c8") or
+        androguard.certificate.sha1("90d825d081966597d6a93606c3ee7656ce054958") or
+        androguard.certificate.sha1("3de3b672ed200bb8b8d434d6b5615e6b303a5999") or
+        androguard.certificate.sha1("a1207816baece243a6bf5fd2a7e87012986a1b39") or
+        androguard.certificate.sha1("8842c39a84224ed726d364cdf26158697d464d28") or
+        androguard.certificate.sha1("73aea9a5a11623ee6709beb435f4c289355b1b3b") or
+        androguard.certificate.sha1("3f2c8e170a4aab68af2c43a0d63e52a637791a9f") or
+        androguard.certificate.sha1("7d36134e934a0d1335c3d2e936901b138088c023") or
+        androguard.certificate.sha1("e5ce50066e22636e055b89f92a08462fa8703edc") or
+        androguard.certificate.sha1("bb68b0ae360485d529df1eac914496ddf7811b76") or
+        androguard.certificate.sha1("aa4d068c2efabc9d94af4bc1a03e26c6eda067d5")
+}
+
+rule FoxKitten
+{
+    meta:
+        description= "It infiltrate and take control over critical corporate information storages"
+    condition:
+        androguard.certificate.sha1("788fdf4b7e9e46080032ea758b5eded829f24cf5")
+}
+
+rule HackingTeam
+{
+    meta:
+        description= "HackingTeam was founded in 2003 by two Italian entrepreneurs. It is a Milan-based information technology company that sells offensive intrusion and surveillance capabilities to governments, law enforcement agencies and corporations"
+    condition:
+        androguard.certificate.sha1("23912d8a28324ae6c5fe5acd518045a2cf4d339f") or
+        androguard.certificate.sha1("13c2cf52c2d97c50b5d10300911e15b52a9f5bc4") or
+        androguard.certificate.sha1("0068a8e61fe75213738ecf9ad4927cb7a533886b") or
+        androguard.certificate.sha1("90320997c7dac34d4261eb38eb548910efc2b983") or
+        androguard.certificate.sha1("6cd604721a280103938173420ff6164896ac51c9") or
+        androguard.certificate.sha1("018085fac80c537ec80c292e2b10f48259d4764a") or
+        androguard.certificate.sha1("d190b480942ac732f282c61a540e9138a3e764b5") or
+        androguard.certificate.sha1("640b42bc0b054458631877c8de46028528e4ac3e")
+}
+
+rule Higaisa
+{
+    meta:
+        description= "Higaisa, named by Tencent, is an attack group uses North Korea's important time nodes such as holidays to carry out fishing attacks since at least 2016"
+    condition:
+        androguard.certificate.sha1("bc6ad07252a0533e87bc12c1d8da11348ec8205c") or
+        androguard.certificate.sha1("8f48024d63210104945e5da52773722495f099f6")
+}
+
+rule Kimsuky
+{
+    meta:
+        description= "The Kimsuky operators carry out ongoing cyber-espionage campaign against South Korean think-tanks"
+    condition:
+        androguard.certificate.sha1("05bd3c330d063eb24a41c67dd49abadf2f716115")
+}
+
+rule Nokki
+ {
+     meta:
+         description= "Nokki is a malware captured and named by Talos, related activities could trace back to as early as 2014"
+     condition:
+         androguard.certificate.sha1("864eef285801f49ffa150647c28e81bba3fecde9") or
+         androguard.certificate.sha1("4e467fef39176330b2c7a2fa4ac499f33f00923d") or
+         androguard.certificate.sha1("5a22910f4ea9ab4738960dd6cac0ef25a80dc2f9") or
+         androguard.certificate.sha1("4bd4a0497f194a79c6958c6c080e01b4991ce5ca") or
+         androguard.certificate.sha1("986212b84f9bd3facafc39a6765885edd945dca4") or
+         androguard.certificate.sha1("b1691e0f0732ce145579e65db8b930d3f394f0b2")
+ }
+ rule LazarusGroup
+ {
+     meta:
+         description= "In the middle of 2017, the WannaCry malware which leverages the leaked EternalBlue exploits affected as many as 300,000 computers worldwide."
+     condition:
+         androguard.certificate.sha1("f862c2899c41a4d1120a7739cdaff561d2490360") or
+         androguard.certificate.sha1("2a797df02b411bfbabc835054cb727cb8f0533d0") or
+         androguard.certificate.sha1("e1e37cc53b2448d7fe18d10c70f09bd463b6f1a3") or
+         androguard.certificate.sha1("6a30b32cb18368316a029b6a36598e3ced74207b") or
+         androguard.certificate.sha1("aab27ff4a57162485d59410b6b675b58fab1857e")
+ }
+
+  rule ZooPark
+  {
+      meta:
+          description= "It is a sophisticated cyberespionage operation that has been focusing on Android device users in the Middle East countries"
+      condition:
+          androguard.certificate.sha1("ce2f1fac0ba05925408ef2f6efb10d66c6578d82") or
+          androguard.certificate.sha1("53f733aa354e3ae95acad5e861aa466654b338e6") or
+          androguard.certificate.sha1("963a8ad06b8644ccb5921586b00d723e2b627161") or
+          androguard.certificate.sha1("35cf6dfd2605041e28f18c244068f11a843a728c") or
+          androguard.certificate.sha1("d097a6d527a698dd90de06ff97f779c3f07187c8") or
+          androguard.certificate.sha1("5e7c3490f6eccc4d0be03a7d9e2e9dd72dba517a") or
+          androguard.certificate.sha1("780b19ecd13b954d16bb1ff2975e04900ad621d7") or
+          androguard.certificate.sha1("8b8b676945e1b37d698beddb0078189afdbbeb9d") or
+          androguard.certificate.sha1("d5cd496c9832289f111afbb475ccd7a09d7d3d3c") or
+          androguard.certificate.sha1("54feb57427e8ad0998623b9a3946b3e17206cf60") or
+          androguard.certificate.sha1("02f178746b99d0cfc138134a1a6095cc6fa2e2f9") or
+          androguard.certificate.sha1("85013100d74c784082e0d224b9cebb1f7b8ec678") or
+          androguard.certificate.sha1("03b404c8f4ead4aa3970b26eeeb268c594b1bb47") or
+          androguard.certificate.sha1("10f27d243adb082ce0f842c7a4a3784b01f7248e") or
+          androguard.certificate.sha1("4969beb65a6e28a02b0d30bf327b5497002da604") or
+          androguard.certificate.sha1("09c3af7b0a6957d5c7c80f67ab3b9cd8bef88813") or
+          androguard.certificate.sha1("289f4f7b0ab10f2201bc86e8f840ee5d18b61b0c") or
+          androguard.certificate.sha1("bd0b132783ade0bd6b1c74c4fc5aa3a65c468f1d") or
+          androguard.certificate.sha1("b8237782486a26d5397b75eeea7354a777bff63a") or
+          androguard.certificate.sha1("cc1389ecc57dddd60470c36cf0e3200b76c9edda") or
+          androguard.certificate.sha1("70042dc45f2d5c121dad94141774db87e1ca2d75") or
+          androguard.certificate.sha1("29a7cd3c1c7f98896b55f066995aa0de772365ca") or
+          androguard.certificate.sha1("89ab73d4aaf41cbcdbd0c8c7d6d85d21d93ed199") or
+          androguard.certificate.sha1("c755d37d6692c650692f4c637ae83ef6bb9577fc") or
+          androguard.certificate.sha1("c60d7134b05b34af08023155eab3b38cede4bccd") or
+          androguard.certificate.sha1("2905f2f60d57fbf13d25828ef635ca1cce81e757")
+  }
+
+rule MustangPanda
+{
+     meta:
+         description= "Mustang Panda, reported by CrowdStrike, targets non-governmental organizations (NGOs) in general"
+     condition:
+         androguard.certificate.sha1("afd02498459773d4c1d271214446fc7db0a5e49d") or
+         androguard.certificate.sha1("d738fd0844dcfa47ebdf53d835ab130f2132a6c2")
+}
+
+rule MuddyWater
+{
+     meta:
+         description= "MuddyWater, named by PaloAlto, carried out targeted attacks against the Middle East in 2017"
+     condition:
+          androguard.certificate.sha1("0c2b938b98cd8dd8154b2ca9024822cdc0584352") or
+          androguard.certificate.sha1("39d267da0585ddec7a5f71f0320e38b680ac6516") or
+          androguard.certificate.sha1("b6045cf3238c4972b382b6e0a9cb06ea4f57d551") or
+          androguard.certificate.sha1("30fbcff5659cc345f513467ef130dd326b6458f5") or
+          androguard.certificate.sha1("1d9673ab682ab388035b00a62d7aeef131df00f3") or
+          androguard.certificate.sha1("1f35aecaf4c51cceb38b2e92f566ed867bfd355c") or
+          androguard.certificate.sha1("996893fa09b1f2e2c58fdaf1d2b1fc98a616d421") or
+          androguard.certificate.sha1("cd29a38eb52dac83be1f1e36b9830f5f0fdc362b") or
+          androguard.certificate.sha1("2ca3210dcc8123dcec312913a5c626ec829cd309") or
+          androguard.certificate.sha1("0b7518dac9d10d2ff187b9c7e05084134c52b8e3")
+
+}
+
+rule OceanLotus
+{
+     meta:
+         description= "OceanLotus is an APT group that was first disclosed and named by QI-ANXIN. The APT group carried out targeted attacks against Chinese government, research institutes, maritime institutions, and shipping companies since 2012"
+     condition:
+         androguard.certificate.sha1("1bfc553067280514545eddf0ccc18d3b4af05360") or
+         androguard.certificate.sha1("8b4e6a1a222f9c7cd5ebea233c5edef704a359a0") or
+         androguard.certificate.sha1("6691c48827fbe9188b063d900701d1ab7d7b38bd") or
+         androguard.certificate.sha1("3f7446ae6a5db4165498e4ad26bfa30a141e9471") or
+         androguard.certificate.sha1("10c91c8c61b963d7d4ad0a0f29cd2b2f878b2b46") or
+         androguard.certificate.sha1("48c10e5b1cc4bdbd8fe3aef45b7d9130b25c8d47") or
+         androguard.certificate.sha1("b6f054c209b52a3cf3788b116d66bf09c30ce68a") or
+         androguard.certificate.sha1("19f67efcce4eb6432b8bb8417da4352d8de9951c") or
+         androguard.certificate.sha1("06d95f0ee45ad028986be4b5849d2b97f9039ffd") or
+         androguard.certificate.sha1("7254708922a6a43640fa49d4280c5dbda5ac3122") or
+         androguard.certificate.sha1("475626991abb46f0089d25ef659ff127b1190d84") or
+         androguard.certificate.sha1("fa169811f462b85b6fad5a8e45fc4444a2e84a24") or
+         androguard.certificate.sha1("5fcbffd4081e56d26ee2ad7dea071aa48bd387f6") or
+         androguard.certificate.sha1("fb478bd9fd25048175dfa4aaab8e75692fd4ecfb") or
+         androguard.certificate.sha1("ff46d66089cfb27bc56950e11bd9add1f27d49c8") or
+         androguard.certificate.sha1("3ae8ca1f4b2ebc8f19546302c358d13c5821aa83") or
+         androguard.certificate.sha1("97068c718d16ab669ffa273e05ba402efba567bc") or
+         androguard.certificate.sha1("d123f14ca62fceddd9df9e86a1bbfd92df94c052") or
+         androguard.certificate.sha1("71a13a249915e5dd243abd4a4f81d314f850ced5") or
+         androguard.certificate.sha1("425f137723111f48bfcf3b65b4c84a17e2da73a6") or
+         androguard.certificate.sha1("dd49bb757aac776f134e7973983dec8516990789") or
+         androguard.certificate.sha1("e470a85d592ef4a8941731aea4543163cb249675") or
+         androguard.certificate.sha1("16d2ca92e002dec60b943240d39a469a95f30bce") or
+         androguard.certificate.sha1("09db8806f2eae7a276f549a6d6b64c6b71f4e091") or
+         androguard.certificate.sha1("0220e51898e5b02ae51efdb9949afdb397e44e3b") or
+         androguard.certificate.sha1("1229662f2a7c72593ae55afa3ff5d36abbbbac68") or
+         androguard.certificate.sha1("1434d8da63b59ffc3b62b7e6996e3f5a68bb26db") or
+         androguard.certificate.sha1("c46250a928607ef5d2b576ae1cb2b2a1d308fbe6") or
+         androguard.certificate.sha1("3209243aac16414adf0a14db426098ca15b2ebff") or
+         androguard.certificate.sha1("d0ea8a967066b0392aed01d5b253950c1bf1d28f") or
+         androguard.certificate.sha1("a0cee6d14f5be72b2579d3631efb62ba09bd49b6") or
+         androguard.certificate.sha1("9086e1f0076373de6eb5b13bc1ae920624d495e9") or
+         androguard.certificate.sha1("f1e6eb23d9d0a38ba356eb52fe4588236b851282") or
+         androguard.certificate.sha1("1ce02bab17c590220564e1aa794d3e58f434ec27") or
+         androguard.certificate.sha1("feb8718085d710c86f0294de52fb299101a43c0c") or
+         androguard.certificate.sha1("926cbdfe4cae6dc5b8b7c01a9a870c6481b3114e") or
+         androguard.certificate.sha1("b52a075dde2e5cca38679dccb48f8d1466b6fd9b") or
+         androguard.certificate.sha1("150b40cda990f91accc410ba74b5bc384d36f086") or
+         androguard.certificate.sha1("c41e9d1d198b91ffeddff8bd9a7876bb38a5ea07") or
+         androguard.certificate.sha1("c2145e83b8ec0dd1f078a7064f2e009be93eead6") or
+         androguard.certificate.sha1("56d35fcc511d13c17f8bbe5be67e5f77ab414c72") or
+         androguard.certificate.sha1("daac5de0919906cc9a43febcea6de5a036a4db7e") or
+         androguard.certificate.sha1("82679f8d52856cdaf251ab27b045402ea213cab8") or
+         androguard.certificate.sha1("a43b083f0b5e725ecda5406cbbf47599eeef2349") or
+         androguard.certificate.sha1("eafcf99c057efd09ba31c34f686db9943b2d1990") or
+         androguard.certificate.sha1("da193c4db108900b50449761746d7b0965eb034a") or
+         androguard.certificate.sha1("e33afa42e9fca470e5174065f3e8450f24370700") or
+         androguard.certificate.sha1("9704d3d884ffb8ec4acbc72442e7049be51cf532") or
+         androguard.certificate.sha1("6d4a25d76de9c9f44b873779b5af966a5c0f6541") or
+         androguard.certificate.sha1("a43e44f87e45f9cebbd871696031d2b7fc899f2a") or
+         androguard.certificate.sha1("c3c983b44bbdd95ff03d324c3dc5cebd6897c2d4") or
+         androguard.certificate.sha1("d2971979fb5c6fb4f78c30489c40f50cfa2b4337") or
+         androguard.certificate.sha1("1c047349ba88b2df55b1b6b84026dfe8280ce4a4") or
+         androguard.certificate.sha1("97f7f543751e5c5fd9018979df995479db3a3e36") or
+         androguard.certificate.sha1("9c4ca8db860ce59126aa5659185cf152aece1e30") or
+         androguard.certificate.sha1("f550d12e2963075fd786a39e329a20abf0ce043e") or
+         androguard.certificate.sha1("6cc2b9523bd7c6f3dd14eb266e539c26541fddb2") or
+         androguard.certificate.sha1("e311e0e890f42322a44443d53858b48e3c61408e") or
+         androguard.certificate.sha1("eba5399cc20de2736e013551dc4790a7b742a75f")
+}
+
+rule OilRig
+{
+     meta:
+         description= "OilRig is a suspected Iranian threat group that has targeted Middle Eastern and international victims since at least 2014."
+     condition:
+         androguard.certificate.sha1("0f3ae5c85151686b836fd95e2d680201679101e9") or
+         androguard.certificate.sha1("c7e7ad6d763a41b8d3d7d9301acbe53674041d75")
+}
+
+rule PKPLUG
+{
+     meta:
+         description= "The name of PKPLUG, created by PaloAlto, comes from the tactic of delivering PlugX malware inside ZIP archive files as part of a DLL side-loading package."
+     condition:
+         androguard.certificate.sha1("d949096ca730ede187f3fd0631404e273008c55e") or
+         androguard.certificate.sha1("b456a61a3e0ac6073a716b06293a3295a261de56") or
+         androguard.certificate.sha1("5d362de4c396195cedfe805a4a8dfec08fed0d1d") or
+         androguard.certificate.sha1("fbcf18496bb53bc2e4bc00d9f193fe3ff5970e48") or
+         androguard.certificate.sha1("a52be87f5cbb5af2f0fe0261d5e57c1b33799046") or
+         androguard.certificate.sha1("8a60db2535aaf6ec776936011067420e20521db0") or
+         androguard.certificate.sha1("9134009dbd05425108b152edb6d897bff4852696") or
+         androguard.certificate.sha1("353a15540724086e4d2931ee87458d776b637a65") or
+         androguard.certificate.sha1("aa0950b51c4dbd26bb52a2a950d53c9209edc28f") or
+         androguard.certificate.sha1("7d8fe5f803ad30f627ead851408efdf42fa04d1c") or
+         androguard.certificate.sha1("f83f38b03e2ce66fe0676f4477d3c5606e6d7db7") or
+         androguard.certificate.sha1("670409fc5173db1be0f2e95d837dc933b7c2705d") or
+         androguard.certificate.sha1("a6420fd866b54a3952de4a80ea34b5a8da39ef3d") or
+         androguard.certificate.sha1("41c994137f92366106429e594b08a962b9c0a5bc") or
+         androguard.certificate.sha1("7da93914c816e738d4237f52c80a17864f37849f") or
+         androguard.certificate.sha1("760cec64b8f212bf772d31460ada372213f37c96") or
+         androguard.certificate.sha1("12bf98c175fa551309bb5ea77809bf22eb7b4ba5") or
+         androguard.certificate.sha1("6dccd5134251e8ff76fad97343deb694200888c8") or
+         androguard.certificate.sha1("84baf6169b29a5ba77416817f770eee3e449ccce") or
+         androguard.certificate.sha1("6d21007cc1f272e011111e78ad4bfd0a557bb317") or
+         androguard.certificate.sha1("87ad86b5ba8fb61b541ff306ff5e83b738827a8b") or
+         androguard.certificate.sha1("f05994df3ee1fadff0d6a035e26170c89a6cec82") or
+         androguard.certificate.sha1("4321ae01d2f1cc1441077481bebc0bd20ad5b0ef") or
+         androguard.certificate.sha1("0b62f47dcd9bc3ce21603e4fab972c96ef922add") or
+         androguard.certificate.sha1("21f53ab407e9b8c73126fdebb0bf23dd78e485ab") or
+         androguard.certificate.sha1("db25cb21519fcbcf0402697db4d7a46fd47a0d28") or
+         androguard.certificate.sha1("c52546d2e2149a7f53d16e1dd9d9825c576dd870") or
+         androguard.certificate.sha1("5f5ca0be5b7d8e6c589647cf802969a3391c89c3") or
+         androguard.certificate.sha1("5028ab99c321ff12337c4541142c51b91db3e790") or
+         androguard.certificate.sha1("c0d0e4a4a8cf2eb4f387cb193065181806e2bd79") or
+         androguard.certificate.sha1("a2d65683bed4a7c67001baebc88b43a6e88d0c52") or
+         androguard.certificate.sha1("866fc7ccd48cc2461351f176e034ed442f1d4584") or
+         androguard.certificate.sha1("d97828122056a1dae78d65453b184eda8795d12d") or
+         androguard.certificate.sha1("aa5956c946975735096ecea6731e69335f549a43") or
+         androguard.certificate.sha1("74310a45914f8cf6c235796f41647f64f84ac663") or
+         androguard.certificate.sha1("37d800824c500c2087bd193fc4860ce4c423f59b") or
+         androguard.certificate.sha1("1fa91a557064a34b73b24b5db7afe72687b38f18") or
+         androguard.certificate.sha1("dfc7e272d051aee8cfae60fb4523413671b4ebfa") or
+         androguard.certificate.sha1("b51d5085adcfa9f8faca0cd234b9ef65d1242e73") or
+         androguard.certificate.sha1("dfa982d77e6c28cd2beee652a8c6ce4465daf3a6") or
+         androguard.certificate.sha1("b624699c9b6588e00171da02d5e097aa199b6e52") or
+         androguard.certificate.sha1("c54fd68e136b44cd805e6706820af1f485184008") or
+         androguard.certificate.sha1("4a343ec015a99f2ffc9284c285854487c040c4b4") or
+         androguard.certificate.sha1("66b98fe12878e035ff12013e75bae5cd06f9aa91") or
+         androguard.certificate.sha1("aadc6770d4578177b507107af4936ca3414bdc66") or
+         androguard.certificate.sha1("5d22d6d07004791e4e284f71ff5153964a8e42be") or
+         androguard.certificate.sha1("fae5c91851b35f4fa1098bf215ebe515ae88236d") or
+         androguard.certificate.sha1("ac0a30833fbc6575ef86f5f568b38d2806195fe6") or
+         androguard.certificate.sha1("1e2c454bd9ce86be5023a77c90bc4f88478e4160") or
+         androguard.certificate.sha1("f2fcd844fe585014481871366a53912feefff5c2") or
+         androguard.certificate.sha1("6448acad7c574a2174a876339004be32b0e3e655") or
+         androguard.certificate.sha1("9a6effb0562e44498d92bf7d36f58a65e92e1348") or
+         androguard.certificate.sha1("98e61754d13474797941c88416f95bbeafae0c7d") or
+         androguard.certificate.sha1("73e1397be9e4ec90959650a13529f0faf925a16a") or
+         androguard.certificate.sha1("c0725c967c0530101d6d199db23685217c09ec28") or
+         androguard.certificate.sha1("23524fa4eb3d4c5b7becba48c5e66e1bcb2c3285") or
+         androguard.certificate.sha1("12a1a49721989943a35082ec1faeb8e6d5eb42d7") or
+         androguard.certificate.sha1("2c24c42f4e1d27a1d293f273235427d81f281560") or
+         androguard.certificate.sha1("f41870ac8eaee7e6cbf2af4151d06cb099216326") or
+         androguard.certificate.sha1("6f4aba24134903b652610da319e1eefea9c6c3b9") or
+         androguard.certificate.sha1("b03a75703af98ec9c5f52d68354992456fa198b3") or
+         androguard.certificate.sha1("5ddd72ece4c17dd0b86cf5a1674a96ea9f61a36a") or
+         androguard.certificate.sha1("4483f071cc9a2cf37f341963ff8bd2a37251ee8c") or
+         androguard.certificate.sha1("03e0996c6d44a3b7df7ab18ef6c0a8d640c93945") or
+         androguard.certificate.sha1("a08e80dc8ca98f54f2c2d574248acd6a19ebb82d") or
+         androguard.certificate.sha1("748b0752f2e819b4e293c02ba6e04ad41caddbc2") or
+         androguard.certificate.sha1("5fccf7bca5b5d5ca857b00e90b083e2c8d63128a") or
+         androguard.certificate.sha1("7c7975fedf6c47503d6adc66ac4fb8c65af7e670") or
+         androguard.certificate.sha1("f2700f0d2f6e577fc4d56529be96e73e4f3377d4") or
+         androguard.certificate.sha1("7ee89f6aced3daffb6e89cd5c5ea57cc54cceef6") or
+         androguard.certificate.sha1("baf9bb0663090722fedcf97f8ad5ab587f3ebf3c") or
+         androguard.certificate.sha1("2a63eac62a151aac772a11d8f38c1899d3d2bd1a") or
+         androguard.certificate.sha1("ad3447f7ef08c8b014dfdecd0f96489fc6bde8d0") or
+         androguard.certificate.sha1("c529f5621152498a6cfa7f76660808268274df3c") or
+         androguard.certificate.sha1("5966f34d71de67828c2e1a047015b2653309cc39") or
+         androguard.certificate.sha1("0f8f4d484ffc1f0a3e47ae1246d004b8ee59b6f0") or
+         androguard.certificate.sha1("4053add5b08b5cb90303324530e13cb4449dc7de") or
+         androguard.certificate.sha1("671363e246f2f0646b71790b8b83269b9e6c4640") or
+         androguard.certificate.sha1("264de328137a71dca2e3db9514ad771c2783a563") or
+         androguard.certificate.sha1("896d8ec46398ef9aebe9438b73dc071cfa80042a") or
+         androguard.certificate.sha1("203a2b3a50cab390fd0e3d9338511be02c7255ef") or
+         androguard.certificate.sha1("683814bf51fee18c4d60132bc09f7ce47f7ada79") or
+         androguard.certificate.sha1("085185e5b552729198707cd7e526181f472001b5") or
+         androguard.certificate.sha1("8973d39e7801a58120ecd5d5b8828e4aafbe5a4f") or
+         androguard.certificate.sha1("a49bf4f4d2768d101a3a02b872eb6e1cd7594f87") or
+         androguard.certificate.sha1("fe447ccae8f4bd69c71dd3e05c7c00a8118468c6") or
+         androguard.certificate.sha1("5f7695ef00d8518d0fe0e1a0ba8887b3f9726d29") or
+         androguard.certificate.sha1("ca12791fd2ac1dc82357f3381c6ed86cda0e203d") or
+         androguard.certificate.sha1("298011c8dcae6933eb03b96bd6694825660ce267") or
+         androguard.certificate.sha1("4fff5c4b8891c61e3b13f09d72e49fa5ae712a1e") or
+         androguard.certificate.sha1("e75f9ad66a2266906e4ec06d9eeef33dd38aba9d") or
+         androguard.certificate.sha1("78183fad63be9f4535b80b809c033b71f21d61fd") or
+         androguard.certificate.sha1("0f4ae942d510e5bf2e5916faef2365fdb7d96f70") or
+         androguard.certificate.sha1("2d7305fbbe848f2171835057473f77f1e4de5bcc") or
+         androguard.certificate.sha1("e9db23eb66f28fd97e7ad1b989eb5d882678e2d8") or
+         androguard.certificate.sha1("cc71c4f56e6d56dc40ae70923371e046c32f61f9") or
+         androguard.certificate.sha1("5bc984605ed2e4c1e6be67648f61a0fb3ff8df44") or
+         androguard.certificate.sha1("e5462d3509cf6ed0a763df0cc3cc809f30d7fb5f") or
+         androguard.certificate.sha1("e9df3b2ce22c129ab89df4d124a2308141bd25c6") or
+         androguard.certificate.sha1("39b208d3d6877b5ca8c51620df2d5c8dc0413e48") or
+         androguard.certificate.sha1("17202ef75defaa1a62d0d6e0e615709501f55212") or
+         androguard.certificate.sha1("cdf9d92e06e35e777a9eef4df4803c186d904acc") or
+         androguard.certificate.sha1("d58bfd0e40d7c5165cd418e57444405dd1f9f402") or
+         androguard.certificate.sha1("f2beebd32046cd0ca5149e83219fe8735e656bfb") or
+         androguard.certificate.sha1("8e738a7640e75cec522efa634c77648eb464124c") or
+         androguard.certificate.sha1("4487ddf83cb696f42672df306a352b24147fd381") or
+         androguard.certificate.sha1("2225865033489ab50406081dad3cab64f2721900") or
+         androguard.certificate.sha1("ed5fe27a21859e4f956ca8fbfaa220e6936f3640") or
+         androguard.certificate.sha1("d8c8d1fc78ffd4ef7e93e9931f36948acd987c80") or
+         androguard.certificate.sha1("18877fc2338a56c86994aab250b698a4b698a5b7") or
+         androguard.certificate.sha1("5f62e9d1699160e3b8bef366794a9145150bab2c") or
+         androguard.certificate.sha1("ceedf207240480d859b558a18f0f40a5acd9845f") or
+         androguard.certificate.sha1("21f53f686d0c4b7641ad756680a2c18fefb5d8a5") or
+         androguard.certificate.sha1("63ce99de6bc2b8b5c9e5ccf2c85601fecf34ce80") or
+         androguard.certificate.sha1("88e524f2dbe96fa65eb4d6df076b23cd51d8e184") or
+         androguard.certificate.sha1("a844c531b81195093eaa4ccacfcf9576945b68f7") or
+         androguard.certificate.sha1("b964c051b6659a5dc2a448de829d7fad526e82f8") or
+         androguard.certificate.sha1("602b711fa9b2e37ce8fc475b98a1d38aa8a6a42d") or
+         androguard.certificate.sha1("ea235eb9c3a38ab6d71a9d8ea69fb1909abb7e66") or
+         androguard.certificate.sha1("f407fd4ba73804071ffe54ebc20d5c7572aff540") or
+         androguard.certificate.sha1("d0107f75c36187c2345f05fb25640aeecbcd39e9") or
+         androguard.certificate.sha1("453a8a3c0f4fa1b060df66342aa3db58b93adbcf") or
+         androguard.certificate.sha1("815d30015a553f39c23da08c7e364c0dc905ef82") or
+         androguard.certificate.sha1("802bc13443e48755ff813d7929119ffa7ce17624") or
+         androguard.certificate.sha1("0d26a75b1305dd2baaf866d219a395cbc61a7f71") or
+         androguard.certificate.sha1("1d9f9c25563abfafaed7e88fec07ea3b40108501") or
+         androguard.certificate.sha1("d0bd083624c85cd936902570b36b57af5d40ac14") or
+         androguard.certificate.sha1("c01ccf9606666cc5e8bb35ce4053cc3fc3021286") or
+         androguard.certificate.sha1("6d645201a16311d20e4e764f56c23fda1916cdf3") or
+         androguard.certificate.sha1("8d0df18c0ab8679ec3fe123d1faa8db9ae1e0551") or
+         androguard.certificate.sha1("7d03deaac80e70684bc1801f096741b94d857d45") or
+         androguard.certificate.sha1("43035a9a0d684b04e2e508a7e8dea4645fa1e508") or
+         androguard.certificate.sha1("51f35af288d182bb9810c897d2c3ae51ec77bc68") or
+         androguard.certificate.sha1("ebd0b6fcb2a22efa994e1db6423794fdb671e834") or
+         androguard.certificate.sha1("48b279cf1d30122079c81871e01c4773fd66ed5b") or
+         androguard.certificate.sha1("ebcd76706d87969ec39719ca2f1cbb44e1305609") or
+         androguard.certificate.sha1("72175a706ef1e9a2d6d2bb5e7d59d552f4c2c1f2") or
+         androguard.certificate.sha1("2e7d3774d4a56ae534632b231a88dfa21ae71da1") or
+         androguard.certificate.sha1("f6af8303172e6ac0c878a06d6b5239697551089b") or
+         androguard.certificate.sha1("162340508b812f83dca5f1a82a251943bbe62189") or
+         androguard.certificate.sha1("de0fcb3a70e738ae19f36e39e96d8ea3e189fe7e") or
+         androguard.certificate.sha1("397c34a43bfb2c17c5c646787f8ca3068be65b81") or
+         androguard.certificate.sha1("43329ca694bb1a5ec464bcb62b2b2addd149b15e") or
+         androguard.certificate.sha1("c3d581d6e1b119f094f81e3eda6ed046ee3ec796") or
+         androguard.certificate.sha1("ddc3ea476aa1c5aa46283f46078c07116128a93e") or
+         androguard.certificate.sha1("c1ec790eae013c4c85fea4ac8a2f46dcaee9f93b") or
+         androguard.certificate.sha1("739371c462280fbe39db1d0d4770244cd5f544ef") or
+         androguard.certificate.sha1("50af0f880d2645fc9a5f679c81479c730e559ccb") or
+         androguard.certificate.sha1("f0958b439448e1053316685848bea870d7cce37b") or
+         androguard.certificate.sha1("c5364074e6b23eadae7c02f0914856d2c3d7be47") or
+         androguard.certificate.sha1("7d10ac9997cba324211c2135f5cb57854bc452e7") or
+         androguard.certificate.sha1("4bb6f27f37120c6723d8c04d2100b3a582bff8d8") or
+         androguard.certificate.sha1("8d0ffea49f57e914ed47063d7678f820a6022307") or
+         androguard.certificate.sha1("c71dcd5c3e389aab23e43d18aa810448c5de4191") or
+         androguard.certificate.sha1("47157c01ce3b820f7ccd14855d8c4553c615538c") or
+         androguard.certificate.sha1("44b044e187dd5517ef7d54c075858395cedbd372") or
+         androguard.certificate.sha1("1c75c759d66b51189089003c9624502df4997c85") or
+         androguard.certificate.sha1("a3156b6140305814c310a5042ff524584656d9d2") or
+         androguard.certificate.sha1("517d5af838f170cc5b840ed1644c7d75e8e82625") or
+         androguard.certificate.sha1("a03fbf1418da02fe0d3b958f9fc0a19d914ae6ee") or
+         androguard.certificate.sha1("6e954e29195a696f4b56ba50521f069190c00143") or
+         androguard.certificate.sha1("3a33f94147e03777b7f014265c057fe27c16a443") or
+         androguard.certificate.sha1("1dc6e2039520b177e109b6038a0087d1379b513c") or
+         androguard.certificate.sha1("7153255351cc97d3b1604fd8701104b3378d2822") or
+         androguard.certificate.sha1("4565a6cb0c39f3267d8c4a69ffeda00574a4a5b7") or
+         androguard.certificate.sha1("df58992a4dab3b71b4855d09ff2bcfe2df57ba1f") or
+         androguard.certificate.sha1("c582d078e11b92e8fe7eb0c6c4d47d1029ba32b3") or
+         androguard.certificate.sha1("7139cf7746b81806ef95427f6dd06fe2e2f475e0") or
+         androguard.certificate.sha1("3f9e9441ba735f8ef8efe3e20cd2a543390a862d") or
+         androguard.certificate.sha1("f02b24a28b5cc92c6bd6133a76896ff4ecafbf4e") or
+         androguard.certificate.sha1("71301d996404ef711b9d79c281e6f9e79fbead25") or
+         androguard.certificate.sha1("e7c8e12657ddb946b4b5854a27f312c7221ad26b") or
+         androguard.certificate.sha1("fdc6e7a978f5def9ab3de4882ffee91d0bacf4d2") or
+         androguard.certificate.sha1("a7a4758ccc4f0daabb391a011890355f994435ae") or
+         androguard.certificate.sha1("546a90beb42e375f3b37416f8a4eb11dccfb4020") or
+         androguard.certificate.sha1("6470c5c4a9686d581f27b55653acffbf27bb768a") or
+         androguard.certificate.sha1("5fc9d246d4e8c792839b39fb10c281ec61e543d0") or
+         androguard.certificate.sha1("8d96d5b1325f468b01a86f0be5014caec5fdc9c9") or
+         androguard.certificate.sha1("b921497c67b37dd474bcea55a763d6553092e06c") or
+         androguard.certificate.sha1("3190d4866f1e840e84b4e49bca0aa1e979fb0f0d") or
+         androguard.certificate.sha1("2806d051fa12ce7c89dc5bba5569ee28f50ae82c") or
+         androguard.certificate.sha1("0beeb8691565fdc4b86574a18c27f39472957c2f") or
+         androguard.certificate.sha1("fdcb4000d44a4b627295a092c2fbfa9707313a15") or
+         androguard.certificate.sha1("1457f65aae69e3ce8921f6b0852eb833082eabca") or
+         androguard.certificate.sha1("f78f83d9dc2c33a5161582be8baa8d1f0a565cad") or
+         androguard.certificate.sha1("0bd5f6574ff1e9d2b3c94743b320381329e054de") or
+         androguard.certificate.sha1("0940232634564cedb215d30132746c3df1d8b8f8") or
+         androguard.certificate.sha1("bbe46c45767b290c37c178ef24640d07b8f1de2e") or
+         androguard.certificate.sha1("d3efd605cc6339e0a8f361275d6750c44cd765dd") or
+         androguard.certificate.sha1("40a37ad782e28947cb6e017d4a89851c247eefc0") or
+         androguard.certificate.sha1("077d8b306cc84c19e21280cc65f232c9a9650cd6") or
+         androguard.certificate.sha1("b9645a434ce9b2c8fb3a5bc0ca0cf5b1d0e2c044") or
+         androguard.certificate.sha1("07cb31616829df7a2585e416007e04864d491bd3") or
+         androguard.certificate.sha1("ee536d323a064753897fe4f5bbec5b62eb3b0129") or
+         androguard.certificate.sha1("40d4bd8210126fc678e34ead301372c2f1349ee0") or
+         androguard.certificate.sha1("da29be11b6e70b908e91fa431440395a27ca174d") or
+         androguard.certificate.sha1("e5eeef2e79adbf64eeb3105c86c81a5498ef7869") or
+         androguard.certificate.sha1("3874d4d8c3daf6be3fea9844ede27c51111121ee") or
+         androguard.certificate.sha1("680b6b9682d4a61ce5305aa3c9ded8341bb4e548") or
+         androguard.certificate.sha1("1a18f7d138cda258d5e6e1ed91581b875f7147f4") or
+         androguard.certificate.sha1("cfd6a608bf9f096fd1db460ec29b6d8f17bb8153") or
+         androguard.certificate.sha1("178019c677cc261a84abc2c28eb3b3a9059e416e") or
+         androguard.certificate.sha1("20c70207b2e2d8e4b2ae56c182e7ba619c72173e") or
+         androguard.certificate.sha1("f01f2c217cfad2d5f04bfe1e7cf36d821b8b2ad7") or
+         androguard.certificate.sha1("5b138f79d4d1189837fd25697e513202bf18a984") or
+         androguard.certificate.sha1("8e759d24dcef7fe93aeacd345eb9f057922163f6") or
+         androguard.certificate.sha1("e3905730331ec6b52c0290be6c2adf0e80ad18ea") or
+         androguard.certificate.sha1("1d8bfa9e922367bc059996f1c78d1ce3612aad6b") or
+         androguard.certificate.sha1("3f142ed64da788aefe7542b349d5b0154f132a3e") or
+         androguard.certificate.sha1("c932ab2513fb911f2c05a46cfebaa2bb8d3d0870") or
+         androguard.certificate.sha1("7b4bc0b54abf3f9cecf41e3ed95f8b2fd0370425") or
+         androguard.certificate.sha1("a75c34f3963858d80cb1be3255b8b16b048fea5f") or
+         androguard.certificate.sha1("63bd4b98a0bfaad6d4edceeb487b6c283892e20c") or
+         androguard.certificate.sha1("f135735de74f8f485fd68e7ef2a6d1f00e6d1b87") or
+         androguard.certificate.sha1("22f7c08fd1af3671ff1bbdfb06a60c824579cc96") or
+         androguard.certificate.sha1("b3604f80218b0abf8f31cbaff641ec04740fc103") or
+         androguard.certificate.sha1("0a14f8bfda07461cf08db682a24c3b617e8c7b78") or
+         androguard.certificate.sha1("8e3fcb28eb2c626edb590eb1fc882fa681585023") or
+         androguard.certificate.sha1("b7387d90d18b51129d45b77ee0f234e9af6cd41d") or
+         androguard.certificate.sha1("874d6b4bc17842f6b7c8991bafd6ee05ed064c12") or
+         androguard.certificate.sha1("44542ec28ebbfd0e424ef3804e7723d678d5537d") or
+         androguard.certificate.sha1("f5e34377598a1130780a87e8a55f29b43d548419") or
+         androguard.certificate.sha1("762a47aafc87ea19dcae05fd110537d80c220ed9") or
+         androguard.certificate.sha1("189ba163b3ccfe1654259dacceb1d22b04cbe9d6") or
+         androguard.certificate.sha1("1c2a1812636ce4810d57e47c608b199f62c105b4") or
+         androguard.certificate.sha1("45db488e643c4fe874aaa3193899b30bc6dd9de3") or
+         androguard.certificate.sha1("82d37a2758078fd39aea1c3d86d9e81c5112d347") or
+         androguard.certificate.sha1("eed90c1515c20bef9b54490852623c4b0b123efc") or
+         androguard.certificate.sha1("c90dabb1634ca0cd754b86b88867d8a344cff602") or
+         androguard.certificate.sha1("d4d95501ef6bcc3f350180b1b04dbd4f9da83fee") or
+         androguard.certificate.sha1("cf5b2db5fe648f8ac8c6c51a52354f28c1c9528c") or
+         androguard.certificate.sha1("25848af40523910b52e2640ff2e729fe25efa24b") or
+         androguard.certificate.sha1("5fe838c1cdac4d5014ed86084d977f5f01fab6b1") or
+         androguard.certificate.sha1("3bc50a2a0a0cf1ff1736157f070a3079b857a0fb") or
+         androguard.certificate.sha1("7a06317fb049f8fe1678955c155513aeafd1f882") or
+         androguard.certificate.sha1("c2d4c51879c7b67c3455b88daa4da850786c4707") or
+         androguard.certificate.sha1("e6f2d839eaa89a046b453ad17998a528e84355a0") or
+         androguard.certificate.sha1("5dfa0293e39ed01220928e3b2a3d9a26f936bc8e") or
+         androguard.certificate.sha1("aab3a35353021d6236af7f8afbf131c3618f126c") or
+         androguard.certificate.sha1("5904b634d1d8cb2f3b71b8062a2687e5b90fca79") or
+         androguard.certificate.sha1("d3abdb5f57da2e27478fc9cf6d3c93ec8993af60") or
+         androguard.certificate.sha1("7ade48cef135007c5d440a1c67c5fb8015de5c2b") or
+         androguard.certificate.sha1("af40aa9d7c62e35bda37a2beb27b35fc53d3e566") or
+         androguard.certificate.sha1("b3d763cfbdf8ba9d133d64c9bef857570966462c") or
+         androguard.certificate.sha1("e2c9df04f1ef4c8975be660f9d6a3e0843db9ac9") or
+         androguard.certificate.sha1("05740e5ece1665edcb8fb46f6ffc2f8dd18ced49") or
+         androguard.certificate.sha1("117005328b60fd87ab3ee873baab762801bff8b1") or
+         androguard.certificate.sha1("8039d29ec7ccb90bd850732f378937836f2d149a") or
+         androguard.certificate.sha1("8f16f544e68b38cf315415219fb9cd377651ad78") or
+         androguard.certificate.sha1("9440fcc50c99af4b40afd59b7f6a8b98fa3f8f7d") or
+         androguard.certificate.sha1("ad12a5935fa29623f0cf13a38233c3a114a92abb") or
+         androguard.certificate.sha1("fbc018a038cf4026ac7f87d457f5054cdf1d8190") or
+         androguard.certificate.sha1("75fd2801c9a50c9d7cdc7a58c57950c7bd2158e5") or
+         androguard.certificate.sha1("dc8f3cb19b5de50849df5e284f780e9daa50fd08") or
+         androguard.certificate.sha1("b7c6d811f808aca07dc56e0eb202bbcc4034a720") or
+         androguard.certificate.sha1("d84ff13047d7b7d4d9d69266e8a00f281224c089") or
+         androguard.certificate.sha1("c0e97f07cb2324aa39a0a184953209c6da1fd520") or
+         androguard.certificate.sha1("7c82765aaa824da6c243a5edd6cfa28d50401de9") or
+         androguard.certificate.sha1("d53f54f66fbff1625170eac6ad834471e46f406e") or
+         androguard.certificate.sha1("b9d7520b9a198a6196cc7fd96ab0ebd98ecde2c0") or
+         androguard.certificate.sha1("aaee330e7f91820f3b6d0910d189db60894ad461") or
+         androguard.certificate.sha1("615dbdade38272bbf0608ebc1149830e7428e56c") or
+         androguard.certificate.sha1("e84ed30c36e0274417d8e7bfd19e060de3f0b7be") or
+         androguard.certificate.sha1("a431171ff2dabd0249a1c3de70dedc8b06df9702") or
+         androguard.certificate.sha1("b71e09fcc2d44293c0ce2364f1510b1e6cd37b29") or
+         androguard.certificate.sha1("9d4611f132b1ad4b8520e1002ab27703eeba8ecf") or
+         androguard.certificate.sha1("948f7796cb3b78265ebbf1262d903b3ce6a3e4f1") or
+         androguard.certificate.sha1("6c54e3a4c6202d9ead95c1cf411566a730064e45") or
+         androguard.certificate.sha1("3b3be9a6a1907e39cf262033c2f95f0cd331d32f") or
+         androguard.certificate.sha1("911ef5942f261339f2504a55038c9aab1a749a83") or
+         androguard.certificate.sha1("3540ae79207feacb05f2ae95b89bddf9e937ca29") or
+         androguard.certificate.sha1("c18484f3b30f85a9900b49ecccde5722226db066") or
+         androguard.certificate.sha1("a416908bd0e023c263adf9c2adba48861d5a3c9d") or
+         androguard.certificate.sha1("3ad36ed107f3f32f9e9cd42da057c64ad354ac7e") or
+         androguard.certificate.sha1("f6738211e36794869bae08fe9d1b50d7b7083bbe") or
+         androguard.certificate.sha1("d7406ba603588c3eaed8e744a3a5e5411d9d0f9e") or
+         androguard.certificate.sha1("75c7dec4949e1c12b65a396dc0a89333b2e6efa9") or
+         androguard.certificate.sha1("a98dfd4726940057001a2d93b85785e67b9af159") or
+         androguard.certificate.sha1("659d12ef207a69dbd6d3ba1fe6e170ae15853fed") or
+         androguard.certificate.sha1("2671a3d8789af5be1a762283457f96fc6fb3270a") or
+         androguard.certificate.sha1("baa3f1a35bbd805876bafea7074e55a0ce53f4e3") or
+         androguard.certificate.sha1("1406bec010f02041a4072c6e9948211175faf44a") or
+         androguard.certificate.sha1("6fe9bc2a76b57099adde1349e63b6b5e8c0efa2a") or
+         androguard.certificate.sha1("bc0a0a9400d673d3b76726d7ecdd3b68819d5293") or
+         androguard.certificate.sha1("c028375df3b2eb9210311f16b0d784f065bb6369") or
+         androguard.certificate.sha1("cd7a2c8a7a6779d9826ed21e0afcf7040a301476") or
+         androguard.certificate.sha1("c7e0c768b7140268aea5b33c13895d03f86ed109") or
+         androguard.certificate.sha1("ddc866464091a84145e361e3f75e83e893cbbd20") or
+         androguard.certificate.sha1("8fa297ea88d4f338f4188bcb76da5ff468820fce") or
+         androguard.certificate.sha1("83d525f1e6ddf427b19e18645b868571bab120eb") or
+         androguard.certificate.sha1("6f1c28711c39f72cdc0129dbaac04ab9fba325f5") or
+         androguard.certificate.sha1("73d086d0cef8d876c69392acf843d565adef286d") or
+         androguard.certificate.sha1("039b41ee33ad8b1b68afd008edfcad06678f4315") or
+         androguard.certificate.sha1("2242bef04d7bc62e8aaaee998fe4569c8737fef1") or
+         androguard.certificate.sha1("d93da9841fc93612888d7fc513d583d9481a7355") or
+         androguard.certificate.sha1("d93419f77f2d16dd18f81844ee588cc2c0ec1ab7") or
+         androguard.certificate.sha1("dc0ffe5f794417bb5f348a15f969078459ec3dcf") or
+         androguard.certificate.sha1("394d9c3f88e2b8b73b8a4d867d0aa156a493dc3f") or
+         androguard.certificate.sha1("6c6618b11c216f12cda1deb682fb852430334fb3") or
+         androguard.certificate.sha1("f9d448d89ad9f6189615be25b2899bf27858192d") or
+         androguard.certificate.sha1("0711e4d06fe83484da25aaef472929026db1d183") or
+         androguard.certificate.sha1("0f2836fa2c9a8060132ca5bad1ca89b314355f98") or
+         androguard.certificate.sha1("2f2b2cb43c35aab1afc942821e5b7f4eaec7d501") or
+         androguard.certificate.sha1("9a0a0744c1b37798fe73f6b7138598f6b4dd5256") or
+         androguard.certificate.sha1("53996dd96b0f7729e5bc80b103fcd5bdcb06bf3b") or
+         androguard.certificate.sha1("84ab2bbb520c2ff655d2e547f07c2471a6fe6366") or
+         androguard.certificate.sha1("4d95b05e0a18d1d2aab8e3f62a1f085537f162e8") or
+         androguard.certificate.sha1("fbeb398e860653de8436f4b864a38a0cc3e3f18c") or
+         androguard.certificate.sha1("e3c58f8fd5daa0a6100a11431f00deff67e88ed2") or
+         androguard.certificate.sha1("2319b926c1aec465a4b6a721d1f6b5cd9b8839e5") or
+         androguard.certificate.sha1("f0a1368f8d3f55789d6b66be6629329f0459c103") or
+         androguard.certificate.sha1("7b6c830df463eed714c80286cdffe91e0e8c9815") or
+         androguard.certificate.sha1("38351a896dc5d659d47a20aa7c57efb3cb705161") or
+         androguard.certificate.sha1("746360d07f525145aa69a5776f355d3aa3e47628") or
+         androguard.certificate.sha1("a8440fa145fe804dc56a967c47c52448764de3c9") or
+         androguard.certificate.sha1("63a78aada5d85148051164ee6d9a7b645a75df59") or
+         androguard.certificate.sha1("b2bf9702cf04382448a03364d167e025d4ba85eb") or
+         androguard.certificate.sha1("9f469427cf5619d1d34e08af0b52ebfa8ec64370") or
+         androguard.certificate.sha1("8645e79a0f9b80cba029c89b92ceac223793f9df") or
+         androguard.certificate.sha1("4f595a1af3882dc896068dcf2081765254e5a564") or
+         androguard.certificate.sha1("3ccaecb45bdf567dfeda1bbabe776988aeaf7dbb") or
+         androguard.certificate.sha1("94729934f8e1e4163e92fb165586229fa5d01914") or
+         androguard.certificate.sha1("0f2207f68955d9b679984fef3611b5279941036c") or
+         androguard.certificate.sha1("e998d1e3601b625295248b10536e816aa86ce20a") or
+         androguard.certificate.sha1("94f37f96efafd661c63fbd59056006699a2fb1e9") or
+         androguard.certificate.sha1("06f90c18b57070a65c3e16f8e5599949e4eaf45c") or
+         androguard.certificate.sha1("4eaef490a80d21066bc8f9e76e2784cd030f69f6") or
+         androguard.certificate.sha1("fd06970eb3ec3192f3d3591cc192a6be55e8b604") or
+         androguard.certificate.sha1("b544f6d11ba0af0ddafea9fb0ddbef18143073d0") or
+         androguard.certificate.sha1("17e10a87c75e7be0cca71c3f8392d566148cc21b") or
+         androguard.certificate.sha1("df3cd1d638f4cc0a7da49b700cd8736b0209df20") or
+         androguard.certificate.sha1("acc7b1cac54a10d9220ff50fbd27357f14da88f2") or
+         androguard.certificate.sha1("b90eff0b907e0cc3dc90e3f1650d7a759bd9af43") or
+         androguard.certificate.sha1("f701b5cc6b603c953f6fdff1a6bf50142c1e1cf7") or
+         androguard.certificate.sha1("a1dc9b153de6c172ce8d56d51063d79f008c30d8") or
+         androguard.certificate.sha1("485aa67ca9239bad1b8f02ac8324f22ec06ce71f") or
+         androguard.certificate.sha1("ecb8aab85361092a0e9ca519deb48ea85274a31b") or
+         androguard.certificate.sha1("405a4e6b9694bbcefb963e29a55a3df0c8bf3cfe") or
+         androguard.certificate.sha1("24793a13d52fafe06bff79067372b28d4bbf6de3") or
+         androguard.certificate.sha1("fd44c6df2ce35876d70023e3de5caa0ed6a73da9") or
+         androguard.certificate.sha1("4c6b4e20f9c7d7527893e85076fe9e63a40556cc") or
+         androguard.certificate.sha1("8588852d9576bbc1e8f7abf4f5cfc6f2728188cd") or
+         androguard.certificate.sha1("9203bdc5668ee17bd8ccc42d8a64bcad961cae78") or
+         androguard.certificate.sha1("ca747c5f3aac67a143ba9cdc7fd19f8397e5d548") or
+         androguard.certificate.sha1("ba5c4b1cbba2f68a04348bba381627ab2165b895") or
+         androguard.certificate.sha1("9007c95630f8b074ef456696f949b7a787284a68") or
+         androguard.certificate.sha1("e7f2aa1ee0900d34c21eb9744cfc5865531c2149") or
+         androguard.certificate.sha1("af96e7e17b9df6acf78c716897f7daa9a0e9ce44") or
+         androguard.certificate.sha1("c79546f9bc220bb8838bf26e510b32eaf09116d4") or
+         androguard.certificate.sha1("6189e073d7515eea581d643a169244ef1b5614d3") or
+         androguard.certificate.sha1("15f5d31580eba8287943908e65dcaebf34c5a0d2") or
+         androguard.certificate.sha1("fc25b6a259b40bc81736c20dc039f53723766a24") or
+         androguard.certificate.sha1("d131fa544736fa5c760f46917a027e728c29cc09") or
+         androguard.certificate.sha1("38abdeb705fc34e2c9313198ace31398dfbd674d") or
+         androguard.certificate.sha1("8be52f9aba29d0c4006c0a48dc7117fa712e88b5") or
+         androguard.certificate.sha1("1b83c453d37a66c4c002ba3b0df4b92bdef81818") or
+         androguard.certificate.sha1("8c6568943dfbfb89e31624d7847bf7776785cc0c") or
+         androguard.certificate.sha1("c71906122b2a1059f5447288aea4017ad1740cb4") or
+         androguard.certificate.sha1("8ff1247327c57b49c5c211bcea85f2aae3b73bd3") or
+         androguard.certificate.sha1("64f328eeab6003085940f3b4c6335936a59c46b0") or
+         androguard.certificate.sha1("4d243b5a00a12e0dd55b729a19abbcaac0b06b65") or
+         androguard.certificate.sha1("c407c2e747a9de9405b2c6172b878331cfc93b31") or
+         androguard.certificate.sha1("f14e669a96321cdee2ab0c90679fb1801c13e341") or
+         androguard.certificate.sha1("ac699b3e85414a83a6b90f915d2d4acd801487e4") or
+         androguard.certificate.sha1("59b80668b87c996f83db19a2cf307ee31a4d31c7") or
+         androguard.certificate.sha1("48ab2da9fca72cfd6020b9ca5441af0f73cf3b2b") or
+         androguard.certificate.sha1("8ab231e8023e3e7fc3da08d7ba59cdeca6300a43") or
+         androguard.certificate.sha1("d2b97b68bbe18fb5a7374d180c0f2c55639d4a30") or
+         androguard.certificate.sha1("8bd2a115c7eb8c029e6afe346e47520ff4f9f02a") or
+         androguard.certificate.sha1("53e16e14693d7adb29715e46fb31d815c9db35dc") or
+         androguard.certificate.sha1("05d2592cc92553372e49bc4aae03151627a20c26") or
+         androguard.certificate.sha1("7432502cda5e8f2f6d8774c5664ab098928c1cb3") or
+         androguard.certificate.sha1("180d20293a9d3b1bf05c41079c8c186ef4a420da") or
+         androguard.certificate.sha1("605687af69641537cabecadfe5a3b2e63dd81af4") or
+         androguard.certificate.sha1("5ad33291bdd78b157f3d967be4c066fc8735fce9") or
+         androguard.certificate.sha1("67777c19a671b55959555fee229cb8c7c36b4664") or
+         androguard.certificate.sha1("9f2632f63cb2ebf7e21c0d049b0d8dd92f323537") or
+         androguard.certificate.sha1("867c3e1d75b8fafa82cd04eef470839bdd85a240") or
+         androguard.certificate.sha1("d3d9637f410a4d3554e98f00bfeb29a0ade0020d")
+}
+
+rule PoisonedNews
+{
+     meta:
+         description= "PoisonedNews, a watering hole attack discovered by Trend Micro, targets iOS users in Hong Kong"
+     condition:
+         androguard.certificate.sha1("c1433c1074bc88ae9858451814244214c50ece37") or
+         androguard.certificate.sha1("308e10c165a0715da841a8867d8e7a0b1b03128b") or
+         androguard.certificate.sha1("0c6ef08ee34891ec29dc9ec235770808292b7026")
+}
+
+
+
+
+
+
+
 
 
 
