@@ -18,17 +18,15 @@ rule shedun
 
 rule SMSSend
 {
-        meta:
-                description = "This rule detects applications that send SMSs"
-                sample = "ee95d232e73ba60cbe31dbae820c13789b5583b1b972df01db24d2d2159446d7"
-        strings:
-                $a = "\" cmcc = \"21\" cuc = \"50\" cnc = \"\">20</province>" wide ascii
-                $b = "\" cmcc = \"10\" cuc = \"36\" cnc = \"\">19</province>" wide ascii
-                $key_file = "assets/keycode.txtbinlangPK"
-        condition:
-                any of them
+    meta:
+        description = "This rule detects applications that send SMSs"
+    strings:
+        $a = "\" cmcc = \"21\" cuc = \"50\" cnc = \"\">20</province>" wide ascii
+        $b = "\" cmcc = \"10\" cuc = \"36\" cnc = \"\">19</province>" wide ascii
+        $key_file = "assets/keycode.txtbinlangPK"
+    condition:
+        any of them
 }
-
 
 rule Android_Trojan_FakeAd_B
 {
@@ -53,7 +51,7 @@ rule bankbot_discoverer
 		description = "This rule detects the bankbot app based on md5 and sha1"
 		sample = "b3b4afbf0e2cbcf17b04d1a081517a8f3bcb1d7a4b761ba3e3d0834bd3c96f88"
 	condition:
-		androguard.certificate.sha1("4126E5EE9FBD407FF49988F0F8DFAA8BB2980F73") and		
+		androguard.certificate.sha1("4126E5EE9FBD407FF49988F0F8DFAA8BB2980F73") and
 		androguard.url(/37.1.207.31\api\?id=7/) or
 		androguard.package_name(/untoenynh/) and
 		androguard.permission(/SEND_SMS/) and
@@ -75,25 +73,24 @@ rule clonedfdroid: pua
 {
 	meta:
 		description = "Find cloned F-Droid Apps"
-		sample = "5962770b87a51fe9198ffdece47ca6faafad98e162275bb485833381774a29cd"
-		sample = "8ed89b20367d4ff0b375451d314780709cb706c17cc7103e9072ebf8ef2564d4"
 	condition:
 		(androguard.package_name("org.fdroid.fdroie") or androguard.package_name("org.fdroid.fdroid"))
 		and
 		(androguard.activity(/com\.applisto\.appcloner\.classes.*/) or androguard.permission(/com.applisto.appcloner.permission.DEFAULT/))
 }
 
-rule Dresscode_hzytrfd_a: official
+rule Dresscode_hzytrfd: official
 {
 	meta:
 		description = "This rule detects potential dresscode infections based on the hzytrfd package name"
 	condition:
-		androguard.package_name("hzytrfd") 
+		androguard.package_name("hzytrfd")
 }
-rule Porn_receiver1_a
+
+rule Porn_receiver1
 {
 	meta:
-		description = "Catches Porn apps - 0679099c90621db26d92bbb2467542a1"
+		description = "Catches Porn apps"
 	condition:
 		(
 		 androguard.receiver(/ts\.xd\.com\.Dw/) and
@@ -103,21 +100,20 @@ rule Porn_receiver1_a
 		 androguard.activity(/ys\.cs\.com\.Xs/)
 		 )
 }
-rule Android_Aulrin_a
+
+rule Android_Aulrin
 {
 	meta:
-		author = "Jacob Soo Lead Re"
-		date = "14-August-2016"
 		description = "This rule try to detect Aulrin. This"
 	condition:
 		androguard.receiver(/z.core.OnBootHandler/i) and
 		androguard.receiver(/z.core.SMSReciever/i) and
 		androguard.service(/z.core.RunService/i) and
-		androguard.activity(/xamarin.media.MediaPickerActivity/i) and 
+		androguard.activity(/xamarin.media.MediaPickerActivity/i) and
         androguard.permission(/android.permission.CHANGE_COMPONENT_ENABLED_STATE/i)
 }
 
-rule Trojan_a: SMSSpy
+rule Trojan: SMSSpy
 {
 	meta:
 		description = "This rule detects the dropper of a trojan that steal SMS"
@@ -129,7 +125,8 @@ rule Trojan_a: SMSSpy
 		$trojanapp and
 		$trojanservice
 }
-rule DTCLoader_Strngs_a: DTCLOADER
+
+rule DTCLoader_Strngs: DTCLOADER
 {
 	meta:
 		description = "Rule used to catch \"DtcLoader\" app strings, which look like malicious"
@@ -144,20 +141,8 @@ rule DTCLoader_Strngs_a: DTCLOADER
 		all of them
 }
 
-rule bankbot_discoverer_c
-{
-	meta:
-		description = "Rule tp detect Bankbot malware"
-		sample = "b3b4afbf0e2cbcf17b04d1a081517a8f3bcb1d7a4b761ba3e3d0834bd3c96f88"
-	condition:
-		androguard.certificate.sha1("4126E5EE9FBD407FF49988F0F8DFAA8BB2980F73") or 
-		(androguard.url(/37.1.207.31\api\?id=7/) and 
-		androguard.package_name(/untoenynh/) and
-		androguard.permission(/CALL_PHONE/) and
-		androguard.permission(/READ_SMS/)
-		)
-}
-rule SpyHuman {
+rule SpyHuman
+ {
    meta:
       description = "This rule try to detect SpyHuman malware"
       author = "yarGen Rule Generator"
@@ -192,7 +177,7 @@ rule SpyHuman {
       $s10 = "<<Register your device with spyhuman.com and start monitoring." fullword ascii
       $s11 = "\" id=\"W5M0MpCehiHzreSzNTczkc9d\"?> <x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"Adobe XMP Core 5.6-c014 79.156797, 2014/08/" ascii
       $s12 = "22Base.Widget.AppCompat.Button.ButtonBar.AlertDialog" fullword ascii
-      $s13 = "##safesecureservice-702df.appspot.com" fullword ascii
+      $s13 = "safesecureservice-702df.appspot.com" fullword ascii
       $s14 = "..https://safesecureservice-702df.firebaseio.com" fullword ascii
       $s15 = "00Base.Widget.AppCompat.CompoundButton.RadioButton" fullword ascii
       $s16 = "11RtlOverlay.Widget.AppCompat.Search.DropDown.Icon1" fullword ascii
@@ -204,18 +189,15 @@ rule SpyHuman {
       ( uint16(0) == 0x4b50 and filesize < 6000KB and ( 8 of them )
       ) or ( all of them )
 }
-rule Android_Copy9_a
+
+rule Android_Copy9
 {
 	meta:
-		author = "Jacob Soo Lead Re"
-		date = "06-June-2016"
 		description = "This rule try to detect commercial spyware from Copy9"
-		source = "http://copy9.com/"
 	condition:
 		androguard.service(/com.ispyoo/i) and
         androguard.receiver(/com.ispyoo/i)
 }
-
 
 rule Android_Buhsam_hunt
 {
@@ -234,6 +216,7 @@ rule Android_Buhsam_hunt
 		androguard.permission(/android.permission.SEND_SMS/) and
 		androguard.permission(/com.android.browser.permission.READ_HISTORY_BOOKMARKS/)
 }
+
 rule miner: coinminer
 {
 	meta:
@@ -272,22 +255,11 @@ rule tarambuka
 	condition:
 		all of ($a_*)
 }
+
 rule test: BankBot
 {
 	meta:
 		description = "This rule detects the bankbot app based on various info"
-		sample="a607a9903b0101bb1ed87381a6f339f83e721555e9355f889798e7b0df28d3cb"
-		sample="f61e3e022cafe04add649eab9173317440845bdbc022060225f3c6d4b2e9d4a1"
-		sample="d32d98751178ce0a307254a989d1d26c5601abc1b4ea092b1cb5dd470b48bb32"
-		sample="f967498ad1623f631356f5a3de2e958cd2794c653218fb8d1828b4be43069e2e"
-		sample="4debd811501958491a44f75d1c116d5ac4276bd1f88d22f81e33fcfff4af2c64"
-		sample="537e0e9d762ab89f6607ed31fd407142909c652958f4522bf8b1a9958b3c10de"
-		sample="3035dde4fa98cba19591808a6f0c2e64f062cb0210350592b72e7a1d8d27710f"
-		sample="a558d2d3e786f9ad00c6329056b84ac007578e422e47b56c7f4a6028abbedbdf"
-		sample="a3f8e8dc01b620f5ef1da9faa57bf691247f4c9e153b764ec1296f94403c2caa"
-		sample="37292ab423ef462b4df34e84116f85f1d0fcf8f8095045170c332cd7164fdda3"
-		sample="b42722eb3be50b74d025055165fc0fa84020df11449062dab2f64621965cb776"
-		sample="929d57342c0e97eb225a95e18c6f3045862ae54948528d22b93954876b92dd3a"
 	strings:
 		$a = "http://5.45.73.20/api/?id=1" nocase
 		$c2_1 = "/private/tuk_tuk.php" nocase
@@ -309,7 +281,7 @@ rule Xavier
 		androguard.activity(/xavier.lib.XavierActivity/i)
 }
 
-rule aamo_str_enc_a: obfuscator
+rule aamo_str_enc: obfuscator
 {
   meta:
     description = "AAMO (String decryption function only)"
@@ -331,14 +303,17 @@ rule aamo_str_enc_a: obfuscator
         71 ?? ?? ?? ?? ??
         0c 04
     }
-    $a = { 00 0f 63 6f 6e 76 65 72 74 54 6f 53 74 72 69 6e 67 00 } // convertToString
-    $b = { 00 14 67 65 74 53 74 6f 72 61 67 65 45 6e 63 72 79 70 74 69 6f 6e 00 } //getStorageEncryption
+    $a = { 00 0f 63 6f 6e 76 65 72 74 54 6f 53 74 72 69 6e 67 00 }
+    $b = { 00 14 67 65 74 53 74 6f 72 61 67 65 45 6e 63 72 79 70 74 69 6f 6e 00 }
   condition:
     $opcodes and
     all of ($a, $b)
 }
-rule sensual_woman_a: chinese
+
+rule sensual_woman: chinese
 {
+    meta:
+        description = "This rule detects porn apps"
 	condition:
 		androguard.package_name(/com.phone.gzlok.live/)
 		or androguard.package_name(/com.yongrun.app.sxmn/)
@@ -347,16 +322,6 @@ rule sensual_woman_a: chinese
 		or androguard.package_name(/com.sp.meise/i)
 		or androguard.package_name(/com.legame.wfxk.wjyg/)
 		or androguard.package_name(/com.video.uiA/i)
-}
-rule SMSSend_a
-{
-	strings:
-		$a = "bd092gcj"
-		$b = "6165b74d-2839-4dcd-879c-5e0204547d71"
-		$c = "SELECT b.geofence_id"
-		$d = "_ZN4UtilD0Ev"
-	condition:
-		all of them
 }
 
 rule e: official
@@ -378,7 +343,7 @@ rule e: official
 		any of them
 }
 
-rule aamo_str_enc_nop_a: obfuscator
+rule aamo_str_enc_nop: obfuscator
 {
   meta:
     description = "AAMO (String decryption function + interleaved NOPs)"
@@ -388,23 +353,23 @@ rule aamo_str_enc_nop_a: obfuscator
     example2 = "eb0d4e1ba2e880749594eb8739e65aa21b6f7b43798f04b6681065b396c15a78"
   strings:
     $opcodes = {
-        22 ?? ?? ?? 
+        22 ?? ?? ??
         ( 00 00 | 00 00 00 00 | 00 00 00 00 00 00 )
         12 22
-        ( 00 00 | 00 00 00 00 | 00 00 00 00 00 00 ) 
+        ( 00 00 | 00 00 00 00 | 00 00 00 00 00 00 )
         1a ?? ?? ??
-        ( 00 00 | 00 00 00 00 | 00 00 00 00 00 00 ) 
+        ( 00 00 | 00 00 00 00 | 00 00 00 00 00 00 )
         71 ?? ?? ?? ?? ??
         0c 02
-        ( 00 00 | 00 00 00 00 | 00 00 00 00 00 00 ) 
+        ( 00 00 | 00 00 00 00 | 00 00 00 00 00 00 )
         71 ?? ?? ?? ?? ??
         0c 03
-        ( 00 00 | 00 00 00 00 | 00 00 00 00 00 00 ) 
+        ( 00 00 | 00 00 00 00 | 00 00 00 00 00 00 )
         6e ?? ?? ?? ?? ??
         0c 02
-        ( 00 00 | 00 00 00 00 | 00 00 00 00 00 00 ) 
+        ( 00 00 | 00 00 00 00 | 00 00 00 00 00 00 )
         1a ?? ?? ??
-        ( 00 00 | 00 00 00 00 | 00 00 00 00 00 00 ) 
+        ( 00 00 | 00 00 00 00 | 00 00 00 00 00 00 )
         70 ?? ?? ?? ?? ??
         71 ?? ?? ?? ?? ??
         0c 04
@@ -434,7 +399,7 @@ rule aamo: obfuscator
     $a and $b
 }
 
-rule appguard_kr_a: packer
+rule appguard_kr: packer
 {
   meta:
     description = "AppGuard (TOAST-NHNent)"
@@ -459,7 +424,8 @@ rule appguard_kr_a: packer
   condition:
     2 of ($a*) and 1 of ($b*) and 1 of ($c*)
 	}
-rule chornclickers_a: packer
+
+rule chornclickers: packer
 {
   meta:
     description = "Custom Chinese 'ChornClickers'"
@@ -471,15 +437,7 @@ rule chornclickers_a: packer
   condition:
     all of them
 }
-rule joker_camera_a: official
-{
-	condition:
-		(androguard.app_name(/camera/) or
-		androguard.app_name(/wallpaper/) or
-		androguard.app_name(/game/)) and
-		androguard.permission(/PHONE_STATE/) and
-		androguard.permission(/CHANGE_WIFI_STATE/)
-}
+
 rule chornclickers_b: packer
 {
   meta:
@@ -493,7 +451,7 @@ rule chornclickers_b: packer
     all of them
 }
 
-rule fortnite_appclone_a
+rule fortniteppclone
 {
 	meta:
 		description = "This rule detects new Fortnite malicious apps"
@@ -506,7 +464,8 @@ rule fortnite_appclone_a
 	condition:
 		all of ($a_*)
 }
-rule android_asacub_a
+
+rule androidsacub
 {
 	meta:
 		description = "Yara detection for Asacub"
@@ -514,18 +473,19 @@ rule android_asacub_a
 	strings:
 		$str_1 = "res/xml/da.xml"
 		$str_2 = "resources.arscPK"
-	condition:		
+	condition:
 		androguard.package_name("com.system.tossl") and
-		androguard.activity(/\.MAC/) and 
-		androguard.receiver(/\.BootReciv/) and 
-		androguard.service(/\.IMService/) or 
+		androguard.activity(/\.MAC/) and
+		androguard.receiver(/\.BootReciv/) and
+		androguard.service(/\.IMService/) or
 		androguard.permission(/android.permission.INTERNET/) and
 		androguard.permission(/android.permission.SEND_SMS/) and
 		androguard.permission(/android.permission.KILL_BACKGROUND_PROCESSES/) and
 		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/) and
 		all of ($str_*)
 }
-rule Android_Trojan_ChatStealer_a
+
+rule Android_Trojan_ChatStealer
 {
 	meta:
 		description = "This rule will be able to tag all Android_Trojan_ChatStealer samples"
@@ -536,23 +496,24 @@ rule Android_Trojan_ChatStealer_a
 		date = "01-July-2018"
 	condition:
 		androguard.service(/nine\.ninere/i)
-		and androguard.receiver(/seven\.PhonecallReceiver/i) 
-		and androguard.receiver(/eight\.eightre/i) 
+		and androguard.receiver(/seven\.PhonecallReceiver/i)
+		and androguard.receiver(/eight\.eightre/i)
 		and androguard.permission(/com\.android\.browser\.permission\.READ_HISTORY_BOOKMARKS/i)
 }
 
-rule adwind_a
+rule adwind
 {
 	meta:
 		description = "This rule detects effected applications by adwind"
-		strings: 
+		strings:
 		$a = "load/stub.adwind"
 		$b = "plugins/AdwindServer.classPK"
 		$c = "plugins/AdwindServer.classuS]w"
 		condition:
 		all of them
 }
-rule LokiBot_a
+
+rule LokiBot
 {
 	meta:
 		description = "This rule will be able to tag all LokiBot samples"
@@ -564,12 +525,13 @@ rule LokiBot_a
 		date = "30-October-2017"
 	condition:
 		androguard.service(/CommandService/i)
-		and androguard.receiver(/Boot/i) 
-		and androguard.receiver(/Scrynlock/i) 
+		and androguard.receiver(/Boot/i)
+		and androguard.receiver(/Scrynlock/i)
 		and androguard.permission(/android\.permission\.BIND_DEVICE_ADMIN/i)
-		and androguard.filter(/android\.app\.action\.DEVICE_ADMIN_ENABLED/i) 
+		and androguard.filter(/android\.app\.action\.DEVICE_ADMIN_ENABLED/i)
 		}
-rule jiagu_apktoolplus_a: packer
+
+rule jiagupktoolplus: packer
 {
     meta:
         description = "Jiagu (ApkToolPlus)"
@@ -580,18 +542,15 @@ rule jiagu_apktoolplus_a: packer
     condition:
         all of them
 }
-rule POB_1_a
+
+rule POB_1
 {
 	meta:
 		description = "Detects few MyPleasure app"
 	condition:
 		(androguard.service(/ch.nth.android.contentabo.service.DownloadAppService/))
 }
-rule PimentoRoot_a: rootkit
-{
-	condition:
-		androguard.url(/http:\/\/webserver\.onekeyrom\.com\/GetJson\.aspx/)
-}
+
 rule j: official
 {
 	meta:
@@ -604,7 +563,8 @@ rule j: official
 		1 of ($str_*)
 		or androguard.activity(/\.views\.activities\.BankActivity/)
 }
-rule Adware_Ashas_a
+
+rule Adware_Ashas
 {
 	meta:
 		description = "Adware campaign on Google Play"
@@ -619,27 +579,24 @@ rule Adware_Ashas_a
 	condition:
 		$a or all of ($f*)
 }
-rule iHandy_a
+
+rule iHandy
 {
 	meta:
 		description = "Detects apps created by/conntected to iHandy"
 	condition:
 		cuckoo.network.dns_lookup(/appcloudbox.net/)
 }
-rule DOGlobal_a
+
+rule DOGlobal
 {
 	meta:
 		description = "Evidences of DO global advertisement library / Adware "
 	condition:
 		cuckoo.network.dns_lookup(/do.global/) or cuckoo.network.dns_lookup(/do-global.com/) or cuckoo.network.dns_lookup(/ad.duapps.com/)
 }
-rule Banks_Strings_inno_a {
-	strings:
-		$string_1 = /innotec\.security/
-	condition:
-		1 of ($string_*)
-}
-rule oneplus_a: UnauthReboot
+
+rule oneplus: UnauthReboot
 {
 	meta:
 		description = "On Oxygen OS 9 this App allows other apps to reboot the device without any user interaction"
@@ -648,77 +605,21 @@ rule oneplus_a: UnauthReboot
 		androguard.package_name("cn.oneplus.nvbackup") and
 		androguard.activity(/NvSyncRebootActivity/i)
 }
-rule whatsapp_a:fake
-{
-	condition:
-		androguard.app_name("WhatsApp") and
-		not androguard.certificate.sha1("38A0F7D505FE18FEC64FBF343ECAAAF310DBD799")
-}
-rule king_games_a:fake
-{
-	condition:
-		(androguard.app_name("AlphaBetty Saga")
-		or androguard.app_name("Candy Crush Soda Saga")
-		or androguard.app_name("Candy Crush Saga")
-		or androguard.app_name("Farm Heroes Saga")
-		or androguard.app_name("Pet Rescue Saga")
-		or androguard.app_name("Bubble Witch 2 Saga")
-		or androguard.app_name("Scrubby Dubby Saga")
-		or androguard.app_name("Diamond Digger Saga")
-		or androguard.app_name("Papa Pear Saga")
-		or androguard.app_name("Pyramid Solitaire Saga")
-		or androguard.app_name("Bubble Witch Saga")
-		or androguard.app_name("King Challenge"))
-		and not androguard.certificate.sha1("9E93B3336C767C3ABA6FCC4DEADA9F179EE4A05B")
-		and not androguard.certificate.sha1("F22BD3F8C24AB1451ABFD675788B953C325AB550")
-}
 
-rule instagram_a:fake
-{
-	condition:
-		androguard.app_name("Instagram")
-		and not androguard.certificate.sha1("C56FB7D591BA6704DF047FD98F535372FEA00211")
-}
-rule android_joker_a {
+rule android_joker
+ {
+    meta:
+    	description = "This rule detects joker"
     strings:
-        $net = { 2F6170692F636B776B736C3F6963633D } // /api/ckwksl?icc=   
-        $ip = "3.122.143.26"
+        $c = { 52656D6F746520436C6F616B }
+        $cerr = { 6E6574776F726B2069737375653A20747279206C61746572 }
+        $net = { 2F6170692F636B776B736C3F6963633D }
+        $ip = { 332E3132322E3134332E3236 }
     condition:
-        $net or $ip 
-}
-rule android_joker_b {
-    strings:
-        $c = { 52656D6F746520436C6F616B } // Remote Cloak
-        $cerr = { 6E6574776F726B2069737375653A20747279206C61746572 } // network issue: try later
-        $net = { 2F6170692F636B776B736C3F6963633D } // /api/ckwksl?icc=
-        $ip = { 332E3132322E3134332E3236 } // 3.122.143.26     
-    condition:
-        ($c and $cerr) or $net or $ip 
+        ($c and $cerr) or $net or $ip
 }
 
-rule l: official
-{
-	condition:
-		androguard.url(/abcdserver\.com/) 
-}
-
-rule ZoopOneSDKTracker_a
-{
-	meta:
-		description = "All Zoop One SDK Apps"
-	condition:
-		androguard.activity("sdk.zoop.one.offline_aadhaar.zoopActivity.ZoopConsentActivity") or
-		androguard.activity("one.zoop.sdkesign.esignlib.qtActivity.QTApiActivity")
-}
-rule QuaggaSDKTrackerActivity_a
-{
-	meta:
-		description = "All Quagga SDK Apps"
-	condition:
-		androguard.activity("quagga.com.sdk.ConsentActivity") or
-		androguard.activity("com.aadhaarapi.sdk.gateway_lib.qtActivity.AadhaarAPIActivity")
-}
-rule zipnach_detect_a
+rule zipnach_detect
 {
 	meta:
 		description = "This rule detects ZIPNach powered apps"
@@ -727,7 +628,8 @@ rule zipnach_detect_a
 	condition:
 		$a and androguard.permission(/android.permission.INTERNET/)
 }
-rule bbps_detect_a
+
+rule bbps_detect
 {
 	meta:
 		description = "This rule detects BBPS apps"
@@ -738,17 +640,8 @@ rule bbps_detect_a
 	condition:
 		($a or $b or $c) and androguard.permission(/android.permission.INTERNET/)
 }
-rule bancocam_a {
-	strings:
-		$string_1 = /bancocaminos/
-		$string_2 = /onboardingcaminos/
-		$string_3 = /lineacaminos/
-		$string_4 = /onboardingcaminos/
-		$string_5 = /caminosontime/
-	condition:
-		any of them
-}
-rule trojanSMS_a
+
+rule trojanSMSS
 {
 	meta:
 		description = "This rule detects trojan SMS"
@@ -760,7 +653,7 @@ rule trojanSMS_a
 		all of them
 }
 
-rule starsWallpaper_jan2020_a
+rule starsWallpaper_jan2020
 {
 	meta:
 		description = "This rule detects Adware malware discussed in the blog below"
@@ -772,7 +665,8 @@ rule starsWallpaper_jan2020_a
 	condition:
         all of ($a*)
 }
-rule digitimeBackdoor_a
+
+rule digitimeBackdoor
 {
 	meta:
 		description = "detects the Digitime backdoor"
@@ -788,24 +682,11 @@ rule digitimeBackdoor_a
 	condition:
 		any of them
 }
-rule frida_a: anti_hooks
-{
-	strings:
-		$a = "frida-gum"
-		$b = "frida-helper"
-		$c = "re.frida.HostSession10"
-		$d = "AUTH ANONYMOUS 474442757320302e31\\r\\n"
-		$e = "re.frida"
-		$f = "00 4C 49 42 46 52 49 44 41 5F 41 47 45  4E 54 5F 31 2E 30 00" // "LIBFRIDA_AGENT_1.0"
-		$g = "00 66 72 69 64 61 5F 61 67 65 6E 74 5F 6D 61 69 6E 00" // "frida_agent_main"
-		$h = "00 66 72 69 64 61 00" // "frida"
-	condition:
-		any of them
-}
-rule digitimeTest_a
+
+rule digitime
 {
 	meta:
-		description = "Test to detect Digitime malware"
+		description = "This rule detects Digitime malware"
 	strings:
 		$key1 = "Ti92T_77Zij_MiTik"
 		$key2 = "HiBox_5i5j_XiMik"
@@ -818,162 +699,10 @@ rule digitimeTest_a
 		(androguard.receiver(/Rvc$/) and androguard.service(/Svc$/)) or (any of ($key*)) or $fnv or $dtInfo
 }
 
-rule BITTER_a
+rule nastyAdware_jan2020
 {
 	meta:
-		description = "This rule detects BITTER"
-		sample = "7ad793b2c586b19753245fc901c3d087ef330804ab1836acba1e1eaaccfd5fb8 "
-	condition:
-		androguard.package_name("com.secureImages.viewer.SlideShow")
-}
-rule SuspPerm
-{
-   condition:
-		androguard.permissions_number > 5 and
-		androguard.permission(/(SEND|WRITE)_SMS/)
-}
-rule mspy_a {
-    condition:
-        androguard.package_name("android.sys.process") or androguard.certificate.sha1("7FFE6DA96346FEE822E1F791176CD6970A1DC770") or androguard.package_name(/.mspy./) or androguard.package_name("system.framework") or androguard.certificate.sha1("3930B621F30D13D24692CBBBBC67C59F92F1C9BD") or androguard.url(/www.mspyonline.com/)
-}
-rule onetopspy_a {
-    condition:
-        androguard.package_name("com.topspy.system") or androguard.certificate.sha1("656CD7890ED79CE8570D1B7156C31958D5AC1606") or androguard.permission(/com.topspy.system.permission/) or androguard.url(/1topspy\.com/)
-}
-rule mobiispy_a {
-    condition:
-        androguard.package_name("com.mobiispy.system") or androguard.url(/mobiispy.com/) or androguard.certificate.sha1("3B167CAE3F1EE3C27DA411DF1290C4CDBA41A633") or androguard.url(/www\.MobiiSpy\.com/) or androguard.certificate.sha1("0208CDD00216157F36DCF7FC2567C5263D8AA682")
-}
-rule hellospy_a {
-    condition:
-        androguard.certificate.issuer(/HelloSpy LLC/) or androguard.certificate.subject(/HelloSpy LLC/) or androguard.url(/hellospy\.com/) or androguard.package_name("com.hellospy.system") or androguard.certificate.sha1("1EBFFD9FE9463B2ED24582D2846990A5ABEF79B9") or androguard.certificate.issuer(/OU=NOVABAY/) or androguard.certificate.subject(/OU=NOVABAY/)
-}
-rule maxxspy_a {
-    condition:
-        androguard.package_name("com.maxxspy.system") or androguard.url(/MaxxSpy\.com/) or androguard.url(/maxxspy\.com/) or androguard.certificate.sha1("6B660EAAEBA47793B7A1278D714669A6612BCA5B")
-}
-rule nguyen_stalkerware_a {
-    condition:
-        androguard.certificate.sha1("7F5C0D54A813BA9B87A91420CA2C3DE5E7948F09") or androguard.app_name(/System Service/) or androguard.url(/\:8080\/gcm-demo/) or androguard.certificate.issuer(/John Nguyen/) or androguard.certificate.subject(/John Nguyen/)
-}
-rule appspy_a {
-    condition:
-        androguard.package_name("com.atracker.app") or androguard.certificate.sha1("0AD33649F0D0532B5EB0A36A81712962AA79BF54") or androguard.certificate.issuer(/OU=ATracker/) or androguard.certificate.subject(/OU=ATracker/) or androguard.url(/appspy\.net/) or androguard.certificate.issuer(/CN=Allen Hitman/) or androguard.certificate.subject(/CN=Allen Hitman/)
-}
-rule catwatchful_a {
-    condition:
-        androguard.package_name("wosc.cwf") or androguard.certificate.issuer(/=catwatchful inc/) or androguard.certificate.subject(/=catwatchful inc/) or androguard.certificate.sha1("9fe876af76cdcb685102a38528a3a732b0872dc6") or androguard.certificate.issuer(/CatWatchful/) or androguard.certificate.subject(/CatWatchful/) or androguard.url(/catwatchful.com/)
-}
-rule cerberus_a {
-    condition:
-        androguard.package_name(/com.lsdroid.cerberus/) or androguard.certificate.sha1("BC693B48B7EC988E275CF9E1CDAA1447A31717D9")
-}
-rule copy9_a {
-    condition:
-        (androguard.package_name("com.android.system") and androguard.app_name("System Service")) or androguard.certificate.sha1("36E6671BC4397F475A350905D9A649A5ADE97BB2") or androguard.certificate.subject(/iSpyoo Teams/) or androguard.certificate.issuer(/iSpyoo Teams/) or androguard.url(/protocol-a621\.copy9\.com/)
-}
-rule thetruthspy_a {
-    condition:
-        androguard.package_name("com.systemservice") or androguard.url(/\.thetruthspy\.com/) or androguard.certificate.sha1("FF8CCD9816B0524A58FBDE1809FB227DBCDFD692")
-}
-rule ispyoo_a {
-    condition:
-        androguard.package_name("com.ispyoo") or androguard.certificate.sha1("CBDA86758FBE8E5A6AB805F493AA151B1F2B95F4") or androguard.certificate.issuer(/iSpy Solution/) or androguard.certificate.subject(/iSpy Solution/) or androguard.url(/\.ispyoo.com/) or androguard.certificate.sha1("31A6ECECD97CF39BC4126B8745CD94A7C30BF81C") or androguard.certificate.sha1("5D7B59F3AFB74D86CCD56440F99CA2FC83A23F22")
-}
-rule easylogger_a {
-    condition:
-        androguard.package_name("app.EasyLogger") or androguard.certificate.sha1("8F23E1457ADC6189F6ED504A60DF8896FEC6D970") or androguard.package_name("app.ELogger") or androguard.certificate.sha1("35D7CF057BFA5023CE739A725ADA0DA1FD34D1FF")
-}
-rule flexispy_a {
-    condition:
-        (androguard.package_name("com.android.systemupdate") and (androguard.app_name("SystemUpdate") or androguard.app_name("com.android.system.service"))) or androguard.certificate.sha1("69B327860EDB531DDFFB1B5DBF0C24245A75F3E4") or androguard.certificate.sha1("93385A087BB5CAB96EAE83A1AF874E0E39B2990F") or androguard.url(/trkps\.com/) or androguard.package_name("com.telephony.android")
-}
-rule guestspy_a {
-    condition:
-        androguard.package_name("com.guest") or androguard.certificate.sha1("917bb5b2d40ec40018541784a06285de0f50f60f") or androguard.certificate.issuer(/GuestSpy Solution/) or androguard.certificate.subject(/GuestSpy Solution/) or androguard.url(/.guestspy\.com/)
-}
-rule highstermobile_a {
-    condition:
-        androguard.package_name("org.secure.smsgps") or androguard.certificate.sha1("683722A1C629AD5734B93E08ADFAA61775AD196F") or androguard.certificate.subject(/Highsterspyapp/) or androguard.certificate.issuer(/Highsterspyapp/) or androguard.url(/evt17\.com/)
-}
-rule ddiutilities_a {
-    condition:
-        androguard.package_name("com.ddiutilities.monitor") or androguard.url(/ddiutilities\.com/)
-}
-rule hoverwatch_a {
-    condition:
-        androguard.package_name("com.android.core.monitor.debug") or androguard.certificate.sha1("CC4A78DBE96AC1FA5977E03C97052A9A334113B4") or androguard.url(/hoverwatch\.com/) or androguard.package_name("com.android.core.monitor") or androguard.url(/account\.refog\.com/)
-}
-rule imonitorspy_a {
-    condition:
-        androguard.package_name("com.imonitor.ainfo") or androguard.certificate.sha1("BFC4C15E35E3506095B42E2B428E4016B1FFA1AB") or androguard.url(/imonitorsoft\.com/) or androguard.url(/imonitorsoft\.cn/)
-}
-rule letmespy_a {
-    condition:
-        androguard.package_name(/pl.lidwin.letmespy/) or androguard.package_name("pl.lidwin.remote") or androguard.certificate.sha1("8F0EAD4F1DA5DAAF8C0F7A51096CECEEF81D0C76") or androguard.certificate.sha1("340E571CB1A64E6EE384D3F8A544681459CF3F5F") or androguard.url(/letmespy\.com/) or androguard.url(/remotecommands\.com/)
-}
-rule mxspy_a {
-    condition:
-        androguard.package_name("com.mxspy") or androguard.certificate.sha1("56EF5244378FB6B4EF82D2B9E99BF41F7B97D93A") or androguard.certificate.issuer(/MxSpy LCC/) or androguard.url(/\.mxspy\.com/)
-}
-rule phonespying_a {
-    condition:
-        androguard.package_name("com.apspy.app") or androguard.certificate.sha1("D667A33203776F2285EBA3E826CD286356EF05D0") or androguard.certificate.issuer(/PhoneSpying Solution/) or androguard.url(/\.phonespying\.com/)
-}
-rule repticulus_a {
-    condition:
-        androguard.package_name("net.vkurhandler") or androguard.package_name("net.system_updater_abs341") or androguard.certificate.sha1("6D0FF787BF4534F1077D1E4BF2E18BA381D97061") or androguard.url(/reptilicus\.net/)
-}
-rule shadowspy_a {
-    condition:
-        androguard.package_name("com.runaki.synclogs") or androguard.package_name("com.client.requestlogs") or androguard.certificate.sha1("FE7626A8D3C38FD78EA2A729B39B943BA814F014") or androguard.certificate.sha1("01E49C220A9776D4978C1D28D6C32F86D145B8AE") or androguard.url(/\.shadow-logs\.com/)
-}
-rule spyhide_a {
-    condition:
-        androguard.package_name("com.wifiset.service") or androguard.url(/\.spyhide\.com/)
-}
-rule spyphoneapp_a {
-    condition:
-        androguard.package_name("com.spappm_mondow.alarm") or androguard.url(/\.spy-phone-app\.com/) or androguard.url(/\.Spy-datacenter\.com/)
-}
-rule fonetracker_a {
-    condition:
-        androguard.package_name("com.fone") or androguard.certificate.sha1("B0F639B67819EDBADC73B9FEFF2582FC58B8F115") or androguard.certificate.issuer(/FoneTracker Solution/) or androguard.url(/fonetracker\.com/)
-}
-rule netspy_a {
-    condition:
-        androguard.package_name("com.googleplay.settings") or androguard.certificate.sha1("A4E169AAF0068A1FC5F7900B7F59A438B833364C") or androguard.certificate.issuer(/NetSpy LLC/) or androguard.url(/www\.netspy\.net/)
-}
-rule spyzie_a {
-    condition:
-        androguard.package_name("com.spyzee") or androguard.package_name("com.ws.scli")
-}
-rule SuspPerm_a
-{
-   condition:
-	 androguard.permission(/(SEND|WRITE)_SMS/)
-}
-
-rule spymie_a
-{
-    condition:
-        androguard.package_name("com.ant.spymie.keylogger") or androguard.certificate.sha1("05B23C7E9156A4C55768DA27936FF2D7AF09BB8F")
-}
-rule neospy_a
-{
-    condition:
-        androguard.package_name("ns.antapp.module") or androguard.certificate.sha1("9ED8DD944D3EB545E1EEEEEC1D8174772CF37C07") or androguard.url(/neospy\.pro/) or androguard.url(/neospy\.net/) or androguard.url(/neospy\.tech/)
-}
-rule androidmonitor_a
-{
-    condition:
-        androguard.package_name("com.ibm.fb") or androguard.certificate.sha1("92EBDB7D7C18A34705A6918B5F327DDB0E8C8452") or androguard.certificate.sha1("558765849658a3821fe4054ed2c1ff6e28b4b8a0") or androguard.url(/\.androidmonitor\.com/)
-}
-
-rule nastyAdware_jan2020_a
-{
-	meta:
-		description = "This rule detects Adware malware discussed in https://labs.bitdefender.com/2020/01/seventeen-android-nasties-spotted-in-google-play-total-over-550k-downloads/" 
+		description = "This rule detects Adware malware discussed in https://labs.bitdefender.com/2020/01/seventeen-android-nasties-spotted-in-google-play-total-over-550k-downloads/"
 	strings:
         $a1 = "clcb.data"
         $a2 = "clcb"
@@ -984,15 +713,8 @@ rule nastyAdware_jan2020_a
 	condition:
         all of ($a*) or all of ($b*) or all of ($c*)
 }
-rule FakeSpy_a {
-   strings:
-      $a = "AndroidManifest.xml"
-      $b = "lib/armeabi/librig.so"
-      $c = "lib/armeabi-v7a/librig.so"
-   condition:
-      $a and ($b or $c) and (filesize > 2MB and filesize < 3MB)
-}
-rule testShopaholicSpyware_jan2020_a
+
+rule testShopaholicSpyware_jan2020
 {
 	meta:
 		description = "This rule detects the a spyawre from  the blog below"
@@ -1007,7 +729,8 @@ rule testShopaholicSpyware_jan2020_a
 	condition:
 		all of ($a*)
 }
-rule Ginp_a
+
+rule Ginp
 {
 	meta:
 		description = "This rule detects Ginp Android malware"
@@ -1018,124 +741,20 @@ rule Ginp_a
 	condition:
 		any of ($a*) or any of ($b*)
 }
-rule Trojan_b: BankBot
-{
-	meta:
-        description = "Trojan targeting Banks with Overlays"
-		source = "https://securify.nl/blog/SFY20170401/banking_malware_in_google_play_targeting_many_new_apps.html"
-	strings:
-		$c2_1 = "/private/tuk_tuk.php" nocase
-		$c2_2 = "/private/add_log.php" nocase
-		$c2_3 = "/private/set_data.php" nocase
-		$c2_4 = "activity_inj" nocase
-	condition:
-		2 of ($c2_*)
-		and (
-			androguard.permission(/android.permission.RECEIVE_SMS/) 
-			or androguard.permission(/android.permission.READ_SMS/)
-		)
-}
-rule Trojan_2_a: BankBot
-{
-	meta:
-		sample = "b314e54a1161deccb2f582aaf6356f2e66a2f983dd1c1ebf7a5c5d9f5a873dba"
-	strings:
-		$sms_1 = "Sms Is Deleted !" nocase
-		$sms_2 = "SMS is NOT DELETED" nocase
-		$c2_1 = "/set/log_add.php" nocase
-		$c2_2 = "/set/receiver_data.php " nocase
-		$c2_3 = "/set/set.php" nocase
-		$c2_4 = "/set/tsp_tsp.php" nocase
-		$cmd_1 = "/proc/%d/cmdline" nocase
-		$cmd_2 = "/proc/%d/cgroup" nocase
-	condition:
-		1 of ($sms_*)
-		and 2 of ($c2_*)
-		and 1 of ($cmd_*)
-		and	androguard.permission(/android.permission.RECEIVE_SMS/)
-}
 
-rule callerapp_a: first
-{
-	condition:
-		(
-		androguard.package_name(/monster/) or 
-		androguard.package_name(/truck/) or 
-		androguard.package_name(/car/) or
-		androguard.package_name(/game/)) and
-		androguard.permission(/ACCESS_NETWORK_STATE/) and
-		androguard.permission(/CALL_PHONE/) and
-		androguard.permission(/CAMERA/) and
-		androguard.permission(/INTERNET/) and
-		androguard.permission(/READ_PHONE_STATE/) and
-		androguard.permission(/RECEIVE_BOOT_COMPLETED/) and
-		androguard.permission(/VIBRATE/) and
-		androguard.permission(/WAKE_LOCK/)
-}
-rule brazilianBanker_jan2020_a
-{
-meta:
-		description = "Detects malware listed in https://www.buguroo.com/en/blog/banking-malware-in-android-continues-to-grow.-a-look-at-the-recent-brazilian-banking-trojan-basbanke-coybot. specifically - gover.may.murder samples"
-strings:
-	$a1 = "ConexaoCentral.php"
-	$a2 = "1fs34"
-	$a3 = "canDrawOverlays"
-condition:
-	all of ($a*) 
-}
-rule android_joker_c {
-    strings:
-        $c = { 52656D6F746520436C6F616B } // Remote Cloak
-        $cerr = { 6E6574776F726B2069737375653A20747279206C61746572 } // network issue: try later
-        $net = { 2F6170692F636B776B736C3F6963633D } // /api/ckwksl?icc=
-        $ip = { 332E3132322E3134332E3236 } // 3.122.143.26     
-    condition:
-        ($c and $cerr) or $net or $ip 
-}
-
-rule Android_Trojan_Ransomware_Coin_a
-{  
-	meta:
-		Author = "Anand Singh"
-		Date = "04/12/2019"
-	strings:
-		$a1 = "For correct operation of the program, you must confirm"
-		$a2 = "android.app.action.ADD_DEVICE_ADMIN"
-		$a3 = "isAutoStartEnabled"
-	condition:
-		$a1 and $a2 and $a3
-}
-
-rule rosy_strings_plus_manifest
-{
-        meta:
-        	description = "description"
-		author = "me"
-        strings:
-            $s4 = "string4"
-            $s3 = "string3"
-        condition:
-            ($s3 or $s4) and 
-            ( 
-                androguard.receiver("receiver") and
-                androguard.filter("filter")
-            )
-}
-rule rosy_strings_plus_manifest_a
+rule brazilianBanker_jan2020
 {
     meta:
-		sample = "ac256d630594fd4335a8351b6a476af86abef72c0342df4f47f4ae0f382543ba"
-		source = "http://www.symantec.com/connect/blogs/androidbankosy-all-ears-voice-call-based-2fa"
-	strings:
-		$string_1 = "*21*"
-		$string_2 = "#disable_forward_calls"
-		$string_3 = "#lock"
-		$string_4 = "#intercept_sms_start"
-	condition:
-		all of ($string_*) and
-		androguard.permission(/android.permission.SYSTEM_ALERT_WINDOW/) 
+		description = "Detects malware listed in https://www.buguroo.com/en/blog/banking-malware-in-android-continues-to-grow.-a-look-at-the-recent-brazilian-banking-trojan-basbanke-coybot. specifically - gover.may.murder samples"
+    strings:
+        $a1 = "ConexaoCentral.php"
+        $a2 = "1fs34"
+        $a3 = "canDrawOverlays"
+    condition:
+	    all of ($a*)
 }
-rule regla_practica_a
+
+rule regla_practica
 {
 	meta:
 		description = "PracticaC"
@@ -1148,7 +767,8 @@ rule regla_practica_a
 	condition:
 		$string_a and $string_b and $string_c and $string_d
 		}
-rule Slempo_a
+
+rule Slempo
 {
 	meta:
 		description = "Slempo"
@@ -1160,6 +780,7 @@ rule Slempo_a
 	condition:
 		$a and ($b or $c or $d)
 }
+
 rule q: SlemBunk_Banker
 {
 	meta:
@@ -1172,19 +793,21 @@ rule q: SlemBunk_Banker
 	condition:
 		$a and ($b or $c or $d)
 }
-rule sample_banker_a: banker
+
+rule sample_banker: banker
 {
-meta: 
-description = "sample rule to detect the malware sample"
-thread_level = 2
-strings:
-$a = "aaAmerican Express The CVC is the four digits located on the front of the card,"
-$b = "Keep your Internet Banking and secret authorisation code (SMS) secret."
-$c = "XPhone number had an IDD, but after this was not long enough to be a viable phon"
-condition:
-$a and $b and $c
+    meta:
+        description = "sample rule to detect the malware sample"
+        thread_level = 2
+    strings:
+        $a = "aaAmerican Express The CVC is the four digits located on the front of the card,"
+        $b = "Keep your Internet Banking and secret authorisation code (SMS) secret."
+        $c = "XPhone number had an IDD, but after this was not long enough to be a viable phon"
+    condition:
+        $a and $b and $c
 }
-rule slempoBMG_a
+
+rule slempoBMG
 {
     meta:
         description = "Regla yara para detectar malware de la familia slempo"
@@ -1195,7 +818,8 @@ rule slempoBMG_a
     condition:
         $a and ($b or $c)
 }
-rule Android_Malware_a: iBank
+
+rule Android_Malware: iBank
 {
 	meta:
 		description = "iBank"
@@ -1208,7 +832,8 @@ rule Android_Malware_a: iBank
 	condition:
 		($pk at 0 and 2 of ($file*) and ($string1 or $string2))
 }
-rule malware_P4_a
+
+rule malware_P4
 {
 	meta:
 		description = "malware_P4"
@@ -1222,7 +847,8 @@ rule malware_P4_a
 	condition:
 		$a and $b and ($c or $d or $e or $f)
 }
-rule sample_a
+
+rule sample
 {
 	meta:
 		description = "sample"
@@ -1233,7 +859,8 @@ rule sample_a
 	condition:
 		$b and ($a or $c)
 }
-rule slempo_detectado_a
+
+rule slempo_detectado
 {
         meta:
                 description = "Trojan-Banker.Slempo"
@@ -1242,7 +869,8 @@ rule slempo_detectado_a
         condition:
                 1 of them
 }
-rule Android_BANKER_JSM_a
+
+rule Android_BANKER_JSM
 {
 	meta:
 		description = "Esta regla detecta Malware Tipo Banker SlempoService "
@@ -1257,19 +885,6 @@ rule Android_BANKER_JSM_a
 	condition:
 		$a or $b or $c or $d or $e or $f or $g
 		}
-rule PUA_a: Untrusted_Cert
-{
-    condition:
-        androguard.certificate.sha1("7E1119BBD05DE6D0CBCFDC298CD282984D4D5CE6") or
-       	androguard.certificate.sha1("DEF68058274368D8F3487B2028E4A526E70E459E")
-}
-rule Suspect_a
-{
-	strings: 
-		$ = "tppy.ynrlzy.cn"
-	condition:
-		1 of them
-}
 
 rule sample_b
 {
@@ -1282,6 +897,7 @@ rule sample_b
 	condition:
 		$b and ($a or $c)
 }
+
 rule Android_BANKER_JSM_b
 {
         meta:
@@ -1295,23 +911,17 @@ rule Android_BANKER_JSM_b
         condition:
                 $a or $b or $c or $d or $e
 				}
-rule geost_a: official
+
+rule geost: official
 {
 	meta:
 		description = "This rule detects Trojan Banker"
 	condition:
 	    androguard.certificate.subject(/C:cn, CN:z, L:shanghai, O:z, ST:shanghai, OU:z/)
 }
-rule guitarsupersolo_a {
-        meta:
-            desc = "YARA Rule to detect suspicious activity"
-        strings:
-            $a = "rooter"
-            $b = "0x992c35d3"
-        condition:
-            $a and $b
-    }
-rule russianTrojan_a{
+
+rule russianTrojan
+{
 	meta:
 		description="This rule detects the russian playstore phising apk"
 		sample="c220f4f4e0fbeaf4128c15366819f4e61ef949ebc0bd502f45f75dd10544cc57"
@@ -1323,7 +933,8 @@ rule russianTrojan_a{
 	condition:
 		any of ($url*)
 }
-rule Similar_radio_apps_a: radio
+
+rule Similar_radiopps: radio
 {
 	meta:
 		description = "Detection of interesting radio apps"
@@ -1344,7 +955,8 @@ rule Similar_radio_apps_a: radio
 	condition:
 		all of them
 }
-rule dinoapp_a: official
+
+rule dinoapp: official
 {
 	meta:
 		description = "This rule detects the dinoapp application"
@@ -1356,16 +968,18 @@ rule dinoapp_a: official
 		androguard.activity(/Details_Activity/i) and
 		androguard.permission(/android.permission.INTERNET/)
 }
-rule cleaner_a
+
+rule cleaner
 {
 	meta:
 		description = "Determine if apk is a fake cleaner"
 		sample = "32741c74508b5efaeada5d68bda3ddf53124331c22dd0b89b5b89647de1ce070"
 	condition:
-		androguard.app_name("Super Clean Master") and 
+		androguard.app_name("Super Clean Master") and
 		not androguard.certificate.sha1("63f1eae14e454ee2d1ea7923853f93e788dd00e8")
 }
-rule blockrogue_a: detect
+
+rule blockrogue: detect
 {
 	meta:
 		description = "Yara rule made for an assignment"
@@ -1380,10 +994,10 @@ rule blockrogue_a: detect
 		androguard.permission(/android.permission.WRITE_EXTERNAL_STORAGE/) and
 		androguard.permission(/android.permission.CHANGE_WIFI_STATUS/) and
 		androguard.min_sdk >= 8 and
-        androguard.target_sdk <= 14 
+        androguard.target_sdk <= 14
 }
 
-rule detect_a: Dinosim
+rule detect: Dinosim
 {
 	meta:
 		description = "This rule detects the Dinosim application"
@@ -1393,7 +1007,8 @@ rule detect_a: Dinosim
 		androguard.permission(/android.permission.INTERNET/) and
 		androguard.certificate.sha1("1e8b087dd8a699faa427a12844ba070b2c66218e")
 }
-rule Reciever_a
+
+rule Reciever
 {
 	meta:
 		description = "Rule seeks to detect certain reciever (see PReciever and OReciever in sample) classes in order to detect apps similair to this one."
@@ -1403,11 +1018,12 @@ rule Reciever_a
 		$b = "Receiver;-><init>()V"
 	condition:
 		$a and $b and filesize == 471 and (
-		androguard.permission(/android.permission.BROADCAST_WAP_PUSH/) 
+		androguard.permission(/android.permission.BROADCAST_WAP_PUSH/)
 			or androguard.permission(/android.permission.BROADCAST_SMS/)
 		)
 }
-rule shishiplace_a
+
+rule shishiplace
 {
 	meta:
 		description = "This  rule detects the shushiplace apk and similar types of apk's."
@@ -1424,7 +1040,8 @@ rule shishiplace_a
 		androguard.certificate.sha1("678776B603C4D2D44E596F16E08C2E2C1859D208")
 		)
 }
-rule repackage_a: ESFileExplorer
+
+rule repackage: ESFileExplorer
 {
 	meta:
 		description = "This is a YARA made as an exercise for a security course at the university of Leiden, checking hashes of dropped files found with TotalVirus"
@@ -1434,11 +1051,12 @@ rule repackage_a: ESFileExplorer
 		$b = "06fd44e4a8268c4b69f873be0daa00de36214b8521673f059700fae638028cda"
 		$c = "33cc60e3851c2d813b95b6e2a6405a7e31d76be95de3a1050f03f44c5ee23c09"
 		$d = "a7fef32d5e603306b064b2f9d8bb197fc13d9e798ebaa3862e703e479462485a"
-		$e = "/data/data/com.estrongs.android.pop/code_cache/secondary-dexes/com.estrongs.android.pop-1.apk.classes2.zip" 
+		$e = "/data/data/com.estrongs.android.pop/code_cache/secondary-dexes/com.estrongs.android.pop-1.apk.classes2.zip"
 		$f = "/data/data/com.estrongs.android.pop/code_cache/secondary-dexes/com.estrongs.android.pop-1.apk.classes3.zip"
 	condition:
 		( $a and $b and $c and $d ) or ( $e and $f )
 }
+
 rule t: official
 {
 	meta:
@@ -1450,7 +1068,8 @@ rule t: official
 	condition:
 		$a and $connect_to_url and $developer and androguard.permission(/android.permission.RECORD_AUDIO/) //If an game permission to record your audio and it wants to connect to a remote server, then it's most likely an malicious app.
 }
-rule Mire_a
+
+rule Mire
 {
 	meta:
 		description = "Mire tools"
@@ -1461,11 +1080,12 @@ rule Mire_a
 	condition:
 		$a and
 		$b and
-		androguard.permission(/android.permission.ACCESS_NETWORK_STATE/) and 
+		androguard.permission(/android.permission.ACCESS_NETWORK_STATE/) and
 		androguard.permission(/android.permission.ACCESS_WIFI_STATE/) and
 		androguard.permission(/android.permission.READ_PHONE_STATE/)
 }
-rule silent_banker_a: banker
+
+rule silent_banker: banker
 {
 	meta:
 		description = "This is just an example"
@@ -1478,6 +1098,7 @@ rule silent_banker_a: banker
 	condition:
 		$a or $b or $c
 }
+
 rule silent_banker_b: banker
 {
 	meta:
@@ -1491,6 +1112,7 @@ rule silent_banker_b: banker
 	condition:
 		$a or $b or $c
 }
+
 rule silent_banker_c: banker
 {
 	meta:
@@ -1504,6 +1126,7 @@ rule silent_banker_c: banker
 	condition:
 		$a or $b or $c
 }
+
 rule silent_banker_d: banker
 {
 	meta:
@@ -1517,6 +1140,7 @@ rule silent_banker_d: banker
 	condition:
 		$a or $b or $c
 }
+
 rule silent_banker_e: banker
 {
 	meta:
@@ -1530,6 +1154,7 @@ rule silent_banker_e: banker
 	condition:
 		$a or $b or $c
 }
+
 rule silent_banker_f: banker
 {
 	meta:
@@ -1543,6 +1168,7 @@ rule silent_banker_f: banker
 	condition:
 		$a or $b or $c
 }
+
 rule silent_banker_g: banker
 {
 	meta:
@@ -1556,6 +1182,7 @@ rule silent_banker_g: banker
 	condition:
 		$a or $b or $c
 }
+
 rule silent_banker_h: banker
 {
 	meta:
@@ -1569,7 +1196,8 @@ rule silent_banker_h: banker
 	condition:
 		$a or $b or $c
 }
-rule Vemnotiba_a:Adware
+
+rule Vemnotiba:Adware
 {
 	meta:
 		description = "Android.Spy.305.origin WIP"
@@ -1578,24 +1206,8 @@ rule Vemnotiba_a:Adware
 		cuckoo.network.dns_lookup(/client\.api-restlet\.com/) and
 		cuckoo.network.dns_lookup(/cloud\.api-restlet\.com/)
 }
-rule YaYaLokibot_a: rule0 {
-	meta:
-		author = "YaYaGen -- Yet Another Yara Rule Generator (*) v0.4_winter17/18"
-		date = "04 Jan 2018"
-		url = "https://koodous.com/apks?search=be02cf271d343ae1665588270f59a8df3700775f98edc42b3e3aecddf49f649d%20OR%20%201979d60ba17434d7b4b5403c7fd005d303831b1a584ea2bed89cfec0b45bd5c2%20OR%20%20a10f40c71721668c5050a5bf86b41a1d834a594e6e5dd82c39e1d70f12aadf8b%20OR%20%205c1857830053e64082d065998ff741b607186dc3414aa7e8d747614faae3f650%20OR%20%20cd44705b685dce0a6033760dec477921826cd05920884c3d8eb4762eaab900d1%20OR%20%20bae9151dea172acceb9dfc27298eec77dc3084d510b09f5cda3370422d02e851%20OR%20%20418bdfa331cba37b1185645c71ee2cf31eb01cfcc949569f1addbff79f73be66%20OR%20%20a9899519a45f4c5dc5029d39317d0e583cd04eb7d7fa88723b46e14227809c26%20OR%20%206fb961a96c84a5f61d17666544a259902846facb8d3e25736d93a12ee5c3087c%20OR%20%20c9f56caaa69c798c8d8d6a3beb0c23ec5c80cab2e99ef35f2a77c3b7007922df%20OR%20%2039b7ff62ec97ceb01e9a50fa15ce0ace685847039ad5ee66bd9736efc7d4a932%20OR%20%2078feb8240f4f77e6ce62441a6d213ee9778d191d8c2e78575c9e806a50f2ae45%20OR%20%20a09d9d09090ea23cbfe202a159aba717c71bf2f0f1d6eed36da4de1d42f91c74%20OR%20%20f4d0773c077787371dd3bebe93b8a630610a24d8affc0b14887ce69cc9ff24e4%20OR%20%2018c19c76a2d5d3d49f954609bcad377a23583acb6e4b7f196be1d7fdc93792f8%20OR%20%20cda01f288916686174951a6fbd5fbbc42fba8d6500050c5292bafe3a1bcb2e8d%20OR%20%207dbcecaf0e187a24b367fe05baedeb455a5b827eff6abfc626b44511d8c0029e"
-	condition:
-		androguard.filter("android.app.action.DEVICE_ADMIN_DISABLED") and 
-		androguard.filter("android.app.action.DEVICE_ADMIN_ENABLED") and 
-		androguard.filter("android.intent.action.ACTION_BATTERY_OKAY") and 
-		androguard.filter("android.intent.action.BOOT_COMPLETED") and 
-		androguard.filter("android.intent.action.NEW_OUTGOING_CALL") and 
-		androguard.filter("android.intent.action.PACKAGE_ADDED") and 
-		androguard.filter("android.intent.action.PACKAGE_REMOVED") and 
-		androguard.filter("android.intent.action.QUICKBOOT_POWERON") and 
-		androguard.filter("com.htc.intent.action.QUICKBOOT_POWERON") and 
-		androguard.permission(/android.permission.QUICKBOOT_POWERON/)
-}
-rule FantaSDK_a
+
+rule FantaSDK
 {
 	meta:
 		author = "CP"
@@ -1609,7 +1221,8 @@ rule FantaSDK_a
 	condition:
 		$fanta_service or $googie and ( $fantastr1 or $fantastr2 )
 }
-rule Android_NetWire_a
+
+rule Android_NetWire
 {
 	meta:
 		description = "This rule detects the NetWire Android RAT, used to show all Yara rules potential"
@@ -1634,7 +1247,8 @@ and androguard.permission(/android.permission.WRITE_EXTERNAL_STORAGE/)
 and androguard.permission(/android.permission.READ_CONTACTS/)
 and androguard.permission(/android.permission.READ_SMS/)
 }
-rule shedum_a: signature
+
+rule shedum: signature
 {
 	meta:
 		description = "This rule detects shedun adware by common code signature method"
@@ -1646,7 +1260,8 @@ rule shedum_a: signature
 	condition:
 		2 of them
 }
-rule Spy_Banker_a
+
+rule Spy_Banker
 {
 	meta:
 		description = "This rule detects the Spy.Banker.BQ"
@@ -1662,16 +1277,7 @@ rule Spy_Banker_a
 		all of them
 }
 
-rule fake_facebook_a: fake android
-{
-  meta:
-		  author = "https://twitter.com/Diviei"
-		  reference = "https://koodous.com/"
-	condition:
-		androguard.app_name("Facebook")
-		and not androguard.certificate.sha1("A0E980408030C669BCEB38FEFEC9527BE6C3DDD0")
-}
-rule fake_facebook_2_a: fake android
+rule fake_facebook_2: fake android
 {
 	meta:
 		author = "https://twitter.com/plutec_net"
@@ -1687,63 +1293,11 @@ rule fake_facebook_2_a: fake android
 		hash_7 = "7345c3124891b34607a07e93c8ab6dcbbf513e24e936c3710434b085981b815a"
 	condition:
 		androguard.app_name("Facebook") and
-		not androguard.package_name(/com.facebook.katana/) and 
-		not androguard.certificate.issuer(/O=Facebook Mobile/)	
+		not androguard.package_name(/com.facebook.katana/) and
+		not androguard.certificate.issuer(/O=Facebook Mobile/)
 }
-rule fake_instagram_a: fake android
-{
-  meta:
-		  author = "https://twitter.com/Diviei"
-		  reference = "https://koodous.com/"
-	condition:
-		androguard.app_name("Instagram")
-		and not androguard.certificate.sha1("76D72C35164513A4A7EBA098ACCB2B22D2229CBE")
-}
-rule fake_king_games_a: fake android
-{
-	condition:
-		(androguard.app_name("AlphaBetty Saga")
-		or androguard.app_name("Candy Crush Soda Saga")
-		or androguard.app_name("Candy Crush Saga")
-		or androguard.app_name("Farm Heroes Saga")
-		or androguard.app_name("Pet Rescue Saga")
-		or androguard.app_name("Bubble Witch 2 Saga")
-		or androguard.app_name("Scrubby Dubby Saga")
-		or androguard.app_name("Diamond Digger Saga")
-		or androguard.app_name("Papa Pear Saga")
-		or androguard.app_name("Pyramid Solitaire Saga")
-		or androguard.app_name("Bubble Witch Saga")
-		or androguard.app_name("King Challenge"))
-		and not androguard.certificate.sha1("9E93B3336C767C3ABA6FCC4DEADA9F179EE4A05B")
-}
-rule fake_market_a: fake android
-{
-  meta:
-		author = "https://twitter.com/plutec_net"
-		reference = "https://koodous.com/"
-	condition:
-		androguard.package_name("com.minitorrent.kimill") 
-}
-rule fake_minecraft_a: fake android
-{
-  meta:
-		author = "https://twitter.com/plutec_net"
-		reference = "https://koodous.com/"
-	condition:
-		( androguard.app_name("Minecraft: Pocket Edition") or 
-			androguard.app_name("Minecraft - Pocket Edition") )
-		and not androguard.package_name("com.mojang.minecraftpe")
-}
-rule fake_whatsapp_a: fake android
-{
-  meta:
-		  author = "https://twitter.com/Diviei"
-		  reference = "https://koodous.com/"
-	condition:
-		androguard.app_name("WhatsApp") and
-		not androguard.certificate.sha1("38A0F7D505FE18FEC64FBF343ECAAAF310DBD799")
-}
-rule fakeInstaller_a
+
+rule fakeInstaller
 {
 	meta:
 		description = "This rule detects application that simulate an Installer"
@@ -1757,16 +1311,8 @@ rule fakeInstaller_a
 	condition:
 		all of them
 }
-rule fakeinstaller_sms_a
-{
-	strings:
-		$a = "http://sms24.me" wide
-		$b = "http://sms911.ru" wide
-		$c = "smsdostup.ru" wide
-	condition:
-		any of them
-}
-rule MazarBot_a
+
+rule MazarBot
 {
 	meta:
 		description = "This rule detects Android.MazarBot"
@@ -1782,7 +1328,8 @@ rule MazarBot_a
 	condition:
 		$string_1 or $string_2  or $string_9 or $string_10  or $string_5 or $string_6
 }
-rule sms_smspay_a: chinnese
+
+rule sms_smspay: chinnese
 {
 	meta:
 		description = "smspay chinnese"
@@ -1798,29 +1345,7 @@ rule sms_smspay_a: chinnese
 		$a and (any of ($b_*)) and (any of ($c_*))
 }
 
-rule Trojan_Droidjack_a
-{
-meta:
-author = "https://twitter.com/SadFud75"
-condition:
-androguard.package_name("net.droidjack.server") or androguard.activity(/net.droidjack.server/i)
-}
-rule Trojan_Droidjack_b
-{
-  meta:
-      author = "https://twitter.com/SadFud75"
-  condition:
-      androguard.package_name("net.droidjack.server") or androguard.activity(/net.droidjack.server/i)
-}
-
-rule GhostFrameWork_EventDex_a
-{
-	strings:
-		$a = "EventDex"
-	condition:
-		$a		
-}
-rule basebridge_a
+rule basebridge
 {
 	meta:
 		description = "A rule to detect Basebridge app"
@@ -1834,7 +1359,7 @@ rule basebridge_a
 		all of them
 }
 
-rule lokibot_grotez_a
+rule lokibot_grotez
 {
 	meta:
 		description = "This rule detects the Loki iterration application, used to show all Yara rules potential"
@@ -1844,59 +1369,8 @@ rule lokibot_grotez_a
 	condition:
 		any of them
 }
-rule SMSSpy_a
-{
-	strings:
-		$files_0 = "syedcontacts"
-		$files_1 = "allcontacts.txt"
-		$files_2 = "tgcontact"
-		$files_3 = "tgupload"
-	condition:
-	  	any of ($files_*) or
-		cuckoo.network.dns_lookup(/zahrasa/) or
-		androguard.url(/zahrasa/) or
-		cuckoo.network.dns_lookup(/tgcontact/) or
-		androguard.url(/tgcontact/) or
-		cuckoo.network.dns_lookup(/tgupload/) or
-		androguard.url(/tgupload/)
-}
-rule bankingapps_a
-{
-	strings:
-	  $ = "com.ingbanktr.ingmobil"
-	  $ = "com.ing.mobile"
-	  $ = "au.com.ingdirect.android"
-	  $ = "de.ing_diba.kontostand"
-	  $ = "com.ing.diba.mbbr2"
-	  $ = "com.IngDirectAndroid"
-	  $ = "pl.ing.ingmobile"
-	condition:
-		1 of them
-}
-rule Banks_Strings_BOI_a {
-	strings:
-		$string_1 = /boi\.com/
-		$string_2 = /365online\.com/
-		$string_3 = /businessonline\-boi\.com/
-		$string_4 = /bankofireland\.com/
-	condition:
-		1 of ($string_*)
-}
 
-rule Ransomware_a
-{
-	strings:
-		$a = "All your files are encrypted"
-		$b = "Your phone is locked until payment"
-	condition:
-		$a or $b	
-}
-rule videogames_a
-{
-    condition:
-        false
-}
-rule FakeClashOfClans_a
+rule FakeClashOfClans
 {
 	meta:
 		description = "Fake Clash of clans applications"
@@ -1904,55 +1378,8 @@ rule FakeClashOfClans_a
 		androguard.app_name(/clash of clans/i) and
 		not androguard.certificate.sha1("456120D30CDA8720255B60D0324C7D154307F525")
 }
-rule Banks_Strings_PermanentTSB_a {
-	strings:
-		$string_1 = /permanenttsb\.ie/
-		$string_2 = /open24\.ie/
-	condition:
-		1 of ($string_*)
-}
-rule Banks_Strings_UlsterBank_a {
-	strings:
-		$string_1 = /digital\.ulsterbank\.ie/
-		$string_2 = /ulsterbankanytimebanking\.ie/
-		$string_3 = /ulsterbank\.ie/
-		$string_4 = /cardsonline\-commercial\.com/
-		$string_5 = /bankline\.ulsterbank\.ie/
-	condition:
-		1 of ($string_*)
-}
-rule Banks_Strings_KBC_a {
-	strings:
-		$string_1 = /online\.kbc\.ie/
-		$string_2 = /kbc\.ie/
-	condition:
-		1 of ($string_*)
-}
-rule Banks_Strings_AIB_a {
-	strings:
-		$string_1 = /onlinebanking\.aib\.ie/
-		$string_2 = /business\.aib\.ie/
-		$string_3 = /aib\.ie/
-	condition:
-		1 of ($string_*)
-}
-rule JusPayActivity_a
-{
-	meta:
-		description = "All JusPay SDK Apps"
-	condition:
-		androguard.activity("in.juspay.godel.PaymentActivity")	or
-		androguard.activity("in.juspay.juspaysafe.LegacyPaymentActivity")
-}
 
-rule EzetapSDKTracker_a
-{
-	meta:
-		description = "All Ezetap SDK Apps"
-	condition:
-		androguard.activity("com.eze.api.EzeAPIActivity")
-}
-rule RuPayTracker_a
+rule RuPayTracker
 {
 	meta:
 		description = "This rule detects RuPay merchant verification"
@@ -1964,57 +1391,65 @@ rule RuPayTracker_a
 		($a or $b or $c) and
 		androguard.permission(/android.permission.INTERNET/)
 }
-rule CitrusSDKActivity_a
+
+rule CitrusSDKActivity
 {
 	meta:
 		description = "All Citrus SDK Apps"
 	condition:
 		androguard.activity("com.citrus.sdk.CitrusActivity")
 }
-rule EBSPaymentsSDKActivity_a
+
+rule EBSPaymentsSDKActivity
 {
 	meta:
 		description = "All EBS Payments SDK Apps"
 	condition:
-		androguard.activity("com.ebs.android.sdk.PaymentDetailActivity")		
+		androguard.activity("com.ebs.android.sdk.PaymentDetailActivity")
 }
-rule PayTMSupremeAuthActivity_a
+
+rule PayTMSupremeAuthActivity
 {
 	meta:
 		description = "All PayTM auth Apps"
 	condition:
 		androguard.activity("com.one97.supreme.ui.auth.SupremeAuthActivity")
 }
-rule PhonePeActivity_a
+
+rule PhonePeActivity
 {
 	meta:
 		description = "All Phonepe SDK Apps"
 	condition:
 		androguard.activity("com.phonepe.android.sdk.ui.MerchantTransactionActivity") or
-		androguard.activity("com.phonepe.android.sdk.ui.debit.views.TransactionActivity")		
+		androguard.activity("com.phonepe.android.sdk.ui.debit.views.TransactionActivity")
 }
-rule YesBankActivity_a
+
+rule YesBankActivity
 {
 	meta:
 		description = "All YesBank UPI SDK"
 	condition:
 		androguard.activity("com.yesbank.TransactionStatus")
 }
-rule InstamojoActivity_a
+
+rule InstamojoActivity
 {
 	meta:
 		description = "All Instamojo SDK Apps"
 	condition:
 		androguard.activity("com.instamojo.android.activities.PaymentActivity")
 }
-rule BillDeskPayActivity_a
+
+rule BillDeskPayActivity
 {
 	meta:
 		description = "All BillDesk SDK Apps"
 	condition:
-		androguard.activity("com.billdesk.sdk.QuickPayView")		
+		androguard.activity("com.billdesk.sdk.QuickPayView")
 }
-rule netc_detect_a
+
+rule netc_detect
 {
 	meta:
 		description = "This rule detects FASTag apps"
@@ -2022,59 +1457,66 @@ rule netc_detect_a
 		$a = "http://npci.org/etc/schema"
 	condition:
 		($a) and
-		androguard.permission(/android.permission.INTERNET/)		
+		androguard.permission(/android.permission.INTERNET/)
 }
-rule LotusPaySDKTrackerActivity_a
+
+rule LotusPaySDKTrackerActivity
 {
 	meta:
 		description = "All LotusPay SDK Apps"
 	condition:
-		androguard.activity("com.lotuspay.library.LotusPay")	
+		androguard.activity("com.lotuspay.library.LotusPay")
 }
-rule PayUActivity_a
+
+rule PayUActivity
 {
 	meta:
 		description = "All PayU SDK Apps"
 	condition:
 		androguard.activity("com.payu.payuui.Activity.PayUBaseActivity")
 }
-rule MobikwikSDKActivity_a
+
+rule MobikwikSDKActivity
 {
 	meta:
 		description = "All Mobikwik SDK Apps"
 	condition:
 		androguard.activity("com.mobikwik.sdk.PaymentActivity")
 }
-rule AmazonPayINSDKActivity_a
+
+rule AmazonPayINSDKActivity
 {
 	meta:
 		description = "All Amazon Pay India Apps"
 	condition:
 		androguard.activity("amazonpay.silentpay.APayActivity")
 }
-rule FreechargeINSDKActivity_a
+
+rule FreechargeINSDKActivity
 {
 	meta:
 		description = "All Freecharge India Apps"
 	condition:
 		androguard.activity("in.freecharge.checkout.android.pay.PayInitActivity")
 }
-rule UPIPINActivity_a
+
+rule UPIPINActivity
 {
 	meta:
-		description = "All UPI PIN Activity apps"	
+		description = "All UPI PIN Activity apps"
 	condition:
-		androguard.activity("org.npci.upi.security.pinactivitycomponent.GetCredential")				
-}
-rule BHIMAadhaarUPITrackerActivity_a
-{
-	meta:
-		description = "All TCS AePS UPI apps"	
-	condition:
-		androguard.activity("com.tcs.merchant.cags.UPIPaymentFragment")		
+		androguard.activity("org.npci.upi.security.pinactivitycomponent.GetCredential")
 }
 
-rule banker_Dew18_2_a
+rule BHIMAadhaarUPITrackerActivity
+{
+	meta:
+		description = "All TCS AePS UPI apps"
+	condition:
+		androguard.activity("com.tcs.merchant.cags.UPIPaymentFragment")
+}
+
+rule banker_Dew18_2
 {
 	meta:
 		description = "Detects DewExample related samples"
@@ -2085,7 +1527,8 @@ rule banker_Dew18_2_a
 	condition:
 		all of ($a_*)
 }
-rule WhiteBroad_a
+
+rule WhiteBroad
 {
 	meta:
 		description = "This rule will be able to tag all the WhiteBroad stealer"
@@ -2098,18 +1541,20 @@ rule WhiteBroad_a
 	condition:
 		androguard.service(/PkgHelper/i)
 		and androguard.service(/SimpleWindow/i)
-		and androguard.receiver(/KeepReceiver/i) 
-		and androguard.receiver(/MessageReceiver/i) 
-		and androguard.receiver(/ShowReceiver/i) 
-		and androguard.activity(/MainActivity/i) 
+		and androguard.receiver(/KeepReceiver/i)
+		and androguard.receiver(/MessageReceiver/i)
+		and androguard.receiver(/ShowReceiver/i)
+		and androguard.activity(/MainActivity/i)
 }
-rule LeegalitySDKTracker_a
+
+rule LeegalitySDKTracker
 {
 	meta:
 		description = "All Leegality SDK Apps"
 	condition:
 		androguard.activity("com.leegality.leegality.Leegality")
 }
+
 rule z: official
 {
 	meta:
@@ -2120,14 +1565,16 @@ rule z: official
 	condition:
 		androguard.permission(/android.permission.KILL_BACKGROUND_PROCESSES/) and $a
 }
-rule WibmoSDKTrackerActivity_a
+
+rule WibmoSDKTrackerActivity
 {
 	meta:
 		description = "All Wibmo SDK Apps"
 	condition:
 		androguard.activity("com.enstage.wibmo.sdk.inapp.InAppInitActivity")
 }
-rule CoronaVirusTrackerRansomware1_a
+
+rule CoronaVirusTrackerRansomware1
 {
 	meta:
 		description = "This rule detects CoronaVirus Tracker ransomware"
@@ -2140,8 +1587,7 @@ rule CoronaVirusTrackerRansomware1_a
 		all of ($a*)
 }
 
-
-rule Lookout_Monokle_Android_a
+rule Lookout_Monokle_Android
 {
      meta:
        description = "Rule for Monokle Android samples. Configuration information suggests actor has a presence in Russia. Campaigns appear highly targeted."
@@ -2168,7 +1614,8 @@ rule Lookout_Monokle_Android_a
      condition:
          $dex_file and (any of ($seq*) or any of ($str*))
 }
-rule SuspiciousPermissions_a
+
+rule SuspiciousPermissions
 {
 	meta:
 		description = "Yara rule to detect deceptive apps"
@@ -2176,16 +1623,18 @@ rule SuspiciousPermissions_a
 		$susp_string1 = "onBackPressed"
 		$susp_string2 = "doubleBackToExitPressedOnce"
 	condition:
-		$susp_string1 and $susp_string2		
+		$susp_string1 and $susp_string2
 }
-rule AePSMicroATM_a
+
+rule AePSMicroATM
 {
 	meta:
 		description = "Detect All AePS apps built for MicroATM agents by a platform X"
 	condition:
 		androguard.url("aepsandroidapp.firebaseio.com")
 }
-rule FinoPaySDKTrackerActivity_a
+
+rule FinoPaySDKTrackerActivity
 {
 	meta:
 		description = "All Fino SDK Apps"
@@ -2195,7 +1644,8 @@ rule FinoPaySDKTrackerActivity_a
 		androguard.activity("com.finopaytech.finosdk.activity.MainTransactionActivity") or
 		androguard.activity("com.finopaytech.finosdk.activity.TransactionStatusActivity")
 }
-rule iServeUSDKActivity_a
+
+rule iServeUSDKActivity
 {
 	meta:
 		description = "All iServeU AePS SDK Apps"
@@ -2207,7 +1657,8 @@ rule iServeUSDKActivity_a
 		androguard.activity("com.iserveu.aeps.aepslibrary.transactionstatus.TransactionStatusActivity") or
 		androguard.activity("com.iserveu.aeps.aepslibrary.transaction.TransactionReceiptActivity")
 }
-rule SimplSDKActivity_a
+
+rule SimplSDKActivity
 {
 	meta:
 		description = "All Simpl SDK Apps"
@@ -2223,46 +1674,16 @@ rule SimplSDKActivity_a
 		androguard.activity("com.simpl.android.sdk.view.activity.BaseSimplScreen") or
 		$a or $b or $c or $d or $e or $f
 }
-rule fanghu_a: official
-{
-	condition:
-		androguard.app_name("fanghu")
-}
-rule AtomSDKTracker_a
+
+rule AtomSDKTracker
 {
 	meta:
 		description = "All Atom SDK Apps"
 	condition:
-		androguard.activity("com.qq.e.ads.ADActivity")	
+		androguard.activity("com.qq.e.ads.ADActivity")
 }
 
-rule credicorp
-{
-	strings:
-		$string_1 = /splashscreentest/
-		$string_2 = /pacifico.miespacio/
-		$string_3 = /pacifico.iwant/
-		$string_4 = /bcp.benefits/
-		$string_5 = /innovacxion.yapeapp/
-		$string_6 = /bcp.bank/
-		$string_7 = /bnfc.npdb/
-		$string_8 = /coebd.paratiapp/
-		$string_9 = /coebd.manyar/
-		$string_10 = /innovaxcion.pagafacil/
-		$string_11 = /bank.tlc/
-		$string_12 = /bo.discounts/
-		$string_13 = /bcp.bo.wallet/
-		$string_14 = /mobile.credinetweb/
-		$string_15 = /mibanco.bancamovil/
-		$string_16 = /benefits.mibanco/
-		$string_17 = /bederr.mibancoapp/
-		$string_18 = /dataifx.credicorp/
-		$string_19 = /credicorp19/
-		$string_20 = /indisac.link2019/
-	condition:
-		any of them
-}
-rule CashFreeSDKTracker_a
+rule CashFreeSDKTracker
 {
 	meta:
 		description = "All CashFree SDK Apps"
@@ -2273,10 +1694,11 @@ rule CashFreeSDKTracker_a
 		androguard.activity("com.gocashfree.cashfreesdk.GooglePayActivity") or
 		androguard.activity("com.gocashfree.cashfreesdk.CFPhonePayActivity"))
 }
-rule test_CerebrusDecrypted_a
+
+rule test_CerebrusDecrypted
 {
 	meta:
-		description = "This rule, if works, should detected decrypted cerberus apk files" 
+		description = "This rule, if works, should detected decrypted cerberus apk files"
 	strings:
 		$a1 = "patch.ring0.run"
 		$a2 = "143523#"
@@ -2287,23 +1709,25 @@ rule test_CerebrusDecrypted_a
 	condition:
         all of ($a*)
 }
+
 rule AtomSDKTracker_b
 {
 	meta:
 		description = "All Atom SDK Apps"
 	condition:
-		androguard.activity("com.atom.mobilepaymentsdk.PayActivity")		
+		androguard.activity("com.atom.mobilepaymentsdk.PayActivity")
 }
-rule algo360_detect_a
+
+rule algo360_detect
 {
 	meta:
 		description = "This rule detects Algo360 Credit Score SDK apps"
 	strings:
 		$a = "iapi.algo360.com"
-		$b = "https://uat.algo360.com:7777"		
+		$b = "https://uat.algo360.com:7777"
 	condition:
 		($a or $b) and
-		androguard.permission(/android.permission.INTERNET/)		
+		androguard.permission(/android.permission.INTERNET/)
 }
 private rule upx_elf32_arm_stub : packer
 {
@@ -2314,7 +1738,8 @@ private rule upx_elf32_arm_stub : packer
   condition:
     $UPX_STUB
 }
-rule promon_a: packer
+
+rule promon: packer
 {
   meta:
     description = "Promon Shield"
@@ -2332,6 +1757,7 @@ rule promon_a: packer
     ($a and $b and $c and $d) and
     2 of ($s*)
 }
+
 rule ba: official
 {
 	meta:
@@ -2345,7 +1771,8 @@ rule ba: official
 	condition:
 		any of them
 }
-rule Miners_cpuminer_a: coinminer
+
+rule Miners_cpuminer: coinminer
 {
 	meta:
 		description = "This rule detects suspicious APK miners"
@@ -2358,7 +1785,8 @@ rule Miners_cpuminer_a: coinminer
 	condition:
 		any of them
 }
-rule Miners_lib_a: coinminer
+
+rule Miners_lib: coinminer
 {
 	meta:
 		description = "This rule detects suspicious APK miners"
@@ -2367,9 +1795,10 @@ rule Miners_lib_a: coinminer
 		$a1 = "libcpuminer.so"
 		$a2 = "libcpuminerpie.so"
 	condition:
-		$a1 or $a2 
+		$a1 or $a2
 }
-rule Androidos_js_a: coinminer
+
+rule Androidos_js: coinminer
 {
 	meta:
 		description = "http://blog.trendmicro.com/trendlabs-security-intelligence/coin-miner-mobile-malware-returns-hits-google-play/; 		https://twitter.com/LukasStefanko/status/925010737608712195"
@@ -2380,29 +1809,10 @@ rule Androidos_js_a: coinminer
 		$s1 = "CoinHive.User"
 		$s2 = "CoinHive.Anonymous"
 	condition:
-		$url and 1 of ($s*)	
+		$url and 1 of ($s*)
 }
-rule Miner_a_a: coinminer
-{
-	meta:
-		    description = "Coinhive"
-			author = "https://koodous.com/analysts/JJRLR"
-	strings:
-	    $miner = "https://coinhive.com/lib/coinhive.min.js" nocase
-	    $miner1 = "https://coin-hive.com/lib/coinhive.min.js" nocase
-	    $miner2 = "new.CoinHive.Anonymous" nocase
-	    $miner3 = "https://security.fblaster.com" nocase
-	    $miner4 = "https://wwww.cryptonoter.com/processor.js" nocase
-	    $miner5 = "https://jsecoin.com/server/api/" nocase
-	    $miner6 = "https://digxmr.com/deepMiner.js" nocase
-	    $miner7 = "https://www.freecontent.bid/FaSb.js" nocase
-		$miner8 = "htps://authedmine.com/lib/authedmine.min.js" nocase
-	    $miner9 = "https://www.bitcoinplus.com/js/miner.js" nocase
-	    $miner10 = "https://www.monkeyminer.net" nocase
-	condition:
-	    any of them 
-}
-rule miner_adb_a
+
+rule minerdb
 {
 	meta:
 		description = "This rule detects adb miner "
@@ -2413,10 +1823,11 @@ rule miner_adb_a
 		$aa_1 = "pool.monero.hashvault.pro:5555"
 		$aa_2 = "pool.minexmr.com:7777"
 	condition:
-		$a_1 and 
+		$a_1 and
 		any of ($aa_*)
 }
-rule miner_b_a: coinminer
+
+rule miner_b: coinminer
 {
 	meta:
 		description = "This rule detects suspicious APK miners"
@@ -2435,8 +1846,9 @@ rule miner_b_a: coinminer
 		$url9 = "http://eruuludam.mn/web/coinhive.min.js" nocase
 		$url10 = "http://www.playerhd2.pw/js/adsensebase.js" nocase
 	condition:
-		$a1 or $a2 or 1 of ($url*)	
+		$a1 or $a2 or 1 of ($url*)
 }
+
 rule Trojan_c: apt36
 {
 	meta:
@@ -2451,12 +1863,12 @@ rule Trojan_c: apt36
 	condition:
 		1 of ($c2_*)
 		and (
-			androguard.permission(/android.permission.RECEIVE_SMS/) 
+			androguard.permission(/android.permission.RECEIVE_SMS/)
 			or androguard.permission(/android.permission.READ_SMS/)
 		)
 }
 
-rule Ahmyth_test_a
+rule Ahmyth_test
 {
 	meta:
 		description = "This rule detects ahmyth packaged apps"
@@ -2471,11 +1883,7 @@ rule Ahmyth_test_a
 	condition:
 		all of ($a*)
 }
-rule WhatsApp_a: Virus
-{
-	condition:
-	   androguard.url("google.com/iidKZ.KxZ/=-Z[")
-}
+
 rule AppInstaller
 {
     meta:
@@ -2484,6 +1892,7 @@ rule AppInstaller
 	androguard.filter(/com.android.vending.INSTALL_REFERRER/) or
 	androguard.permission(/INSTALL_PACKAGES/)
 }
+
 rule Keylogger
 {
     meta:
@@ -2492,6 +1901,7 @@ rule Keylogger
 	androguard.filter(/accessibilityservice.AccessibilityService/) or
 	androguard.permission(/BIND_ACCESSIBILITY_SERVICE/)
 }
+
 rule DeviceAdmin
 {
     meta:
@@ -2500,6 +1910,7 @@ rule DeviceAdmin
 	androguard.filter(/ACTION_DEVICE_ADMIN/) or
 	androguard.permission(/BIND_DEVICE_ADMIN/)
 }
+
 rule Veri5DigitalTracker
 {
 	meta:
@@ -2511,18 +1922,9 @@ rule Veri5DigitalTracker
 		($a or $b)  and
 		androguard.permission(/android.permission.INTERNET/)
 }
-rule riltok_koo
-{
-    strings:
-        $s1 = "librealtalk-jni.so"
-        $s2 = "AmericanExpress"
-        $s3 = "cziugqk"
-    condition:
-        all of them
-}
 
 rule video_player:fake
-{ 	
+{
 	meta:
 		description = "Determine if apk is a fake Video Player"
 		sample = "b7d5732b1f0895724bac1fc20994341aed74e80d1f60f175196b98147ec5887c"
@@ -2530,6 +1932,7 @@ rule video_player:fake
 		androguard.app_name("Video Player") and
 		not androguard.certificate.sha1("7106c7423d7e70cd03db17c5b1cc9827")
 }
+
 rule ca: official
 {
 	meta:
@@ -2539,25 +1942,27 @@ rule ca: official
 		$b = "android.app.extra.DEVICE_ADMIN" nocase
 		$c = "/private/tuk_tuk.php"
 	condition:
-		($a and $b) and (androguard.permission(/RECEIVE_SMS/) or androguard.permission(/READ_SMS/) or androguard.permission(/SEND_SMS/) or $c) 
+		($a and $b) and (androguard.permission(/RECEIVE_SMS/) or androguard.permission(/READ_SMS/) or androguard.permission(/SEND_SMS/) or $c)
 }
+
 rule apperhand: trojan
 {
 	meta:
 		description = "This rule detects the apperhand SDK aggressive adware."
 	condition:
-		androguard.url(/www\.apperhand\.com/) 
-		and   			
-		(androguard.permission(/android.permission.INTERNET/) 
+		androguard.url(/www\.apperhand\.com/)
+		and
+		(androguard.permission(/android.permission.INTERNET/)
 		or
-		androguard.permission(/android.permission.READ_HISTORY_BOOKMARKS/) 
+		androguard.permission(/android.permission.READ_HISTORY_BOOKMARKS/)
 		or
-		androguard.permission(/android.WRITE_HISTORY_BOOKMARKS/) 
-		or 
+		androguard.permission(/android.WRITE_HISTORY_BOOKMARKS/)
+		or
 		androguard.permission(/android.permission.AUTHENTICATE_ACCOUNTS/)
 		or
 		androguard.permission(/android.permission.SET_TIME_ZONE/))
 }
+
 rule Minecraft
 {
 	meta:
@@ -2580,26 +1985,7 @@ rule Minecraft
 		androguard.activity(/\.sms\./)
 		)
 }
-rule da: official
-{
-	strings:
-		$MD5 = "8037c51ababaaeb8da4d8a0b460223a2"
-		$SHA1 = "b657d2817ff6d511d6c2b725c58180721d1e153c"
-		$AppName = "Hediye Kutusu"
-		$Developer = "Hediye Fun Corp."
-	condition:
-		$MD5 or $SHA1 or $AppName or $Developer
-}
-rule ea: official
-{
-	strings:
-		$MD5 = "5f08fb3e2fc00391561578d0e5142ecd"
-		$SHA1 = "db35baeb9fc92ea28b116ec7da02af1cd0797dcf"
-		$AppName = "Viber"
-		$Developer = "UMT inc."
-	condition:
-		$MD5 or $SHA1 or $AppName or $Developer
-}
+
 rule quickshortcuu
 {
 	meta:
@@ -2620,8 +2006,9 @@ rule tiffintomsus
 		sample = "6e2c3900d9775696bd401cdfb6924f66c3283cd10666cebc930a1d01f9bf9807"
 	condition:
 		androguard.activity(/\.tiffintom\./) or
-    	androguard.activity("com.tiffintom.tiffintom.sdk.activity.PermissionsActivity") 
+    	androguard.activity("com.tiffintom.tiffintom.sdk.activity.PermissionsActivity")
 }
+
 rule fake_updater
 {
 	meta:
@@ -2638,6 +2025,7 @@ rule fake_updater
 	condition:
 		all of them
 }
+
 rule apkDetect
 {
 	meta:
@@ -2655,9 +2043,10 @@ rule apkDetect
 		androguard.permission(/android.permission.CHANGE_NETWORK_STATE/) and
 		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/) and
 		androguard.permission(/android.permission.SYSTEM_ALERT_WINDOW/) and
-		androguard.permission(/android.permission.INTERNET/) and 
+		androguard.permission(/android.permission.INTERNET/) and
 		$a
 }
+
 rule ga: official
 {
 	meta:
@@ -2673,6 +2062,7 @@ rule ga: official
 		androguard.permission(/android.permission.ADD_VOICEMAIL/) and
 		androguard.certificate.sha1("1dab0a0d4123f6fc17b78ee327b1b219b951f546")
 }
+
 rule Igexin2252
 {
 	meta:
@@ -2685,23 +2075,7 @@ rule Igexin2252
 	condition:
 		any of ($strings_*)
 }
-rule dowgin_a:adware android
-{
-    meta:
-        author = "https://twitter.com/plutec_net"
-        reference = "https://koodous.com/"
-        sample = "4d7f2d6ff4ed8ced6f8f7f96e9899273cc3090ea108f2cc3b32dd1a06e63cf70"
-        sample2 = "cde8160d09c486bdd6d96b2ed81bd52390d77094d13ff9cfbc6949ed00206a83"
-        sample3 = "d2e81e6db5f4964246d10241588e0e97cde524815c4de7c0ea1c34a48da1bcaf"
-        sample4 = "cc2d0b3d8f00690298b0e5813f6ace8f4d4b04c9704292407c2b83a12c69617b"
-    strings:
-        $a = "http://112.74.111.42:8000"
-        $b = "SHA1-Digest: oIx4iYWeTtKib4fBH7hcONeHuaE="
-        $c = "ONLINEGAMEPROCEDURE_WHICH_WAP_ID"
-        $d = "http://da.mmarket.com/mmsdk/mmsdk?func=mmsdk:posteventlog"
-    condition:
-        all of them
-}
+
 rule leadbolt: advertising
 {
 	meta:
@@ -2724,12 +2098,12 @@ rule android_mazarBot_z: android
 		$str_4 = "#admin_start"
 		$str_5 = "kill call"
 		$str_6 = "unstop all numbers"
-	condition:		
+	condition:
 		androguard.certificate.sha1("50FD99C06C2EE360296DCDA9896AD93CAE32266B") or
 		(androguard.package_name("com.mazar") and
-		androguard.activity(/\.DevAdminDisabler/) and 
-		androguard.receiver(/\.DevAdminReceiver/) and 
-		androguard.service(/\.WorkerService/i)) or 
+		androguard.activity(/\.DevAdminDisabler/) and
+		androguard.receiver(/\.DevAdminReceiver/) and
+		androguard.service(/\.WorkerService/i)) or
 		androguard.permission(/android.permission.INTERNET/) and
 		androguard.permission(/android.permission.SEND_SMS/) and
 		androguard.permission(/android.permission.CALL_PHONE/) and
@@ -2756,9 +2130,9 @@ rule MazarBot_b
 		$string_11 = "assets/x86/tor.mp3"
 		$string_12 = "assets/x86/tor_old.mp3"
 	condition:
-		(($string_1 or $string_2) and ($string_3 or $string_4)) or 
+		(($string_1 or $string_2) and ($string_3 or $string_4)) or
 		(($string_9 or $string_10) and ($string_11 or $string_12)) or
-		(($string_5 or $string_6) and ($string_7 or $string_8)) 
+		(($string_5 or $string_6) and ($string_7 or $string_8))
 }
 
 rule FakeApp
@@ -2776,6 +2150,7 @@ rule FakeApp
 	androguard.certificate.subject(/Attacker Inc\./) or
 	androguard.certificate.subject(/Attacker corp\./)
 }
+
 rule AddsDomains
 {
 	meta:
@@ -2783,14 +2158,14 @@ rule AddsDomains
 		sample = "3516eb210aad7f05c8c2d5485905308714d9fe6c898cfd8e35cb247475846261"
 	strings:
 		$1 = "zzwx.ru/" wide ascii
-		$2 = "zwx.ru/" wide ascii	
+		$2 = "zwx.ru/" wide ascii
 		$3 = "sppromo.ru/" wide ascii
 		$4 = "tdslsd.ru/" wide ascii
 		$5 = "cldrm.com/" wide ascii
 		$6 = "clmbtrk.com/" wide ascii
 		$7 = "cldlr.com/" wide ascii
 		$8 = "wezzx.ru/" wide ascii
-		$9 = "leno.ml/" wide ascii		
+		$9 = "leno.ml/" wide ascii
 		$10 = "winbv.nl/" wide ascii
 	condition:
 		1 of them or
@@ -2803,7 +2178,7 @@ rule AddsDomains
 		cuckoo.network.dns_lookup(/cldlr.com/) or
 		cuckoo.network.dns_lookup(/wezzx.ru/) or
 		cuckoo.network.dns_lookup(/leno.ml/) or
-		cuckoo.network.dns_lookup(/winbv.nl/)		
+		cuckoo.network.dns_lookup(/winbv.nl/)
 }
 
 rule BankingPhisher: string
@@ -2817,6 +2192,7 @@ rule BankingPhisher: string
 	condition:
 		$string_1 or $string_2
 }
+
 rule MobiDash
 {
 	meta:
@@ -2827,6 +2203,7 @@ rule MobiDash
 	condition:
 		all of them
 }
+
 rule MobiDa
 {
 	meta:
@@ -2838,7 +2215,8 @@ rule MobiDa
 	condition:
 		1 of them
 }
-rule slempo_a: package
+
+rule slempo: package
 {
 	meta:
 		description = "This rule detects the slempo (slembunk) variant malwares by using package name and app name comparison"
@@ -2846,7 +2224,8 @@ rule slempo_a: package
 	condition:
 		androguard.package_name("org.slempo.service")
 }
-rule HummingBad_a: urls
+
+rule HummingBad: urls
 {
 	meta:
 		description = "This rule detects APKs in HummingBad Malware Chain"
@@ -2862,19 +2241,13 @@ rule HummingBad_a: urls
 		$string_8 = "assets/ep"
 		$string_9 = "assets/fx"
 	condition:
-		($string_1 and $string_3 and $string_2) or 
-		($string_3 and $string_4 and $string_5 and $string_6 and $string_7) or 
+		($string_1 and $string_3 and $string_2) or
+		($string_3 and $string_4 and $string_5 and $string_6 and $string_7) or
 		($string_6 and $string_7 and $string_8 and $string_9) or
 		($string_6 and $string_7)
 }
-rule russian_domain_a: adware
-{
-	strings:
-		$a = "zzwx.ru"
-	condition:
-		$a
-}
-rule AndroRAT_a
+
+rule AndroRAT
 {
 	meta:
 		description = "AndroRAT"
@@ -2886,7 +2259,8 @@ rule AndroRAT_a
 	condition:
 		$a and ($b or $c or $d)
 }
-rule Mulad_a
+
+rule Mulad
 {
 	meta:
         description = "Evidences of Mulad Adware via rixallab component"
@@ -2895,7 +2269,8 @@ rule Mulad_a
    	condition:
     	$1 or androguard.service(/com\.rixallab\.ads\./)
 }
-rule Deng_a
+
+rule Deng
 {
 	meta:
 		description = "Android Deng, SMSreg variant related with cmgame.com chinese game portal and its SDK. #Deng #SMSreg #PUA #Riskware"
@@ -2909,7 +2284,8 @@ rule Deng_a
 	condition:
 		(1 of them) or cuckoo.network.dns_lookup(/.*\.cmgame\.com/)
 }
-rule banker_Dew18_a
+
+rule banker_Dew18
 {
 	meta:
 		description = "Detects DewExample related samples"
@@ -2922,7 +2298,8 @@ rule banker_Dew18_a
 	condition:
 		all of ($a_*)
 }
-rule dexguard_new_a: obfuscator
+
+rule dexguard_new: obfuscator
 {
   meta:
     description = "DexGuard new"
@@ -2947,7 +2324,8 @@ rule dexguard_new_a: obfuscator
         or
         ( ($Lolcase or $Loucase or $Lo2c or 1 of ($Loif*)) and ($Lo2crap or $Lo3crap) )
 }
-rule unk_packer_a_a: packer
+
+rule unk_packer: packer
 {
   meta:
     description = "Unknown packer"
@@ -2996,7 +2374,8 @@ rule unk_packer_a_a: packer
   condition:
     $attachBaseContextOpcodes and $xor_key and 3 of ($str_*)
 }
-rule lipizzan_1_a
+
+rule lipizzan_1
 {
 	meta:
 		description = "Detects Lipizzan related samples"
@@ -3012,6 +2391,7 @@ rule lipizzan_1_a
 	condition:
 		all of ($a_*)
 }
+
 rule ia: official
 {
 	meta:
@@ -3021,7 +2401,8 @@ rule ia: official
 	condition:
 		all of them
 }
-rule stealien_a: protector
+
+rule stealien: protector
 {
   meta:
     description = "AppSuit"
@@ -3030,6 +2411,7 @@ rule stealien_a: protector
     condition:
         all of them
 }
+
 rule ja: official
 {
 	meta:
@@ -3041,6 +2423,7 @@ rule ja: official
 	condition:
 		any of them
 }
+
 rule ka: official
 {
 	meta:
@@ -3050,7 +2433,8 @@ rule ka: official
 	condition:
 		$a
 }
-rule sppromo_fakeapps_a
+
+rule sppromo_fakeapps
 {
 	meta:
 		description = "Detects few shopping related apps which redirect to a malicious website"
@@ -3060,50 +2444,8 @@ rule sppromo_fakeapps_a
 	condition:
 		all of ($a_*)
 }
-rule LokiBotMobile_a
-{
-	strings:
-		$string1 = "android.permission.BIND_DEVICE_ADMIN"
-		$string2 = "android.permission.SYSTEM_ALERT_WINDOW"
-        $string3 = "and your's device will reboot and"
-        $string4 = "This action will RESET ALL YOUR DATA."
-        $string5 = "Please, wait"
-        $string6 = "AndroidManifest.xml"
-	condition:
-		all of them
-}
-rule LokiBotMobile1_a
-{
-	strings:
-		$string1 = "Domian1"
-		$string2 = "Domian2"
-		$string3 = "Domian3"		
-		$string4 = "Domian4"
-		$string5 = "Domian5"
-		$string6 = "android.permission.BIND_DEVICE_ADMIN"
-		$string7 = "android.permission.SYSTEM_ALERT_WINDOW"
-		$string8 = "android.permission.SYSTEM_OVERLAY_WINDOW"
-	condition:
-		all of them
-}
-rule redalertJAR_a {
-	strings:
-		$string_1 = /http:\/\/\S+:7878/
-		$string_2 = "twitter.com"
-		$string_4 = "Enable security protection"
-		$string_5 = "timeapi.org"
-	condition:
-		all of ($string_*)
-}
-rule readAlertNEW_a {
-	strings:
-		$string_1 = "twwitter.com"
-		$string_2 = /http:\/\/\S+:7878/
-		$string_4 = "utc/now?%5CD"
-	condition:
-		all of ($string_*)
-}
-rule Android_OmniRat_a
+
+rule Android_OmniRat
 {
 	meta:
 		author = "Jacob Soo Lead Re"
@@ -3113,11 +2455,12 @@ rule Android_OmniRat_a
 	strings:
 		$a = "android.engine.apk"
 	condition:
-		(androguard.activity(/com.app.MainActivity/i) and 
-		 androguard.permission(/android.permission.WRITE_EXTERNAL_STORAGE/i) and 
+		(androguard.activity(/com.app.MainActivity/i) and
+		 androguard.permission(/android.permission.WRITE_EXTERNAL_STORAGE/i) and
 		 androguard.package_name(/com.app/i)) and $a
 }
-rule Dendroid_a: android
+
+rule Dendroid: android
 {
 	meta:
 	author = "https://twitter.com/jsmesa"
@@ -3132,7 +2475,8 @@ rule Dendroid_a: android
    	condition:
     	all of them
 }
-rule Dendroid_2_a: android
+
+rule Dendroid_2: android
 {
 	meta:
 	author = "https://twitter.com/jsmesa"
@@ -3144,7 +2488,8 @@ rule Dendroid_2_a: android
    	condition:
     	all of them
 }
-rule Dendroid_3_a: android
+
+rule Dendroid_3: android
 {
 	meta:
 	author = "https://twitter.com/jsmesa"
@@ -3156,7 +2501,8 @@ rule Dendroid_3_a: android
    	condition:
     	all of them
 }
-rule Android_Dendroid_a
+
+rule Android_Dendroid
 {
 	meta:
 		author = "Jacob Soo Lead Re"
@@ -3167,7 +2513,8 @@ rule Android_Dendroid_a
 		androguard.service(/com.connect/i) and
         androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/i)
 }
-rule Android_Triada_a: android
+
+rule Android_Triada: android
 {
   meta:
     author = "Doopel"
@@ -3182,11 +2529,11 @@ rule Android_Triada_a: android
       androguard.permission(/android.permission.KILL_BACKGROUND_PROCESSES/) and
       androguard.permission(/android.permission.SYSTEM_ALERT_WINDOW/) and
       androguard.permission(/android.permission.GET_TASKS/) and
-		  androguard.activity("org.cocos2dx.cpp.VideoPlayer") and 
-			androguard.activity("com.cy.smspay.HJActivity") and 
-	    androguard.activity("com.b.ht.FJA") and 
-	    androguard.activity("com.door.pay.sdk.DnPayActivity") and 
-	    androguard.activity("com.alipay.android.app.sdk.WapPayActivity") and 
+		  androguard.activity("org.cocos2dx.cpp.VideoPlayer") and
+			androguard.activity("com.cy.smspay.HJActivity") and
+	    androguard.activity("com.b.ht.FJA") and
+	    androguard.activity("com.door.pay.sdk.DnPayActivity") and
+	    androguard.activity("com.alipay.android.app.sdk.WapPayActivity") and
 	    androguard.activity("com.cy.pay.TiantianSMPay")
  }
 
@@ -3198,22 +2545,8 @@ rule Anubis_b: abc
 		androguard.receiver(/AlarmRcv/) and
 		androguard.receiver(/BootRcv/)
 }
-rule Pakistan_a
-{
- strings:
-   $a1 = "com.avanza.ambitwiz" wide ascii
- condition:
-   $a1
-}
-rule Coinhive4_a
-{
- strings:
-   $a1 = "CoinHiveIntentService" wide ascii
-   $a2 = "com.kaching.kingforaday.service.CoinHiveIntentService" wide ascii
- condition:
-   any of them
-}
-rule android94188_a: NetTraffic
+
+rule android94188: NetTraffic
 {
 	meta:
 		description = "This rule detects anroid94188.com related samples"
@@ -3287,9 +2620,10 @@ rule android94188_a: NetTraffic
 		cuckoo.network.dns_lookup(/ad\.hywfs\.com/) or
 		cuckoo.network.dns_lookup(/zy\.innet18\.com/) or
 		cuckoo.network.dns_lookup(/45\.125\.216\.210/) or
-		cuckoo.network.dns_lookup(/121\.201\.67\.140/) 
+		cuckoo.network.dns_lookup(/121\.201\.67\.140/)
 }
-rule Root_zk_a: NetTraffic
+
+rule Root_zk: NetTraffic
 {
 	meta:
 		description = "This rule detects root related about zookxxxxxx "
@@ -3316,30 +2650,8 @@ rule Root_zk_a: NetTraffic
 		cuckoo.network.dns_lookup(/m\.justforsomefun\.com/) or
 		cuckoo.network.dns_lookup(/p\.shuyuan168\.com/)
 }
-rule RuClicker_a
-{
-	strings:
-		$ = "CiLscoffBa"
-		$ = "FhLpinkJs"
-		$ = "ZhGsharecropperFx"
-	condition:
- 		all of them
-}
-rule LeakerLocker2_a
-{
-	condition:
-		androguard.service(/x\.u\.s/)
-}
-rule com_house_crust_a
-{
-		strings:
-			$a = "assets/com.jiahe.school.apk" nocase
-		condition:
-		androguard.package_name("com.house.crust") or
-		androguard.certificate.sha1("E1DF7A92CE98DC2322C7090F792818F785441416") and
-		$a
-}
-rule android_mazarbot_version_three_a
+
+rule android_mazarbot_version_three
 {
 	meta:
 		description = "Yara rule to detect MazarBOT version three"
@@ -3360,16 +2672,8 @@ rule android_mazarbot_version_three_a
 		androguard.permission(/android.permission.READ_SMS/) and
 		androguard.permission(/android.permission.WRITE_SMS/)
 }
-rule la: official
-{
-	strings:
-		$a = "your files have been encrypted!"
-		$b = "your Device has been locked"
-		$c = "All information listed below successfully uploaded on the FBI Cyber Crime Depar"
-	condition:
-		$a or $b or $c or androguard.package_name("com.android.admin.huanmie") or androguard.package_name("com.android.admin.huanmie")
-}
-rule ChinesePorn_2_a
+
+rule ChinesePorn_2
 {
 	meta:
 		description = "This rule detects dirtygirl samples"
@@ -3378,29 +2682,22 @@ rule ChinesePorn_2_a
 		androguard.receiver(/com\.sdky\.lyr\.zniu\.HuntReceive/) and
 		androguard.service(/com\.sdky\.jzp\.srvi\.DrdSrvi/)
 }
-rule rest_a
-{
-	strings:
-		$ = "cards, you can resolve the confusion within your heart. Every card has two" 
-	  	$ = "sides, representing the Pros and Cons of a subject. All the answers are" 
-		$ = "First of all, this is a free software, but due to the high development costs" 
-	condition:
-		all of them
-}
-rule Generic_a: Suspicious Certs
+
+rule Generic: Suspicious Certs
 {
 	meta:
 		description = "Generic Rule to identify APKs with suspicious certificates"
 	condition:
-		androguard.certificate.sha1("BD1C65A339E6D133C3C5ADB0A42205BE90F36CCD") 
-		or androguard.certificate.sha1("219D542F901D8DB85C729B0F7AE32410096077CB") 
+		androguard.certificate.sha1("BD1C65A339E6D133C3C5ADB0A42205BE90F36CCD")
+		or androguard.certificate.sha1("219D542F901D8DB85C729B0F7AE32410096077CB")
 		or androguard.certificate.sha1("10763B5D0F4DD9976815C1270072510E6A453798")
 		or androguard.certificate.sha1("FF3488E07D179A0E5EAD90E52D12F26E100B4CA6")
 		or androguard.certificate.sha1("140FC8781942E9DFF4C0E60CD3F8DDE6565A9D76")
 		or androguard.certificate.sha1("5AD2ACB089F8BE5112FF5125D94036983DE3E8D5")
 		or androguard.certificate.sha1("ECE521E38C5E9CBEA53503EAEF1A6DDD204583FA")
 }
-rule SLockerQQ_a
+
+rule SLockerQQ
 {
 	meta:
 		description = "http://blog.trendmicro.com/trendlabs-security-intelligence/new-wannacry-mimicking-slocker-abuses-qq-services/"
@@ -3409,6 +2706,7 @@ rule SLockerQQ_a
 		androguard.package_name("com.android.admin.huanmie") or
 		androguard.app_name("TyProxy")
 }
+
 rule ma: official
 {
 	meta:
@@ -3429,7 +2727,7 @@ rule ma: official
 		any of them
 }
 
-rule NqShield_a
+rule NqShield
 {
 	meta:
 		description = "NqShield"
@@ -3438,8 +2736,9 @@ rule NqShield_a
 		$nqshield_2 = "libnqshieldx86"
 		$nqshield_3 = "LIB_NQ_SHIELD"
 	condition:
-        any of them 
+        any of them
 }
+
 rule sandrorat
 {
 	meta:
@@ -3449,40 +2748,8 @@ rule sandrorat
 	condition:
 		$a
 }
-rule YaYaMarcher2_a  {
-	meta:
-		author = "YaYaGen -- Yet Another Yara Rule Generator (!) v0.3_summer17"
-		date = "13 Jul 2017"
-		original = "1301:Marcher2"
-	condition:
-		androguard.filter("MainActivity.AlarmAction") and 
-		androguard.filter("android.app.action.DEVICE_ADMIN_ENABLED") and 
-		androguard.filter("android.intent.action.BOOT_COMPLETED") and 
-		androguard.filter("android.intent.action.MAIN") and 
-		androguard.filter("android.intent.action.QUICKBOOT_POWERON") and 
-		androguard.filter("android.provider.Telephony.SMS_RECEIVED") and
-		androguard.filter("com.KHLCert.fdservice") and
-		androguard.filter("com.KHLCert.gpservice") and
-		androguard.permission(/android.permission.ACCESS_NETWORK_STATE/) and
-		androguard.permission(/android.permission.ACCESS_WIFI_STATE/) and
-		androguard.permission(/android.permission.CALL_PHONE/) and
-		androguard.permission(/android.permission.CHANGE_NETWORK_STATE/) and
-		androguard.permission(/android.permission.CHANGE_WIFI_STATE/) and
-		androguard.permission(/android.permission.GET_TASKS/) and
-		androguard.permission(/android.permission.INTERNET/) and
-		androguard.permission(/android.permission.READ_CONTACTS/) and
-		androguard.permission(/android.permission.READ_PHONE_STATE/) and
-		androguard.permission(/android.permission.READ_SMS/) and
-		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/) and
-		androguard.permission(/android.permission.RECEIVE_SMS/) and
-		androguard.permission(/android.permission.SEND_SMS/) and
-		androguard.permission(/android.permission.USES_POLICY_FORCE_LOCK/) and
-		androguard.permission(/android.permission.VIBRATE/) and
-		androguard.permission(/android.permission.WAKE_LOCK/) and
-		androguard.permission(/android.permission.WRITE_SETTINGS/) and
-		androguard.permission(/android.permission.WRITE_SMS/)
-}
-rule dropper_a
+
+rule dropper
 {
 	meta:
 		description = "This rule detects a dropper app"
@@ -3497,7 +2764,7 @@ rule dropper_a
 		all of them
 }
 
-rule loki_skd_a
+rule loki_skd
 {
 	meta:
 	description = "This rule detects com.loki.sdk"
@@ -3507,14 +2774,16 @@ rule loki_skd_a
 	condition:
 		$a or $b
 }
-rule groups_a: authors2
+
+rule groups: authors2
 {
 	meta:
 		description = "To find groups of apps with old testing certificate, signapk tool used it. Recently apps should not have this certificate"
 	condition:
 		androguard.certificate.sha1("61ED377E85D386A8DFEE6B864BD85B0BFAA5AF81")
 }
-rule marcher_v2_a
+
+rule marcher_v2
 {
 	meta:
 		description = "This rule detects a new variant of Marcher"
@@ -3527,7 +2796,8 @@ rule marcher_v2_a
 	condition:
 		all of them
 }
-rule spyAgent_a
+
+rule spyAgent
 {
 	meta:
 		description = "This rule detects arabian spyware which records call and gathers user information which is later sent to a remote c&c"
@@ -3547,7 +2817,8 @@ rule spyAgent_a
 	condition:
 		androguard.url(/ksa-sef\.com/) or ($phone and $caption) or ($cc and $cc_alt and $cc_alt2 and $cc_alt3 and $cc_alt4 and $cc_alt5 and $cc_alt6 and $cc_alt7)
 }
-rule FakeInst_a
+
+rule FakeInst
 {
 	meta:
         description = "FakeInst evidences"
@@ -3558,7 +2829,8 @@ rule FakeInst_a
    	condition:
 		all of them
 }
-rule FakeInst_certs_a
+
+rule FakeInst_certs
 {
 	meta:
 		description = "FakeInst installer from fake developers"
@@ -3568,10 +2840,11 @@ rule FakeInst_certs_a
 		androguard.certificate.sha1("FB2FD4D89D7363E6386C865247825C041F23CDEB") or
 		androguard.certificate.sha1("9AD4DB5F64C6B12106DCAE54A9759154C56E27E1") or
 		androguard.certificate.sha1("0A721AF65BBB389EA9E224A59833BD3FD92F4129") or
-		androguard.certificate.sha1("5D66125A5FAE943152AE83D5787CDCFD1C579F4E")	or	
+		androguard.certificate.sha1("5D66125A5FAE943152AE83D5787CDCFD1C579F4E")	or
 		androguard.certificate.sha1("2260A1A17C96AF2C8208F0C0A34CF3B87A28E960")
 }
-rule FakeInst_offers_xmls_a
+
+rule FakeInst_offers_xmls
 {
 	meta:
         description = "FakeInst evidences offers XML"
@@ -3589,7 +2862,8 @@ rule FakeInst_offers_xmls_a
    	condition:
 		all of them
 }
-rule FakeInst_v2_a
+
+rule FakeInst_v2
 {
 	meta:
         description = "FakeInst evidences v2"
@@ -3602,19 +2876,21 @@ rule FakeInst_v2_a
    	condition:
 		all of them
 }
-rule FakeInst_v3_a
+
+rule FakeInst_v3
 {
 	meta:
         description = "FakeInst evidences v3"
 	strings:
 		$sa0 = "data.db" wide ascii
 		$sa1 = "sms911.ru" wide ascii
-		$sb0 = "agree.txt" wide ascii		
+		$sb0 = "agree.txt" wide ascii
 		$sb1 = "topfiless.com" wide ascii
    	condition:
 		all of ($sa*) or all of ($sb*)
 }
-rule FakeInst_v4_a
+
+rule FakeInst_v4
 {
 	meta:
         description = "FakeInst evidences v4"
@@ -3626,7 +2902,8 @@ rule FakeInst_v4_a
    	condition:
 		all of them
 }
-rule FakeInst_domains_a
+
+rule FakeInst_domains
 {
 	meta:
         description = "FakeInst evidences domains"
@@ -3637,11 +2914,12 @@ rule FakeInst_domains_a
 		$4 = "sellapis.ru/am/files/" wide ascii
 		$5 = "myapkbox.cu.cc/market.php?t=" wide ascii
 		$6 = "wap4mobi.ru/rools.html" wide ascii
-		$7 = "filesmob.ru/getfile.php?fl=" wide ascii			
+		$7 = "filesmob.ru/getfile.php?fl=" wide ascii
    	condition:
 		1 of them
 }
-rule WhatsAppGold_a
+
+rule WhatsAppGold
 {
 	meta:
 		description = "Rule to detect WhatsApp Gold"
@@ -3651,7 +2929,8 @@ rule WhatsAppGold_a
 	condition:
 		all of ($a)
 }
-rule android_asacub_b
+
+rule androidsacub_b
 {
 	meta:
 		description = "Yara detection for Asacub"
@@ -3659,11 +2938,11 @@ rule android_asacub_b
 	strings:
 		$str_1 = "res/xml/da.xml"
 		$str_2 = "resources.arscPK"
-	condition:		
+	condition:
 		androguard.package_name("com.system.tossl") and
-		androguard.activity(/\.MAC/) and 
-		androguard.receiver(/\.BootReciv/) and 
-		androguard.service(/\.IMService/) or 
+		androguard.activity(/\.MAC/) and
+		androguard.receiver(/\.BootReciv/) and
+		androguard.service(/\.IMService/) or
 		androguard.permission(/android.permission.INTERNET/) and
 		androguard.permission(/android.permission.SEND_SMS/) and
 		androguard.permission(/android.permission.KILL_BACKGROUND_PROCESSES/) and
@@ -3671,7 +2950,7 @@ rule android_asacub_b
 		all of ($str_*)
 }
 
-rule ransomware_a
+rule ransomware
 {
 	meta:
 		description = "This rule detects ijimu.com and bluerobo.com see source"
@@ -3684,7 +2963,8 @@ rule ransomware_a
 	condition:
 		1 of them
 }
-rule MobileOrder_a
+
+rule MobileOrder
 {
 	meta:
 		description = "MobileOrder trojan."
@@ -3696,7 +2976,8 @@ rule MobileOrder_a
 	condition:
 		all of them
 }
-rule tachi_a
+
+rule tachi
 {
 	meta:
 		description = "This rule detects tachi apps (not all malware)"
@@ -3722,7 +3003,8 @@ rule tachi_a
 	condition:
 		$a and 4 of ($xml_*)
 }
-rule wait_for_the_police_a: official
+
+rule wait_for_the_police: official
 {
 	meta:
 		description = "This rule detects apps created by GYM that are SMS-frauds but looks like ramsomware"
@@ -3731,10 +3013,11 @@ rule wait_for_the_police_a: official
 		$a = "iiAttention, you are trying to commit a crime. Please wait while a police car goes to your position. thanks"
 		$b = " intentando cometer un delito, por favor, espere mientras un coche patrulla se dirige a su posici"
 	condition:
-		androguard.certificate.issuer(/GYM/) and 
+		androguard.certificate.issuer(/GYM/) and
 		androguard.certificate.sha1("55C1FB97AC36FCCEC1175CF06DAA73214B23054F") and
 		($a or $b)
 }
+
 rule oa: official
 {
 	meta:
@@ -3752,51 +3035,56 @@ rule oa: official
 		androguard.permission(/SYSTEM_ALERT_WINDOW/) and
 		((all of them) or
 		(2 of them and androguard.certificate.sha1("C0ACB33AF5EC1F66835566F9273165CCF8F8FBA4"))
-		)	
+		)
 }
+
 rule Xynyin_certs
 {
 	meta:
 		description = "Fake developers certs and email: smo_XXXX_t@gmail.com"
 	condition:
-		androguard.certificate.issuer(/smo_[0-9]{3,4}_t\@gmail\.com/) or	
+		androguard.certificate.issuer(/smo_[0-9]{3,4}_t\@gmail\.com/) or
 		androguard.certificate.sha1("A1B5344F6E8EB1305EE7B742CDDBEFAF2041CB89") or
 		androguard.certificate.sha1("CB48901569936E9322103EA806F386ED2401583F") or
 		androguard.certificate.sha1("171F1EFF24F580EE28AF7C30C1190AB717A96DCE") or
-		androguard.certificate.sha1("DCD5BA60AC48996A11D126354978E9A909D90229")		
+		androguard.certificate.sha1("DCD5BA60AC48996A11D126354978E9A909D90229")
 }
+
 rule Xynyin_cyphered
 {
 	meta:
 		description = "Cyphered files by Xynyin"
-	strings:	
+	strings:
 		$1 = "assets/version.txt" wide ascii
 		$2 = "assets/ecode"	 wide ascii
-		$3 = "assets/ecode_64" wide ascii	
+		$3 = "assets/ecode_64" wide ascii
 	condition:
 		all of them
 }
-rule Xynyin_strings_a
+
+rule Xynyin_strings
 {
 	meta:
 		description = "Xynyin particular strings"
-	strings:	
+	strings:
 		$2 = "zzzsurpriseprjsnotificationcontent" wide ascii
-		$3 = "zzzltid" wide ascii		
+		$3 = "zzzltid" wide ascii
 	condition:
 		1 of them and Xynyin_cyphered and Xynyin_certs
 }
-rule shuabang_evidences_a
+
+rule shuabang_evidences
 {
 	meta:
 		description = "Xynyin/shuabang based"
-	strings:			
+	strings:
 		$1 = "ShuaBangBase"
 		$2 = "ShuaPublicConfig"
 		$3 = "Start BindLMT!"
 	condition:
 		all of them and Xynyin_certs
 }
+
 rule Dendroid_b
 {
 	meta:
@@ -3810,6 +3098,7 @@ rule Dendroid_b
    	condition:
     	all of them
 }
+
 rule Dendroid_2_b
 {
 	meta:
@@ -3820,6 +3109,7 @@ rule Dendroid_2_b
    	condition:
     	all of them
 }
+
 rule Dendroid_3_b
 {
 	meta:
@@ -3830,20 +3120,22 @@ rule Dendroid_3_b
    	condition:
     	all of them
 }
-rule clicker_a: urls
+
+rule clicker: urls
 {
 	meta:
 		description = "This rule detects the android clicker variat"
 		sample = "b855bcb5dcec5614844e0a49da0aa1782d4614407740cb9d320961c16f9dd1e7"
 	condition:
-		androguard.url(/bestmobile\.mobi/) or 
+		androguard.url(/bestmobile\.mobi/) or
 		androguard.url(/oxti\.org/) or
 		androguard.url(/oxti\.net/) or
-		androguard.url(/oin\.systems/) or 
-		androguard.url(/wallpapers535\.in/) or 
+		androguard.url(/oin\.systems/) or
+		androguard.url(/wallpapers535\.in/) or
 		androguard.url(/pop\.oin\.systems/)
 }
-rule android_spywaller_a
+
+rule android_spywaller
 {
 	meta:
 		description = "Rule for detection of Android Spywaller samples"
@@ -3852,14 +3144,15 @@ rule android_spywaller_a
 	strings:
 		$str_1 = "droid.png"
 		$str_2 = "getSrvAddr"
-		$str_3 = "getSrvPort"		
+		$str_3 = "getSrvPort"
 		$str_4 = "android.intent.action.START_GOOGLE_SERVICE"
 	condition:
 		androguard.certificate.sha1("165F84B05BD33DA1BA0A8E027CEF6026B7005978") or
 		androguard.permission(/android.permission.INTERNET/) and
-		androguard.permission(/android.permission.READ_PHONE_STATE/) and 
+		androguard.permission(/android.permission.READ_PHONE_STATE/) and
 		all of ($str_*)
 }
+
 rule sandrorat_b
 {
 	meta:
@@ -3875,7 +3168,8 @@ rule sandrorat_b
 	condition:
 		any of them
 }
-rule sms_fraud_a: MSACM32
+
+rule sms_fraud: MSACM32
 {
 	meta:
 		description = "sms-fraud examples"
@@ -3888,7 +3182,8 @@ rule sms_fraud_a: MSACM32
 		all of ($string_*) and
 		androguard.permission(/android.permission.SEND_SMS/)
 }
-rule sms_fraud_gen_a: generic
+
+rule sms_fraud_gen: generic
 {
 	meta:
 		description = "This is just an example"
@@ -3902,7 +3197,8 @@ rule sms_fraud_gen_a: generic
 		$a and $b and $c and
 		androguard.permission(/android.permission.SEND_SMS/)
 }
-rule MapinDropper_a
+
+rule MapinDropper
 {
 	meta:
 		description = "This rule detects mapin dropper files"
@@ -3915,13 +3211,16 @@ rule MapinDropper_a
 	condition:
 		$a or $b or $e or $f
 }
-rule fakeInstalls {
+
+rule fakeInstalls
+{
 	meta:
 	 description = "creates fake apps (usually low sized) for malicious purposes."
 	condition:
 		androguard.certificate.sha1("E030A31BE312FF938AAF3F314934B1E92AF25D60")
 }
-rule Shuanet_a: official
+
+rule Shuanet: official
 {
 	meta:
 		description = "This rule detects Shuanet aggresive Adware"
@@ -3955,10 +3254,11 @@ rule disruptive1
 		$a = /google-ads-admob/ nocase
 	condition:
 		(androguard.activity(/OnBackedPressed/i) or  androguard.activity(/doubleBackToExitPressedOnce/i)) and
-		androguard.permission(/android.permission.INTERNET/) 
+		androguard.permission(/android.permission.INTERNET/)
 		and $a
 }
-rule disruptive2_a
+
+rule disruptive2
 {
 	meta:
 		description = "searching for disruptive ads"
@@ -3971,35 +3271,14 @@ rule disruptive2_a
 		($a or $b) and
 		$c
 }
-rule Trojan_Banker4:Marcher {
-	strings:
-		$ = "a!v!g.!a!n!t!i!vi!ru!s"
-		$ = "a!vg!.!a!n!t!i!v!i!r!u!s"
-		$ = "a!vg!.an!ti!vi!r!us!"
-		$ = "a!vg.a!n!t!i!v!irus!"
-		$ = "av!g!.!a!n!ti!v!i!r!us"
-		$ = "av!g.!an!ti!v!i!ru!s!"
-		$ = "a!vg.!a!nt!i!v!irus"
-		$ = "avg!.!a!n!tivi!ru!s!"
-		$ = "avg.!a!n!t!i!v!i!r!u!s"
-		$ = "a!v!g.a!n!tiv!i!ru!s"
-	condition:
-		1 of ($)
-}
-rule malicious_cert_a
+
+rule malicious_cert
 {
 	meta:
 		description = "This rule detects apps with malicious certs"
 		sample = "a316a8cccbee940c3f0003344e6e29db163b1c82cd688bdc255a69300470124c"
 	condition:
 		androguard.certificate.sha1("219D542F901D8DB85C729B0F7AE32410096077CB")
-}
-rule Target_Instagram_a: official
-{
-	strings:
-		$string_target_fbmessenger = "com.instagram.android"
-	condition:
-	($string_target_fbmessenger)
 }
 
 rule Generic_b: Banker
@@ -4015,15 +3294,15 @@ rule Generic_b: Banker
 		$amex_1 = "cvc_amex" nocase
 		$amex_2 = "amex_cvc" nocase
 	condition:
-		$gp and 
+		$gp and
 		(
-			(1 of ($mastercard_*)) or 
-			(1 of ($visa_*)) or 
+			(1 of ($mastercard_*)) or
+			(1 of ($visa_*)) or
 			(1 of ($amex_*))
 		) and
 		androguard.permission(/android.permission.RECEIVE_SMS/) and
 		androguard.permission(/android.permission.READ_SMS/) and
-		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/)	
+		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/)
 }
 
 rule BankbotAlpha
@@ -4046,9 +3325,10 @@ rule BankbotAlpha
 		$b_11 = "kinoprofi.hhos.ru"
 		$a = "private/add_log.php"
 	condition:
-		$a and 
+		$a and
 		any of ($b_*)
 }
+
 rule FakeAppCampaign1
 {
 	meta:
@@ -4060,6 +3340,7 @@ rule FakeAppCampaign1
 	condition:
 		$url1 or $url2
 }
+
 rule FalseGuide
 {
 	meta:
@@ -4101,10 +3382,11 @@ rule ya: official
 		$a = "bankaccount"
 		$b = "msky/*/phonecall/"
 	condition:
-		androguard.certificate.sha1("5312c4f491cbb55f890e8b4206c890fd48ab49c5") 
+		androguard.certificate.sha1("5312c4f491cbb55f890e8b4206c890fd48ab49c5")
 		and $a
 		and $b
 }
+
 rule AnubisVariant: Bankbot
 {
     meta:
@@ -4122,13 +3404,14 @@ rule AnubisVariant: Bankbot
                androguard.permission(/android.permission.RECEIVE_SMS/) or 		androguard.permission(/android.permission.READ_SMS/)
            )
 }
+
 rule Trojan_d: BankBot
 {
 	meta:
         description = "Trojan targeting Banks"
 	condition:
 		(
-			androguard.permission(/android.permission.RECEIVE_SMS/) 
+			androguard.permission(/android.permission.RECEIVE_SMS/)
 			and androguard.permission(/android.permission.READ_SMS/)
 			and androguard.permission(/android.permission.SEND_SMS/)
 			and androguard.permission(/android.permission.ACCESS_NETWORK_STATE/)
@@ -4145,7 +3428,8 @@ rule BITTER_b
 		androguard.package_name("droid.pixels") or
 		androguard.package_name("eu.blitz.conversations") or
 		androguard.package_name("com.picture.guard.view") or
-		androguard.package_name("com.android.settings") 
+		androguard.package_name("com.android.settings") or
+		androguard.package_name("com.secureImages.viewer.SlideShow")
 }
 
 rule baa: official
@@ -4160,7 +3444,8 @@ rule baa: official
 	condition:
 		all of them
 }
-rule EventBot_a
+
+rule EventBot
 {
 	meta:
 		description = "This rule detects Trojan.AndroidOS.EventBot"
@@ -4176,7 +3461,8 @@ rule EventBot_a
 		androguard.permission(/android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS/) and
 		androguard.permission(/android.permission.READ_SMS/)
 }
-rule TruCallerSMSThief_a
+
+rule TruCallerSMSThief
 {
 	meta:
 		description = "This rule detects JS based TruCaller SMS Thief"
@@ -4188,7 +3474,8 @@ rule TruCallerSMSThief_a
 		androguard.permission(/android.permission.SEND_SMS/) and
 		androguard.permission(/android.permission.READ_SMS/)
 }
-rule hacking_team_a: stcert
+
+rule hacking_team: stcert
 {
 	meta:
 		description = "com.lody.virtual.client.stub.StubActivity"
@@ -4196,7 +3483,8 @@ rule hacking_team_a: stcert
 	condition:
 		androguard.activity("com.lody.virtual.client.stub.StubActivity*")
 }
-rule zooking_a: official
+
+rule zooking: official
 {
 	meta:
 		description = "This rule detects Zooking theme"
@@ -4205,7 +3493,7 @@ rule zooking_a: official
 		$a = "com.zzadsdk.sdk.activity.RewardedVideo"
 		$b = "http://openbox.mobilem.360.cn/third/download?downloadUrl=http%3A%2F%2Fshouji.360tpcdn.com%2F180516%2F4e09ba8f237b7ecc9a229b05e420fd88%2Fcom.zhima.wszb_450.apk&softId=3981200&from=ivvi&pname=com.zhima.wszb"
 		$c =  "http://adc.vanmatt.com/pk/u/c"
-		$d = "https://www.starbucks.com.cn/menu/#lto-items" 
+		$d = "https://www.starbucks.com.cn/menu/#lto-items"
 		$e = "http://lockscreen.zookingsoft.com:8888/LockScreen/LoadBalancing"
 	condition:
 		androguard.certificate.sha1("5cf396ef252bc129affdb6c6f6915461bfc36205") and
@@ -4229,29 +3517,9 @@ rule Adware_b: SnakeRecipes
 		)
 		and androguard.filter(/ghrataneomwalide06.matbakhomwalid2017free06/)
 		and (
-			androguard.permission(/ACCESS_NETWORK_STATE/) or 
+			androguard.permission(/ACCESS_NETWORK_STATE/) or
 			androguard.permission(/RECEIVE_BOOT_COMPLETED/)
 		)
-}
-rule users_location_a
-{	
-	meta:
-		sample = "401193787f23126097d4b7600ce8e7d118db24023039897f4a292eab2d87a499"
-	strings:
-		$string1 = "android/location/Location/"
-	condition:
-		$string1 and (
-		androguard.permission(/ACCESS_FINE_LOCATION/) or
-		androguard.permission(/ACCESS_COARSE_LOCATION/)
-		)
-}
-rule get_deviceId_a
-{
-	strings:
-		$string2 = "getdeviceId"
-		$string3 = "android/telephony/TelephonyManager"
-	condition:
-		$string2 and $string3
 }
 
 rule caa: Adware
@@ -4272,7 +3540,8 @@ rule caa: Adware
 		androguard.certificate.sha1("f2ea77200808caaa94447b601e41b9c0bc470eb6")	and
 		$a
 }
-rule SaveMe_a
+
+rule SaveMe
 {
 	meta:
 		description = "This rule is to detect the SaveMe application"
@@ -4287,7 +3556,7 @@ rule SaveMe_a
 		androguard.url("http://xxxxmarketing.com")
 }
 
-rule virus1_a
+rule virus1
 {
 	meta:
 		description = "This rule is made to find the same virus in different apks"
@@ -4322,18 +3591,7 @@ rule virus1_a
 		$s_message_to_4
 }
 
-rule faa: official
-{
-	condition:
-		(androguard.service("org.telegram.messenger.AuthenticatorService") and
-		androguard.service("org.telegram.messenger.NotificationsService") and not
-		androguard.certificate.sha1("9723e5838612e9c7c08ca2c6573b6026d7a51f8f") )
-		or
-		(androguard.service("org.thunderdog.challegram.service.NetworkListenerService") and
-		androguard.service("org.thunderdog.challegram.sync.StubAuthenticatorService") and not
-		androguard.certificate.sha1("66462134345a6adac3c1d5aea9cef0421b7cab68") )
-}
-rule potentialFakeGoogle_a
+rule potentialFakeGoogle
 {
 	meta:
 		description = "Some apps seems to be signing themselves fraudulently as Google, why?"
@@ -4341,24 +3599,27 @@ rule potentialFakeGoogle_a
 	condition:
 	androguard.certificate.subject(/O=Google Inc./) or androguard.certificate.issuer(/O=Google Inc./)
 }
-rule permissions_a: readclipboard
+
+rule permissions: readclipboard
 {
 	meta:
 		description = "New permission in Android Q, such that apps need to declare if they're doing clipboard snarfing.."
 	condition:
 		androguard.permission(/android\.permission\.READ_CLIPBOARD_IN_BACKGROUND/)
 }
-rule TwelfthMileDetect_a
+
+rule TwelfthMileDetect
 {
 	meta:
 		description = "All apps using twelfthmile SDK (https://messai.in/) for Credit Scoring"
 	strings:
 		$a = "twelfthmile"
 	condition:
-		$a or 
-		androguard.service("com.twelfthmile") or 
+		$a or
+		androguard.service("com.twelfthmile") or
 		androguard.receiver("com.twelfthmile")
 }
+
 rule gaa: official
 {
 	meta:
@@ -4369,7 +3630,7 @@ rule gaa: official
 		all of them
 }
 
-rule Monokle_a: lookout
+rule Monokle: lookout
 {
 	meta:
 		description = "Monokle Android. Malware. Trojan. RC. "
@@ -4432,7 +3693,8 @@ rule Monokle_a: lookout
 	condition:
 		any of them
 }
-rule Android_Trojan_SuspiciousPermission_LauncherMiss_Change1_a
+
+rule Android_Trojan_SuspiciousPermission_LauncherMiss_Change1
 {
 	meta:
 		Updated_description = "rules checks the missing launcher"
@@ -4461,7 +3723,7 @@ rule Android_Trojan_SuspiciousPermission_LauncherMiss_Change1_a
 		#permission >= 10 and $hexstr_targetSdkVersion and not ($LauncherMissing) and not (any of ($exclude_*)) and 2 of ($a*) and 2 of ($b*)
 }
 
-rule certificates_a
+rule certificates
 {
 	meta:
 		description = "Identifies apps signed with certificates that are known to be from developers who make malicious apps"
@@ -4469,7 +3731,8 @@ rule certificates_a
 		androguard.certificate.sha1("2FC3665C8DAAE9A61CB7FA26FB3FEDE604DA4896") or
 		androguard.certificate.sha1("3645AF60F8302526D376405C596596158379C7C2")
 }
-rule fakeFaceAPp_a
+
+rule fakeFaceAPp
 {
         meta:
                 description="Detects fake FaceApp malware/adware"
@@ -4479,23 +3742,26 @@ rule fakeFaceAPp_a
         condition:
                 all of ($a*)
 }
+
 rule haa: official
 {
 	meta:
 		description = "anjianmobile detect"
 	condition:
-		androguard.url("api.mobileanjian.com")		
+		androguard.url("api.mobileanjian.com")
 		or androguard.url("mobileanjian.com")
 		or androguard.url(/mobileanjian\.com/)
 }
-rule c2dmSEND_a
+
+rule c2dmSEND
 {
 	meta:
 		description = "Should never be present in any apps - https://firebase.google.com/docs/reference/android/com/google/firebase/iid/FirebaseInstanceIdReceiver"
 	condition:
 		androguard.permission(/com\.google\.android\.c2dm\.permission\.SEND/)
 }
-rule android_wannahydra_a
+
+rule android_wannahydra
 {
 	meta:
 		description = "Yara detection for WannaHydra"
@@ -4505,15 +3771,15 @@ rule android_wannahydra_a
 		(
 				androguard.activity(/\.ItaActivity/) or
 				androguard.activity(/\.InterSplashActivity/) or
-				androguard.activity(/\.SantaSplashActivity/) or 
-				androguard.activity(/\.ItaJujuActivity/) or 
-				androguard.activity(/\.BBSplashActivity/) or 
-				androguard.activity(/\.PhishingActivity/) or 
+				androguard.activity(/\.SantaSplashActivity/) or
+				androguard.activity(/\.ItaJujuActivity/) or
+				androguard.activity(/\.BBSplashActivity/) or
+				androguard.activity(/\.PhishingActivity/) or
 				androguard.activity(/\.RansoActivity/) or
-				androguard.activity(/\.BBCapActivity/) or 
-				androguard.activity(/\.SantaCapActivity/) or 
+				androguard.activity(/\.BBCapActivity/) or
+				androguard.activity(/\.SantaCapActivity/) or
 				androguard.activity(/\.InterCapActivity/)
-		) 
+		)
 		and
 			(
 				androguard.permission(/android.permission.SEND_SMS/) and
@@ -4527,9 +3793,10 @@ rule android_wannahydra_a
 				androguard.permission(/android.permission.INTERNET/) and
 				androguard.permission(/android.permission.READ_PHONE_NUMBERS/)
 			)
-	) 	
+	)
 }
-rule Leadbolt_a: ads
+
+rule Leadbolt: ads
 {
 	meta:
 		description = "Detects leadbolt ad urls"
@@ -4538,34 +3805,8 @@ rule Leadbolt_a: ads
 		androguard.url(/ad.leadboltapps\.net/) or
 		androguard.url(/ad.leadboltmobile\.net/)
 }
-rule commasterclean_a
-{
-	strings:
-		$d1 = "kstest.8rln3ufc.pw"
-		$d2 = "newappsdk.fbvxi8mz.pw"
-		$d3 = "newstr.pkw9tq2v.pw"
-		$d4 = "sscapi.goytd2by.pw"
-		$d5 = "ks.urva3ucp.pw"
-		$d6 = "app.urva3ucp.pw"
-		$d7 = "newstrapi.pkw9tq2v.pw"
-		$d8 = "newapi.fbvxi8mz.pw"
-		$ip = "52.199.190.161"
-		$c = "eu/chainfire/libsuperuser/HideOverlaysReceiver"
-		$s0 = "com.master.clean.relate.CrkService"
-		$s1 = "com.master.clean.relate.FcService"
-		$s2 = "com.master.clean.relate.PoniService"
-		$s3 = "com.master.clean.relate.ScreenServer"
-		$s4 = "com.master.clean.relate.SjkJobService"
-	condition:
-		(1 of ($d*) or $ip ) or
-		($c and 3 of ($s*))
-}
-rule CleanupRadar_a
-{
-	condition:
-	androguard.package_name("com.Airie.CleanupRadar")
-}
-rule Hiv13PhishingCampaign_a
+
+rule Hiv13PhishingCampaign
 {
 	meta:
 		description = "This campaign shows phishing payment page and gathers users card information"
@@ -4575,7 +3816,8 @@ rule Hiv13PhishingCampaign_a
 	condition:
 		$a
 }
-rule add_device_admin_activity_a: official
+
+rule add_devicedminctivity: official
 {
 	meta:
 		description = "This rule detects apps that request add device admin activity"
@@ -4583,9 +3825,10 @@ rule add_device_admin_activity_a: official
 		$a = "android.app.action.ADD_DEVICE_ADMIN"
 	condition:
 		androguard.activity(/ACTION_ADD_DEVICE_ADMIN/i) or
-		$a 
+		$a
 }
-rule pChaosVMP_a: Packers
+
+rule pChaosVMP: Packers
 {
 	meta:
 		description = "Nagapt (chaosvmp)"
@@ -4596,7 +3839,8 @@ rule pChaosVMP_a: Packers
 	condition:
 		any of them
 }
-rule pLIAPP_a: Packers
+
+rule pLIAPP: Packers
 {
 	meta:
 		description = "LIAPP"
@@ -4608,7 +3852,8 @@ rule pLIAPP_a: Packers
 	condition:
 		any of them
 }
-rule pNqShield_a: Packers
+
+rule pNqShield: Packers
 {
 	meta:
 		description = "NqShield"
@@ -4620,7 +3865,8 @@ rule pNqShield_a: Packers
 	condition:
 		any of them
 }
-rule pBangcleSecApk_a: Packers
+
+rule pBangcleSecApk: Packers
 {
 	meta:
 		description = "Bangcle (SecApk)"
@@ -4629,11 +3875,12 @@ rule pBangcleSecApk_a: Packers
 		$a = "libsecexe.x86"
 		$b = "libsecmain.x86"
 		$c = "SecApk"
-		$d = "bangcle_classes"		
+		$d = "bangcle_classes"
 	condition:
 		any of them
 }
-rule pTencent_a: Packers
+
+rule pTencent: Packers
 {
 	meta:
 		description = "Tencent"
@@ -4644,7 +3891,8 @@ rule pTencent_a: Packers
 	condition:
 		all of them
 }
-rule pAli_a: Packers
+
+rule pAli: Packers
 {
 	meta:
 		description = "Ali"
@@ -4655,33 +3903,19 @@ rule pAli_a: Packers
 	condition:
 		all of them
 }
-rule Porn_a: official
+
+rule Porn: official
 {
 	meta:
 		description = "Experimental rule about Porn samples"
 	strings:
 		$a = "porn" nocase
 	condition:
-		androguard.package_name(/porn/) and $a 
+		androguard.package_name(/porn/) and $a
 		or (androguard.package_name(/porn/) and $a and androguard.permission(/android.permission.SEND_SMS/))
 }
-rule BankBot_b
-{
-	strings:
-		$a = "/private/tuk_tuk.php"
-		$b = "/set/tsp_tsp.php"
-	condition:
-		$a or $b
-}
-rule certs_a
-{
-	condition:
-		androguard.certificate.sha1("3F65615D7151BA782F9C0938B01F4834B8E492BC") or
-		androguard.certificate.sha1("AFD2E81E03F509B7898BFC3C2C496C6B98715C58") or
-		androguard.certificate.sha1("E6D2E5D8CCBB5550E666756C804CA7F19A523523") or
-		androguard.certificate.sha1("7C9331A5FE26D7B2B74C4FB1ECDAF570EFBD163C")          // Ransomware Locker
-}
-rule Bankyara_a
+
+rule Bankyara
 {
 	meta:
 		description = "Regla para detectar muestra de practica4"
@@ -4689,36 +3923,23 @@ rule Bankyara_a
 		$string_1 = "185.62.188.32"
 	condition:
 		all of ($string_*) and
-		androguard.permission(/android.permission.RECEIVE_SMS/) 
+		androguard.permission(/android.permission.RECEIVE_SMS/)
 		}
 
-rule FakePostBank_a {
-meta:
-descripton= "Regla para Detectar Fake Post Bank"
-thread_level=3
-strings:
-	$a = "Lorg/slempo/service/Main;" wide ascii
-	$b = "http://185.62.188.32/app/remote/" wide ascii
-	$c = "&http://185.62.188.32/app/remote/forms/" wide ascii
-condition:
-	$a or $b or $c 
+rule FakePostBank
+{
+    meta:
+        description= "Regla para Detectar Fake Post Bank"
+        thread_level=3
+    strings:
+        $a = "Lorg/slempo/service/Main;" wide ascii
+        $b = "http://185.62.188.32/app/remote/" wide ascii
+        $c = "&http://185.62.188.32/app/remote/forms/" wide ascii
+    condition:
+        $a or $b or $c
 }
 
-rule FakePostBank_b
-{
-   meta:
-       descripton= "Regla para Detectar Fake Post Bank"
-   strings:
-		$a = "http://185.62.188.32/app/remote/"
-		$b = "intercept_sms"
-		$c = "unblock_all_numbers"
-		$d = "unblock_numbers"
-		$e = "TYPE_INTERCEPTED_INCOMING_SMS"
-		$f = "TYPE_LISTENED_INCOMING_SMS"
-	condition:
-		$a and $b and ($c or $d or $e or $f)
-}
-rule samplep4_a
+rule samplep4
 {
 	meta:
 		description="samplepract"
@@ -4730,7 +3951,8 @@ rule samplep4_a
 	condition:
 		$a and ($b or $c or $d )
 }
-rule  practica4_slempo_a
+
+rule  practica4_slempo
 {
 	meta:
 		description=  "BANKED_SLEMPO"
@@ -4742,7 +3964,7 @@ rule  practica4_slempo_a
 		$a and $b and $c
 }
 
-rule YARA_Act4_DG_a
+rule YARA_Act4_DG
 {
 	meta:
 		description = "Esta regla detecta Malware de Postbank FinanzAssistent"
@@ -4756,19 +3978,8 @@ rule YARA_Act4_DG_a
 	condition:
 		$c and ($a or $b or $d or $e or $f)
 		}
-rule pokemon_a
-{
-	condition:
-		androguard.app_name(/pokemongo/i)
-}
-rule adware_a
-{
-    condition:
-		androguard.filter("com.airpush.android.DeliveryReceiver") or
-		androguard.filter(/smsreceiver/)
 
-}
-rule spydealer_a: trojan
+rule spydealer: trojan
 {
 	meta:
 		description = "This rule detects spydealer trojan"
@@ -4788,7 +3999,8 @@ rule spydealer_a: trojan
 		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/) and
 		androguard.permission(/android.permission.READ_CONTACTS/)
 }
-rule LeakerLocker_a
+
+rule LeakerLocker
 {
 	meta:
 		description = "This rule detects Leaker Locker samples"
@@ -4797,7 +4009,8 @@ rule LeakerLocker_a
 	condition:
 		androguard.receiver(/receiver.LockScreenReceiver/)
 }
-rule HDVP_a: official
+
+rule HDVP: official
 {
 	meta:
 		description = "This rule detects the HD Video Player application, used to show all Yara rules potential"
@@ -4812,7 +4025,8 @@ rule HDVP_a: official
 		androguard.certificate.sha1("61ED377E85D386A8DFEE6B864BD85B0BFAA5AF81") and
 		androguard.url(/ms.applovin.com/)
 }
-rule GhostCtrl_a
+
+rule GhostCtrl
 {
 	meta:
 		description = "This rule detects partially GhostCtrl campaign"
@@ -4821,6 +4035,7 @@ rule GhostCtrl_a
 	condition:
 		androguard.certificate.sha1("4BB2FAD80003219BABB5C7D30CC8C0DBE40C4D64")
 }
+
 rule HDVideoPlayer: official
 {
 	meta:
@@ -4836,6 +4051,7 @@ rule HDVideoPlayer: official
 		androguard.certificate.sha1("61ED377E85D386A8DFEE6B864BD85B0BFAA5AF81") and
 		androguard.url(/ms.applovin.com/)
 }
+
 rule iaa: official
 {
 	meta:
@@ -4848,7 +4064,8 @@ rule iaa: official
 		androguard.permission(/android.permission/) and
 		androguard.permission(/android.permission.READ_EXTERNAL_STORAGE/)
 }
-rule Simplelocker_Rule_a
+
+rule Simplelocker_Rule
 {
 	meta:
 		description = "This rule detects the Simplelocker application"
@@ -4874,7 +4091,8 @@ rule Simplelocker_Rule_a
 		$text_string4 and
 		$text_in_hex4
 }
-rule loveads_a
+
+rule loveads
 {
     meta:
    		description = "APK contains malware of all sorts, adware/trojan"
@@ -4884,7 +4102,8 @@ rule loveads_a
     condition:
         $a and $b
 		}
-rule Packer_Qihoo_a
+
+rule Packer_Qihoo
 {
 	meta:
 		description = "Qihoo 360"
@@ -4896,21 +4115,21 @@ rule Packer_Qihoo_a
 		$qihoo_5 = "com.qihoo.util.DefenceReport"
 		$qihoo_6 = "libprotectClass"
 	condition:
-        any of them 
+        any of them
 }
 
-rule Packer_Bangcle_a
+rule Packer_Bangcle
 {
 	meta:
 		description = "Bangcle (SecApk)"
     strings:
 		$bangcle_1 = "libsecmain.so"
 		$bangcle_2 = "libsecexe.so"
-		$bangcle_3 = "bangcleplugin"	
+		$bangcle_3 = "bangcleplugin"
 		$bangcle_4 = "libsecexe.x86"
 		$bangcle_5 = "libsecmain.x86"
 		$bangcle_6 = "SecApk"
-		$bangcle_7 = "bangcle_classes"	
+		$bangcle_7 = "bangcle_classes"
 		$bangcle_8 = "assets/bangcleplugin"
 		$bangcle_9 = "neo.proxy.DistributeReceiver"
 		$bangcle_10 = "libapkprotect2.so"
@@ -4918,9 +4137,10 @@ rule Packer_Bangcle_a
 		$bangcle_12 = "bangcleclasses.jar"
 		$bangcle_13 = "bangcle_classes.jar"
 	condition:
-        any of them 
+        any of them
 }
-rule Cajino_a
+
+rule Cajino
 {
 	meta:
 		Author= "Anna and Felicia"
@@ -4936,7 +4156,8 @@ rule Cajino_a
 		androguard.package_name("com.Titanium.Gloves") or
 	  	androguard.certificate.sha1("db27bc861665495329fb93df30017e24ddda8d27")
 }
-rule otherpacker_a
+
+rule otherpacker
 {
   meta:
     description = "AppGuard"
@@ -4946,7 +4167,8 @@ rule otherpacker_a
   condition:
    ($stub and $encrypted_dex)
 }
-rule dxshield_a: otherpacker
+
+rule dxshield: otherpacker
 {
   meta:
     description = "DxShield"
@@ -4956,7 +4178,8 @@ rule dxshield_a: otherpacker
   condition:
      ($decryptlib and $res)
 }
-rule secneo_a: otherpacker
+
+rule secneo: otherpacker
 {
   meta:
     description = "SecNeo"
@@ -4967,7 +4190,8 @@ rule secneo_a: otherpacker
   condition:
      any of ($encrypted_dex, $encryptlib2, $encryptlib1)
 }
-rule dexprotector_a: otherpacker
+
+rule dexprotector: otherpacker
 {
   meta:
     author = "Jasi2169"
@@ -4981,7 +4205,8 @@ rule dexprotector_a: otherpacker
   condition:
      any of ($encrptlib, $encrptlib1, $encrptlib2, $encrptlib3) and $encrptcustom
 }
-rule kiro_a: otherpacker
+
+rule kiro: otherpacker
 {
   meta:
     description = "Kiro"
@@ -4991,7 +4216,8 @@ rule kiro_a: otherpacker
   condition:
      $kiro_lib and $sbox
 }
-rule qdbh_packer_a: otherpacker
+
+rule qdbh_packer: otherpacker
 {
   meta:
     description = "'qdbh' (?)"
@@ -5000,7 +4226,8 @@ rule qdbh_packer_a: otherpacker
   condition:
      $qdbh
 }
-rule unknown_packer_lib_a: otherpacker
+
+rule unknown_packer_lib: otherpacker
 {
   meta:
     description = "'jpj' packer (?)"
@@ -5011,7 +4238,8 @@ rule unknown_packer_lib_a: otherpacker
   condition:
     ($pre_jar and $jar_data and $post_jar)
 }
-rule unicom_loader_a: otherpacker
+
+rule unicom_loader: otherpacker
 {
   meta:
     description = "Unicom SDK Loader"
@@ -5022,7 +4250,8 @@ rule unicom_loader_a: otherpacker
   condition:
      ($unicom_lib and ($decrypt_lib or $classes_jar))
 }
-rule app_fortify_a: otherpacker
+
+rule app_fortify: otherpacker
 {
   meta:
     description = "App Fortify"
@@ -5031,7 +4260,8 @@ rule app_fortify_a: otherpacker
   condition:
      $lib
 }
-rule nqshield_a: otherpacker
+
+rule nqshield: otherpacker
 {
   meta:
     description = "NQ Shield"
@@ -5042,6 +4272,7 @@ rule nqshield_a: otherpacker
   condition:
      any of ($lib, $lib_sec1, $lib_sec2)
 }
+
 rule medusah: otherpacker
 {
   meta:
@@ -5051,7 +4282,8 @@ rule medusah: otherpacker
   condition:
     $lib
 }
-rule medusah_appsolid_a: otherpacker
+
+rule medusahppsolid: otherpacker
 {
   meta:
     description = "Medusah (AppSolid)"
@@ -5060,7 +4292,8 @@ rule medusah_appsolid_a: otherpacker
   condition:
      $encrypted_dex and not medusah
 }
-rule kony_a: otherpacker
+
+rule kony: otherpacker
 {
   meta:
     description = "Kony"
@@ -5071,7 +4304,8 @@ rule kony_a: otherpacker
   condition:
     $lib and $decrypt_keys and $encrypted_js
 }
-rule approov_a: otherpacker
+
+rule approov: otherpacker
 {
   meta:
     description = "Aproov"
@@ -5082,15 +4316,14 @@ rule approov_a: otherpacker
      $lib and $sdk_config
 }
 
-
-rule PornHubAPK_a
+rule PornHubAPK
 {
     meta:
         Author = "Wessel van Putten and Niels Cluistra"
         email = "s2600889@vuw.leidenuniv.nl"
         description = "A rule to detect the malicious APK in the PornHub app"
     strings:
-        $a= "Vgamqwt" 
+        $a= "Vgamqwt"
         $b= "Wunec"
         $c= "android.permission.QUICKBOOT_POWERON"
         $d= "android.permission.WRITE_EXTERNAL_STORAGE"
@@ -5110,9 +4343,10 @@ rule kaa: official
 		androguard.activity(/com.baidu.android.andpushservice.action.notification.CLICK/) and
 		androguard.permission(/android.permission.CALL_LOG/) and
 		androguard.permission(/android.permission.UPLOAD_MESSAGE/) and
-		androguard.permission(/android.permission.SEND_MESSAGE/) 
+		androguard.permission(/android.permission.SEND_MESSAGE/)
 }
-rule antiemulator_a
+
+rule antiemulator
 {
 	meta:
 		description = "Detect dumb antiemulator techniques"
@@ -5123,16 +4357,18 @@ rule antiemulator_a
 	condition:
 		all of them
 }
+
 rule laa: official
 {
 	meta:
 		description = "This rule detects potential banking trojans with the interface of Chrome"
 		sample = "f46c90ffd4b15655f00a0fc5cb671cc9f55f2a21457913af940b9dd32f286307"
-	condition:	
-	androguard.permission(/android.permission.SYSTEM_OVERLAY_WINDOW/) and
-	androguard.permission (/android.permission.DISABLE_KEYGUARD/) and
-	androguard.permission(/android.permission.SYSTEM_ALERT_WINDOW/)
+	condition:
+        androguard.permission(/android.permission.SYSTEM_OVERLAY_WINDOW/) and
+        androguard.permission (/android.permission.DISABLE_KEYGUARD/) and
+        androguard.permission(/android.permission.SYSTEM_ALERT_WINDOW/)
 }
+
 rule Cajino_b
 {
 	meta:
@@ -5147,9 +4383,10 @@ rule Cajino_b
 		androguard.activity("com.baidu.android.pushservice.action.notification.CLICK")and
 		androguard.activity("android.intent.action.VIEW") and
 		androguard.permission(/RECORD_AUDIO/) and
-		androguard.permission(/ACCESS_FINE_LOCATION/) 
+		androguard.permission(/ACCESS_FINE_LOCATION/)
 }
-rule Android_Anubis_v3_a
+
+rule Android_Anubis_v3
 {
 	meta:
 		description = "Anubis newer version."
@@ -5158,18 +4395,8 @@ rule Android_Anubis_v3_a
 		and androguard.filter(/android.provider.Telephony.SMS_DELIVER/i)
 		and androguard.filter(/android.provider.Telephony.SMS_RECEIVED/i))
 }
-rule downloader_a:trojan
-{
-	meta:
-		sample = "800080b7710870e1a9af02b98ea2073827f96d3fde8ef9d0e0422f74fe7b220f"
-	strings:
-		$a = "Network is slow, click OK to install network acceleration tool."
-		$b = "Your network is too slow"
-		$c = "Awesome body. Lean and sexy."
-	condition:
-		all of them
-}
-rule Anubis_Variant_two_a: BankBot
+
+rule Anubis_Variant_two: BankBot
 {
   meta:
         description = "Anubis malware targeting banks variant 2"
@@ -5181,12 +4408,13 @@ rule Anubis_Variant_two_a: BankBot
   condition:
     2 of ($c2_*)
     and (
-      androguard.permission(/android.permission.RECEIVE_SMS/) 
+      androguard.permission(/android.permission.RECEIVE_SMS/)
       or androguard.permission(/android.permission.READ_SMS/)
       or androguard.permission(/android.permission.SEND_SMS/)
     )
 }
-rule MobileSpy_a: simple
+
+rule MobileSpy: simple
 {
 	meta:
 		description = "This rule should detect old Mobilespy from 2014"
@@ -5196,66 +4424,44 @@ rule MobileSpy_a: simple
 		androguard.certificate.sha1("ADDCAD719274B94AE233E33F5923D6B9BB78A417B34B851527A0B857A616A2E4")
 }
 
-rule LockerIns_a{
-meta:
-	description="Detects Locker samples that encrypt the device files"
-	author="skeptre[@]gmail.com"
-	filetype="apk/classes.dex"
-	date="04/28/2020"
-strings:
-	$a1="l956y/bVK0RXi9hvy6OVaw9XhtAhzLzXZ05Bi89gz+OdZVVKiMt3lA=="
-	$a2="decryptDir"
-	$a3="You've successfully unblocked your device"
-condition:
-	all of ($a*)
-}
-rule iconPackRu_a {
-meta:
-	description="This rule targets fake apps that are passed as icon packs"
-	targetDomain="These apps communicate with the hardcoded domain spasskds.ru/update.php"
-	md5="df30c7d28fbe5fc4f1e2778d104ec351"
-	author="skeptre[@]gmail.com"
-	filetype="apk/classes.dex"
-	date="04/28/2020"
-strings:
-	$a1 = "aHR0cDovL3NwYXNza2RzLnJ1L3VwZGF0ZS5waHA="
-	$a2 = "LmFwaw=="
-	$b1 = "loadUrl"
-	$b2 = "UpdateAPP"
-condition:
-	any of($a*) and any of($b*)
-}
-rule naa: official
+rule LockerIns
 {
-	meta:
-		description = "This rule detects stripe related apps"  
-	condition: 
-        androguard.activity("com.stripe.android.view.PaymentMethodsActivity") 
+    meta:
+        description="Detects Locker samples that encrypt the device files"
+        author="skeptre[@]gmail.com"
+        filetype="apk/classes.dex"
+        date="04/28/2020"
+    strings:
+        $a1="l956y/bVK0RXi9hvy6OVaw9XhtAhzLzXZ05Bi89gz+OdZVVKiMt3lA=="
+        $a2="decryptDir"
+        $a3="You've successfully unblocked your device"
+    condition:
+        all of ($a*)
 }
-rule apk_inside_a
+
+rule iconPackRu
 {
-	strings:
-		$a = /META-INF\/[0-9a-zA-Z_\-\.]{0,32}\.apkPK/
-	condition:
-		$a
+    meta:
+        description="This rule targets fake apps that are passed as icon packs"
+    strings:
+        $a1 = "aHR0cDovL3NwYXNza2RzLnJ1L3VwZGF0ZS5waHA="
+        $a2 = "LmFwaw=="
+        $b1 = "loadUrl"
+        $b2 = "UpdateAPP"
+    condition:
+        any of($a*) and any of($b*)
 }
-rule lionmobi_a
-{
-	meta:
-		description = "lionmobi sketchy cleaner artifact"
-		sample = "25f69a80ca602e9b2e81ed1c22ab62d91706bc13144ef490550aecbd7a73383a"
-	condition:
-		androguard.activity(/com\.example\.lakes/)
-		}
 
 rule paann: official
 {
-	meta: 
+	meta:
 		description = "This rule detects AD fraud"
 	condition:
 		androguard.url("app/ConfServlet?conf=") or androguard.url("http://ip-api.com/json/?fields=country,countryCode")
 }
-rule Advertisement_a {
+
+rule Advertisement
+{
 	meta:
 		description = "Yara rule to detect adware api calls within apps"
 	strings:
@@ -5270,42 +4476,8 @@ rule Advertisement_a {
 			androguard.permission(/WRITE_EXTERNAL_STORAGE/)) or
 		androguard.certificate.sha1("b254ecc73bbc4107e7f6046f3138364fc2f94f07")
 }
-rule Control_a
-{
-	meta:
-		description = "A simple rule to detect the Corona Safety Mask App"
-	strings:
-		$a = "com.coronasafetymask.app"
-		$b = "click on this link download the app and order your own face mask" 
-	condition:
-	androguard.permission(/android.permission.INTERNET/) and 
-	androguard.permission(/android.permission.ACCESS_WIFI_STATE/) and 
-	androguard.permission(/android.permission.ACCESS_NETWORK_STATE/) and 			
-	androguard.permission(/android.permission.SEND_SMS/) and 
-	$a and 
-	$b
-}
-rule corona_pkg_a: covid19
-{
-	condition:
-		androguard.package_name(/corona/i)
-}
-rule covid_pkg_a: covid19
-{
-	condition:
-		androguard.package_name(/covid/i)
-}
-rule corona_app_name_a: covid19
-{
-	condition:
-		androguard.app_name(/corona/i)
-}
-rule covid_app_name_a: covid19
-{
-	condition:
-		androguard.app_name(/covid/i)
-}
-rule Covid_a:AdFraud
+
+rule Covid:AdFraud
 {
 	meta:
 		description = "This rule detects the Covid19 application with AdFraud suspicious signatures"
@@ -5313,10 +4485,11 @@ rule Covid_a:AdFraud
 		(androguard.package_name(/corona/i) or
 		androguard.package_name(/covid/i) or
 		androguard.app_name(/corona/i) or
-		androguard.app_name(/covid/i)) and		
+		androguard.app_name(/covid/i)) and
 		((androguard.permission(/android.permission.INTERNET/) and (androguard.permission(/android.permission.ACCESS_WIFI_STATE/) or androguard.permission(/CHANGE_WIFI_STATE/))) or
 		(androguard.permission(/android.permission.INTERNET/) and androguard.permission(/android.permission.BIND_NOTIFICATION_LISTENER_SERVICE/)))
 }
+
 rule qaa: official
 {
 	meta:
@@ -5328,6 +4501,7 @@ rule qaa: official
 		androguard.app_name(/covid/i)) and
 		androguard.filter("android.accessibilityservice.AccessibilityService")
 }
+
 rule collectors
 {
 	meta:
@@ -5344,25 +4518,7 @@ rule collectors
 		and androguard.permission(/android.permission.ACCESS_COARSE_LOCATION/)
 }
 
-rule adecosystems_a
-{
-    condition:
- 		cuckoo.network.http_request(/ads01\.adecosystems\.com/) or cuckoo.network.http_request(/ads02\.adecosystems\.com/) or cuckoo.network.http_request(/ads03\.adecosystems\.com/) or cuckoo.network.http_request(/ads04\.adecosystems\.com/)
-}
-rule otherFindSMS_a
-{
-    strings:
-        $text_string = "sendsms"
-    condition:
-       ($text_string or androguard.permission(/SEND_SMS/))
-	   and androguard.permission(/FLASHLIGHT/)
-}
-rule HackedScreen_a
-{
-    condition:
-        androguard.activity(/.*\.HackedScreen/)
-}
-rule pornplayer_a
+rule pornplayer
 {
 	meta:
 		description = "Porn Player, de.smarts.hysteric"
@@ -5371,7 +4527,8 @@ rule pornplayer_a
 	condition:
 		$a
 }
-rule simplelocker_b_tor_a
+
+rule simplelocker_b_tor
 {
 	meta:
 		description = "SimpleLocker.B Tor enabled"
@@ -5381,16 +4538,17 @@ rule simplelocker_b_tor_a
 	condition:
 		$a and $b
 }
+
 rule raa: ClickFraud AdFraud SMS Downloader_Trojan
 {
 	meta:
-		description = "http://research.zscaler.com/2015/07/fake-batterybotpro-clickfraud-adfruad.html"
-		sample = "cc4e024db858d7fa9b03d7422e760996de6a4674161efbba22d05f8b826e69d5"
+		description = "This rule detects AD fraud"
 	condition:
 		androguard.activity(/com\.polaris\.BatteryIndicatorPro\.BatteryInfoActivity/i) and
 		androguard.permission(/android\.permission\.SEND_SMS/)
 }
-rule LLCdev_a: official
+
+rule LLCdev: official
 {
 	meta:
 		description = "This rule detects samples fom LLC developer"
@@ -5398,7 +4556,8 @@ rule LLCdev_a: official
 	condition:
 		androguard.certificate.sha1("D7FE504792CD5F67A7AF9F26C771F990CA0CB036")
 }
-rule wipelocker_a_a
+
+rule wipelocker
 {
 	meta:
 		description = "WipeLocker.A"
@@ -5408,8 +4567,7 @@ rule wipelocker_a_a
 		$a
 }
 
-
-rule WapCash_a: official
+rule WapCash: official
 {
 	meta:
 		description = "This rule detects samples fom WapCash developer"
@@ -5417,6 +4575,7 @@ rule WapCash_a: official
 	condition:
 		androguard.certificate.sha1("804B1FED90432E8BA852D85C7FD014851C97F9CE")
 }
+
 rule saa: official
 {
 	meta:
@@ -5425,7 +4584,8 @@ rule saa: official
 	condition:
 		androguard.certificate.sha1("ED9A1CE1F18A1097DCCC5C0CB005E3861DA9C34A")
 }
-rule proxy_spy_a: trojan
+
+rule proxy_spy: trojan
 {
 	meta:
 		description = "This rule detects http://b0n1.blogspot.com.es/2015/04/android-trojan-spy-goes-2-years.html"
@@ -5433,14 +4593,10 @@ rule proxy_spy_a: trojan
 	condition:
 		androguard.permission(/android.permission.SEND_SMS/) and
 		androguard.activity(/\.*proxy\.MainActivity/i) and
-		androguard.url(/proxylog\.dyndns\.org/)	
+		androguard.url(/proxylog\.dyndns\.org/)
 }
-rule russian_a: fakeInst
-{
-	condition:
-		androguard.certificate.sha1("D7FE504792CD5F67A7AF9F26C771F990CA0CB036")
-}
-rule koler_a: example
+
+rule koler: example
 {
 	meta:
 		description = "This rule detects koler rasomware"
@@ -5455,15 +4611,8 @@ rule koler_a: example
 		any of ($string_*) ) and
 		androguard.permission(/com.android.browser.permission.READ_HISTORY_BOOKMARKS/)
 }
-rule fraudulent_developers_a: airpush
-{
-	condition:
-		androguard.certificate.issuer(/tegyhman/) 
-		or androguard.certificate.issuer(/tengyhman/)
-		or androguard.certificate.issuer(/pitorroman/) 
-		or androguard.certificate.subject(/pitorroman/)
-}
-rule slocker_a_a
+
+rule slocker
 {
 	meta:
 		description = "SLocker.A"
@@ -5473,42 +4622,8 @@ rule slocker_a_a
 	condition:
 		$a or $b
 }
-rule SMSReviever_a: banker
-{
-	meta:
-		description = "To found apps with a typo error, is classified too as ibanking"
-		sample = "6903ce617a12e2a74a3572891e1df11e5d831632fae075fa20c96210d9dcd507"
-	strings:
-	$a = {53 6D 73 52 65 63 69 65 76 65 72 75 70 64 61 74 65} //SmsRevieverupdate
-	condition:
-		$a
-}
-rule adware_b:asd
-{
-	condition:
-		androguard.certificate.sha1("ED9A1CE1F18A1097DCCC5C0CB005E3861DA9C34A")
-}
-rule hao_a
-{
-	meta:
-		description = "Developer / Company: hao"
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-		search = "cert:7428EA9322A6FBF2DDE4A6DB6C6E59237E0D8EC3" 
-	condition:
-		androguard.certificate.sha1("7428EA9322A6FBF2DDE4A6DB6C6E59237E0D8EC3")
-}
-rule fakeav_a
-{
-	condition:
-	  androguard.package_name("com.hao.sanquanweishi") or
-	  androguard.certificate.sha1("1C414E5C054136863B5C460F99869B5B21D528FC")
-}
-rule adware_c: installer
-{
-	condition:
-		androguard.package_name("installer.com.bithack.apparatus")
-}
-rule geohotS4_a
+
+rule geohotS4
 {
 	meta:
 		description = "Geohot S4"
@@ -5517,7 +4632,9 @@ rule geohotS4_a
 	condition:
 		$a
 }
-rule MilkyDoor_a {
+
+rule MilkyDoor
+{
 	meta:
 		description = "http://blog.trendmicro.com/trendlabs-security-intelligence/operation-c-major-actors-also-used-android-blackberry-mobile-spyware-targets/"
 	strings:
@@ -5532,7 +4649,8 @@ rule MilkyDoor_a {
 	condition:
 		1 of them
 }
-rule Marcher_ObfuscatedStr_a
+
+rule Marcher_ObfuscatedStr
 {
 	meta:
 		description = "This rule detects hardcoded strings in marcher malware using regex built to detect their string obfuscation scheme. Strings are obfuscated with each character being delimited by (** or <<) 3 random chars (** or >>) and these characters vary for each apk"
@@ -5547,55 +4665,15 @@ rule Marcher_ObfuscatedStr_a
 		$c
 }
 
-rule ransomware_b
-{
-  meta:
-      author = "https://www.twitter.com/SadFud75"
-  strings:
-      $s1 = "The penalty set must be paid in course of 48 hours as of the breach" nocase
-      $s2 = "following violations were detected" nocase
-      $s4 = "all your files are encrypted" nocase
-      $s5 = "your device has been blocked" nocase
-      $s6 = "department of justice" nocase
-      $s7 = "remaining time to pay" nocase
-      $s8 = "your phone has been blocked" nocase
-  condition:
-      any of them or androguard.service("com.h.s")
-}
-rule Fake_Flash_a
+rule Fake_Flash
 {
   meta:
        description = "Detects fake flash apps"
    condition:
        (androguard.package_name(/com\.adobe\.flash/i) or androguard.app_name(/Adobe Flash/i)) //and not
 }
-rule SMS_Fraud_a
-{
-	meta:
-		Author = "https://www.twitter.com/SadFud75"
-	condition:
-		androguard.package_name("com.sms.tract") or androguard.package_name("com.system.sms.demo") or androguard.package_name(/com\.maopake/)
-}
-rule Fake_Hill_Climb2_a
-{
-  meta:
-      Author = "https://twitter.com/SadFud75"
-      Info = "Detection of fake hill climb racing 2 apps"
-  condition:
-      androguard.app_name("Hill Climb Racing 2") and not androguard.certificate.sha1("F0FDF0136D03383BA4B2BE81A14CD4B778FB1F6C")
-}
-rule Trojan_Androrat_a
-{
-  meta:
-      Author = "https://www.twitter.com/SadFud75"
-  strings:
-      $s_1 = "Hello World, AndroratActivity!" wide ascii
-      $s_2 = "Lmy/app/client/AndroratActivity;" wide ascii
-      $s_3 = "Androrat.Client.storage" wide ascii
-  condition:
-      any of them
-}
-rule suidext_a: official
+
+rule suidext: official
 {
 	meta:
 		description = "detect suid"
@@ -5604,7 +4682,8 @@ rule suidext_a: official
 	condition:
 		$a
 }
-rule sms_suspect_a
+
+rule sms_suspect
 {
 	meta:
 		description = "This rule detects APKs with SMS (write & send) permissions"
@@ -5614,7 +4693,8 @@ rule sms_suspect_a
 		androguard.permission(/android.permission.READ_SMS/) and
 		androguard.permission(/android.permission.RECEIVE_SMS/)
 }
-rule Trojan_Dendroid_a
+
+rule Trojan_Dendroid
 {
   meta:
       author = "https://www.twitter.com/SadFud75"
@@ -5629,23 +4709,7 @@ rule Trojan_Dendroid_a
       3 of them
 }
 
-rule Metasploit_Payload_a
-{
-  meta:
-      author = "https://www.twitter.com/SadFud75"
-      information = "Detection of payloads generated with metasploit"
-  strings:
-      $s1 = "-com.metasploit.meterpreter.AndroidMeterpreter"
-      $s2 = ",Lcom/metasploit/stage/MainBroadcastReceiver;"
-      $s3 = "#Lcom/metasploit/stage/MainActivity;"
-      $s4 = "Lcom/metasploit/stage/Payload;"
-      $s5 = "Lcom/metasploit/stage/a;"
-      $s6 = "Lcom/metasploit/stage/c;"
-      $s7 = "Lcom/metasploit/stage/b;"
-  condition:
-      androguard.package_name("com.metasploit.stage") or any of them
-}
-rule Trojan_Spynote_a
+rule Trojan_Spynote
 {
     meta:
 		author = "https://twitter.com/SadFud75"
@@ -5654,30 +4718,12 @@ rule Trojan_Spynote_a
         $cond_1 = "SERVER_IP" nocase
         $cond_2 = "SERVER_NAME" nocase
         $cond_3 = "content://sms/inbox"
-        $cond_4 = "screamHacker" 
+        $cond_4 = "screamHacker"
     condition:
         all of ($cond_*)
 }
-rule wefleet_a
-{
-	strings:
-		$a = "wefleet.net/smstracker/ads.php" nocase
-	condition:
-		$a
-}
-rule Banker_Acecard_a
-{
-  meta:
-      author = "https://twitter.com/SadFud75"
-      more_information = "https://threats.kaspersky.com/en/threat/Trojan-Banker.AndroidOS.Acecard/"
-      samples_sha1 = "ad9fff7fd019cf2a2684db650ea542fdeaaeaebb 	53cca0a642d2f120dea289d4c7bd0d644a121252"
-  strings:
-      $str_1 = "Cardholder name"
-      $str_2 = "instagram.php"
-  condition:
-      ((androguard.package_name("starter.fl") and androguard.service("starter.CosmetiqFlServicesCallHeadlessSmsSendService")) or androguard.package_name("cosmetiq.fl") or all of ($str_*)) and androguard.permissions_number > 19
-}
-rule LocationStealer_a
+
+rule LocationStealer
 {
 	meta:
 		description = "This rule detects SMS based trojans stealing location"
@@ -5692,10 +4738,11 @@ rule LocationStealer_a
 		androguard.certificate.sha1("4D5B2813770A367C8821A7024CD6DC5319A7E1C7")) or
 		(androguard.permission(/android.permission.INTERNET/) and
 		 androguard.permission(/android.permission.SEND_SMS/) and
-		 androguard.permission(/android.permission.READ_SMS/) and 
+		 androguard.permission(/android.permission.READ_SMS/) and
 		 all of them )
 }
-rule banking_a
+
+rule banking
 {
 	meta:
 		description = "This rule detects is to detect a type of banking malware"
@@ -5706,48 +4753,8 @@ rule banking_a
 	condition:
 		all of them
 }
-rule marcher2_a
-{
-	strings:
-		$a = "HDNRQ2gOlm"
-		$b = "lElvyohc9Y1X+nzVUEjW8W3SbUA"
-	condition:
-		all of them
-}
-rule marcher3_a
-{
-	meta:
-		sample1 = "087710b944c09c3905a5a9c94337a75ad88706587c10c632b78fad52ec8dfcbe"
-		sample2 = "fa7a9145b8fc32e3ac16fa4a4cf681b2fa5405fc154327f879eaf71dd42595c2"
-	strings:
-		$b = "certificado # 73828394"
-		$c = "A compania TMN informa que o vosso sistema Android tem vulnerabilidade"
-	condition:
-		all of them
-}
-rule Banker1_a {
-	strings:
-		$ = "MessageReceiver"
-		$ = "AlarmReceiver"
-		$ = "BootReceiver"
-		$ = "AdminRightsReceiver"
-		$ = "AdminService"
-		$ = "FDService"
-		$ = "USSDService"
-		$ = "MainService"
-	condition:
-		all of them
-}
-rule Banker2_a {
-	strings:
-		$ = "85.93.5.228/index.php?action=command"
-		$ = "email@fgdf.er"
-		$ = "majskdd@ffsa.com"
-		$ = "185.48.56.10"
-	condition:
-		1 of them
-}
-rule Zitmo_a
+
+rule Zitmo
 {
 	meta:
 		description = "Trojan-Banker.AndroidOS.Zitmo"
@@ -5757,15 +4764,8 @@ rule Zitmo_a
 		androguard.receiver("com.security.service.receiver.RebootReceiver") and
 		androguard.receiver("com.security.service.receiver.ActionReceiver")
 }
-rule Banker3_a
-{
-	strings:
-	$ = "cosmetiq/fl/service" nocase
-	condition:
-	1 of them
-}
 
-rule Rule_EliteVPN_a
+rule Rule_EliteVPN
 {
     meta:
         description = "This rule detects the EliteVPN application, as analyzed in exercise A"
@@ -5775,7 +4775,8 @@ rule Rule_EliteVPN_a
         androguard.permissions_number > 10 and
         androguard.url("https://facebook.com/device?user_code=%1$s&qr=1")
 }
-rule SauronLockerSpecialized_a: Dordy
+
+rule SauronLockerSpecialized: Dordy
 {
 	meta:
 		description = "This rule detects the SauronLocker application, please let me know any of your ideas.. Just student work :]"
@@ -5785,7 +4786,7 @@ rule SauronLockerSpecialized_a: Dordy
 		androguard.app_name("Clash Royale Private") and
 		androguard.activity(/LockActivity/i) and
 		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/) and
-		androguard.receiver("com.ins.screensaver.receivers.OnBoot") and 
+		androguard.receiver("com.ins.screensaver.receivers.OnBoot") and
 		androguard.filter("android.intent.action.BOOT_COMPLETED") and
 		androguard.service("com.ins.screensaver.services.CheckerService") and
 		androguard.permission(/android.permission.READ_CONTACTS/) and
@@ -5794,7 +4795,8 @@ rule SauronLockerSpecialized_a: Dordy
 		androguard.url("timei2260.myjino.ru/gateway/") and
 		androguard.url("schemas.android.com/apk/res/android/")
 }
-rule Clipper_a: DordyRule
+
+rule Clipper: DordyRule
 {
 	meta:
 		description = "This rule detects the Clipper apk, plese let me know how to get it better :] Just some student work"
@@ -5804,46 +4806,9 @@ rule Clipper_a: DordyRule
 		androguard.package_name("/com.lemon.metamask/") or
 		androguard.app_name(/MetaMask/) and
 		androguard.service("com.lemon.metamask.Util.ClipboardMonitorService") or
-        androguard.service(/clipboard/) and 
+        androguard.service(/clipboard/) and
 		androguard.permission(/WRITE_EXTERNAL_STORAGE/) and
 		androguard.url("api.telegram.org")
-}
-
-rule Trojan_e: BankBot
-{
-	meta:
-        description = "Trojan targeting Banks with Overlays"
-		source = "https://securify.nl/blog/SFY20170401/banking_malware_in_google_play_targeting_many_new_apps.html"
-	strings:
-		$c2_1 = "/private/tuk_tuk.php" nocase
-		$c2_2 = "/private/add_log.php" nocase
-		$c2_3 = "/private/set_data.php" nocase
-		$c2_4 = "activity_inj" nocase
-	condition:
-		2 of ($c2_*)
-		and (
-			androguard.permission(/android.permission.RECEIVE_SMS/) 
-			or androguard.permission(/android.permission.READ_SMS/)
-		)
-}
-rule Trojan_2_b: BankBot
-{
-	meta:
-		sample = "b314e54a1161deccb2f582aaf6356f2e66a2f983dd1c1ebf7a5c5d9f5a873dba"
-	strings:
-		$sms_1 = "Sms Is Deleted !" nocase
-		$sms_2 = "SMS is NOT DELETED" nocase
-		$c2_1 = "/set/log_add.php" nocase
-		$c2_2 = "/set/receiver_data.php " nocase
-		$c2_3 = "/set/set.php" nocase
-		$c2_4 = "/set/tsp_tsp.php" nocase
-		$cmd_1 = "/proc/%d/cmdline" nocase
-		$cmd_2 = "/proc/%d/cgroup" nocase
-	condition:
-		1 of ($sms_*)
-		and 2 of ($c2_*)
-		and 1 of ($cmd_*)
-		and	androguard.permission(/android.permission.RECEIVE_SMS/)
 }
 
 rule AVG_free
@@ -5860,7 +4825,7 @@ rule AVG_free
 		androguard.certificate.sha1("1e1b347f62f980e4eea6051d85c203a1eeeff1a8")
 }
 
-rule Developers_with_known_malicious_apps
+rule Developers_with_known_maliciouspps
 {
 	meta:
 		description = "This rule lists app from developers with a history of malicious apps"
@@ -5875,7 +4840,7 @@ rule Developers_with_known_malicious_apps
 		($b and androguard.certificate.sha1("79981C39859BFAC4CDF3998E7BE26148B8D94197")) or
 		($c and androguard.certificate.sha1("CA763A4F5650A5B685EF07FF31587FA090F005DD")) or
 		($d and androguard.certificate.sha1("4CC79D06E0FE6B0E35E5B4C0CB4F5A61EEE4E2B8")) or
-		($e and androguard.certificate.sha1("69CE857378306A329D1DCC83A118BC1711ABA352")) 
+		($e and androguard.certificate.sha1("69CE857378306A329D1DCC83A118BC1711ABA352"))
 }
 
 rule eaaa: official
@@ -5893,7 +4858,7 @@ rule eaaa: official
 		androguard.permission(/android.permission.READ_SMS/)
 }
 
-rule Stage1_a
+rule Stage1
 {
     meta:
         description = "Op codes for loading stage 2"
@@ -5904,16 +4869,7 @@ rule Stage1_a
         1 of them
 }
 
-rule ibers_a {
-  strings:
-	$string_1 = /scottishpower\.com/
-	$string_2 = /avangrid\.com/
-	$string_3 = /neoenergia\.com/
-	$string_4 = /iberdrola/
-  condition:
-	any of them
-}
-rule string_sanitas_a
+rule string_sanitas
 {
 	meta:
 		description = "Regla creada por Victor"
@@ -5923,6 +4879,7 @@ rule string_sanitas_a
 	condition:
 		1 of ($string_*)
 }
+
 rule faaa: official
 {
 	meta:
@@ -5934,6 +4891,7 @@ rule faaa: official
 	condition:
 		$a or $b
 }
+
 rule gaaa: official
 {
 	meta:
@@ -5946,7 +4904,7 @@ rule gaaa: official
 		$e = "uber"
 	condition:
  		$a and $b and $c and $d and $e and
-		androguard.permission(/android.permission.INTERNET/) 
+		androguard.permission(/android.permission.INTERNET/)
 }
 
 rule test_crypto_clipper
@@ -5960,6 +4918,7 @@ rule test_crypto_clipper
 	condition:
 		all of ($a_*)
 }
+
 rule iaaa: official
 {
 	meta:
@@ -5971,6 +4930,7 @@ rule iaaa: official
 	condition:
 		$a or $b or $c
 }
+
 rule jaaa: official
 {
 	meta:
@@ -5980,6 +4940,7 @@ rule jaaa: official
 	condition:
 		$a
 }
+
 rule kaaa: official
 {
 	meta:
@@ -5989,7 +4950,8 @@ rule kaaa: official
 	condition:
 		$a
 }
-rule metafortress_a: obfuscator
+
+rule metafortress: obfuscator
 {
   meta:
     description = "MetaFortress"
@@ -6002,7 +4964,8 @@ rule metafortress_a: obfuscator
   condition:
     ($a and $b) or $c
 }
-rule gemalto_protector_a: obfuscator
+
+rule gemalto_protector: obfuscator
 {
   meta:
     description = "Gemalto"
@@ -6020,7 +4983,8 @@ rule gemalto_protector_a: obfuscator
   condition:
     2 of them
 }
-rule potential_miners_by_strings_a: miner
+
+rule potential_miners_by_strings: miner
 {
 	meta:
 		description = "This rule detects potential miners using only strings"
@@ -6200,13 +5164,14 @@ rule potential_miners_by_strings_a: miner
         $api024 = "Lcom/minergate/miner/services/MinerService"
         $api025 = "startMiner"
 	condition:
-		androguard.permission(/android.permission.INTERNET/) and 
+		androguard.permission(/android.permission.INTERNET/) and
 		((any of ($id*)) or
-        (any of ($js*)) or 
+        (any of ($js*)) or
         (any of ($lib*)) or
         (any of ($api*)))
 }
-rule anubis_downloader_a
+
+rule anubis_downloader
 {
 	meta:
 		description = "Anubis downloader"
@@ -6221,7 +5186,7 @@ rule anubis_downloader_a
 		all of ($a_*)
 }
 
-rule smsriskware_a
+rule smsriskware
 {
 	meta:
 		description = "Payments(sms), storing gps location into .db files and sending through http"
@@ -6230,10 +5195,12 @@ rule smsriskware_a
 		$b = "http://112.74.106.240:7878/port/Sbill/"
 		$c = "http://wiipay.cxso.cn/xml/listA.txt"
 	condition:
-		all of them 
+		all of them
 }
-rule adware_d {
-	meta: 
+
+rule adware_d
+{
+	meta:
 		description = "Sends SMS/MMS - Installs adware"
 	strings:
 		$a = "http://115.28.52.43:9000/tabscr/appclient/fetchList!down.do?imei="
@@ -6246,7 +5213,8 @@ rule adware_d {
 	condition:
 		any of them
 		}
-rule fakeAV_a
+
+rule fakeAV
 {
   meta:
   	description = "Redirects to fake AV page to install / send later sms / ads"
@@ -6255,7 +5223,8 @@ rule fakeAV_a
   condition:
   	$a
 }
-rule smsSender_a
+
+rule smsSender
 {
   meta:
   	description = "Has a list of countries and phones inside a .txt file. Apparently using some kind of code from BASICSMSSENDER"
@@ -6264,9 +5233,11 @@ rule smsSender_a
 	$b = "dcSmsCount_"
 	$c = "\n*****BINARY MESSAGE*****\n"
   condition:
-    all of them 
+    all of them
 }
-rule fakeInstaller_b {
+
+rule fakeInstaller_b
+{
 	meta:
 		description = "Fake installer - Same signature always encrypted with RSA"
 	strings:
@@ -6275,106 +5246,26 @@ rule fakeInstaller_b {
 		$c ="ECB"
 		$f= "http://qpclick.com/"
 	condition:
-		all of them 
+		all of them
 }
-rule riskWare_a {
+
+rule riskWare
+{
 	meta:
 		description = "Riskware, installing thirdparty APKs and adware"
 	condition:
 		androguard.certificate.sha1("4D1C1D21519F3B03858627D624BE87DA961E83EC")
 }
-rule fakeInstallerSig_a {
+
+rule fakeInstallerSig
+{
 	meta:
 		description = "Fake installer - Same signature always encrypted with RSA"
 	condition:
-			androguard.certificate.sha1("17:42:6e:74:e2:96:d3:fa:31:01:04:62:08:d9:c7:84:1d:73:89:0c:de:de:80:a6:df:5e:ca:c6:43:1d:bc:37:57:c4:ad:e9:21:30:f4:0d:02:7d:f7:19:5a:54:ce:2a:6f:ee:85:02:32:50:23:74:7b:87:4d:ee:92:e1:63:24:b8:cc:16:50:62:0f:6e:f3:09:cd:75:2a:93:95:95:e6:4c:be:a4:73:27:4a:5b:5b:1c:f4:ef:02:cd:f8:6e:cc:30:5c:7e:f9:fe:54:96:f9:78:73:62:40:6e:10:ee:3d:9f:85:57:cf:59:25:09:06:c6:01:61:a1:3a:56:cf:7f:14:84:ed:4b:ff:6b:91:49:0a:ca:23:98:3c:84:c7:35:65:21:19:3e:2c:41:42:47:cd:74:84:4a:f3:fa:aa:b3:ed:ff:40:8b:ed:4c:a7:df:d1:9c:49:b1:38:49:bf:aa:20:e0:28:b9:04:07:44:d0:f4:e7:64:4b:29:a6:7a:ac:de:24:79:59:95:b2:fe:98:e6:61:08:dd:a8:9e:fc:59:51:49:f4:87:c4:0a:0b:e7:dc:09:73:86:a9:71:46:54:6c:11:11:bb:73:b8:5f:fa:c4:e0:03:85:0b:4c:19:f6:29:d3:1b:d8:c2:bc:da:c5:1b:6a:a0:6c:7b:89:5b:51")
-}
-rule YaYaCatelites_a: rule0 {
-	meta:
-		author = "YaYaGen -- Yet Another Yara Rule Generator (*) v0.4_winter17/18"
-		date = "04 Jan 2018"
-		url = "https://koodous.com/apks?search=0e741a21228f4f7ffdbb891524f3a246b60bee287965a74fe15009127f6de280%20OR%20%2014c7e547cb8dc8f5d629725fdbdd2e8c33693dd407b2f36cd03c613e59af2cc7%20OR%20%20efe6d86d7482fbcb5b1e7e12e22c2b086e4ec988939ebdffc9d363413e5a3326%20OR%20%20bf6a4b8c24cd4cf233137dcee735bc33849d34e659ec2fa5e0fa9b425fee9b4e%20OR%20%20e174dd174c5e21daa86064562aaf274d3f6fe84f4a3970beed48c02c3b605d58%20OR%20%20b81e0b6fe123b8d4cf7d99c20de1c694360d146bf80d9490b1b0325a00bf7f5a%20OR%20%200c50311ee3e30fe5be1b863db1b60b32bc9afa8d4264b852a836220751c7e3b2%20OR%20%20d8452b39b1962239e9dbe12e8a9d8d0ee098b9c8de8a8d55b5a95b67b552102f%20OR%20%2053dc796e2e77689b115701a92ad2bdaeb0c7a4e87bc9e9a0bbeda057b77e22ee"
-	condition:
-		androguard.app_name("System Application") and 
-		androguard.filter("android.app.action.ACTION_DEVICE_ADMIN_DISABLE_REQUESTED") and 
-		androguard.filter("android.app.action.DEVICE_ADMIN_DISABLED") and 
-		androguard.filter("android.app.action.DEVICE_ADMIN_ENABLED") and 
-		androguard.filter("android.intent.action.BOOT_COMPLETED") and 
-		androguard.filter("android.intent.action.PACKAGE_ADDED") and 
-		androguard.filter("android.intent.action.PACKAGE_REMOVED") and 
-		androguard.filter("android.intent.action.QUICKBOOT_POWERON") and 
-		androguard.filter("android.intent.action.SEND") and 
-		androguard.filter("android.intent.action.SENDTO") and 
-		androguard.filter("android.intent.action.USER_PRESENT") and 
-		androguard.filter("com.htc.intent.action.QUICKBOOT_POWERON")
-}
-rule YaYaNGEMobi_a: rule1 {
-	meta:
-		author = "YaYaGen -- Yet Another Yara Rule Generator (*) v0.4_winter17/18"
-		date = "03 Jan 2018"
-		url = "https://koodous.com/apks?search=12b8da40ec9e53a83a7c4b1d490db397730123efa5e8ed39ee596d3bae42f80d%20OR%20%208b5b898c7ad2fc6b516800f411b7181877a89124a94ba8a9fa0e974972c67553%20OR%20%20d65696c077b480bb0afab2390f1efd37d701ca2f6cbaa91977d4ac76957438c7%20OR%20%203a5bbe5454124ba5fbaa0dc7786fd2361dd903f84ccf65be65b0b0b77d432e6e%20OR%20%20b05013bbabf0a24a2c8b9c7b3f3ad79b065c6daaaec51c2e61790b05932dbb58%20OR%20%20396324dc3f34785aca1ece255a6f142f52e831b22bf96906c2a10b61b1da4713%20OR%20%2098bdad683b0ae189ed0fa56fb1e147c93e96e085dff90565ee246a4f6c4e2850%20OR%20%20f46c21a2976af7ba23e0af54943eacdaad2fd0b3108fde6d1502879fe9c83d07%20OR%20%20b3c3d131200369d1c28285010b99d591f9a9c0629b0ba9fedd1b4ffe0170cf4c%20OR%20%200a63ca301d97930eb8352c0772fb39015e4b89cd82e72391213ee82414e60cf8"
-	condition:
-		androguard.filter("android.intent.action.BOOT_COMPLETED") and
-		androguard.filter("android.intent.action.USER_PRESENT") and
-		androguard.filter("android.net.conn.CONNECTIVITY_CHANGE") and
-		androguard.permission(/android.permission.ACCESS_MTK_MMHW/) and
-		androguard.permission(/android.permission.ACCESS_NETWORK_STATE/) and
-		androguard.permission(/android.permission.ACCESS_WIFI_STATE/) and
-		androguard.permission(/android.permission.CAMERA/) and
-		androguard.permission(/android.permission.INTERNET/) and
-		androguard.permission(/android.permission.READ_PHONE_STATE/) and
-		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/) and
-		androguard.permission(/android.permission.WAKE_LOCK/)
-}
-rule YaYaCharger_a: rule0 {
-	meta:
-		author = "YaYaGen -- Yet Another Yara Rule Generator (*) v0.4_winter17/18"
-		date = "03 Jan 2018"
-		url = "https://koodous.com/apks?search=efb1a6c795b81d31a15e1d49790d59ff3e474c430956340ae447364568033c03%20OR%2058eb6c368e129b17559bdeacb3aed4d9a5d3596f774cf5ed3fdcf51775232ba0%20OR%20761c805132d2080ce6d68d117bb25a297570dbf9a6cb510fcd68bf99de8e3a39"
-	condition:
-		androguard.filter("android.app.action.DEVICE_ADMIN_ENABLED") and 
-		androguard.filter("android.intent.action.ACTION_EXTERNAL_APPLICATIONS_AVAILABLE") and 
-		androguard.filter("android.intent.action.BOOT_COMPLETED") and 
-		androguard.filter("com.android.vending.INSTALL_REFERRER") and 
-		androguard.permission(/android.permission.ACCESS_NETWORK_STATE/) and
-		androguard.permission(/android.permission.CAMERA/) and
-		androguard.permission(/android.permission.INTERNET/) and
-		androguard.permission(/android.permission.READ_PHONE_STATE/) and
-		androguard.permission(/android.permission.READ_SMS/) and
-		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/) and
-		androguard.permission(/android.permission.SYSTEM_ALERT_WINDOW/) and
-		androguard.permission(/android.permission.WAKE_LOCK/)
-}
-rule YaYaGMBanker_a {
-	meta:
-		author = "YaYaGen -- Yet Another Yara Rule Generator (*) v0.4_winter17/18"
-		date = "29 Dec 2017"
-		url = "https://koodous.com/apks?search=Bd8502a1f9934d0c1f7bb44f0b4fd7f7765798225bd2192f3fff76f5cb55259a%20OR%209425fca578661392f3b12e1f1d83b8307bfb94340ae797c2f121d365852a775e%20OR%20960422d069c5bcf14b2acbefac99b4c57b857e2a2da199c69e4526e0defc14d7%20OR%20306ca47fdf2db0010332d58f2f099d702046aa1739157163ee75177e1b9d5455"
-	condition:
-		androguard.filter("android.app.action.DEVICE_ADMIN_ENABLED") and 
-		androguard.filter("android.intent.action.ACTION_EXTERNAL_APPLICATIONS_AVAILABLE") and 
-		androguard.filter("android.intent.action.BOOT_COMPLETED") and 
-		androguard.filter("android.provider.Telephony.SMS_RECEIVED") and 
-		androguard.filter("com.slempo.service.activities.HTMLStart")
-}
-rule YaYaGhostPush_a {
-	meta:
-		author = "YaYaGen -- Yet Another Yara Rule Generator (*) v0.4_winter17/18"
-		date = "29 Dec 2017"
-		url = "https://koodous.com/apks?search=0f9e0b86fd3685ee0960ad6dfdc9e2e03c81ce203888546d3cc7740c0a07e5aa%20OR%20%205fbcab01cf7b231d3cc0b26b86e58c95a82cebaa34e451b7b4d3f5e78dad3ea5%20OR%20%2003eda7f7ecaa6425d264d82fb22e7b7218dfdd17bf9d5bbdd70045fecb3eb0e5"
-	condition:
-		androguard.permission(/android.permission.ACCESS_NETWORK_STATE/) and
-		androguard.permission(/android.permission.CAMERA/) and
-		androguard.permission(/android.permission.GET_ACCOUNTS/) and
-		androguard.permission(/android.permission.KILL_BACKGROUND_PROCESSES/) and
-		androguard.permission(/android.permission.READ_SETTINGS/) and
-		androguard.permission(/android.permission.RECEIVE_USER_PRESENT/) and
-		androguard.permission(/android.permission.WRITE_SETTINGS/) and
-		androguard.service("com.android.wp.net.log.UpService") and 
-		androguard.service("com.android.wp.net.log.service.ActivateService")
+	    androguard.certificate.sha1("17:42:6e:74:e2:96:d3:fa:31:01:04:62:08:d9:c7:84:1d:73:89:0c:de:de:80:a6:df:5e:ca:c6:43:1d:bc:37:57:c4:ad:e9:21:30:f4:0d:02:7d:f7:19:5a:54:ce:2a:6f:ee:85:02:32:50:23:74:7b:87:4d:ee:92:e1:63:24:b8:cc:16:50:62:0f:6e:f3:09:cd:75:2a:93:95:95:e6:4c:be:a4:73:27:4a:5b:5b:1c:f4:ef:02:cd:f8:6e:cc:30:5c:7e:f9:fe:54:96:f9:78:73:62:40:6e:10:ee:3d:9f:85:57:cf:59:25:09:06:c6:01:61:a1:3a:56:cf:7f:14:84:ed:4b:ff:6b:91:49:0a:ca:23:98:3c:84:c7:35:65:21:19:3e:2c:41:42:47:cd:74:84:4a:f3:fa:aa:b3:ed:ff:40:8b:ed:4c:a7:df:d1:9c:49:b1:38:49:bf:aa:20:e0:28:b9:04:07:44:d0:f4:e7:64:4b:29:a6:7a:ac:de:24:79:59:95:b2:fe:98:e6:61:08:dd:a8:9e:fc:59:51:49:f4:87:c4:0a:0b:e7:dc:09:73:86:a9:71:46:54:6c:11:11:bb:73:b8:5f:fa:c4:e0:03:85:0b:4c:19:f6:29:d3:1b:d8:c2:bc:da:c5:1b:6a:a0:6c:7b:89:5b:51")
 }
 
-rule bankingsha_a: versi0ne
+rule bankingsha: versi0ne
 {
 	meta:
 		description = "This rule detects Bankers that embed the sha of the name of the targets apps"
@@ -6516,7 +5407,7 @@ rule bankingsha_a: versi0ne
 		any of them
 }
 
-rule cryptoshell_apkguard_a: packer
+rule cryptoshellpkguard: packer
 {
   meta:
     description = "APKGuard/CryptoShell"
@@ -6603,7 +5494,8 @@ rule unicom_loader_b: packer
   condition:
     ($unicom_lib and ($decrypt_lib or $classes_jar))
 }
-rule liapp_a: packer
+
+rule liapp: packer
 {
   meta:
     description = "LIAPP"
@@ -6613,6 +5505,7 @@ rule liapp_a: packer
   condition:
     any of ($dir, $lib)
 }
+
 rule app_fortify_b: packer
 {
   meta:
@@ -6622,6 +5515,7 @@ rule app_fortify_b: packer
   condition:
     $lib
 }
+
 rule nqshield_b: packer
 {
   meta:
@@ -6634,7 +5528,7 @@ rule nqshield_b: packer
     any of ($lib, $lib_sec1, $lib_sec2)
 }
 
-rule bitwise_antiskid_a: obfuscator
+rule bitwisentiskid: obfuscator
 {
   meta:
     description = "Bitwise AntiSkid"
@@ -6647,7 +5541,7 @@ rule bitwise_antiskid_a: obfuscator
     any of them
 }
 
-rule reddrop_a
+rule reddrop
 {
 	meta:
 		description = "This rule detects malicious samples belonging to Reddrop campaign"
@@ -6673,48 +5567,9 @@ rule laaa: official
 		androguard.package_name("com.ibk.smsmanager") or
 		androguard.package_name("com.example.kbtest")
 }
-rule lokibot_old
+
+rule Androguard_Santander
 {
-    strings:
-		$a1 = "Seller" 
-		$a2 = "Domian1" 
-	condition:
-        androguard.package_name(/compse.refact.st.upsssss/) and 
-		1 of ($a*)
-}
-rule detection_b
-{
-	strings:
-		$ = "mspace.com.vn"
-		$ = "optimuscorp.pw"
-		$ = "ads_manager/get_facebook_ads_manager.php" 
-	condition:
-		2 of them or
-		androguard.url("mspace.com.vn") or
-		androguard.url("optimuscorp.pw") or
-		androguard.certificate.sha1("A7E0323BFEFED2929F62EFC015ED465409479F6F") or
-		androguard.certificate.issuer(/assdf/)
-}
-rule Click415to417
-{
-	strings:
-	 $ = "http://apk-archive.ru"
-	 $ = "aHR0cDovL2Fway1hcmNoaXZlLnJ1L2dvb2dsZXBsYXlhcHBzL2NoZWNrL281L2luZGV4LnBocD9pbXNpPQ"
-	condition:
-		androguard.url(/apk-archive.ru/i)
-		or 
-		1 of them
-}
-rule Title_Santander_a {
-	strings:
-		$string_1 = /Santander/
-		$string_2 = /Spendlytics/
-		$string_3 = /SmartBank/
-		$string_4 = /Flite/
-	condition:
-	4 of ($string_*)
-}
-rule Androguard_Santander_a {
 	meta:
 		description = "Per Package detection"
 	condition:
@@ -6728,7 +5583,8 @@ rule Androguard_Santander_a {
 		androguard.package_name("uk.co.santander.businessUK.bb") or
 		androguard.package_name("uk.co.santander.spendlytics")
 }
-rule Android_MazarBot_a
+
+rule Android_MazarBot
 {
 	meta:
 		author = "Jacob Soo Lead Re"
@@ -6736,11 +5592,12 @@ rule Android_MazarBot_a
 		description = "This rule try to detects MazarBot"
 		source = "https://heimdalsecurity.com/blog/security-alert-new-android-malware-post-denmark/"
 	condition:
-		(androguard.filter(/wakeup/i) and 
+		(androguard.filter(/wakeup/i) and
 		 androguard.filter(/reportsent/i)) or
-		(androguard.filter(/wakeup/i) and 
+		(androguard.filter(/wakeup/i) and
 		 androguard.filter(/com\.whats\.process/i))
 }
+
 rule maaa: official
 {
 	meta:
@@ -6755,7 +5612,8 @@ rule maaa: official
 		$b or
 		$c
 }
-rule fake_google_chrome_a
+
+rule fake_google_chrome
 {
 	meta:
 		description = "This rule detects fake google chrome apps"
@@ -6763,7 +5621,8 @@ rule fake_google_chrome_a
 	condition:
 		androguard.package_name("com.android.chro.me")
 }
-rule ahmyth_rat_a
+
+rule ahmyth_rat
 {
 	meta:
 		description = "This rule detects malicious spawns of Ahmyth RAT"
@@ -6772,7 +5631,8 @@ rule ahmyth_rat_a
 		androguard.service(/ahmyth.mine.king.ahmyth.MainService/) and
 		androguard.receiver(/ahmyth.mine.king.ahmyth.MyReceiver/)
 }
-rule Android_RuMMS_a
+
+rule Android_RuMMS
 {
 	meta:
 		author = "Jacob Soo Lead Re"
@@ -6780,24 +5640,15 @@ rule Android_RuMMS_a
 		description = "This rule try to detects Android.Banking.RuMMS"
 		source = "https://www.fireeye.com/blog/threat-research/2016/04/rumms-android-malware.html"
 	condition:
-		(androguard.service(/\.Tb/) and 
-		 androguard.service(/\.Ad/) and 
-		 androguard.receiver(/\.Ac/) and 
+		(androguard.service(/\.Tb/) and
+		 androguard.service(/\.Ad/) and
+		 androguard.receiver(/\.Ac/) and
 		 androguard.receiver(/\.Ma/)) or
-        (androguard.url(/http\:\/\/37\.1\.207/) and 
+        (androguard.url(/http\:\/\/37\.1\.207/) and
 		 androguard.url(/\/api\/\?id\=7/))
 }
-rule Coinhive_a
-{
- strings:
-   $a1 = "*rcyclmnrepv*" wide ascii
-   $a2 = "*coin-hive*" wide ascii
-   $a3 = "*coin-hive.com*" wide ascii
-   $a4 = "*com.android.good.miner*" wide ascii
- condition:
-   any of them
-}
-rule Android_AVITOMMS_Variant_a
+
+rule Android_AVITOMMS_Variant
 {
 	meta:
 		author = "Jacob Soo Lead Re"
@@ -6805,11 +5656,12 @@ rule Android_AVITOMMS_Variant_a
 		description = "This rule try to detects Spy.Banker AVITO-MMS Variant"
 		source = "https://blog.avast.com/android-banker-trojan-preys-on-credit-card-information"
 	condition:
-		(androguard.receiver(/AlarmReceiverKnock/) and 
-		 androguard.receiver(/BootReciv/) and 
+		(androguard.receiver(/AlarmReceiverKnock/) and
+		 androguard.receiver(/BootReciv/) and
 		 androguard.receiver(/AlarmReceiverAdm/))
 }
-rule Android_AVITOMMS_Rule2_a
+
+rule Android_AVITOMMS_Rule2
 {
 	meta:
 		author = "Jacob Soo Lead Re"
@@ -6817,14 +5669,15 @@ rule Android_AVITOMMS_Rule2_a
 		description = "This rule try to detects Spy.Banker AVITO-MMS Variant"
 		source = "https://blog.avast.com/android-banker-trojan-preys-on-credit-card-information"
 	condition:
-		androguard.service(/IMService/) and 
-		androguard.receiver(/BootReciv/) and 
-		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/i) and 
-		androguard.permission(/android.permission.KILL_BACKGROUND_PROCESSES/i) and 
+		androguard.service(/IMService/) and
+		androguard.receiver(/BootReciv/) and
+		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/i) and
+		androguard.permission(/android.permission.KILL_BACKGROUND_PROCESSES/i) and
 		androguard.permission(/android.permission.SEND_SMS/i) and
 		androguard.permission(/android.permission.INTERNET/i)
 }
-rule rule1_a: mmarrkv_misc
+
+rule mmarrkv_misc
 {
 	meta:
 		description = "Test rule"
@@ -6832,7 +5685,8 @@ rule rule1_a: mmarrkv_misc
 		androguard.permission(/SYSTEM_ALERT_WINDOW/) and
 		androguard.permission(/BIND_ACCESSIBILITY_SERVICE/)
 }
-rule AndroRat_a
+
+rule AndroRat
 {
         meta:
                 description = "ejercicio - yarn - androrat"
@@ -6844,7 +5698,8 @@ rule AndroRat_a
         condition:
                 $a and ($b or $c or $d)
 }
-rule taskhijack3_a: official
+
+rule taskhijack3: official
 {
 	meta:
 		date = "2018-02-09"
@@ -6859,7 +5714,7 @@ rule taskhijack3_a: official
 		$file and ($a or $b)
 }
 
-rule SuspiciousAdds_a
+rule SuspiciousAdds
 {
 	meta:
 		description = "This rule looks for suspicios activity"
@@ -6867,23 +5722,16 @@ rule SuspiciousAdds_a
 		androguard.activity(/com.startapp.android.publish.OverlayActivity/i) or androguard.activity(/com.greystripe.sdk.GSFullscreenActivity/i)
 }
 
-rule FakeAngribirds_a
+rule FakeAngribirds
 {
 	meta:
 		description = "This ruleset looks for angribirds not by rovio"
 	condition:
 		androguard.activity(/com.rovio.fusion/i) and not
-		androguard.certificate.sha1("66DA9177253113474F6B3043B89E0667902CF115") 
-}
-rule crypto_b: jcarneiro
-{
-	strings:
-		$a = "pool.minexmr.com"
-	condition:
-		$a
+		androguard.certificate.sha1("66DA9177253113474F6B3043B89E0667902CF115")
 }
 
-rule FaceAdware_a
+rule FaceAdware
 {
 	meta:
 		description = "Adware pretending to be a Whatsapp or Facebook hack."
@@ -6892,8 +5740,9 @@ rule FaceAdware_a
 		$pub_id = "ca-app-pub-5886589216790682/8233759652"
 		$pub_id2 = "ca-app-pub-5886589216790682/9710492858"
 	condition:
-		$pub_id or $pub_id2 
+		$pub_id or $pub_id2
 }
+
 rule waaa: official
 {
 	meta:
@@ -6902,7 +5751,7 @@ rule waaa: official
         androguard.package_name(/com\.app\.attacker\../)
 }
 
-rule CyberPolice_ransomware_a
+rule CyberPolice_ransomware
 {
 	meta:
 		description = "CyberPolice Ransomware"
@@ -6918,29 +5767,24 @@ rule CyberPolice_ransomware_a
 		androguard.permission(/android.permission.SYSTEM_ALERT_WINDOW/) and
 		androguard.permission(/android.permission.KILL_BACKGROUND_PROCESSES/) and
 		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/) and
-		androguard.permission(/android.permission.WRITE_SETTINGS/) and	
+		androguard.permission(/android.permission.WRITE_SETTINGS/) and
 		androguard.permission(/android.permission.WRITE_CONTACTS/) and
 		$a and ($b or $c)
 }
-rule postepay_smsFraud_a
+
+rule postepay_smsFraud
 {
 	meta:
 		description = "Yara detection for PostePay SMS-fraud"
-	condition:		
+	condition:
 		androguard.package_name("me.help.botfix") and
 		androguard.certificate.sha1("F3B7734A4BADE62AD30FF4FA403675061B8553FF") and
-		androguard.receiver(/\.SmsListener/) and 
+		androguard.receiver(/\.SmsListener/) and
 		androguard.permission(/android.permission.SEND_SMS/) and
-		androguard.permission(/android.permission.READ_SMS/) 
+		androguard.permission(/android.permission.READ_SMS/)
 }
-rule edvo_a
-{
-	strings:
-		$a= "EDVO revision 0"
-	condition:
-		all of them
-}
-rule testing_a
+
+rule testing
 {
 	meta:
 		description = "This rule is a test"
@@ -6976,6 +5820,7 @@ rule testing_a
 	condition:
 		all of them
 }
+
 rule testing_b
 {
 	meta:
@@ -7031,58 +5876,25 @@ rule testing_b
 		all of them
 }
 
-rule whatsdog_a: test
+rule whatsdog: test
 {
 	meta:
 		description = "Fake Whatsdog apps"
-	condition:		
-		androguard.app_name("WhatsDog") and 
+	condition:
+		androguard.app_name("WhatsDog") and
 		not androguard.certificate.sha1("006DA2B35407A5A017F04C4C675B05D3E77808C9")
 }
-rule plantsvszombies_a:SMSFraud
-{
-	meta:
-		sample = "ebc32e29ceb1aba957e2ad09a190de152b8b6e0f9a3ecb7394b3119c81deb4f3"
-	condition:
-		androguard.certificate.sha1("2846AFB58C14754206E357994801C41A19B27759")
-}
-rule FakeFacebook_a
+
+rule FakeFacebook
 {
 	meta:
 		description = "Fake Facebook applications"
 	condition:
 		androguard.app_name("Facebook") and
-		not androguard.certificate.sha1("8A3C4B262D721ACD49A4BF97D5213199C86FA2B9")	
+		not androguard.certificate.sha1("8A3C4B262D721ACD49A4BF97D5213199C86FA2B9")
 }
-rule SMSFraud_a
-{
-	condition:
-		androguard.certificate.issuer(/\/C=UK\/ST=Portland\/L=Portland\/O=Whiskey co\/OU=Whiskey co\/CN=John Walker/)
-}
-rule SMSFraud_b: russian_dev
-{
-	meta:
-		sample = "f9a86f8a345dd88f87efe51fef3eb32a7631b6c56cbbe019faa114f2d2e9a3ac"
-	condition:
-		androguard.certificate.sha1("7E209CBB95787A9F4E37ED943E8349087859DA73") or
-		androguard.certificate.sha1("3D725C7115302C206ABDD0DA85D67AD546E4A076") or
-		androguard.certificate.sha1("AC2D0CFAB11A82705908B88F57854F721C7D2E4E") or
-		androguard.certificate.sha1("F394D49E025FA95C38394BB05B26E6CAB9DF0A85") or
-		androguard.certificate.sha1("224DE2C3B80A52C08B24A0594EDD6C0A0A14F0D2") or
-		androguard.certificate.sha1("CF240D24D441F0A2808E6E5A0203AC05ACF0D10C")
-}
-rule fraudulent_a:numeric_developers
-{
-	meta:
-		search = "developer:91"
-		search2 = "developer:86"
-		search3 = "developer:34"
-	condition:
-		androguard.certificate.sha1("7D4EA444984A1AD84BBE408DB4A57A42B989E51A") or //developer 91
-		androguard.certificate.sha1("78739E2E80F74715D31A72185942487216E40D81") or //developer 86
-		androguard.certificate.sha1("E08260D36C0E5E2CEB9DE2FB0BAB0ABEA1471058") //developer 34
-}
-rule smsfraud_a
+
+rule smsfraud
 {
 	meta:
 		description = "This rule detects apks related with sms fraud"
@@ -7090,7 +5902,8 @@ rule smsfraud_a
 	condition:
 		androguard.certificate.sha1("1B70B4850F862ED0D5D495EC70CA133A4598C007")
 }
-rule packers_a
+
+rule packers
 {
 	meta:
 		description = "packers"
@@ -7099,8 +5912,9 @@ rule packers_a
 	strings:
 		$strings_b = "libmobisecy1"
 	condition:
-		$strings_b 
+		$strings_b
 }
+
 rule packers_b
 {
 	meta:
@@ -7113,13 +5927,7 @@ rule packers_b
 	condition:
 		$strings_b or $strings_c
 }
-rule xaaa: official
-{
-	meta:
-		description = "http://researchcenter.paloaltonetworks.com/2015/10/chinese-taomike-monetization-library-steals-sms-messages/"
-	condition:
-		androguard.url("http://112.126.69.51/2c.php")
-}
+
 rule yaaa: official
 {
 	meta:
@@ -7128,9 +5936,10 @@ rule yaaa: official
 		sample = "6e57a0b0b734914da334471ea3cd32b51df52c2d17d5d717935373b18b6e0003" //Fake avast
 	condition:
 		androguard.activity(/com\.startapp\.android\.publish\.AppWallActivity/) and
-		androguard.activity(/com\.startapp\.android\.publish\.list3d\.List3DActivity/)		
+		androguard.activity(/com\.startapp\.android\.publish\.list3d\.List3DActivity/)
 }
-rule VKSteal_a: official
+
+rule VKSteal: official
 {
 	meta:
 		description = "This rule detects vK login stealer"
@@ -7144,7 +5953,8 @@ rule VKSteal_a: official
 	condition:
 		$a and $b and $c and $d and $e
 }
-rule SkyMobiVariant_a
+
+rule SkyMobiVariant
 {
 	meta:
 		description = "Variant of Skymobi / SMS Pay / Riskware"
@@ -7152,7 +5962,8 @@ rule SkyMobiVariant_a
 	condition:
  androguard.certificate.sha1("62:71:54:7B:66:8C:E8:81:20:82:49:F8:59:5F:53:15:E3:90:EB:2E")
 }
-rule SkymobiPorn_a
+
+rule SkymobiPorn
 {
 	meta:
 		description = "Skymobi variant - Ads / SMS"
@@ -7177,10 +5988,11 @@ rule SkymobiPorn_a
 		  $q = "http://121.52.218.66:8011/request_v2.php"
 		  $r = "http://221.179.131.90/0903?http://111.13.47.76:81/open_gate/web_game_fee.php"
 		  $s = "http://121.52.218.66:8009/alipayto_v2.php?"
-	condition: 
-		any of them 
+	condition:
+		any of them
 }
-rule ggtracker_a: trojan
+
+rule ggtracker: trojan
 {
 	meta:
 		description = "Android.Ggtracker is a Trojan horse for Android devices that sends SMS messages to a premium-rate number. It may also steal information from the device."
@@ -7189,6 +6001,7 @@ rule ggtracker_a: trojan
 		androguard.permission(/android.permission.SEND_SMS/) and
 		androguard.url("http://ggtrack.org/SM1c?device_id=")
 }
+
 rule zaaa: official
 {
 	meta:
@@ -7199,83 +6012,15 @@ rule zaaa: official
 		androguard.certificate.sha1("C2:E4:C2:C7:AA:E9:ED:9C:C9:4B:B0:12:BA:DB:52:26:D1:27:87:42") or $a
 }
 
-rule Posible_bypass_Screenlock_a
+rule Posible_bypass_Screenlock
 {
 	meta:
 		description = "Bypass_Screenlock"
 	condition:
 		androguard.permission(/android.permission.DISABLE_KEYGUARD/)
 }
-rule genericSMS_a: smsFraud
-{
-	meta:
-		sample = "3fc533d832e22dc3bc161e5190edf242f70fbc4764267ca073de5a8e3ae23272"
-		sample2 = "3d85bdd0faea9c985749c614a0676bb05f017f6bde3651f2b819c7ac40a02d5f"
-	strings:
-		$a = "SHA1-Digest: +RsrTx5SNjstrnt7pNaeQAzY4kc="
-		$b = "SHA1-Digest: Rt2oRts0wWTjffGlETGfFix1dfE="
-		$c = "http://image.baidu.com/wisebrowse/index?tag1=%E6%98%8E%E6%98%9F&tag2=%E5%A5%B3%E6%98%8E%E6%98%9F&tag3=%E5%85%A8%E9%83%A8&pn=0&rn=10&fmpage=index&pos=magic#/channel"
-		$d = "pitchfork=022D4"
-	condition:
-		all of them
-}
-rule genericSMS2_a: smsFraud
-{
-	meta:
-		sample = "1f23524e32c12c56be0c9a25c69ab7dc21501169c57f8d6a95c051397263cf9f"
-		sample2 = "2cf073bd8de8aad6cc0d6ad5c98e1ba458bd0910b043a69a25aabdc2728ea2bd"
-		sample3 = "20575a3e5e97bcfbf2c3c1d905d967e91a00d69758eb15588bdafacb4c854cba"
-	strings:
-		$a = "NotLeftTriangleEqual=022EC"
-		$b = "SHA1-Digest: X27Zpw9c6eyXvEFuZfCL2LmumtI="
-		$c = "_ZNSt12_Vector_baseISsSaISsEE13_M_deallocateEPSsj"
-		$d = "FBTP2AHR3WKC6LEYON7D5GZXVISMJ4QU"
-	condition:
-		all of them
-}
-rule genericSMS3_a: smsFraud
-{
-	meta:
-		sample = "100de47048f17b7ea672573809e6cd517649b0f04a296c359e85f2493cdea366"
-		sample2 = "0c5392b7ec1c7a1b5ec061f180b5db4d59b476f7f6aaa1d034b7c94df96d4a36"
-		sample3 = "1002ab2d97ee45565cdec4b165d6b4dcd448189201adad94ea8152d8a9cadac3"
-	strings:
-		$a = "res/drawable-xxhdpi/abc_textfield_search_selected_holo_dark.9.pngPK"
-		$b = "SHA1-Digest: Jxn4OLlRA7rJLn731JTR4YDWdiY="
-		$c = "\\-'[%]W["
-		$d = "_ZN6N0Seed10seedStatusE"
-	condition:
-		all of them
-}
-rule SMSsend_a
-{
-	meta:
-		sample = "cbadcd7d1b99f330665b3fc68d1bdafb5d0a38f36c76505b48b283a2c1bbb48a"
-		sample2 = "e3cd70b5ec2fa33d151043d4214ea3ab9623874a45ae04cc0816ebf787c045ff"
-		sample3 = "cc21dc0d3b09a47f008cd68a3c7086f0112c93a027b18ed4283541182d0dfc13"
-	strings:
-		$a = "SHA1-Digest: ZEVCPDHNa58Z+ad4DBPhHzHs2Q0="
-		$b = "5148cfbb-cd66-447b-a3dc-f0b4e416d152"
-		$c = "merchantOrderTime"
-		$d = "dialog_content_l"
-	condition:
-		all of them
-}
-rule SMSSend2_b
-{
-	meta:
-		sample = "5e5645bfc4fa8d539ef9ef79066dab1d98fdeab81ac26774e65b1c92f437b5b7"
-		sample2 = "bf1529540c3882c2dfa442e9b158e5cc00e52b5cf5baa4c20c4bdce0f1bb0a6f"
-		sample3 = "0deb55c719b4104ba1715da20efbc30e8f82cbff7da4d4c00837428e6dc11a24"
-	strings:
-		$a = "unicom_closepress"
-		$b = "UpDownArrow=02195"
-		$c = "SHA1-Digest: yMpAl55vjxeiLiY1ZwkqDUztpfg="
-		$d = "&&res/drawable-xhdpi/hfb_btn_normal2.png"
-	condition:
-		all of them
-}
-rule lockerpin_a
+
+rule lockerpin
 {
 	meta:
 		description = "This rule detects LockerPin apps"
@@ -7290,37 +6035,8 @@ rule lockerpin_a
 	condition:
 		all of them
 }
-rule dowgin_b
-{
-	meta:
-		sample = "13d63521e989be22b81f21bd090f325688fefe80e7660e57daf7ca43c31105cb"
-		sample2 = "8840f0e97b7909c8fcc9c61cdf6049d08dc8153a58170976ff7087e25461d7bd"
-		sample3 = "14f40c998a68d26a273eba54e1616a1a1cd77af4babb0f159a228754d3fd93ba"
-		sample4 = "ad8803481b08f6d7bea92a70354eca504da73a25df3e52b0e028b1b125d9a6be"
-		sample5 = "243c4042d8b0515cbb88887432511611fc5aa25e1d719d84e96fd44613a3e0cc"
-	strings:
-		$a = "SexPoseBoxLayout"
-		$b = "PleasureStartsLayout"
-		$c = "lYttxRF!2"
-	condition:
-		all of them
-}
-rule dowgin_c:adware
-{
-	meta:
-		sample = "4d7f2d6ff4ed8ced6f8f7f96e9899273cc3090ea108f2cc3b32dd1a06e63cf70"
-		sample2 = "cde8160d09c486bdd6d96b2ed81bd52390d77094d13ff9cfbc6949ed00206a83"
-		sample3 = "d2e81e6db5f4964246d10241588e0e97cde524815c4de7c0ea1c34a48da1bcaf"
-		sample4 = "cc2d0b3d8f00690298b0e5813f6ace8f4d4b04c9704292407c2b83a12c69617b"
-	strings:
-		$a = "http://112.74.111.42:8000"
-		$b = "SHA1-Digest: oIx4iYWeTtKib4fBH7hcONeHuaE="
-		$c = "ONLINEGAMEPROCEDURE_WHICH_WAP_ID"
-		$d = "http://da.mmarket.com/mmsdk/mmsdk?func=mmsdk:posteventlog"
-	condition:
-		all of them
-}
-rule comandroidmediacode_a
+
+rule comandroidmediacode
 {
 	meta:
 		description = "This rule detects fraudulent applications based on Umeng"
@@ -7332,7 +6048,8 @@ rule comandroidmediacode_a
 		$a and $b
 		and androguard.app_name("com.android.mediacode")
 }
-rule FakeFlashPlayer_a
+
+rule FakeFlashPlayer
 {
 	meta:
 		description = "Fake FlashPlayer apps"
@@ -7342,6 +6059,7 @@ rule FakeFlashPlayer_a
 		androguard.app_name("Flash_Player") or
 		androguard.app_name("Flash update")
 }
+
 rule fakeInstaller_c
 {
 	meta:
@@ -7350,7 +6068,8 @@ rule fakeInstaller_c
 	condition:
 		androguard.certificate.sha1("E030A31BE312FF938AAF3F314934B1E92AF25D60")
 }
-rule libAPKProtect_a: packer
+
+rule libAPKProtect: packer
 {
 	meta:
 		description = "Packer libAPKProtect"
@@ -7360,6 +6079,7 @@ rule libAPKProtect_a: packer
 	condition:
 		any of them
 }
+
 rule libprotectClass_b: packer
 {
 	meta:
@@ -7369,6 +6089,7 @@ rule libprotectClass_b: packer
 	condition:
 		$a
 }
+
 rule SMSFraud_c: chinese
 {
 	meta:
@@ -7377,32 +6098,29 @@ rule SMSFraud_c: chinese
 	condition:
 		androguard.certificate.sha1("24C0F2D7A3178A5531C73C0993A467BE1A4AF094")
 }
-rule chinese_setting_a
+
+rule chineseporn: player
 {
 	meta:
-		sample = "ff53d69fd280a56920c02772ceb76ec6b0bd64b831e85a6c69e0a52d1a053fab"
-	condition:
-		androguard.package_name("com.anrd.sysservices") and
-		androguard.certificate.issuer(/localhost/)
-}
-rule chineseporn_a: player
-{
-	meta:
-		sample = "4a29091b7e342958d9df00c8a37d58dfab2edbc06b05e07dcc105750f0a46c0f"
+        description = "This rule detects porn apps"
 	condition:
 		androguard.package_name("com.mbsp.player") and
 		androguard.certificate.issuer(/O=localhost/)
 }
-rule chinese2_a: sms_sender
+
+rule chinese2: sms_sender
 {
+    meta:
+    	description = "SMS malwares catcher"
 	condition:
-		androguard.package_name(/com.adr.yykbplayer/) or 
+		androguard.package_name(/com.adr.yykbplayer/) or
 		androguard.package_name(/sdej.hpcite.icep/) or
 		androguard.package_name(/p.da.wdh/) or
 		androguard.package_name(/com.shenqi.video.sjyj.gstx/) or
 		androguard.package_name(/cjbbtwkj.xyduzi.fa/) or
 		androguard.package_name(/kr.mlffstrvwb.mu/)
 }
+
 rule collectors_b
 {
 	meta:
@@ -7416,43 +6134,44 @@ rule collectors_b
 		and androguard.permission(/android.permission.WRITE_EXTERNAL_STORAGE/)
 		and androguard.permission(/android.permission.SEND_SMS/)
 }
-rule sms_malwares_nograiny_a
+
+rule sms_malwares_nograiny
 {
 	meta:
 		description = "SMS malwares catcher"
 	condition:
 		androguard.permission(/android.permission.SEND_SMS/)
 }
-rule pletor_a: ransomware
+
+rule pletor: ransomware
 {
 	meta:
 		description = "This rule detects pletor ransomware, crated by ccm "
 	strings:
-	$S_11_55102 = { 55 ?? ?? ?? 38 ?? 07 00 54 ?? ?? ?? 6e 10 ?? ?? ?? 00 54 ?? ?? ?? 6e 10 ?? ?? ?? 00 0c ?? 6e 10 ?? ?? ?? 00 0c ?? 71 30 ?? ?? ?? ?? 0c ?? 52 ?? ?? 00 52 ?? ?? 00 6e 30 ?? ?? ?? ?? 54 ?? ?? ?? 13 ?? 5a 00 6e 20 ?? ?? ?? 00 54 ?? ?? ?? 6e 20 ?? ?? ?? 00 54 ?? ?? ?? 6e 10 ?? ?? ?? 00 12 ?? 5c ?? ?? ?? 0e 00 }
-$S_11_7046 = { 70 10 ?? ?? 03 00 6e 10 ?? ?? 04 00 0c 00 5b 30 ?? ?? 5b 35 ?? ?? 54 30 ?? ?? 1a 01 ?? ?? 12 02 6e 30 ?? ?? 10 02 0c 00 5b 30 ?? ?? 0e 00 }
-$S_10_6262 = { 62 ?? ?? ?? 6e 10 ?? ?? ?? 00 0c 01 72 10 ?? ?? 01 00 0a ?? 38 ?? 13 00 72 10 ?? ?? 01 00 0c 00 1f 00 ?? ?? 54 ?? ?? ?? 6e 20 ?? ?? 02 00 0a ?? 12 ?? 32 ?? ed ff 12 ?? 0f ?? 12 ?? 28 fe }
-$S_11_1282 = { 12 12 6a 02 ?? ?? 1a ?? ?? ?? 6e 20 ?? ?? ?? 00 0c 00 1f 00 ?? 00 1a 01 ?? ?? 6e 30 ?? ?? 20 01 0c ?? 5b ?? ?? ?? 54 ?? ?? ?? 6e 10 ?? ?? ?? 00 22 ?? ?? ?? 22 ?? ?? ?? 70 20 ?? ?? ?? 00 70 20 ?? ?? ?? 00 6e 10 ?? ?? ?? 00 6f 10 ?? 00 03 00 0e 00 }
-$S_11_5450 = { 54 30 ?? ?? 71 10 ?? ?? 00 00 0c 00 1a 01 ?? ?? 12 02 72 30 ?? ?? 10 02 0a 00 39 00 0b 00 54 30 ?? ?? 71 10 ?? ?? 00 00 0c 00 71 10 ?? ?? 00 00 0e 00 }
-$S_10_22126 = { 22 ?? ?? 00 54 ?? ?? 00 70 20 ?? 00 ?? 00 6e 10 ?? 00 ?? 00 54 ?? ?? 00 1a ?? ?? 00 12 ?? 6e 30 ?? 00 ?? ?? 0c ?? 1a ?? ?? ?? 12 ?? 71 30 ?? ?? ?? ?? 1a ?? ?? ?? 12 ?? 71 30 ?? ?? ?? ?? 54 ?? ?? 00 6e 10 ?? 00 ?? 00 0e 00 0d 00 1a ?? ?? 00 22 ?? ?? 00 1a ?? ?? 00 70 20 ?? ?? ?? 00 6e 10 ?? ?? 00 00 0c ?? 6e 20 ?? ?? ?? 00 0c ?? 6e 10 ?? ?? ?? 00 0c ?? 71 20 ?? 00 ?? 00 28 e6 }
-$S_33_6f24 = { 6f 10 ?? 00 01 00 54 10 ?? ?? 6e 10 ?? ?? 00 00 12 00 6a 00 ?? ?? 0e 00 }
-$S_12_5488 = { 54 ?? ?? ?? 71 10 ?? ?? ?? 00 0c ?? 1a ?? ?? ?? 12 ?? 72 30 ?? ?? ?? ?? 0a ?? 39 ?? 1e 00 63 ?? ?? ?? 39 ?? 1a 00 22 00 ?? 00 54 ?? ?? ?? 1c 02 ?? ?? 70 30 ?? ?? 10 02 15 01 00 10 6e 20 ?? ?? 10 00 15 01 02 00 6e 20 ?? ?? 10 00 54 ?? ?? ?? 6e 20 ?? ?? 01 00 0e 00 }
-$S_28_6336 = { 63 ?? ?? ?? 39 ?? 0f 00 22 00 ?? 00 70 10 ?? ?? 00 00 1c 01 ?? ?? 6e 30 ?? ?? ?? 01 6e 20 ?? ?? ?? 00 0e 00 }
-$S_10_15166 = { 15 ?? 00 10 22 ?? ?? 00 1c ?? ?? ?? 70 30 ?? 00 ?? ?? 54 ?? ?? ?? 6e 20 ?? 00 ?? 00 0a ?? 39 ?? 18 00 22 ?? ?? 00 70 10 ?? ?? ?? 00 1c ?? ?? ?? 6e 30 ?? ?? ?? ?? 6e 10 ?? ?? ?? 00 0a ?? b6 ?? 6e 20 ?? ?? ?? 00 6e 20 ?? ?? ?? 00 0e 00 54 ?? ?? ?? 1a ?? ?? ?? 12 ?? 72 30 ?? ?? ?? ?? 0a ?? 39 ?? f6 ff 54 ?? ?? ?? 1a ?? ?? ?? 12 ?? 71 30 ?? ?? ?? ?? 22 00 ?? 00 1a ?? ?? ?? 1a ?? ?? ?? 71 10 ?? ?? ?? 00 0c ?? 70 30 ?? ?? ?? ?? 6e 10 ?? ?? 00 00 0a ?? b6 ?? 6e 20 ?? ?? ?? 00 6e 20 ?? ?? ?? 00 28 d4 }
-$S_11_7138 = { 71 00 ?? ?? 00 00 0c 00 22 01 ?? ?? 70 20 ?? ?? 71 00 16 02 00 00 16 04 64 00 62 06 ?? ?? 78 07 ?? ?? 00 00 0e 00 }
-$S_10_1a66 = { 1a ?? ?? ?? 1a ?? ?? ?? 71 20 ?? ?? ?? 00 54 ?? ?? ?? 1a ?? ?? ?? 12 ?? 71 30 ?? ?? ?? ?? 63 ?? ?? ?? 39 ?? 0f 00 22 00 ?? 00 70 10 ?? ?? 00 00 1c 01 ?? ?? 6e 30 ?? ?? ?? 01 6e 20 ?? ?? ?? 00 0e 00 }
-$S_11_5256 = { 52 ?? ?? ?? 71 10 ?? ?? ?? 00 0c ?? 5b ?? ?? ?? 54 ?? ?? ?? 38 ?? 07 00 54 ?? ?? ?? 6e 20 ?? ?? ?? 00 0e 00 0d 00 54 ?? ?? ?? 6e 10 ?? ?? ?? 00 12 ?? 5b ?? ?? ?? 28 f6 }
-$S_11_1248 = { 12 02 12 01 70 10 ?? ?? 03 00 5b 32 ?? ?? 71 00 ?? ?? 00 00 0a 00 59 30 ?? ?? 5c 31 ?? ?? 5b 32 ?? ?? 5c 31 ?? ?? 5b 34 ?? ?? 5b 35 ?? ?? 0e 00 }
-$S_11_2244 = { 22 00 ?? ?? 70 20 ?? ?? ?? 00 22 01 ?? ?? 1a 02 ?? ?? 70 30 ?? ?? ?? 02 6e 20 ?? ?? 10 00 54 31 ?? ?? 72 20 ?? ?? 01 00 0c ?? 11 ?? }
-$S_12_16168 = { 16 08 ?? 00 12 12 1a ?? ?? ?? 6e 20 ?? ?? ?? 00 0c ?? 1f ?? ?? 00 1a 01 ?? ?? 6e 30 ?? ?? ?? 01 0c ?? 5b ?? ?? ?? 54 ?? ?? ?? 6e 10 ?? ?? ?? 00 5b aa ?? ?? 6a 02 ?? ?? 1a ?? ?? ?? 12 ?? 6e 30 ?? ?? ?? ?? 0c ?? 5b ?? ?? ?? 6f 10 ?? 00 0a 00 71 00 ?? ?? 00 00 0c 00 22 01 ?? ?? 70 20 ?? ?? a1 00 16 02 00 00 16 04 ?? 00 62 06 ?? ?? 78 07 ?? ?? 00 00 22 01 ?? ?? 70 20 ?? ?? a1 00 62 06 ?? ?? 04 82 04 84 78 07 ?? ?? 00 00 22 ?? ?? ?? 22 ?? ?? ?? 70 20 ?? ?? ?? 00 70 20 ?? ?? ?? 00 6e 10 ?? ?? ?? 00 0e 00 }
-$S_11_1a68 = { 1a ?? ?? ?? 1a ?? ?? ?? 71 20 ?? ?? ?? 00 54 ?? ?? ?? 1a ?? ?? ?? 12 ?? 71 30 ?? ?? ?? ?? 71 00 ?? ?? 00 00 0c 00 22 01 ?? ?? 70 20 ?? ?? 71 00 16 02 00 00 16 04 ?? 00 62 06 ?? ?? 78 07 ?? ?? 00 00 0e 00 }
-$S_11_2282 = { 22 ?? ?? ?? 54 ?? ?? ?? 71 10 ?? ?? ?? 00 0c ?? 70 20 ?? ?? ?? 00 6e 10 ?? ?? ?? 00 0e 00 0d 00 1a ?? ?? ?? 22 ?? ?? ?? 1a ?? ?? ?? 70 20 ?? ?? ?? 00 6e 10 ?? ?? 00 00 0c ?? 6e 20 ?? ?? ?? 00 0c ?? 6e 10 ?? ?? ?? 00 0c ?? 71 20 ?? ?? ?? 00 28 e6 }
-$S_12_12112 = { 12 ?? 70 10 ?? ?? ?? 00 22 ?? ?? ?? 70 10 ?? ?? ?? 00 5b ?? ?? ?? 22 ?? ?? ?? 70 10 ?? ?? ?? 00 5b ?? ?? ?? 12 ?? 23 ?? ?? ?? 1a ?? ?? ?? 4d ?? ?? ?? 71 10 ?? ?? ?? 00 0c ?? 5b ?? ?? ?? 1a ?? ?? ?? 6e 30 ?? ?? ?? ?? 0c ?? 5b ?? ?? ?? 71 00 ?? ?? 00 00 0c ?? 6e 10 ?? ?? ?? 00 0c 00 22 01 ?? ?? 70 20 ?? ?? 01 00 70 20 ?? ?? ?? 00 0e 00 }
+        $S_11_55102 = { 55 ?? ?? ?? 38 ?? 07 00 54 ?? ?? ?? 6e 10 ?? ?? ?? 00 54 ?? ?? ?? 6e 10 ?? ?? ?? 00 0c ?? 6e 10 ?? ?? ?? 00 0c ?? 71 30 ?? ?? ?? ?? 0c ?? 52 ?? ?? 00 52 ?? ?? 00 6e 30 ?? ?? ?? ?? 54 ?? ?? ?? 13 ?? 5a 00 6e 20 ?? ?? ?? 00 54 ?? ?? ?? 6e 20 ?? ?? ?? 00 54 ?? ?? ?? 6e 10 ?? ?? ?? 00 12 ?? 5c ?? ?? ?? 0e 00 }
+        $S_11_7046 = { 70 10 ?? ?? 03 00 6e 10 ?? ?? 04 00 0c 00 5b 30 ?? ?? 5b 35 ?? ?? 54 30 ?? ?? 1a 01 ?? ?? 12 02 6e 30 ?? ?? 10 02 0c 00 5b 30 ?? ?? 0e 00 }
+        $S_10_6262 = { 62 ?? ?? ?? 6e 10 ?? ?? ?? 00 0c 01 72 10 ?? ?? 01 00 0a ?? 38 ?? 13 00 72 10 ?? ?? 01 00 0c 00 1f 00 ?? ?? 54 ?? ?? ?? 6e 20 ?? ?? 02 00 0a ?? 12 ?? 32 ?? ed ff 12 ?? 0f ?? 12 ?? 28 fe }
+        $S_11_1282 = { 12 12 6a 02 ?? ?? 1a ?? ?? ?? 6e 20 ?? ?? ?? 00 0c 00 1f 00 ?? 00 1a 01 ?? ?? 6e 30 ?? ?? 20 01 0c ?? 5b ?? ?? ?? 54 ?? ?? ?? 6e 10 ?? ?? ?? 00 22 ?? ?? ?? 22 ?? ?? ?? 70 20 ?? ?? ?? 00 70 20 ?? ?? ?? 00 6e 10 ?? ?? ?? 00 6f 10 ?? 00 03 00 0e 00 }
+        $S_11_5450 = { 54 30 ?? ?? 71 10 ?? ?? 00 00 0c 00 1a 01 ?? ?? 12 02 72 30 ?? ?? 10 02 0a 00 39 00 0b 00 54 30 ?? ?? 71 10 ?? ?? 00 00 0c 00 71 10 ?? ?? 00 00 0e 00 }
+        $S_10_22126 = { 22 ?? ?? 00 54 ?? ?? 00 70 20 ?? 00 ?? 00 6e 10 ?? 00 ?? 00 54 ?? ?? 00 1a ?? ?? 00 12 ?? 6e 30 ?? 00 ?? ?? 0c ?? 1a ?? ?? ?? 12 ?? 71 30 ?? ?? ?? ?? 1a ?? ?? ?? 12 ?? 71 30 ?? ?? ?? ?? 54 ?? ?? 00 6e 10 ?? 00 ?? 00 0e 00 0d 00 1a ?? ?? 00 22 ?? ?? 00 1a ?? ?? 00 70 20 ?? ?? ?? 00 6e 10 ?? ?? 00 00 0c ?? 6e 20 ?? ?? ?? 00 0c ?? 6e 10 ?? ?? ?? 00 0c ?? 71 20 ?? 00 ?? 00 28 e6 }
+        $S_33_6f24 = { 6f 10 ?? 00 01 00 54 10 ?? ?? 6e 10 ?? ?? 00 00 12 00 6a 00 ?? ?? 0e 00 }
+        $S_12_5488 = { 54 ?? ?? ?? 71 10 ?? ?? ?? 00 0c ?? 1a ?? ?? ?? 12 ?? 72 30 ?? ?? ?? ?? 0a ?? 39 ?? 1e 00 63 ?? ?? ?? 39 ?? 1a 00 22 00 ?? 00 54 ?? ?? ?? 1c 02 ?? ?? 70 30 ?? ?? 10 02 15 01 00 10 6e 20 ?? ?? 10 00 15 01 02 00 6e 20 ?? ?? 10 00 54 ?? ?? ?? 6e 20 ?? ?? 01 00 0e 00 }
+        $S_28_6336 = { 63 ?? ?? ?? 39 ?? 0f 00 22 00 ?? 00 70 10 ?? ?? 00 00 1c 01 ?? ?? 6e 30 ?? ?? ?? 01 6e 20 ?? ?? ?? 00 0e 00 }
+        $S_10_15166 = { 15 ?? 00 10 22 ?? ?? 00 1c ?? ?? ?? 70 30 ?? 00 ?? ?? 54 ?? ?? ?? 6e 20 ?? 00 ?? 00 0a ?? 39 ?? 18 00 22 ?? ?? 00 70 10 ?? ?? ?? 00 1c ?? ?? ?? 6e 30 ?? ?? ?? ?? 6e 10 ?? ?? ?? 00 0a ?? b6 ?? 6e 20 ?? ?? ?? 00 6e 20 ?? ?? ?? 00 0e 00 54 ?? ?? ?? 1a ?? ?? ?? 12 ?? 72 30 ?? ?? ?? ?? 0a ?? 39 ?? f6 ff 54 ?? ?? ?? 1a ?? ?? ?? 12 ?? 71 30 ?? ?? ?? ?? 22 00 ?? 00 1a ?? ?? ?? 1a ?? ?? ?? 71 10 ?? ?? ?? 00 0c ?? 70 30 ?? ?? ?? ?? 6e 10 ?? ?? 00 00 0a ?? b6 ?? 6e 20 ?? ?? ?? 00 6e 20 ?? ?? ?? 00 28 d4 }
+        $S_11_7138 = { 71 00 ?? ?? 00 00 0c 00 22 01 ?? ?? 70 20 ?? ?? 71 00 16 02 00 00 16 04 64 00 62 06 ?? ?? 78 07 ?? ?? 00 00 0e 00 }
+        $S_10_1a66 = { 1a ?? ?? ?? 1a ?? ?? ?? 71 20 ?? ?? ?? 00 54 ?? ?? ?? 1a ?? ?? ?? 12 ?? 71 30 ?? ?? ?? ?? 63 ?? ?? ?? 39 ?? 0f 00 22 00 ?? 00 70 10 ?? ?? 00 00 1c 01 ?? ?? 6e 30 ?? ?? ?? 01 6e 20 ?? ?? ?? 00 0e 00 }
+        $S_11_5256 = { 52 ?? ?? ?? 71 10 ?? ?? ?? 00 0c ?? 5b ?? ?? ?? 54 ?? ?? ?? 38 ?? 07 00 54 ?? ?? ?? 6e 20 ?? ?? ?? 00 0e 00 0d 00 54 ?? ?? ?? 6e 10 ?? ?? ?? 00 12 ?? 5b ?? ?? ?? 28 f6 }
+        $S_11_1248 = { 12 02 12 01 70 10 ?? ?? 03 00 5b 32 ?? ?? 71 00 ?? ?? 00 00 0a 00 59 30 ?? ?? 5c 31 ?? ?? 5b 32 ?? ?? 5c 31 ?? ?? 5b 34 ?? ?? 5b 35 ?? ?? 0e 00 }
+        $S_11_2244 = { 22 00 ?? ?? 70 20 ?? ?? ?? 00 22 01 ?? ?? 1a 02 ?? ?? 70 30 ?? ?? ?? 02 6e 20 ?? ?? 10 00 54 31 ?? ?? 72 20 ?? ?? 01 00 0c ?? 11 ?? }
+        $S_12_16168 = { 16 08 ?? 00 12 12 1a ?? ?? ?? 6e 20 ?? ?? ?? 00 0c ?? 1f ?? ?? 00 1a 01 ?? ?? 6e 30 ?? ?? ?? 01 0c ?? 5b ?? ?? ?? 54 ?? ?? ?? 6e 10 ?? ?? ?? 00 5b aa ?? ?? 6a 02 ?? ?? 1a ?? ?? ?? 12 ?? 6e 30 ?? ?? ?? ?? 0c ?? 5b ?? ?? ?? 6f 10 ?? 00 0a 00 71 00 ?? ?? 00 00 0c 00 22 01 ?? ?? 70 20 ?? ?? a1 00 16 02 00 00 16 04 ?? 00 62 06 ?? ?? 78 07 ?? ?? 00 00 22 01 ?? ?? 70 20 ?? ?? a1 00 62 06 ?? ?? 04 82 04 84 78 07 ?? ?? 00 00 22 ?? ?? ?? 22 ?? ?? ?? 70 20 ?? ?? ?? 00 70 20 ?? ?? ?? 00 6e 10 ?? ?? ?? 00 0e 00 }
+        $S_11_1a68 = { 1a ?? ?? ?? 1a ?? ?? ?? 71 20 ?? ?? ?? 00 54 ?? ?? ?? 1a ?? ?? ?? 12 ?? 71 30 ?? ?? ?? ?? 71 00 ?? ?? 00 00 0c 00 22 01 ?? ?? 70 20 ?? ?? 71 00 16 02 00 00 16 04 ?? 00 62 06 ?? ?? 78 07 ?? ?? 00 00 0e 00 }
+        $S_11_2282 = { 22 ?? ?? ?? 54 ?? ?? ?? 71 10 ?? ?? ?? 00 0c ?? 70 20 ?? ?? ?? 00 6e 10 ?? ?? ?? 00 0e 00 0d 00 1a ?? ?? ?? 22 ?? ?? ?? 1a ?? ?? ?? 70 20 ?? ?? ?? 00 6e 10 ?? ?? 00 00 0c ?? 6e 20 ?? ?? ?? 00 0c ?? 6e 10 ?? ?? ?? 00 0c ?? 71 20 ?? ?? ?? 00 28 e6 }
+        $S_12_12112 = { 12 ?? 70 10 ?? ?? ?? 00 22 ?? ?? ?? 70 10 ?? ?? ?? 00 5b ?? ?? ?? 22 ?? ?? ?? 70 10 ?? ?? ?? 00 5b ?? ?? ?? 12 ?? 23 ?? ?? ?? 1a ?? ?? ?? 4d ?? ?? ?? 71 10 ?? ?? ?? 00 0c ?? 5b ?? ?? ?? 1a ?? ?? ?? 6e 30 ?? ?? ?? ?? 0c ?? 5b ?? ?? ?? 71 00 ?? ?? 00 00 0c ?? 6e 10 ?? ?? ?? 00 0c 00 22 01 ?? ?? 70 20 ?? ?? 01 00 70 20 ?? ?? ?? 00 0e 00 }
 	condition:
 		16 of them
 }
 
-
-rule Trojan_Banker_Slempo_a
+rule Trojan_Banker_Slempo
 {
 	meta:
 		description = "Trojan-Banker.Slempo"
@@ -7465,17 +6184,20 @@ rule Trojan_Banker_Slempo_a
 	condition:
 		1 of them
 }
-rule Ransom_b:Cokri {
+
+rule Ransom_b:Cokri
+{
 	meta:
 	description = "Trojan Locker Cokri"
 	strings:
-	$ = "com/example/angrybirds_test/MyService" 
+	$ = "com/example/angrybirds_test/MyService"
 	$ = "world4rus.com"
 	$ = "api.php/?devise"
 	condition:
 	all of them
 }
-rule Fushicho_a: official
+
+rule Fushicho: official
 {
 	meta:
 		description = "http://blog.avlsec.com/2016/09/3788/fushicho/"
@@ -7487,13 +6209,8 @@ rule Fushicho_a: official
 		cuckoo.network.http_request(/abcll0/) or
 		cuckoo.network.http_request(/us:9009\/gamesdk\/doroot\.jsp\?/)
 }
-rule Twittre_a
-{
-    condition:
-        androguard.certificate.sha1("CEEF7C87AA109CB678FBAE9CB22509BD7663CB6E") and not
-		androguard.certificate.sha1("40F3166BB567D3144BCA7DA466BB948B782270EA") //original
-}
-rule AgentGen_a: test
+
+rule AgentGen: test
 {
         meta:
                 description = "Artemis Detecti ANDROID/Hiddad.P.Gen "
@@ -7505,6 +6222,7 @@ rule AgentGen_a: test
                 androguard.filter("android.app.action.DEVICE_ADMIN_ENABLED") or
                 androguard.url("http://apk-market.net/l2/aacc2ffc4d3e18ef12f908921ad235be")
 }
+
 rule Adware_c: test
 {
 	meta:
@@ -7520,6 +6238,7 @@ rule Adware_c: test
 	condition:
 		3 of ($*)
 }
+
 rule koler_b: ransomware
 {
 	meta:
@@ -7536,9 +6255,10 @@ rule koler_b: ransomware
 	$h = {12 11 12 00 39 06 23 00 6e 10 ?? ?? 05 00 0c 02 52 53 ?? ?? 6e 10 ?? ?? 05 00 0a 04 38 04 15 00 6e 30 ?? ?? 32 00 6e 10 ?? ?? 05 00 0a 00 32 60 0b 00 6e 20 ?? ?? 65 00 0a 00 38 00 05 00 6f 20 ?? ?? 65 00 0e 00 01 10 28 ec 6e 10 ?? ?? 05 00 0c 02 52 53 ?? ?? 6e 10 ?? ?? 05 00 0a 04 38 04 06 00 6e 30 ?? ?? 32 00 28 df 01 10 28 fb }
 	$i = {12 11 70 20 ?? 00 32 00 12 00 59 20 ?? 00 14 00 01 00 03 7f 59 20 ?? 00 59 21 ?? 00 6e 20 ?? ?? 12 00 6e 10 ?? ?? 02 00 0e 00 }
 	condition:
-	6 of them	
+	6 of them
 }
-rule dasho_a: ccm
+
+rule dasho: ccm
 {
 	meta:
 		description = "This rule detects dasho obfuscated apps"
@@ -7549,7 +6269,8 @@ rule dasho_a: ccm
 	condition:
 		all of them
 }
-rule curiosity_a
+
+rule curiosity
 {
 	meta:
 		description = "Curiosity malware"
@@ -7564,6 +6285,7 @@ rule curiosity_a
 	condition:
 		all of them
 }
+
 rule curiosity_b
 {
 	meta:
@@ -7576,7 +6298,8 @@ rule curiosity_b
 	condition:
 		androguard.url(/185\.38\.248\.94\/messages/) and androguard.permission(/vdsoft.spying.sjin.permission.C2D_MESSAGE/) or $b or $a or $c
 }
-rule mirai_20161004_a: malware linux
+
+rule mirai_20161004: malware linux
 {
         meta:
                 author = "@h3x2b <tracker@h3x.eu>"
@@ -7588,7 +6311,8 @@ rule mirai_20161004_a: malware linux
                 uint32(0) == 0x464c457f and
                 all of ($mirai_*)
 }
-rule kaiten_std2_a: malware
+
+rule kaiten_std2: malware
 {
 	meta:
 		author = "@h3x2b <tracker@h3x.eu>"
@@ -7600,7 +6324,8 @@ rule kaiten_std2_a: malware
 		uint32(0) == 0x464c457f and
 		all of ($std_*)
 }
-rule kaiten_std_a: malware
+
+rule kaiten_std: malware
 {
 	meta:
 		author = "@h3x2b <tracker@h3x.eu>"
@@ -7608,7 +6333,7 @@ rule kaiten_std_a: malware
 	strings:
 		$irc_00 = "CONNECT"
 		$irc_01 = "NICK"
-		$irc_02 = "PING"			 
+		$irc_02 = "PING"
 		$irc_03 = "JOIN"
 		$std_00 = ":>bot +std"
 		$std_01 = "PRIVMSG"
@@ -7618,7 +6343,8 @@ rule kaiten_std_a: malware
 		all of ($irc_*) and
 		all of ($std_*)
 }
-rule notcompatible_a: ccm
+
+rule notcompatible: ccm
 {
 	meta:
 		description = "This rule detects notcompatible android malware, using common code signature method"
@@ -7634,7 +6360,8 @@ rule notcompatible_a: ccm
 	condition:
 		7 of them
 }
-rule kemoge_a: signatures
+
+rule kemoge: signatures
 {
 	meta:
 		description = "This rule detects kemoge adware using new approach for common code signature generation"
@@ -7645,9 +6372,10 @@ rule kemoge_a: signatures
 	$S_7120 = { 71 00 ?? ?? 00 00 62 00 ?? ?? 70 10 ?? ?? 00 00 0a 00 0f 00 }
 	$S_6326 = { 63 00 ?? ?? 38 00 0a 00 12 ?? 60 01 ?? ?? 34 10 05 00 71 ?? ?? ?? 32 ?? 0e 00 }
 	condition:
-	3 of them		
+	3 of them
 }
-rule PornDroid_a
+
+rule PornDroid
 {
 	meta:
 		description = "This rule detects PornDroid by Childporn Picture"
@@ -7660,23 +6388,26 @@ rule PornDroid_a
 	condition:
 		1 of them
 }
-rule Fake_SuperCell_a {
+
+rule Fake_SuperCell
+{
     meta:
         description = "This rule aims to detect fake games from SuperCell. Current list of games included: Clash of Clans, Clash Royale, Hay Day"
     condition:
-		(androguard.app_name(/clash royale/i) 
-		and not 
-		androguard.certificate.sha1("2E18D3F8726B1DE631322716518FB2AEC2EBEB9E")) 
-		or (androguard.certificate.sha1("456120D30CDA8720255B60D0324C7D154307F525") 
-		and not androguard.app_name(/clash of clans/i)) 
-		or (androguard.certificate.sha1("1E7C404B0EE0749CF936606C3EC34CF9D3283BE3") 
-		and not androguard.app_name(/hay day/i)) 
-		or (androguard.app_name(/boom beach/i) 
+		(androguard.app_name(/clash royale/i)
+		and not
+		androguard.certificate.sha1("2E18D3F8726B1DE631322716518FB2AEC2EBEB9E"))
+		or (androguard.certificate.sha1("456120D30CDA8720255B60D0324C7D154307F525")
+		and not androguard.app_name(/clash of clans/i))
+		or (androguard.certificate.sha1("1E7C404B0EE0749CF936606C3EC34CF9D3283BE3")
+		and not androguard.app_name(/hay day/i))
+		or (androguard.app_name(/boom beach/i)
 		and not androguard.certificate.sha1("C568F735B129423014938283809A36DEA8EBD3A4"))
 }
-rule fake_playstore_a
+
+rule fake_playstore
 {
-	meta: 
+	meta:
 		description = "Yara detection for Fake Google Playstore"
 		samples = "1c19aedabe7628594c40a239369dc891d6b75ba4562425267ea786a8a3dcdf98"		author = "https://twitter.com/5h1vang"
 	strings:
@@ -7685,12 +6416,13 @@ rule fake_playstore_a
 		$str_3 = "com.google.game.store.close"
 		$str_4 = "/webmaster/action/"
 	condition:
-		androguard.certificate.sha1("DC517E3302B426FA57EDD9B438C02F094D17976B") or 
+		androguard.certificate.sha1("DC517E3302B426FA57EDD9B438C02F094D17976B") or
 		androguard.permission(/android.permission.READ_SMS/) and
-		androguard.permission(/android.permission.SEND_SMS/) and 
+		androguard.permission(/android.permission.SEND_SMS/) and
 		all of ($str_*)
 }
-rule android_dropper_sh_a
+
+rule android_dropper_sh
 {
 	meta:
 		description = "Yara rule for detection of Android dropper.c samples"
@@ -7705,10 +6437,11 @@ rule android_dropper_sh_a
 	condition:
 		androguard.certificate.sha1("7D4A2A6087D6F935E9F80A8500C42DB912C270C6") or
 		androguard.permission(/android.permission.INTERNET/) and
-		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/) and 
+		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/) and
 		all of ($str_*)
 }
-rule spynote_variants_a
+
+rule spynote_variants
 {
 	meta:
 		description = "Yara rule for detection of different Spynote Variants"
@@ -7718,14 +6451,15 @@ rule spynote_variants_a
 		$str_1 = "SERVER_IP" nocase
 		$str_2 = "SERVER_NAME" nocase
 		$str_3 = "content://sms/inbox"
-		$str_4 = "screamHacker" 
+		$str_4 = "screamHacker"
 		$str_5 = "screamon"
 	condition:
-		androguard.package_name("dell.scream.application") or 
+		androguard.package_name("dell.scream.application") or
 		androguard.package_name("com.spynote.software.stubspynote") or
 		androguard.certificate.sha1("219D542F901D8DB85C729B0F7AE32410096077CB") or
 		all of ($str_*)
 }
+
 rule baaaa: official
 {
 	meta:
@@ -7735,7 +6469,9 @@ rule baaaa: official
 		androguard.package_name("net.droidjack.server") and
 		androguard.service(/net\.droidjack\.server\./)
 }
-rule Trojan_Switcher_a {
+
+rule Trojan_Switcher
+{
 	meta:
 	sample = "d3aee0e8fa264a33f77bdd59d95759de8f6d4ed6790726e191e39bcfd7b5e150"
 	description = "https://securelist.com/blog/mobile/76969/switcher-android-joins-the-attack-the-router-club/"
@@ -7761,7 +6497,7 @@ rule Trojan_Switcher_a {
 		$account16= " admin:123456@"
 		$account17= " admin:147258369@"
 		$account18= " admin:5201314@"
-		$account19= " admin:520520@" 
+		$account19= " admin:520520@"
 		$account20= " admin:66666666@"
 		$account21= " admin:666666@"
 		$account22= " admin:66668888@"
@@ -7770,12 +6506,12 @@ rule Trojan_Switcher_a {
 		$account25= " admin:88888888@"
 		$account26= " admin:888888@"
 		$account27= " admin:987654321@"
-		$account28= " admin:admin@" 
+		$account28= " admin:admin@"
 	condition:
 		1 of ($dns*) and 2 of ($account*)
 }
 
-rule Tordow2_a
+rule Tordow2
 {
 	meta:
 		description = "This rule detects tordow v2.0"
@@ -7787,22 +6523,25 @@ rule Tordow2_a
 	condition:
 		androguard.url("http://5.45.70.34") or ( $a and $b)
 }
-rule RelatedtoTordow_a
+
+rule RelatedtoTordow
 {
 	meta:
 		description = "This rule detects apps related , from same serial certificate"
 		sample = "ae645ea25450cdbd19d72831a387f0c20523e6d62d201561ee59949b3806a82c"
 	condition:
-		androguard.url("http://185.117.72.17") 
+		androguard.url("http://185.117.72.17")
 }
-rule SameCertificate_a
+
+rule SameCertificate
 {
 	meta:
 		description = "Same certificate that first samples"
 	condition:
 		androguard.certificate.sha1("0B7C3BC97B6D7C228F456304F5E1B75797B7265E")
 }
-rule banker_a: generic
+
+rule banker: generic
 {
 	meta:
 		description = "This rule detects the Generic banker asking for credit card information where GooglePlay is launched"
@@ -7816,7 +6555,8 @@ rule banker_a: generic
 	condition:
 		(all of ($visa_*) or all of ($mastercard_*)) and $google_play
 }
-rule fake_framaroot_a
+
+rule fake_framaroot
 {
 	meta:
 		description = "This rule detects fake framaroot apks"
@@ -7825,7 +6565,8 @@ rule fake_framaroot_a
 		androguard.app_name(/framaroot/i) and
 		not androguard.certificate.sha1("3EEE4E45B174405D64F877EFC7E5905DCCD73816")
 }
-rule locker_a: ransomware
+
+rule lockers: ransomware
 {
 	meta:
 		description = "This rule detects ransomware apps"
@@ -7833,6 +6574,7 @@ rule locker_a: ransomware
 	condition:
 		androguard.package_name("com.simplelocker")
 }
+
 rule Banker_b
 {
 	meta:
@@ -7853,7 +6595,8 @@ rule Banker_b
 	condition:
 		8 of ($a*)
 }
-rule Acecard_a
+
+rule Acecard
 {
 	meta:
 		description = "Detects some acecard samples"
@@ -7869,7 +6612,8 @@ rule Acecard_a
 	condition:
 		all of them
 }
-rule Acecard2_a
+
+rule Acecard2
 {
 	meta:
 		description = "Detects some acecard samples"
@@ -7903,7 +6647,8 @@ rule dropper_b
 	condition:
 		all of them
 }
-rule zitmo_a
+
+rule zitmo
 {
 	meta:
 		description = "Detects Zitmo"
@@ -7920,30 +6665,8 @@ rule zitmo_a
 		androguard.permission(/android.permission.SEND_SMS/) and
 		androguard.permission(/android.permission.RECEIVE_SMS/)
 }
-rule dropper_c {
-	meta:
-		sample = "42c5fd9d90b42b1e7914bf10318ba0e8d349b584b05471da78be49fc76e385a4"
-		sample2 = "5e0cfae3b637a383032ec75adaf93be96af8414e9280f2e1e3382848feef2b72"
-	strings:
-		$a = "gDexFileName"
-		$b = "lib/armeabi/libzimon.so"
-		$c = "Register_PluginLoaderForCryptDexFile_Functions"
-		$d = "javax/crypto/Cipher"
-	condition:
-		all of them
-}
-rule unknown_a
-{
-	meta:
-		sample = "ee05cbd6f7862f247253aa1efdf8de27c32f7a9fc2624c8e82cbfd2aab0e9438"
-		search = "package_name:com.anrd.bo"
-	strings:
-		$a = "543b9536fd98c507670030b9" wide
-		$b = "Name: assets/su"
-	condition:
-		all of them
-}
-rule PluginPanthom_a
+
+rule PluginPanthom
 {
 	meta:
 		description = "This rule detects pluginpanthom"
@@ -7957,6 +6680,7 @@ rule PluginPanthom_a
 		androguard.url("58.222.39.215:8088/dmrcandroid/ws/httpsData/command")
 		)
 }
+
 rule smsfraud_b
 {
 	meta:
@@ -7965,14 +6689,7 @@ rule smsfraud_b
     condition:
 		cuckoo.network.dns_lookup(/waply\.ru/) or cuckoo.network.dns_lookup(/depositmobi\.com/)
 }
-rule SMSPay_a: chinese_porn
-{
-	meta:
-		description = "This rule detects the SMSPay apps"
-		sample = "e0fcfe3cc43e613ec733c30511492918029c6c76afe8e9dfb3b644077c77611a"
-	condition:
-		androguard.certificate.sha1("42867A29DCD05B048DBB5C582F39F8612A2E21CD")
-}
+
 rule caaaa: official
 {
 	meta:
@@ -7988,30 +6705,7 @@ rule caaaa: official
                 all of ($*)
 }
 
-rule sensual_woman_b: chinese
-{
-	condition:
-		androguard.package_name(/com.phone.gzlok.live/)
-		or androguard.package_name(/com.yongrun.app.sxmn/)
-		or androguard.package_name(/com.wnm.zycs/)
-		or androguard.package_name(/com.charile.chen/i)
-		or androguard.package_name(/com.sp.meise/i)
-		or androguard.package_name(/com.legame.wfxk.wjyg/)
-		or androguard.package_name(/com.video.uiA/i)
-}
-rule SMSSend_c
-{
-	strings:
-		$a = "bd092gcj"
-		$b = "6165b74d-2839-4dcd-879c-5e0204547d71"
-		$c = "SELECT b.geofence_id"
-		$d = "_ZN4UtilD0Ev"
-	condition:
-		all of them
-}
-
-
-rule Agent_a: official
+rule Agent: official
 {
 	meta:
 		description = "This rule detects one Agent variant w/ Admin Access"
@@ -8022,7 +6716,8 @@ rule Agent_a: official
 	condition:
 		$a and $b
 }
-rule main_a
+
+rule main
 {
 	meta:
 		description = "Identify Agent Smith core app"
@@ -8038,6 +6733,7 @@ rule main_a
 	condition:
 		2 of ($a*) and (any of ($b*) or any of ($c*))
 }
+
 rule dropper_d
 {
 	meta:
@@ -8048,7 +6744,8 @@ rule dropper_d
 		(androguard.package_name("com.cool.temple007") or
 		androguard.package_name("com.cool.rabbit.temple"))
 }
-rule JaguarKillSwitch_a: dropper_variant
+
+rule JaguarKillSwitch: dropper_variant
 {
 	meta:
 		description = "Identify (currently) dormant variants of Agent Smith droppers containing the 'Jaguar Kill Switch'"
@@ -8061,14 +6758,16 @@ rule JaguarKillSwitch_a: dropper_variant
 	condition:
 		all of ($a*) and any of ($b*)
 }
-rule RazorPayActivity_a
+
+rule RazorPayActivity
 {
 	meta:
 		description = "All RazorPay SDK Apps"
 	condition:
-		androguard.activity("com.razorpay.CheckoutActivity")		
+		androguard.activity("com.razorpay.CheckoutActivity")
 }
-rule TeleRAT_a
+
+rule TeleRAT
 {
 	meta:
 		author = "R"
@@ -8077,7 +6776,8 @@ rule TeleRAT_a
 		androguard.activity(/getlastsms/i) and
 		(androguard.service(/botrat/i) or androguard.service(/teleser/i))
 }
-rule dexguard_a: obfuscator
+
+rule dexguard: obfuscator
 {
   meta:
     description = "DexGuard"
@@ -8110,7 +6810,8 @@ rule dexguard_a: obfuscator
     $opcodes and
     all of ($a, $b, $c)
 }
-rule bankbot_a
+
+rule bankbot
 {
 	meta:
 		description = "This rule detects the bankbot app based on various info"
@@ -8120,7 +6821,8 @@ rule bankbot_a
 		androguard.certificate.sha1("4126E5EE9FBD407FF49988F0F8DFAA8BB2980F73") or
 		androguard.url(/37.1.207.31\api\?id=7/)
 }
-rule BankingTrojan_a
+
+rule BankingTrojan
 {
 	meta:
 		description = "This rule detects Banking Trojan missusing Accessibility services"
@@ -8132,14 +6834,15 @@ rule BankingTrojan_a
 		$required_6 = "getDefaultSmsPackage"
 		$required_7 = "removeViewImmediate"
 		$required_8 = "getDisplayOriginatingAddress"
-		$required_9 = "isAdminActive"		
+		$required_9 = "isAdminActive"
 	condition:
-		all of ($required_*) and 
+		all of ($required_*) and
 		androguard.permission(/android.permission.SYSTEM_ALERT_WINDOW/) and
 		androguard.permission(/android.permission.EXPAND_STATUS_BAR/) and
 		androguard.permission(/android.permission.READ_SMS/)
 }
-rule mopub_a
+
+rule mopub
 {
 	meta:
 		description = "This rule detects aggressive (fake) mopub adware"
@@ -8155,123 +6858,9 @@ rule mopub_a
 		androguard.package_name("com.mopub") or
 		($number and $wstring and $anotherstring and $evenanother)
 }
-rule Sparkasse_a: Fake Banking App
+
+rule Finsky
 {
-	condition:
-		(
-		  androguard.app_name("Sparkasse") 
-		  or androguard.app_name("Sparkasse+")
-		  or androguard.app_name("Sparkasse+ Tablet")
-		  or androguard.app_name("Sparkasse Update")
-		  or androguard.app_name("Sparkasse Verify")
-		  or androguard.app_name("Sparkasse Sicherheitszertifikat")
-		  or androguard.app_name("Sparkasse Zertifikat")
-		  or androguard.app_name("Sparkasse Sicherheit")
-		)
-		and not androguard.certificate.sha1("0DADCA40A960FF65BB72104378BE92DB4051B28B")
-}
-rule Postbank_a: Fake Banking App
-{
-	condition:
-		(
-		  androguard.app_name("Finanzassistent")
-		  or androguard.app_name("Postbank")
-		  or androguard.app_name("Postbank Finanzassistent")
-		  or androguard.app_name("Postbank Sicherheitszertifikat")
-		  or androguard.app_name("Postbank Verify")
-		  or androguard.app_name("Postbank Update")
-		  or androguard.app_name("Postbank Zertifikat")
-		  or androguard.app_name("Postbank Sicherheit")
-		) 
-		and not androguard.certificate.sha1("73839EC3A528910B235859947CC8424543D7B686")
-}
-rule Volksbank_a: Fake Banking App
-{
-	condition:
-		(
-		   androguard.app_name("VR-Banking")
-		   or androguard.app_name("Volksbank")
-		   or androguard.app_name("Volksbank Update")
-		   or androguard.app_name("Volksbank Verify")
-		   or androguard.app_name("Volksbank Sicherheitszertifikat")
-		   or androguard.app_name("Volksbank Zertifikat")
-		   or androguard.app_name("Volksbank Sicherheit")
-		)
-		and not androguard.certificate.sha1("ADDB5ED43A27660E41ACB1D39E85DDD7B9C9807C")
-}
-rule Commerzbank_a: Fake Banking App
-{
-	condition:
-		(
-		   androguard.app_name("Commerzbank")
-		   or androguard.app_name("Commerzbank Update")
-		   or androguard.app_name("Commerzbank Verify")
-		   or androguard.app_name("Commerzbank Sicherheitszertifikat")
-		   or androguard.app_name("Commerzbank Zertifikat")
-		   or androguard.app_name("Commerzbank Sicherheit")
-		)
-		and not ( androguard.certificate.sha1("1BA105AB48190B0369A07BA7E9AA2E68952A2DD1") 
-			or androguard.certificate.sha1("B7921B2DFC5D6DEB60ED9F6E969CD4D6DBDF2456")
-		)
-}
-rule DKBpushTAN_a: Fake Banking App
-{
-	condition:
-		(
-		  androguard.app_name("DKB-pushTAN")
-		  or androguard.app_name("TAN2go")
-		  or androguard.app_name("DKBTAN2go")
-		) 
-		and not androguard.certificate.sha1("B4199718EAA0E676755AF77419FB59ABF7FECE00")
-}
-rule Banker_c: Cosmetiq
-{
-	strings:
-		$c2_prefix = "{\"to\":"
-		$c2_mid = "\",\"body\":"
-		$c2_suffix = "php\"},"
-		$com1 = "upload_sms"
-		$com2 = "send_sms"
-		$com3 = "default_sms"
-		$com4 = "sms_hook"
-		$com5 = "gp_dialog_password"
-		$com6 = "gp_password_visa"
-		$com7 = "gp_password_master"
-	condition:
-		all of ($c2_*)
-		and 2 of ($com*) 
-		and androguard.permission(/android.permission.RECEIVE_SMS/)
-		and androguard.permission(/android.permission.GET_TASKS/)
-		and androguard.permission(/android.permission.READ_SMS/)
-}
-rule Banker2_b: Cosmetiq by Name
-{
-	condition:
-		androguard.package_name("cosmetiq.fl")
-}
-rule experimental_a
-{
-	strings:
-		$ = "Th.Dlg.Fll13" nocase
-		$ = "alluorine.info" nocase
-		$ = "mancortz.info" nocase
-		$ = "api-profit.com" nocase
-		$ = "narusnex.info" nocase
-		$ = "ronesio.xyz" nocase
-		$ = "alluorine.info" nocase
-		$ = "meonystic.info" nocase
-		$ = "api-profit.com" nocase
-		$ = "narusnex.info" nocase
-		$ = "ngkciwmnq.info" nocase
-		$ = "golangwq.info" nocase
-		$ = "krnwhyvq.info" nocase
-		$ = "nvewpvnid.info" nocase
-		$ = "ovnwislxf.info" nocase
-		$ = "deputizem.info" nocase
-	condition:
-		1 of them
-}
-rule Finsky_a {
 	meta:
 	sample = "f10ff63c0a8b7a102d6ff8b4e4638edb8512f772,a5b9ca61c2c5a3b283ad56c61497df155d47f276"
 	description = "http://vms.drweb.ru/virus/?_is=1&i=14891022"
@@ -8284,16 +6873,17 @@ rule Finsky_a {
 	condition:
 		1 of ($hooker*) and ($cc or $wzh) and $finsky
 }
-rule limeUrls_a
+
+rule limeUrls
 {
 	meta:
-		description = "Ruleset containing c&c servers used by the Lime trojan." 
+		description = "Ruleset containing c&c servers used by the Lime trojan."
 	strings:
-		$site1 = "limeox.ru" 
+		$site1 = "limeox.ru"
 		$site2 = "3amutka.ru"
 		$site3 = "11.serj1228.aux.su"
-		$site4 = "185.87.193.242" 
-		$site5 = "driver-free.biz" 
+		$site4 = "185.87.193.242"
+		$site5 = "driver-free.biz"
 		$site6 = "gbb1.ru"
 		$site7 = "95.183.13.146"
 		$site8 = "jolit.ga"
@@ -8303,23 +6893,15 @@ rule limeUrls_a
 		$site12 = "admin25.tw1.su"
 		$site13 = "wertik-dok2.myjino.ru"
 		$site14 = "deram.myjino.ru"
-		$site15 = "44448888.ru" 
+		$site15 = "44448888.ru"
 		$site16 = "http://ltnari3g.beget.tech/"
 	condition:
-		any of them or (androguard.activity("app.six.AdmActivity") and androguard.activity("app.six.CardAtivity") and androguard.filter("android.app.action.DEVICE_ADMIN_ENABLED"))  
+		any of them or (androguard.activity("app.six.AdmActivity") and androguard.activity("app.six.CardAtivity") and androguard.filter("android.app.action.DEVICE_ADMIN_ENABLED"))
 }
-rule fbilocker_a {
-	strings:	
-		$a1 = "comdcompdebug.500mb.net/api33"
-		$a2 = "itsecurityteamsinc.su"
-		$a3 = "api.php"
-    condition:
-        androguard.certificate.sha1("A4DF11815AF385578CEC757700A3D1A0AF2136A8") or
-		2 of ($a*)
-}
-rule androidbankosy_sh_a
+
+rule androidbankosy_sh
 {
-	meta: 
+	meta:
 		description = "Yara detection for Android.BankOsy"
 		samples = "e6c1621158d37d10899018db253bf7e51113d47d5188fc363c6b5c51a606be2f and ac256d630594fd4335a8351b6a476af86abef72c0342df4f47f4ae0f382543ba"
 		source = "http://www.symantec.com/connect/blogs/androidbankosy-all-ears-voice-call-based-2fa"
@@ -8330,11 +6912,12 @@ rule androidbankosy_sh_a
 		$str_3 = "BLOCKED_NUMBERS"
 		$str_4 = "*21*"
 	condition:
-		androguard.certificate.sha1("CE84D46572CF77DC2BBA7C0FCCDE411D6056027B") or 
-		androguard.certificate.sha1("CA048A9BB7FE1CD4F2B6C3E1C3C622D540989E36") or 
+		androguard.certificate.sha1("CE84D46572CF77DC2BBA7C0FCCDE411D6056027B") or
+		androguard.certificate.sha1("CA048A9BB7FE1CD4F2B6C3E1C3C622D540989E36") or
 		$str_1 and $str_2 and $str_3 and $str_4
 }
-rule Android_AliPay_smsStealer_a
+
+rule Android_AliPay_smsStealer
 {
 	meta:
 		description = "Yara rule for detection of Fake AliPay Sms Stealer"
@@ -8350,10 +6933,11 @@ rule Android_AliPay_smsStealer_a
 		androguard.certificate.sha1("0CDFC700D0BDDC3EA50D71B54594BF3711D0F5B2") or
 		androguard.permission(/android.permission.RECEIVE_SMS/) and
 		androguard.permission(/android.permission.INTERNET/) and
-		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/) and 		
+		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/) and
 		all of ($str_*)
 }
-rule Android_Tordow_a
+
+rule Android_Tordow
 {
 	meta:
 		description = "Trojan-Banker.AndroidOS.Tordow."
@@ -8370,7 +6954,8 @@ rule Android_Tordow_a
 		( $dropperA and $dropperB and $dropperC ) or
 		( $droppedA and $droppedB and $droppedC and $droppedD )
 }
-rule PinguLocker_a
+
+rule PinguLocker
 {
 	meta:
 		description = "This rule detects a locker for Android"
@@ -8384,14 +6969,16 @@ rule PinguLocker_a
 	condition:
 		all of them
 }
-rule VideoTestNoicon_a
+
+rule VideoTestNoicon
 {
     meta:
         description = "Rule to catch APKs with app name VideoTestNoicon"
     condition:
         androguard.app_name(/VideoTestNoicon/i)
 }
-rule LotsofAds_a
+
+rule LotsofAds
 {
 	meta:
 		description = "This rule detects apps with lots of ads"
@@ -8430,7 +7017,8 @@ rule LotsofAds_a
 condition:
 		20 of them
 }
-rule trojan_a: pornClicker
+
+rule trojan: pornClicker
 {
 	meta:
 		description = "Ruleset to detect android pornclicker trojan, connects to a remote host and obtains javascript and a list from urls generated, leading to porn in the end."
@@ -8444,7 +7032,8 @@ rule trojan_a: pornClicker
 	condition:
 		($a and $b and $c and $api) or androguard.url(/mayis24\.4tubetv\.xyz/)
 }
-rule metasploit_a
+
+rule metasploit
 {
 	meta:
 		description = "This rule detects apps made with metasploit framework"
@@ -8457,7 +7046,8 @@ rule metasploit_a
 	condition:
 		all of them
 }
-rule metasploit_obsfuscated_a
+
+rule metasploit_obsfuscated
 {
 	meta:
 		description = "This rule tries to detect apps made with metasploit framework but with the paths changed"
@@ -8484,8 +7074,9 @@ rule qihoo360_b: packer
 	strings:
 		$a = "libprotectClass.so"
 	condition:
-		$a 
+		$a
 }
+
 rule ijiami_b: packer
 {
 	meta:
@@ -8497,6 +7088,7 @@ rule ijiami_b: packer
 	condition:
 		$old_dat or $new_ajm or $ijm_lib
 }
+
 rule naga_b: packer
 {
 	meta:
@@ -8506,6 +7098,7 @@ rule naga_b: packer
 	condition:
 		 $lib
 }
+
 rule alibaba_b: packer
 {
 	meta:
@@ -8515,6 +7108,7 @@ rule alibaba_b: packer
 	condition:
 		 $lib
 }
+
 rule baidu_b: packer
 {
 	meta:
@@ -8525,6 +7119,7 @@ rule baidu_b: packer
 	condition:
 		$lib or $encrypted
 }
+
 rule pangxie_b: packer
 {
 	meta:
@@ -8534,7 +7129,8 @@ rule pangxie_b: packer
 	condition:
 	 	$lib
 }
-rule Tencent_a
+
+rule Tencent
 {
 	meta:
 		description = "Tencent"
@@ -8544,9 +7140,10 @@ rule Tencent_a
 		$tencent_3 = "com.tencent.StubShell.ProxyShell"
 		$tencent_4 = "com.tencent.StubShell.ShellHelper"
 	condition:
-        any of them 
+        any of them
 }
-rule Ijiami_a
+
+rule Ijiami
 {
 	meta:
 		description = "Ijiami"
@@ -8559,18 +7156,20 @@ rule Ijiami_a
 		$1jiami_6 = "rmeabi/libexecmain.so"
 		$1jiami_7 = "neo.proxy.DistributeReceiver"
 	condition:
-        any of them 
+        any of them
 }
-rule Naga_a
+
+rule Naga
 {
 	meta:
 		description = "Naga"
     strings:
 		$naga_1 = "libddog.so"
 	condition:
-        any of them 
+        any of them
 }
-rule Nagapt_a
+
+rule Nagapt
 {
 	meta:
 		description = "Nagapt (chaosvmp)"
@@ -8578,9 +7177,10 @@ rule Nagapt_a
 		$nagapt_1 = "chaosvmp"
 		$nagapt_2 = "ChaosvmpService"
 	condition:
-        any of them 
+        any of them
 }
-rule Alibaba_a
+
+rule Alibaba
 {
 	meta:
 		description = "Alibaba"
@@ -8590,9 +7190,10 @@ rule Alibaba_a
 		$ali_3 = "mobisecenhance"
 		$ali_4 = "StubApplication"
 	condition:
-        any of them 
+        any of them
 }
-rule Baidu_a
+
+rule Baidu
 {
 	meta:
 		description = "Baidu"
@@ -8606,9 +7207,10 @@ rule Baidu_a
 		$baidu_7 = "com.baidu.protect.A"
 		$baidu_8 = "libbaiduprotect"
 	condition:
-        any of them 
+        any of them
 }
-rule Apkprotect_a
+
+rule Apkprotect
 {
 	meta:
 		description = "Apkprotect"
@@ -8619,16 +7221,18 @@ rule Apkprotect_a
 	condition:
          ($apkprotect_1 and $apkprotect_2) or $apkprotect_3
 }
-rule PangXie_a
+
+rule PangXie
 {
 	meta:
 		description = "PangXie"
     strings:
 		$pangxie_1 = "libnsecure.so"
 	condition:
-        any of them 
+        any of them
 }
-rule LIAPP_a
+
+rule LIAPP
 {
 	meta:
 		description = "LIAPP"
@@ -8638,9 +7242,10 @@ rule LIAPP_a
 		$liapp_3 = "LIAPPClient"
 		$liapp_4 = "LIAPPEgg.dex"
 	condition:
-        any of them 
+        any of them
 }
-rule Fake_Flash_Player_a
+
+rule Fake_Flash_Player
 {
   meta:
        description = "Detects fake flashplayer apps"
@@ -8649,9 +7254,10 @@ rule Fake_Flash_Player_a
 		$string_2 = "pay"
    condition:
 	 $string_1 and $string_2 and
-       (androguard.package_name(/com\.adobe\.flash/i) or androguard.app_name(/Adobe Flash/i)) 
+       (androguard.package_name(/com\.adobe\.flash/i) or androguard.app_name(/Adobe Flash/i))
 }
-rule leakerlocker_a
+
+rule leakerlocker
 {
 	meta:
 		description = "https://securingtomorrow.mcafee.com/mcafee-labs/leakerlocker-mobile-ransomware-acts-without-encryption/"
@@ -8663,7 +7269,8 @@ rule leakerlocker_a
 	condition:
 		2 of them
 }
-rule CopyCatRule_a: official
+
+rule CopyCatRule: official
 {
 	meta:
 		description = "This rule detects the copycat malware"
@@ -8680,7 +7287,8 @@ rule CopyCatRule_a: official
 		androguard.url("tracksummer.com")
 		or $a or $b or $c or $d or $e
 }
-rule psserviceonline_a: urlbased
+
+rule psserviceonline: urlbased
 {
 	meta:
 		description = "This rule detects APKs that contat a well-known malware infection source 						https://blog.checkpoint.com/2015/09/21/braintest-a-new-level-of-sophistication-in-mobile-malware/"
@@ -8692,24 +7300,25 @@ rule psserviceonline_a: urlbased
 		$malicious_url_4 = "adsuperiorstore.com"
 		$malicious_url_5 = "i4vip"
 	condition:
-		any of them 
-		or androguard.url(/psserviceonline\.com/) or 
-		cuckoo.network.dns_lookup(/psserviceonline\.com/) or 
-		androguard.url(/psservicedl\.com/) or 
+		any of them
+		or androguard.url(/psserviceonline\.com/) or
+		cuckoo.network.dns_lookup(/psserviceonline\.com/) or
+		androguard.url(/psservicedl\.com/) or
 		cuckoo.network.dns_lookup(/psservicedl\.com/)
 }
-rule androrat_a
- {  
-     meta:  
+
+rule androrat
+ {
+     meta:
          description = "This malware is a bot that allows sms hook, calls and other information"
          source = "Source from which we extracted the information, if not own"
          author = "asanchez@koodous.com"
-     strings:  
+     strings:
          $activity = "AndroratActivity.java"
          $classPath = "my/app/client/AndroratActivity"
          $method = "Androrat.Client.storage"
-     condition:  
-         all of them  
+     condition:
+         all of them
  }
 
 rule slempo_c
@@ -8718,13 +7327,14 @@ rule slempo_c
 			description = "SLEMPO"
 	strings:
 			$a = "#INTERCEPTED_SMS_START"
-			$b = "#INTERCEPTED_SMS_STAR" 
-			$c = "#block_numbers" 
+			$b = "#INTERCEPTED_SMS_STAR"
+			$c = "#block_numbers"
 			$d = "#wipe_data"
 	condition:
 			all of them
 }
-rule Regla_Deutsche_Finanz_Malware_a
+
+rule Regla_Deutsche_Finanz_Malware
 {
 meta:
     description = "Regla Yara para detectar malware del Deutsche Bank Finanz"
@@ -8736,13 +7346,7 @@ strings:
 condition:
 	$a and $b and $c
 }
-rule HiddenApp_a {
-	strings:
-	  	$ = /ssd3000.top/
-		$ = "com.app.htmljavajets.ABKYkDEkBd"
-	condition:
-		1 of them
-}
+
 rule New_Marcher_May_17
 {
 	meta:
@@ -8752,7 +7356,8 @@ rule New_Marcher_May_17
 		androguard.service(/\.[a-z]{1}[0-9]{3}[a-z]{1}\b/) and
 		androguard.receiver(/\.[a-z]{1}[0-9]{3}[a-z]{1}\b/)
 }
-rule TriadaDetector_a
+
+rule TriadaDetector
 {
 	meta:
 		description = "Detect Triada"
@@ -8762,7 +7367,8 @@ rule TriadaDetector_a
 	condition:
 		$a or $b
 }
-rule DetectOverlayMaleware_a
+
+rule DetectOverlayMaleware
 {
 	meta:
 		description = "This rule detects the many overlays"
@@ -8777,6 +7383,7 @@ rule DetectOverlayMaleware_a
 	condition:
 		$a and $b and $c and $d and $e and $f and $g
 }
+
 rule InjectionService
 {
 	meta:
@@ -8785,7 +7392,8 @@ rule InjectionService
 	condition:
 		androguard.service(/injectionService/)
 }
-rule Marcher_a: AlarmAction
+
+rule Marcher: AlarmAction
 {
 	meta:
 		description = "This rule detects marcher new versions"
@@ -8794,7 +7402,8 @@ rule Marcher_a: AlarmAction
 	condition:
 		androguard.filter(/p\d{3}\w\.AlarmAction/)
 }
-rule BadAccents_a: ccm
+
+rule BadAccents: ccm
 {
         meta:
         description = "This rule was produced by CreateYaraRule and CommonCode, it detects badAccents malware"
@@ -8811,20 +7420,22 @@ rule BadAccents_a: ccm
     condition:
         all of them
 }
-rule simplerule
+
+rule simple
 {
 	meta:
 		description = "This rule detects a SMS Fraud malware"
 	condition:
 		androguard.package_name("com.hsgame.")
 }
+
 rule badaccents
 {
 	meta:
 		description = "This rule detects badaccents"
 		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
 	condition:
-		androguard.activity(/Badaccents/i) 
+		androguard.activity(/Badaccents/i)
 }
 
 rule Mazain_b: Banker
@@ -8853,6 +7464,7 @@ rule Mazain_b: Banker
 		all of them
 		or androguard.package_name("com.system.adobe.FlashPlayer")
 }
+
 rule ransomware_c
 {
 	meta:
@@ -8863,12 +7475,11 @@ rule ransomware_c
 	condition:
 		androguard.package_name("com.android.locker") or
 		androguard.package_name("com.example.testlock") or
-		androguard.url(/api33\/api\.php/) or 
+		androguard.url(/api33\/api\.php/) or
 		$a
 }
 
-
-rule smspay_a
+rule smspay
 {
 	meta:
 		description = "This rule detects smspay trojans"
@@ -8882,7 +7493,7 @@ rule smspay_a
 		all of them
 }
 
-rule Dowgin_a: URL
+rule Dowgin: URL
 {
 	meta:
 		description = "This rule detects Dowgin Related Samples by network traffic keywords, like cd.ld.clspw.cn/app/20160518/201605181740719.apk"
@@ -8938,16 +7549,6 @@ rule Dowgin_a: URL
 		androguard.url(/s.d.133166.cn/) or
 		cuckoo.network.http_request(/s.d.133166.cn/)
 }
-rule OtakuVideo: chinese_porn
-{
-	meta:
-		sample = "449a9fc0694b483a4c1935b33eea433268560784d819f0d63bf66080f5529df8"
-	condition:
-		cuckoo.network.dns_lookup(/api\.hykuu\.com/) or
-		cuckoo.network.dns_lookup(/wo\.ameqq\.com/) or
-		cuckoo.network.dns_lookup(/home\.qidewang\.com/) or
-		cuckoo.network.dns_lookup(/img\.gdhjkm\.com/)
-}
 
 rule koodousfaaaa: official
 {
@@ -8965,18 +7566,9 @@ rule koodousfaaaa: official
 		$str15778000  =   "15778000"
 		$str15998000  =   "15998000"
 	condition:
-		1 of them 
+		1 of them
 }
-rule AiQingYingShi_a: chinese_porn
-{
-	condition:
-	androguard.app_name(/\xe7\x88\xb1\xe6\x83\x85[\w]+?\xe5\xbd\xb1\xe8\xa7\x86[\w]{,11}/)  //273bcec861e915f39572a169ae98d4c2afae00800259c1fe5e28c075923d90ca
-}
-rule JinBoShiPin_a: chinese_porn
-{
-	condition:
-		androguard.app_name("\xe7\xa6\x81\xe6\x92\xad\xe8\xa7\x86\xe9\xa2\x91") // jin bo shi pin 277b8320ceb8481a46198f7b9491aef5e9cf54ecda32ca419d0f1aaa422f34cd
-}
+
 rule SLocker
 {
 	meta:
@@ -8988,7 +7580,8 @@ rule SLocker
     	cuckoo.network.http_get(/pha\?android_version/) or
 		cuckoo.network.dns_lookup(/148.251.154.104/)
 }
-rule SLocker_notifications_a
+
+rule SLocker_notifications
 {
 	meta:
         description = "SLocker ransomware notifications"
@@ -8998,7 +7591,8 @@ rule SLocker_notifications_a
 	condition:
 		1 of them
 }
-rule SLocker_cyphers_a
+
+rule SLocker_cyphers
 {
 	meta:
         description = "SLocker ransomware cyphers"
@@ -9009,7 +7603,8 @@ rule SLocker_cyphers_a
    	condition:
 		all of ($A*)
 }
-rule ZerUnOkLoK_detect_a
+
+rule ZerUnOkLoK_detect
 {
 	meta:
 		description = "ZerUnOkLoK, related to SLocker/Ramsomware"
@@ -9020,15 +7615,7 @@ rule ZerUnOkLoK_detect_a
 		$a
 }
 
-rule luluvideo: chinese_porn
-{
-	meta:
-		sample = "f243a64965619acc4523e8e738846a3983ad91650bd41ce463a3a3ff104ddfd1"
-	condition:
-		cuckoo.network.http_request(/www\.sexavyy\.com:8088/) or 
-		cuckoo.network.http_request(/spimg\.ananyy\.com/)
-}
-rule PornPlayer_URL_a
+rule PornPlayer_URL
 {
 	meta:
 		description = "This rule detects PornPlayer by network traffic keywords, like /ckplayer/style.swf"
@@ -9039,7 +7626,7 @@ rule PornPlayer_URL_a
 		cuckoo.network.http_request(/\/ckplayer\/style\.swf/)
 }
 
-rule Godlike_a
+rule Godlike
 {
 	meta:
 		description = "This rule detects samples belonging to Godlike malware"
@@ -9050,6 +7637,7 @@ rule Godlike_a
 	condition:
 		$a or $b
 }
+
 rule downloader_c
 {
 	meta:
@@ -9062,6 +7650,7 @@ rule downloader_c
 	condition:
 		all of them
 }
+
 rule koodousiaaaa: official
 {
 	meta:
@@ -9071,7 +7660,8 @@ rule koodousiaaaa: official
 	condition:
 		$certs_path
 }
-rule droidjack_RAT_malware_a
+
+rule droidjack_RAT_malware
 {
 	meta:
 		description = "Droidjack RAT Malware - http://www.droidjack.net/"
@@ -9083,9 +7673,10 @@ rule droidjack_RAT_malware_a
 		androguard.receiver("net.droidjack.server.CallListener") and
 		androguard.service("net.droidjack.server.Controller") and
 		androguard.service("net.droidjack.server.GPSLocation") and
-		androguard.service("net.droidjack.server.Toaster") 
+		androguard.service("net.droidjack.server.Toaster")
 }
-rule TrustEVTracker_a
+
+rule TrustEVTracker
 {
 	meta:
 		description = "This rule detects TransUnion TrustEV SDK"
@@ -9095,19 +7686,21 @@ rule TrustEVTracker_a
 		$a  and
 		androguard.permission(/android.permission.INTERNET/)
 }
-rule FinBoxINTracker_a
+
+rule FinBoxINTracker
 {
 	meta:
 		description = "This rule detects FinBox India SDK"
 	strings:
 		$a = "https://riskmanager.apis.finbox.in"
 		$b = "https://api.finbox.in/api"
-		$c = "https://logger.apis.finbox.in"		
+		$c = "https://logger.apis.finbox.in"
 	condition:
 		($a or $b or $c) and
 		androguard.permission(/android.permission.INTERNET/)
 }
-rule cloak_and_dagger_a: official
+
+rule cloaknd_dagger: official
 {
 	meta:
 		description = "Potential Cloak and Dagger attack - http://cloak-and-dagger.org"
@@ -9121,9 +7714,10 @@ rule koodouskaaaa: official
 	meta:
 		description = "Korea Phishing app"
 	condition:
-		androguard.package_name("sakura.phonetransfer")		
+		androguard.package_name("sakura.phonetransfer")
 }
-rule WhatsupTrojan_a
+
+rule WhatsupTrojan
 {
 	meta:
 		description = "This rule detects the WhatsupTrojan app based on different indicators"
@@ -9154,8 +7748,9 @@ rule WhatsupTrojan_a
 			  androguard.service(/Operation/i)
 		  )
 }
-rule newdress_a: official
-{		 
+
+rule newdress: official
+{
 		meta:
 		description = "This rule detects Dresscode samples"
         strings:
@@ -9169,7 +7764,8 @@ rule newdress_a: official
         condition:
                 $a or $b or $c or $d or $e or $f or $g
 }
-rule fake_wallet_apps_a: official
+
+rule fake_walletpps: official
 {
 	meta:
 		description = "Detect fake wallet apps"
@@ -9179,7 +7775,8 @@ rule fake_wallet_apps_a: official
 		androguard.permission(/android.permission.INTERNET/) and
 		androguard.url(/coinwalletinc\.com/)
 }
-rule coinimp_basic_a: official
+
+rule coinimp_basic: official
 {
 	meta:
 		description = "Basic rule to detect CoinImp apps - see https://www.coinimp.com/documentation"
@@ -9189,7 +7786,8 @@ rule coinimp_basic_a: official
 		androguard.permission(/android.permission.INTERNET/) and
 		$coinimp
 }
-rule sauronlocker_android_app_a
+
+rule sauronlockerndroidpp
 {
     meta:
         description = "Sauron Locker"
@@ -9209,7 +7807,8 @@ rule sauronlocker_android_app_a
         androguard.service(/com.ins.screensaver.services.CheckerService/) and
         (all of ($str*)) or (1 of ($url*))
 }
-rule FRSLabsSDKTracker_a
+
+rule FRSLabsSDKTracker
 {
 	meta:
 		description = "All FRSLabs SDK Apps"
@@ -9218,15 +7817,17 @@ rule FRSLabsSDKTracker_a
 		androguard.activity("com.frslabs.android.sdk.facesdk.activities.FaceCaptureActivity") or
 		androguard.activity("com.frslabs.android.sdk.videosdk.ui.WorkflowActivity")
 }
-rule KhoslaVideoeKYCTracker_a
+
+rule KhoslaVideoeKYCTracker
 {
 	meta:
-		description = "All Khosla Video eKYC SDK Apps"	
-	condition:		
+		description = "All Khosla Video eKYC SDK Apps"
+	condition:
 		androguard.activity("com.khoslalabs.videoidkyc.ui.init.VideoIdKycInitActivity")
 }
-rule Android_Trojan_FakeAd_A_a
-{  
+
+rule Android_Trojan_FakeAd_A
+{
 	meta:
 		description = "Rule used to detect Jio and PayTM fakeapp"
 		source = "Lastline"
@@ -9246,7 +7847,8 @@ rule Android_Trojan_FakeAd_A_a
 	condition:
 		$hexstr_targetSdkVersion and ((any of ($a*) or (any of ($b*)) and 3 of ($c*)))
 }
-rule Android_FakeBank_Fanta_a
+
+rule Android_FakeBank_Fanta
 {
 	meta:
 		author = "Jacob Soo Lead Re"
@@ -9254,12 +7856,13 @@ rule Android_FakeBank_Fanta_a
 		description = "This rule try to detects Android FakeBank_Fanta"
 		source = "https://blog.trendmicro.com/trendlabs-security-intelligence/fake-bank-app-phishes-credentials-locks-users-out/"
 	condition:
-		androguard.service(/SocketService/i) and 
-		androguard.receiver(/MyAdmin/i) and 
-		androguard.receiver(/Receiver/i) and 
+		androguard.service(/SocketService/i) and
+		androguard.receiver(/MyAdmin/i) and
+		androguard.receiver(/Receiver/i) and
 		androguard.receiver(/NetworkChangeReceiver/i)
 }
-rule Adload_PUA_a
+
+rule Adload_PUA
 {
 	meta:
 		description = "This rule detects the Adload potential Unwanted"
@@ -9272,8 +7875,9 @@ rule Adload_PUA_a
 		$e = "modifyThread"
 		$f = "init_url"
 	condition:
-		all of them		
+		all of them
 }
+
 rule mopub_b: adware
 {
 	meta:
@@ -9282,7 +7886,8 @@ rule mopub_b: adware
 	condition:
 		cuckoo.network.dns_lookup(/ads\.mopub\.com/)
 }
-rule lop_K_a
+
+rule lop_K
 {
 	meta:
 		description = "This rule detects the lop files"
@@ -9293,7 +7898,8 @@ rule lop_K_a
 	condition:
 		$a and $b
 }
-rule parse_a
+
+rule parse
 {
 	meta:
 		description = "This rule detects aplicactions relationship with http://parse.com/"
@@ -9301,7 +7907,8 @@ rule parse_a
 	condition:
 		cuckoo.network.dns_lookup(/api\.parse\.com/)
 }
-rule SKYMOBI_a
+
+rule SKYMOBI
 {
 	meta:
 		description = "Skymobi H"
@@ -9314,7 +7921,8 @@ rule SKYMOBI_a
 	condition:
 		$a and $b and $c and $d
 }
-rule DroidJack_a
+
+rule DroidJack
 {
 	meta:
 		description = "Detects only the ones that weren't obfuscated. Such as the samples like the repackaged Pokemon Go APK"
@@ -9325,6 +7933,7 @@ rule DroidJack_a
 	condition:
 		($a and $b)
 }
+
 rule packers_c: Ijiami
 {
 	meta:
@@ -9336,6 +7945,7 @@ rule packers_c: Ijiami
 	condition:
 		all of them
 }
+
 rule packers_d: qihoo
 {
 	meta:
@@ -9347,6 +7957,7 @@ rule packers_d: qihoo
 	condition:
 		2 of them
 }
+
 rule packers_e: bangcle
 {
 	meta:
@@ -9358,6 +7969,7 @@ rule packers_e: bangcle
 	condition:
 		all of them
 }
+
 rule packers_f: ali
 {
 	meta:
@@ -9368,6 +7980,7 @@ rule packers_f: ali
 	condition:
 		any of them
 }
+
 rule packers_g: liapp
 {
 	meta:
@@ -9378,6 +7991,7 @@ rule packers_g: liapp
 	condition:
 		2 of them
 }
+
 rule packers_h: tencent
 {
 	meta:
@@ -9388,6 +8002,7 @@ rule packers_h: tencent
 	condition:
 		2 of them
 }
+
 rule packers_j: baidu
 {
 	meta:
@@ -9399,7 +8014,8 @@ rule packers_j: baidu
 	condition:
 		all of them
 }
-rule Locker_K_a
+
+rule Locker_K
 {
 	meta:
 		description = "This rulset detects the Android Screen Locker"
@@ -9411,6 +8027,7 @@ rule Locker_K_a
 		androguard.filter(/DEVICE_ADMIN_ENABLED/) and
 		androguard.permission(/android.permission.KILL_BACKGROUND_PROCESSES/) and $a
 }
+
 rule packers_k
 {
 	meta:
@@ -9435,35 +8052,37 @@ rule packers_k
 	condition:
 		2 of them
 }
+
 rule ransomware_d: from_cromosome
 {
 	meta:
 		description = "This rule detects ransomware"
 		sample = "created with the help of cromosome.py and a ransomware dataset with the families fakedefender, kiler, pletor, ransombo, scarepackage, slocker and svpeng "
 	strings:
-	$cromo_0 ="android.app.device_admin"
-	$cromo_1 ="AndroidManifest.xmlPK"
-	$cromo_2 ="$Landroid/telephony/TelephonyManager;"
-	$cromo_3 ="$android.permission.BIND_DEVICE_ADMIN"
-	$cromo_4 ="*Landroid/content/SharedPreferences$Editor;"
-	$cromo_5 ="getSharedPreferences"
-	$cromo_6 ="'android.app.action.DEVICE_ADMIN_ENABLED"
-	$cromo_7 ="&android.permission.SYSTEM_ALERT_WINDOW"
-	$cromo_8 =")android.permission.RECEIVE_BOOT_COMPLETED"
-	$cromo_9 =")android.permission.WRITE_EXTERNAL_STORAGE"
-	$cromo_10 ="$android.intent.action.BOOT_COMPLETED"
-	$cromo_11 ="android.intent.category.HOME"
-	$cromo_12 ="android.permission.GET_TASKS"
-	$cromo_13 ="#Landroid/content/SharedPreferences;"
-	$cromo_14 ="android.permission.READ_CONTACTS"
-	$cromo_15 ="Landroid/os/Build;"
-	$cromo_16 ="#android.permission.READ_PHONE_STATE"
-	$cromo_17 ="'Landroid/app/admin/DevicePolicyManager;"
-	$cromo_18 ="'Landroid/app/admin/DeviceAdminReceiver;"
+        $cromo_0 ="android.app.device_admin"
+        $cromo_1 ="AndroidManifest.xmlPK"
+        $cromo_2 ="$Landroid/telephony/TelephonyManager;"
+        $cromo_3 ="$android.permission.BIND_DEVICE_ADMIN"
+        $cromo_4 ="*Landroid/content/SharedPreferences$Editor;"
+        $cromo_5 ="getSharedPreferences"
+        $cromo_6 ="'android.app.action.DEVICE_ADMIN_ENABLED"
+        $cromo_7 ="&android.permission.SYSTEM_ALERT_WINDOW"
+        $cromo_8 =")android.permission.RECEIVE_BOOT_COMPLETED"
+        $cromo_9 =")android.permission.WRITE_EXTERNAL_STORAGE"
+        $cromo_10 ="$android.intent.action.BOOT_COMPLETED"
+        $cromo_11 ="android.intent.category.HOME"
+        $cromo_12 ="android.permission.GET_TASKS"
+        $cromo_13 ="#Landroid/content/SharedPreferences;"
+        $cromo_14 ="android.permission.READ_CONTACTS"
+        $cromo_15 ="Landroid/os/Build;"
+        $cromo_16 ="#android.permission.READ_PHONE_STATE"
+        $cromo_17 ="'Landroid/app/admin/DevicePolicyManager;"
+        $cromo_18 ="'Landroid/app/admin/DeviceAdminReceiver;"
 	condition:
 		16 of them
 }
-rule shuanet_a: from_cromosome
+
+rule shuanet: from_cromosome
 {
 	meta:
 		description = "This rule detects shuanet aggresive malware"
@@ -9480,7 +8099,8 @@ rule shuanet_a: from_cromosome
 	condition:
 		all of them
 }
-rule Android_AndroRat_a
+
+rule Android_AndroRat
 {
 	meta:
 		author = "Jacob Soo Lead Re"
@@ -9492,7 +8112,8 @@ rule Android_AndroRat_a
         androguard.receiver(/BootReceiver/i) and
 		androguard.filter(/android.intent.action.BOOT_COMPLETED/i)
 }
-rule GCM_a
+
+rule GCM
 {
 	meta:
 		description = "Trojan-SMS AndroidOS GCM"
@@ -9502,6 +8123,7 @@ rule GCM_a
 	condition:
 		all of them
 }
+
 rule koodouslaaaa: official
 {
 	meta:
@@ -9517,9 +8139,10 @@ rule koodouslaaaa: official
 	condition:
 		all of them
 }
-rule Godless_a
+
+rule Godless
 {
-	meta: 
+	meta:
 		description = "This rule detects the AndroidOS.Godless Auto-Rooting Trojan"
 	strings:
 		$a = "KEY_REUEST_TEMP_ROOT"
@@ -9527,7 +8150,9 @@ rule Godless_a
 	condition:
 		($a and $c)
 }
-rule RootNik_a {
+
+rule RootNik
+{
 	meta:
 	description = "https://blog.fortinet.com/2017/01/26/deep-analysis-of-android-rootnik-malware-using-advanced-anti-debug-and-anti-hook-part-ii-analysis-of-the-scope-of-java"
 	strings:
@@ -9539,25 +8164,8 @@ rule RootNik_a {
 	condition:
 		1 of them
 }
-rule Trojan_Banker_a:Marcher {
-	strings:
-		$ = "Landroid/telephony/SmsManager"
-		$ = "szClassname"
-		$ = "szICCONSEND"
-		$ = "szModuleSmsStatus"
-		$ = "szModuleSmsStatusId"
-		$ = "szName"
-		$ = "szNomer"
-		$ = "szNum"
-		$ = "szOk"
-		$ = "szTel"
-		$ = "szText"
-		$ = "szpkgname"
-	condition:
-		all of them
-}
 
-rule android_metasploit_a: android
+rule android_metasploit: android
 {
 	meta:
 	  author = "https://twitter.com/plutec_net"
@@ -9570,6 +8178,7 @@ rule android_metasploit_a: android
 	condition:
 	  $a or $b or $c or $d
 }
+
 rule qihoo360_c: packer
 {
 	meta:
@@ -9577,8 +8186,9 @@ rule qihoo360_c: packer
 	strings:
 		$a = "libprotectClass.so"
 	condition:
-		$a 
+		$a
 }
+
 rule ijiami_c: packer
 {
 	meta:
@@ -9590,6 +8200,7 @@ rule ijiami_c: packer
 	condition:
 		$old_dat or $new_ajm or $ijm_lib
 }
+
 rule naga_c: packer
 {
 	meta:
@@ -9599,6 +8210,7 @@ rule naga_c: packer
 	condition:
 		 $lib
 }
+
 rule alibaba_c: packer
 {
 	meta:
@@ -9608,7 +8220,8 @@ rule alibaba_c: packer
 	condition:
 		 $lib
 }
-rule medusa_a: packer
+
+rule medusa: packer
 {
 	meta:
 		description = "Medusa"
@@ -9617,6 +8230,7 @@ rule medusa_a: packer
 	condition:
 		$lib
 }
+
 rule baidu_c: packer
 {
 	meta:
@@ -9627,6 +8241,7 @@ rule baidu_c: packer
 	condition:
 		$lib or $encrypted
 }
+
 rule pangxie_c: packer
 {
 	meta:
@@ -9636,23 +8251,25 @@ rule pangxie_c: packer
 	condition:
 	 	$lib
 }
-rule risky_android_certificates_a {
+
+rule riskyndroid_certificates
+{
 	meta:
 		description="An ongoing list of certificates that are used to create adware/malware"
 	condition:							androguard.certificate.sha1("81:3A:3A:D3:7D:87:AA:36:12:0D:FE:C6:41:46:C3:11:DB:5F:4C:A9") or
 		androguard.certificate.issuer(/BestToolbars/) or
-		androguard.certificate.sha1("8C:BD:58:1C:77:76:7B:CA:B8:0C:D4:BE:DE:DD:5F:A2:A2:28:69:E8") or 
+		androguard.certificate.sha1("8C:BD:58:1C:77:76:7B:CA:B8:0C:D4:BE:DE:DD:5F:A2:A2:28:69:E8") or
 		androguard.certificate.issuer(/android-debug/) or
-		androguard.certificate.sha1("62:71:54:7B:66:8C:E8:81:20:82:49:F8:59:5F:53:15:E3:90:EB:2E") or 
+		androguard.certificate.sha1("62:71:54:7B:66:8C:E8:81:20:82:49:F8:59:5F:53:15:E3:90:EB:2E") or
 		androguard.certificate.issuer(/Chineseall/) or
-		androguard.certificate.sha1("94:3B:C6:E0:82:7F:09:B0:50:B0:28:30:68:5A:76:73:4E:56:61:68") or 
-		androguard.certificate.sha1("AC:9B:0D:8F:AE:26:2C:90:3A:E3:37:49:C0:C1:4B:D0:9F:64:B8:22") or 
+		androguard.certificate.sha1("94:3B:C6:E0:82:7F:09:B0:50:B0:28:30:68:5A:76:73:4E:56:61:68") or
+		androguard.certificate.sha1("AC:9B:0D:8F:AE:26:2C:90:3A:E3:37:49:C0:C1:4B:D0:9F:64:B8:22") or
 		androguard.certificate.issuer(/Internet Widgits/) or
-		androguard.certificate.sha1("BF:C7:3C:8C:C6:F0:DF:CC:90:EF:8B:E4:9B:2E:17:CB:B7:85:6F:EE") or 
+		androguard.certificate.sha1("BF:C7:3C:8C:C6:F0:DF:CC:90:EF:8B:E4:9B:2E:17:CB:B7:85:6F:EE") or
 		androguard.certificate.issuer(/Gall me/) or
-		androguard.certificate.sha1("C6:7F:8F:C6:3E:25:C1:F2:D3:D3:62:32:10:D1:26:BC:96:AF:EE:69") or 
+		androguard.certificate.sha1("C6:7F:8F:C6:3E:25:C1:F2:D3:D3:62:32:10:D1:26:BC:96:AF:EE:69") or
 		androguard.certificate.issuer(/Alex Popov/) or
-		androguard.certificate.sha1("E0:30:A3:1B:E3:12:FF:93:8A:AF:3F:31:49:34:B1:E9:2A:F2:5D:60") or 
+		androguard.certificate.sha1("E0:30:A3:1B:E3:12:FF:93:8A:AF:3F:31:49:34:B1:E9:2A:F2:5D:60") or
 		androguard.certificate.issuer(/hjgjhg/) or
         androguard.certificate.sha1("DB:87:39:0F:55:B3:FE:B6:D7:A0:5C:64:6B:F0:97:91:67:13:73:CC") or
         androguard.certificate.sha1("06:14:68:81:20:29:0A:8F:6F:88:8A:A6:EC:24:72:AF:A6:3E:8B:66")
@@ -9669,6 +8286,7 @@ rule koodousnaaaa: official
 	condition:
 		all of them
 }
+
 rule koodousoaaaa: official
 {
 	meta:
@@ -9679,28 +8297,8 @@ rule koodousoaaaa: official
 	condition:
 		$message_str
 }
-rule Trojan_SberBank_a:Generic {
-	strings:
-		$ = "SHA1-Digest: 0RYXrwza/VlrQipZh52pDBGYSv4=" // res/layout/html_win.xml
-		$ = "SHA1-Digest: 2MulKCZR+tONx7LwGwYj0iu6p1k=" // res/layout/chat_sent.xml
-		$ = "SHA1-Digest: 4igVIY5xayNxe5Sde9RKcRtwCZM=" // res/layout-v17/chat_interface.xml
-		$ = "SHA1-Digest: 9XFO5nLfmU2zFKMEg5WZpgf+QDs=" // res/menu-v11/sba.xml
-		$ = "SHA1-Digest: EpKx2fb1krx+1ur7MvFMXS/kMxA=" // res/drawable/border_white.xml
-		$ = "SHA1-Digest: IJrFgK4WHwDca+LzUXjqZp2pay0=" // res/xml/shhtdi.xml
-		$ = "SHA1-Digest: Krc08hysIogRi8pojcDE29oQCnI=" // res/layout/chat_receive.xml
-		$ = "SHA1-Digest: MPo0HYhkXD7dsSBWAf8Rszo0bdI=" // res/layout-v17/chat_row.xml
-		$ = "SHA1-Digest: P/3/FuaWSmTJzhEqPKhcSn4X00Y=" // res/xml/rotatter.xml
-		$ = "SHA1-Digest: R1Vm5lb43YlHLnwI1pO68trQnxw=" // res/layout/adm_win.xml
-		$ = "SHA1-Digest: j8bj2Jwy/rSyyR3pMorEje8InWI=" // res/xml/ashp.xml
-		$ = "SHA1-Digest: oC1yBCAMYEJUij+pELT2JTSNizg=" // res/xml/da.xml
-		$ = "SHA1-Digest: rUYGYMmoO8HjIdBex+fX/xLL0t0=" // res/layout/chat_interface.xml
-		$ = "SHA1-Digest: yJi5Vu0G3AqXbLAdSlIgvxYQaw8=" // res/anim/dialog_close.xml
-		$ = "SHA1-Digest: zY4Ma7dxptRI8YdoKrdIegQ4a9o=" // res/anim/dialog_open.xml
-		$a = "Sberbank" nocase
-	condition:
-		all of ($) and $a
-}
-rule vidroid_a
+
+rule vidroid
 {
 	meta:
 		description = "This rule detects vidroid malware"
@@ -9709,10 +8307,11 @@ rule vidroid_a
 		$a = "Mozilla/5.0 (Linux; U; {app_id}; {android_version}; de-ch; Vid4Droid) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30"
 		$b = "Lcom/vid4droid/PleechActivity$MyChromeWebViewClient;"
 	condition:
-		androguard.package_name("com.vid4droid") or 
-		($a and $b) 
+		androguard.package_name("com.vid4droid") or
+		($a and $b)
 }
-rule smssend_a
+
+rule smssend
 {
 	meta:
 		description = "This rule detects smssend trojan"
@@ -9726,7 +8325,8 @@ rule smssend_a
 	condition:
 		all of them
 }
-rule HummingWhale_a
+
+rule HummingWhale
 {
 	meta:
 		description = "A Whale of a Tale: HummingBad Returns, http://blog.checkpoint.com/2017/01/23/hummingbad-returns/"
@@ -9737,7 +8337,8 @@ rule HummingWhale_a
 	condition:
  		1 of them
 }
-rule PornApps_a
+
+rule PornApps
 {
 	meta:
 		description = "Rule to detect certain Porn related apps"
@@ -9748,7 +8349,8 @@ rule PornApps_a
 		(androguard.activity(/.HejuActivity/) and $a)or
 		androguard.service(/\.cn\.soor\.qlqz\.bfmxaw\.a\.a\.c\.d/)
 }
-rule test2_a
+
+rule test2
 {
 	meta:
 		description = "This rule detects apps with VirusService"
@@ -9757,7 +8359,7 @@ rule test2_a
 		androguard.service(/\.VirusService/i)
 }
 
-rule HackingTeam_Android_a: Android Implant
+rule HackingTeam_Android: Android Implant
 {
 	meta:
 		description = "HackingTeam Android implant, known to detect version v4 - v7"
@@ -9802,7 +8404,8 @@ rule HackingTeam_Android_a: Android Implant
       condition:
         $decryptor and ($settings and $getSmsInputNumbers)
 }
-rule Xbot_certs_a
+
+rule Xbot_certs
 {
 	meta:
 		description = "http://researchcenter.paloaltonetworks.com/2016/02/new-android-trojan-xbot-phishes-credit-cards-and-bank-accounts-encrypts-devices-for-ransom/"
@@ -9812,7 +8415,8 @@ rule Xbot_certs_a
 		androguard.certificate.sha1("25D6A5507F3262ADF65639C0BA7B0997AE35C36D") or
 		androguard.certificate.sha1("27F8BD306E03B3BAAB8A57A7EC6F1CAE71B321EE")
 }
-rule Xbot_domains_a
+
+rule Xbot_domains
 {
 	meta:
         description = "Xbot domains/IPs"
@@ -9822,12 +8426,12 @@ rule Xbot_domains_a
 		$3 = "illuminatework.ru" wide ascii
 		$4 = "yetiathome15.ru" wide ascii
 		$5 = "leeroywork3.co" wide ascii
-		$6 = "morning3.ru" wide ascii	
-		$7 = "52.24.219.3/action.php" wide ascii			
+		$6 = "morning3.ru" wide ascii
+		$7 = "52.24.219.3/action.php" wide ascii
 		$8 = "192.227.137.154/request.php" wide ascii
 		$9 = "23.227.163.110/locker.php" wide ascii
 		$10 = "81.94.205.226:8021" wide ascii
-		$11 = "104.219.250.16:8022" wide ascii			
+		$11 = "104.219.250.16:8022" wide ascii
    	condition:
 		1 of them or
 		cuckoo.network.dns_lookup(/melon25.ru/) or
@@ -9837,7 +8441,8 @@ rule Xbot_domains_a
 		cuckoo.network.dns_lookup(/leeroywork3.co/) or
 		cuckoo.network.dns_lookup(/morning3.ru/)
 }
-rule Xbot_pass_a
+
+rule Xbot_pass
 {
 	meta:
         description = "Xbot password"
@@ -9847,18 +8452,20 @@ rule Xbot_pass_a
    	condition:
 		all of them
 }
-rule Xbot_evidences_a
+
+rule Xbot_evidences
 {
 	meta:
         description = "Xbot evidences"
 	strings:
 		$1 = "Lcom/xbot/core/activities/BrowserActivity" wide ascii
 		$2 = "/xBot.log.txt" wide ascii
-		$3 = "com.xbot.core" wide ascii		
+		$3 = "com.xbot.core" wide ascii
    	condition:
 		1 of them
 }
-rule AirPush_a
+
+rule AirPush
 {
 	meta:
         description = "Evidences of AirPush Adware SDK. v1.2 20160208"
@@ -9875,6 +8482,7 @@ rule AirPush_a
    	condition:
     	1 of them
 }
+
 rule banking_b
 {
 	meta:
@@ -9886,26 +8494,8 @@ rule banking_b
 	condition:
 		all of them
 }
-rule marcher2_b
-{
-	strings:
-		$a = "HDNRQ2gOlm"
-		$b = "lElvyohc9Y1X+nzVUEjW8W3SbUA"
-	condition:
-		all of them
-}
-rule marcher3_b
-{
-	meta:
-		sample1 = "087710b944c09c3905a5a9c94337a75ad88706587c10c632b78fad52ec8dfcbe"
-		sample2 = "fa7a9145b8fc32e3ac16fa4a4cf681b2fa5405fc154327f879eaf71dd42595c2"
-	strings:
-		$b = "certificado # 73828394"
-		$c = "A compania TMN informa que o vosso sistema Android tem vulnerabilidade"
-	condition:
-		all of them
-}
-rule omnirat_dropper_a
+
+rule omnirat_dropper
 {
 	meta:
 		description = "This rule detects omnirat dropper"
@@ -9918,6 +8508,7 @@ rule omnirat_dropper_a
 	condition:
 		all of them
 }
+
 rule koodouspaaaa: official
 {
 	meta:
@@ -9926,10 +8517,11 @@ rule koodouspaaaa: official
 		$a = "http://antigate.com/in.php"
 		$b = "http://antigate.com/"
 	condition:
-		$a or 
+		$a or
 		$b
 }
-rule Mapin_a:trojan
+
+rule Mapin:trojan
 {
 	meta:
 		description = "Mapin trojan, not droppers"
@@ -9941,7 +8533,8 @@ rule Mapin_a:trojan
 	condition:
 		all of them
 }
-rule Btest_a
+
+rule Btest
 {
 	meta:
 		description = "btest"
@@ -9954,19 +8547,21 @@ rule Btest_a
 	condition:
 		$strings_a or $strings_b or $strings_b or $strings_c
 }
+
 rule clicker_b: url
 {
 	meta:
 		description = "This rule detects the clicker variant malwares by using visited URLs"
 		sample = "aa19c5038d74cf537de35b39bfbf82a35e03e4ab0635a14fdf857aabbe134382"
 	condition:
-		androguard.url(/^https?:\/\/.*\/z\/z2\/?/) or 
+		androguard.url(/^https?:\/\/.*\/z\/z2\/?/) or
 		androguard.url(/^https?:\/\/.*\/z\/z5\/?/) or
 		androguard.url(/^https?:\/\/.*\/g\/getasite\/?/) or
 		androguard.url(/^https?:\/\/.*\/z\/orap\/?/) or
 		androguard.url(/^https?:\/\/.*\/g\/gstie\/?/)
 }
-rule Igexin_a
+
+rule Igexin
 {
 	meta:
 		description = "igexin"
@@ -9977,6 +8572,7 @@ rule Igexin_a
 	condition:
 		any of ($strings_*)
 }
+
 rule leadbolt_b: advertising
 {
 	meta:
@@ -9984,17 +8580,8 @@ rule leadbolt_b: advertising
 	condition:
 		androguard.url(/http:\/\/ad.leadbolt.net/)
 }
-rule fakeinstaller_a
-{
-	meta:
-		sample = "e39632cd9df93effd50a8551952a627c251bbf4307a59a69ba9076842869c63a"
-	condition:
-		androguard.permission(/com.android.launcher.permission.INSTALL_SHORTCUT/)
-		and androguard.permission(/android.permission.SEND_SMS/)
-		and androguard.certificate.sha1("E030A31BE312FF938AAF3F314934B1E92AF25D60")
-		and androguard.certificate.issuer(/hghjg/)
-}
-rule fbilocker_a_a
+
+rule fbilocker
 {
 	meta:
 		description = "FBILocker.A"
@@ -10003,15 +8590,8 @@ rule fbilocker_a_a
 	condition:
 		$a
 }
-rule Rana_Android_resources_a {
-strings:
-        $res1 = "res/raw/cng.cn" fullword wide ascii
-        $res2 = "res/raw/att.cn" fullword wide ascii
-        $res3 = "res/raw/odr.od" fullword wide ascii
-condition:
-        any of them
-}
-rule FakeCoC_a
+
+rule FakeCoC
 {
 	meta:
 		description = "This rule detects fake Clash of Clans apps"
@@ -10021,16 +8601,8 @@ rule FakeCoC_a
 		(androguard.app_name("Clash of Clans") and androguard.permission(/SEND_SMS/)) or
 		$url
 }
-rule sushinow_a
-{
-    strings:
-        $launcher_image = "EA DB A8 44 25 9A 27 93 8A 25 D2 E0 A2 42 8B D6 F8 10 11 F2 C4 5D 10 D2 8B FA D5 8C DC 5E 85 FA F5 E3 90 9F 23 1B DB BE 45 AC B2 86 0D 19 33 CB 5F 1F A9 0A 45 A3 40 E4 AC 3C 58 58 7D A6 F7 DB B9 00 20 A4 8D 82 B3 60 3A EA 4E 32 43 DB B7 8A A9 3E 8E 58 58 22 05 88 6C 9F 2F 7A 24 91 CC B1 2A 40 CE 82 19 F1 6B 2B 3F 18 66 B4 4E 4E 74 FB 56 31 49 24 73 B6 CF 17 3D 91 42 14 31 40 E3 8B C8 4F AD 3C 0F 15 B3 27 C6 B1 AD 49 5D BF 87 9C 9C E8 F6 AD 64 AA AF E3 06 10 59 70 BF E0 74 48 64 9E 95 01 E2 9C F9 F1 6B CB 55 D8 ED EF BA 93 2C E1 ED 5B C9 1C 12 99 B7 E0 7E C1 19 09 44 11 01 74 CB 95 DC 95 48 26 63 D4 F0 F6 AD 06 91 EA"
-        $app_id = "013df7ae-6c39-4a9e-9151-fd626d536dcc"
-        $app_server = "EhUbWAcbLRoGAD5FHQAJ"
-    condition:
-        $launcher_image or $app_id or $app_server
-}
-rule music_player_apk_a
+
+rule music_playerpk
 {
 meta:
 	description = "rule to uniquely identify apk"
@@ -10047,19 +8619,6 @@ strings:
 condition:
 	$a and $b and $c and $d and $e and $f and $g and $h and $i
 }
-rule security_a: Google Chrome
-{
-	meta:
-		info = "This rule will detect a Trojan banker"
-		sha="36004af3567c2f09b108dbc30458507f38ed2e2a6f462213b5f5cd783adacc7a"
-		sample_name = "Chrome"
-	strings:
-		$a = "tjnahlcl.tdpk.kdkl"
-		$b = "iwncbde.ixkpw.jjucczi"
-		$c = "ebsn.ejnaa.clswqsrq"
-	condition:
-		all of them
-}
 
 rule Trojan_f: Obscuro Banking Trojan
 {
@@ -10074,19 +8633,20 @@ rule Trojan_f: Obscuro Banking Trojan
 	condition:
 		2 of ($c2_*)
 		and (
-			androguard.permission(/android.permission.BIND_ACCESSIBILITY_SERVICE/) 
+			androguard.permission(/android.permission.BIND_ACCESSIBILITY_SERVICE/)
 			and androguard.permission(/android.permission.FOREGROUND_SERVICE/)) or
 		androguard.certificate.sha1("E7BA28ECA0760524411B2D2476BDAE65C274B46A") or
 		androguard.certificate.sha1("6DB41284B29ADF5FCFFFB3712D827161E26B504A") or
 		androguard.certificate.sha1("E5029BA773B141CDD9C7352EA5BC63275B975303") or
 		androguard.certificate.sha1("3BA519FBDDF5CB33203DC55255FA589FF4B0F983")
 }
+
 rule koodousqaaaa: official
 {
 	meta:
 		description = "This rule detects the Fresh cleaner application, a Trojan 							used to gain backdoor access"
 		sample = "c0403093672b782d2a95fe5cf5ce8bc4"
-		reference = 
+		reference =
 		"https://koodous.com/apks/abd99e70679da305251c8d2c38b4364b9c919a88aa144cd0e5ea65fdf598d664"
 	strings:
 		$a = "http://ELB-API-127-1069859428.ap-southeast-1.elb.amazonaws.com/in"
@@ -10096,10 +8656,11 @@ rule koodousqaaaa: official
 		androguard.permission(/android.permission.DISABLE_KEYGUARD/) and
 		androguard.permission(/android.permission.READ_PHONE_STATE/) and
 		androguard.permission(/android.permission.CHANGE_WIFI_STATE/) and
-		androguard.permission(/android.permission.PACKAGE_USAGE_STATS/)   
-		and $a 
+		androguard.permission(/android.permission.PACKAGE_USAGE_STATS/)
+		and $a
 }
-rule SimpLocker_a
+
+rule SimpLocker
 {
 	meta:
 		description = "SimpLocker"
@@ -10110,9 +8671,10 @@ rule SimpLocker_a
 		$b = "http://xeyocsu7fu2vjhxs.onion/"
 		$c = "https://check.torproject.org"
 	condition:
-	all of them 
+	all of them
 }
-rule TractorSMS_a
+
+rule TractorSMS
 {
 	meta:
 		description = "Detects tractor-apps that send and receive SMS"
@@ -10123,7 +8685,8 @@ rule TractorSMS_a
 	condition:
 		$a and $b and $c and androguard.app_name("com.safetest.tractor")
 }
-rule Anubis_Variant_a: BankBot
+
+rule Anubis_Variant: BankBot
 {
 	meta:
         description = "Anubis malware targeting banks"
@@ -10135,37 +8698,12 @@ rule Anubis_Variant_a: BankBot
 	condition:
 		2 of ($c2_*)
 		and (
-			androguard.permission(/android.permission.RECEIVE_SMS/) 
+			androguard.permission(/android.permission.RECEIVE_SMS/)
 			or androguard.permission(/android.permission.READ_SMS/)
 			or androguard.permission(/android.permission.SEND_SMS/)
 		)
 }
-rule smsfraud_c
-{
-	meta:
-		sample = "7ea9a489080fa667b90fb454b86589ac8b018c310699169b615aabd5a0f066a8"
-		search = "cert:14872DA007AA49E5A17BE6827FD1EB5AC6B52795"
-	condition:
-		androguard.certificate.sha1("14872DA007AA49E5A17BE6827FD1EB5AC6B52795")
-}
-rule smsfraud2_a {
-	strings:
-		$a = "isUserAMonkey" 
-		$b = "android.permission.CHANGE_CONFIGURATION" wide ascii
-		$c = "%android.permission.MODIFY_PHONE_STATE" wide ascii
-		$d = "+android.permission.SEND_SMS_NO_CONFIRMATION" wide ascii
-		$e = "&android.permission.PACKAGE_USAGE_STATS" wide ascii
-		$f = "Obfuscator-clang version 3.4 (tags/RELEASE_34/final) (based on LLVM 3.4svn)"
-		$g = "res/layout/authenticator.xml" wide ascii
-		$h = "eQdPXV^QZ"
-		$i = "my_transparent"
-		$j = "android.intent.action.DATE_CHANGED" wide ascii
-		$k = "Gxq3/70q/>7q;>*/:+<<1<p>6>"
-		$l = "__modsi3"
-		$m = "MService.java"
-	condition:
-		all of them
-}
+
 rule packers_l: apkprotect
 {
 	meta:
@@ -10176,32 +8714,8 @@ rule packers_l: apkprotect
 	condition:
 		2 of them
 }
-rule malicious_certs_a
-{
-	condition:
-		androguard.certificate.sha1("437423567AA682723D3ADD8BAD316BD578F2EB85") or
-		androguard.certificate.sha1("9BB11D691804256616B232C1D803ADC3CDFF4B6D") or
-		androguard.certificate.sha1("D5274E3BF8B2F0B6E3D69ECF064D38CD74B3E64B") or
-		androguard.certificate.sha1("0ECA59048B29A69FC7F9655C0534EB97BFF15893") or
-		androguard.certificate.sha1("8B373E842398325296B6FDC302296AD1F6CFCEDA")
-		or androguard.certificate.sha1("1B1DE0EF592C729D2BC578A259F6D740FE3E1C4E")
-		or androguard.certificate.sha1("1D4A315F36C933028F1938979354D68F69217993")
-		or androguard.certificate.sha1("046BF157D644F2DE7BF0BCEC8C5D4E240C9F1901")
-		or androguard.certificate.sha1("9465535F221311ECDE7CB0886930E639AA4A47C2")
-		or androguard.certificate.sha1("F55C09CF87F998364C5B679E8219475FDB708F56")
-		or androguard.certificate.sha1("19E98203E736DE818F79A8BC9541D8BF6A0EC7DE")
-		or androguard.certificate.sha1("34E39C32B5561EC307FB133ABA3C637A99D62E3A")
-		or androguard.certificate.sha1("A66802E44869280D14FECE10661370D6AA13F79E")
-		or androguard.certificate.sha1("69DA14E583BF3127015ADD077B997DB1474A5312")
-		or androguard.certificate.sha1("97C962C8AC89663B9041CC0E08057200A65560F2")
-		or androguard.certificate.sha1("A1480C8895A8B10A34C714867FFFD3CF98A5C8B5")
-		or androguard.certificate.sha1("34E39C32B5561EC307FB133ABA3C637A99D62E3A")
-		or androguard.certificate.sha1("3B2097D66D27A248B8F45332A52F7B83DC98F2D3")
-		or androguard.certificate.sha1("623CFF4004DB8D106FB47EDD20A53138892CD7DD")
-		or androguard.certificate.sha1("EED7DF45045A39EC7D11991CE983DFC50D91ACF7")
-		or androguard.certificate.sha1("6668C30E3C4DB3FD68C1EC79DA3468457B2B3028")
-}
-rule gazon_a
+
+rule gazon
 {
 	meta:
 		description = "This rule detects gazon adware"
@@ -10211,6 +8725,7 @@ rule gazon_a
 	condition:
 		$a
 }
+
 rule shuanet_b: adWare
 {
 	meta:
@@ -10219,7 +8734,8 @@ rule shuanet_b: adWare
 		androguard.service(/com\/boyaa\/push/) and
 		androguard.receiver(/orp\/frame\/shuanet\/abs/)
 }
-rule shuanet2_a: adWare
+
+rule shuanet2: adWare
 {
 	meta:
 		description = "This rule detects shuanet aggresive malware"
@@ -10227,6 +8743,7 @@ rule shuanet2_a: adWare
 		androguard.service("com/boyaa/push/NotifyCenterAIDL") and
 		androguard.receiver("orp/frame/shuanet/abs/DataReciver")
 }
+
 rule koodousraaaa: official
 {
 	meta:
@@ -10236,6 +8753,7 @@ rule koodousraaaa: official
 	condition:
 		$isroot
 }
+
 rule SMSPay_b
 {
 	meta:
@@ -10245,13 +8763,6 @@ rule SMSPay_b
 		$a = "To activate the application, you must allow the sending of a query using short numbers. For complete information on pricing can be found at the web site: http://www.mobi911.ru/" ascii wide
 	condition:
 		$a
-}
-rule SMSPay2_a
-{
-	meta:
-		sample = "4f75890ff99ff8e94b6f7f4b33f9c21d482b2dffb78ced72484acb74e14bb2e7"
-	condition:
-		androguard.certificate.sha1("6818663E1B038E42D7B8CBCF63CF3D470DA90124")
 }
 
 rule Acecard_b
@@ -10270,21 +8781,22 @@ rule Acecard_b
 		$h = "USSDService"
 	condition:
 		androguard.filter("android.intent.action.ACTION_EXTERNAL_APPLICATIONS_AVAILABLE") and
-		androguard.filter("android.app.action.DEVICE_ADMIN_ENABLED") and 
+		androguard.filter("android.app.action.DEVICE_ADMIN_ENABLED") and
 		5 of them
 }
+
 rule koodoustaaaa: official
 {
 	meta:
 		description = "Adware showing full-screen ads even if infected app is closed"
-		sample = "0e18c6a21c33ecb88b2d77f70ea53b5e23567c4b7894df0c00e70f262b46ff9c"
 		ref_link = "http://news.drweb.com/show/?i=10115&c=38&lng=en&p=0"
 	strings:
 		$a = "com/nativemob/client/" // Ad-network library
 	condition:
 		all of them
 }
-rule AfricanScamware_a
+
+rule AfricanScamware
 {
 	meta:
 		description = "Detects scamware originating from Africa"
@@ -10299,11 +8811,7 @@ rule AfricanScamware_a
 rule Android_Triada_b: android
 {
 	meta:
-		author = "reverseShell - https://twitter.com/JReyCastro"
-		date = "2016/03/04"
 		description = "This rule try to detects Android.Triada.Malware"
-		sample = "4656aa68ad30a5cf9bcd2b63f21fba7cfa0b70533840e771bd7d6680ef44794b"
-		source = "https://securelist.com/analysis/publications/74032/attack-on-zygote-a-new-twist-in-the-evolution-of-mobile-threats/"
 	strings:
 		$string_1 = "android/system/PopReceiver"
 	condition:
@@ -10312,10 +8820,12 @@ rule Android_Triada_b: android
 		androguard.permission(/android.permission.SYSTEM_ALERT_WINDOW/) and
 		androguard.permission(/android.permission.GET_TASKS/)
 }
-rule citrusRAT_a {
+
+rule citrusRAT
+{
 	meta:
-		description = "Ruleset to detect an Italian RAT." 
-		sample = "f26658419a9113b0b79ecd58966aee93deec77ea713ff37af36c249002419310" 
+		description = "Ruleset to detect an Italian RAT."
+		sample = "f26658419a9113b0b79ecd58966aee93deec77ea713ff37af36c249002419310"
 	strings:
 		$a = "/system/bin/screenrecord /sdcard/example.mp4"
 		$b = "/system/bin/rm /sdcard/img.png"
@@ -10325,29 +8835,19 @@ rule citrusRAT_a {
 		$g = "fin qui OK 7"
 		$h = "/system/xbin/"
 	condition:
-		all of them 
+		all of them
 }
+
 rule koodousuaaaa: official
 {
 	meta:
 		description = "Adware showing full-screen ads even if infected app is closed"
-		sample = "0e18c6a21c33ecb88b2d77f70ea53b5e23567c4b7894df0c00e70f262b46ff9c"
 		ref_link = "http://news.drweb.com/show/?i=10115&c=38&lng=en&p=0"
 	condition:
 		androguard.receiver(/com\.nativemob\.client\.NativeEventReceiver/)
 }
-rule Jiaguo_a
-{
-	meta:
-		description = "Jiaguo"
-		sample = "0a108ace8c317df221d605b2e3f426e4b3712e480f8a780f3c9c61e7bc20c520"
-	strings:
-		$a = "assets/libjiagu.so"
-		$b = "assets/libjiagu_x86.so"
-	condition:
-		$a and $b
-}
-rule pokemongo_a: fake
+
+rule pokemongo: fake
 {
 	meta:
 		description = "This rule detects fakes Pokemon Go apps "
@@ -10356,7 +8856,8 @@ rule pokemongo_a: fake
 		(androguard.package_name("com.nianticlabs.pokemongo") or androguard.app_name("Pokemon GO")) and not
 		androguard.certificate.sha1("321187995BC7CDC2B5FC91B11A96E2BAA8602C62")
 }
-rule paymentsSMS_a
+
+rule paymentsSMS
 {
 	meta:
 		description = "Connects to remote server and tries to charge the user using his data and sends SMS"
@@ -10370,7 +8871,8 @@ rule paymentsSMS_a
 	condition:
 		 androguard.url(/112\.126\.69\.51/) or $a or $b or $c or $d or $e or $f
 }
-rule SpyNet_a
+
+rule SpyNet
 {
 	meta:
 		description = "Ruleset to detect SpyNetV2 samples. "
@@ -10386,21 +8888,13 @@ rule SpyNet_a
 	$h = "send|999SAnd|TimeStart"
 	$i = "!s!c!r!e!a!m!"
 	condition:
-		4 of them 
+		4 of them
 }
-rule DroidRt_a
-{
-	meta:
-		sample = "f50dc3592737532bc12ef4954cb2d7aeb725f6c5eace363c8ab8535707b614b3"
-	condition:
-		cuckoo.network.dns_lookup(/download\.moborobo\.com/)
-}
-rule SMSReg_a
+
+rule SMSReg
 {
         meta:
                 description = "This rule detects SMSReg apps"
-                sample = "ed3c5d4a471ee4bf751af4b846645efdeafcdd5f85c1f3bdc58b84119b7d60e8"
-				packagename = "com.sm.a36video1"
         strings:
                 $a = "kFZFZUIF"
                 $b = "btn_title_shop"
@@ -10410,25 +8904,11 @@ rule SMSReg_a
         condition:
                 all of them
 }
-rule jmede_a
-{
-	meta:
-		description = "http://blog.avlsec.com/2016/07/3381/pokemon-go/"
-	condition:
-		cuckoo.network.dns_lookup(/if\.anycell\-report\.com/) or
-		cuckoo.network.dns_lookup(/if\.jmede\.com/) or
-		cuckoo.network.dns_lookup(/down\.tuohuangu\.com/)
-}
-rule OmniRat_a: Certs
-{
-    condition:
-        androguard.certificate.sha1("B17BACFB294A2ADDC976FE5B8290AC27F31EB540")
-}
-rule PornLock_a
+
+rule PornLock
 {
 	meta:
 		description = "Rule to detect specific Porn related Lockscreen"
-		sample = "f7c9a55d07069af95c18c8dd62b1c66568e3b79af551d95c7bf037a107e6526e"
 	strings:
 		$r = "res/xml/device_admin_data.xml"
 		$b = "Update"
@@ -10438,7 +8918,8 @@ rule PornLock_a
 	condition:
 	($r and androguard.service(/.Service\d{2}/) and $b and $c) or ($r and androguard.service(/.Service\d{2}/) and $b and $d) or ($r and androguard.service(/.Service\d{2}/) and $b and $e)
 }
-rule Spywaller_a
+
+rule Spywaller
 {
 	meta:
 		description = "Android.Spywaller"
@@ -10454,7 +8935,8 @@ rule Spywaller_a
 		all of them
 		and androguard.permission(/android.permission.RESTART_PACKAGES/)
 }
-rule flash_malware_a
+
+rule flash_malware
 {
 	meta:
 		description = "Flash Malware Dvxew"
@@ -10469,7 +8951,8 @@ rule flash_malware_a
 		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/) and
 		$a
 }
-rule SandroRat_a
+
+rule SandroRat
 {
 	meta:
 		author = "Jacob Soo Lead Re"
@@ -10477,9 +8960,10 @@ rule SandroRat_a
 		description = "This rule detects SandroRat"
 		source = "https://blogs.mcafee.com/mcafee-labs/sandrorat-android-rat-targeting-polish-banking-users-via-e-mail-phishing/"
 	condition:
-		androguard.activity(/net.droidjack.server/i) 
+		androguard.activity(/net.droidjack.server/i)
 }
-rule fakeav_cert_a
+
+rule fakeav_cert
 {
 	meta:
 		description = "fakeav msg premium"
@@ -10487,19 +8971,20 @@ rule fakeav_cert_a
 	condition:
 		androguard.certificate.sha1("1C414E5C054136863B5C460F99869B5B21D528FC")
 }
-rule fakeav_url_a
+
+rule fakeav_url
 {
 	meta:
 		description = "fakeav msg premium"
 		sample = ""
 	condition:
-		androguard.url(/topfiless\.com\/rates\.php/) 
+		androguard.url(/topfiless\.com\/rates\.php/)
 }
-rule AdultAdware_a: official
+
+rule AdultAdware: official
 {
 	meta:
 		description = "This rule detects the variant from https://blogs.mcafee.com/mcafee-labs/sex-sells-looking-at-android-adult-adware-apps/"
-		sample = "BB2E56B9259D945592D7A6DDDBCEDCF82DDF3E5A52232377B5648AAACC3F12FB"
 	strings:
 		$a = {26 41 64 73 43 6F 75 6E 74 3D}
 		$b = {26 48 6F 75 72 53 69 6E 63 65 49 6E 73 74 61 6C 6C 3D}
@@ -10508,108 +8993,27 @@ rule AdultAdware_a: official
 		$e = {4C 6F 61 64 6F 66 66 65 72}
 		$f = {58 58 41 44 53 43 4F 55 4E 54}
 	condition:
-		$a and $b and $c and $d and $e and $f  
-}
-rule eicar_a
-{
-	meta:
-		description = "EICAR-AV-Test"
-		source = "http://www.eicar.org/86-0-Intended-use.html"
-	strings:
-		$eicar = "X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*" ascii wide
-	condition:
-		$eicar
+		$a and $b and $c and $d and $e and $f
 }
 
-rule syringe_a
-{
-	strings:
-		$a = "setHostService"
-		$b = "getHostActivity"
-		$c = "MainApplication.java"
-		$d = "kqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwqAFW0sDGPfZ9GxASIFGcdrCdHefFdCjmB4c5M9RADKikKYlD9LjjlTtcTfP6MBMUGayzgDAI0Tt4oqLI1//DddfIFCQ4eC2VTYiTsb+dx23GT5wERpaN2T+1cbZG9aNL2TEkriuoN2ovIa6yXGMI8srqjlq9TP8djedzgRaStQl/zrjPz+G00FxfBObgfgTvzgaAvaluBXTnvu0N2t5KG0ubQC24d2dTrr+Kc9Y9ZiMqDTOn8rLgoM/PcJZkKg5d7GQMpNC1GJeWCcGh6NMhv3QGn/GswfW865AmyxL75JE+61Un8cxouTUQzEsGZ3zNR/F3tA0SKyQCl7LwfV8dwIDAQ"
-	condition:
-		all of them
-}
-
-
-rule fakeGames_a
-{
-	meta:
-		sample = "e6ef34577a75fc0dc0a1f473304de1fc3a0d7d330bf58448db5f3108ed92741b"
-		google_play = "https://play.google.com/store/apps/developer?id=Dawerominza"
-	strings:
-		$a = "http://ggd.prnlivem.com/frerr.php"
-		$b = "Lcom/gte/fds/j/a;"
-	condition:
-		any of them
-}
-rule adware_e
-{
-	meta:
-		sample = "28e2d0f5e6dca1b108bbdc82d8f80cfbf9acd1df2e89f7688a98806dc01a89ba"
-		search = "package_name:com.blackbean.cnmeach"
-	strings:
-		$a = "CREATE TABLE IF NOT EXISTS loovee_molove_my_date_history"
-		$b = "loovee_molove_my_dating_task_delete_bak"
-	condition:
-		all of them
-}
-rule smsreg_a
-{
-	meta:
-		sample = "1c2e1083f9c73a222af21351b243d5072fcc3360a5be6fa4d874e4a94249a68d"
-		search = "package_name:com.dnstore.vn"
-	strings:
-		$a = "var msg2_4 = \"DSD zombie\";"
-		$b = "Ldnteam/gamevui2014/net/ScriptInterface$Downloader3"
-	condition:
-		($a and $b) or androguard.package_name("com.dnstore.vn")
-}
-
-rule redalert2_b
-{
-	meta:
-		author = "R"
-		description = "https://clientsidedetection.com/new_android_trojan_targeting_over_60_banks_and_social_apps.html"
-	strings:
-		$intent = "HANDLE_COMMANDS"
-	condition:
-		$intent
-}
-rule suoji_a
-{
-	meta:
-		description = "suoji"
-	strings:
-		$a = "&#x9501;&#x673A;&#x751F;&#x6210;&#x5668;"
-	condition:
-		$a
-}
-rule Momo_a
-{
-	condition:
-		androguard.package_name("com.mobo.gram") and
-		androguard.activity(/StepTwoActivityForce/i)
-}
-rule Exobotv2_a: abc
+rule Exobotv2: abc
 {
 	meta:
 		description = "Exobot payload abc"
 		sample = "a04dee90bbd98cae515c0084acbd18aa91f1de6db28a415c0ac8688286f0acd3"
 	condition:
 		androguard.permissions_number == 20 and
-		androguard.permission(/ACCESS_FINE_LOCATION/) and	
+		androguard.permission(/ACCESS_FINE_LOCATION/) and
 		androguard.permission(/ACCESS_NETWORK_STATE/) and
 		androguard.permission(/CALL_PHONE/) and
-		androguard.permission(/GET_TASKS/) and	
+		androguard.permission(/GET_TASKS/) and
 		androguard.permission(/INTERNET/) and
 		androguard.permission(/PACKAGE_USAGE_STATS/) and
 		androguard.permission(/READ_CONTACTS/) and
 		androguard.permission(/READ_EXTERNAL_STORAGE/) and
 		androguard.permission(/READ_PHONE_STATE/) and
 		androguard.permission(/READ_SMS/) and
-		androguard.permission(/RECEIVE_BOOT_COMPLETED/) and	
+		androguard.permission(/RECEIVE_BOOT_COMPLETED/) and
 		androguard.permission(/RECEIVE_SMS/) and
 		androguard.permission(/RECORD_AUDIO/) and
 		androguard.permission(/REQUEST_IGNORE_BATTERY_OPTIMIZATIONS/) and
@@ -10619,7 +9023,8 @@ rule Exobotv2_a: abc
 		androguard.permission(/WRITE_EXTERNAL_STORAGE/) and
 		androguard.permission(/WRITE_SMS/)
 }
-rule Anubis_c
+
+rule Anubis
 {
 	meta:
     	description = "Rule set for detect Anubis banker"
@@ -10667,7 +9072,8 @@ rule Anubis_c
          androguard.permission(/WRITE_EXTERNAL_STORAGE/) and
          androguard.permission(/READ_SMS/)
 }
-rule GhostTeam_a
+
+rule GhostTeam
 {
 	meta:
 		description = "This rule will be able to tag all GhostTeam samples"
@@ -10680,14 +9086,15 @@ rule GhostTeam_a
 		date = "07-August-2018"
 	condition:
 		androguard.receiver(/.ScreenR/i)
-		and androguard.receiver(/.BS/i) 
+		and androguard.receiver(/.BS/i)
 		and androguard.receiver(/.SR/i)
 		and androguard.service(/.FS/i)
 		and androguard.service(/.LS/i)
 		and androguard.service(/.SO/i)
 		and androguard.filter(/android.intent.action.BOOT_COMPLETED/i)
 }
-rule Crymore_a
+
+rule Crymore
 {
 	meta:
 		description = "Cryptocurrency Miner, Crymore"
@@ -10704,22 +9111,7 @@ rule Crymore_a
 		any of ($a*)
 }
 
-rule avdobfuscator_a: obfuscator
-{
-  meta:
-    description = "AVDobfuscator"
-    url         = "https://github.com/andrivet/ADVobfuscator"
-  strings:
-    $o1 = "ObfuscatedAddress"
-    $o3 = "ObfuscatedCall"
-    $o4 = "ObfuscatedCallP"
-    $o5 = "ObfuscatedCallRet"
-    $o6 = "ObfuscatedCallRetP"
-    $o7 = "ObfuscatedFunc"
-  condition:
-    1 of ($o*)
-}
-rule HeroBot_a
+rule HeroBot
 {
 	meta:
 		description = "This rule will be able to tag all HeroBot samples"
@@ -10727,19 +9119,17 @@ rule HeroBot_a
 		hash_1 = "3b40b5081c2326f70e44245db9986f7a2f07a04c9956d27b198b6fc0ae51b3a2"
 		hash_2 = "a002fca557e33559db6f1d5133325e372dd5689e44422297406e8337461e1548"
 		hash_3 = "92edbf20549bad64202654bc51cc581f706a31bd8d877812b842d96406c835a1"
-		author = "Jacob Soo Lead Re"
-		date = "21-June-2018"
 	condition:
 		androguard.activity(/OS\.Cam/i)
-		and androguard.activity(/OS\.MainActivity/i) 
+		and androguard.activity(/OS\.MainActivity/i)
 		and androguard.service(/OS\.mainservice/i)
 		and androguard.service(/OS\.voiceservice/i)
-		and androguard.receiver(/OS\.smsreceiver/i) 
-		and androguard.receiver(/OS\.callreceiver/i) 
+		and androguard.receiver(/OS\.smsreceiver/i)
+		and androguard.receiver(/OS\.callreceiver/i)
 		and androguard.receiver(/OS\.booton/i)
 }
 
-rule Android_Marcher_a
+rule Android_Marcher
 {
 	meta:
 		author = "Jacob Soo Lead Re"
@@ -10750,6 +9140,7 @@ rule Android_Marcher_a
 		(androguard.filter(/com.KHLCert.fdservice/i) and
 		androguard.filter(/com.KHLCert.gpservice/i))
 }
+
 rule APT_Loader
 {
 	meta:
@@ -10766,18 +9157,20 @@ rule APT_Loader
 		androguard.receiver(/AdminReceiver/) and
 		androguard.receiver(/MainReceiver/)
 }
-rule spynote4_a
+
+rule spynote4
 {
 	meta:
 		description = "Yara rule for detection of  Spynote4.0"
 		author = "invoker"
 	strings:
-		$str_1 = "scream" 
+		$str_1 = "scream"
 	condition:
-		androguard.package_name("system.operating.dominance.proj") and 
+		androguard.package_name("system.operating.dominance.proj") and
 		all of ($str_*)
 }
-rule trojanSMS_b
+
+rule trojanSMS
 {
 	meta:
 		description = "This rule detects trojan SMS"
@@ -10790,52 +9183,14 @@ rule trojanSMS_b
     		$d = "com.android.install"
     	condition:
     		all of them
+}
 
-}
-rule YaYaGene_a: rule1 {
-	meta:
-		author = "YaYaGen -- Yet Another Yara Rule Generator (*) v0.4_winter17/18"
-		date = "03 Jan 2018"
-		url = "https://koodous.com/apks?search=be44cc5f3ec413f649154a515725fff58fd87fb47fd83201577872c2594b7f84%20OR%20%209548ee4acd88262a084aba5bac2002746fff85ed83008c9cdf2a13199ab77aa6%20OR%20%20d70fa70efbff55eafc9077bc6ed49798d5cf966a2a0cb8062ff6ffb5c688773c%20OR%20%20014996cc63ed7ba6118149166290303df1dce4daaf27a194222746e9160dcfaa%20OR%20%20dc96d4230bb489acd3b823b22345626d0e0ac8ba48871f8fa864974ba504faec%20OR%20%2075759cc9af54e71ac79fbdc091e30b4a6e5d5862d2b1c0decfb83c9a3d99b01b%20OR%20%20ad03a820f5458977d1a8621c7a64722e08bf85acdbbca23bae345aa4e573a0eb%20OR%20%20621e6eb85c67f4af9eb5a3a5afee99f5a797d84cb606bb2bfc8d387517fb08ba%20OR%20%20b902c0cb656addf4fbd5c6b1836233445e9e1775944a0b0551e1e2d4cfd87372"
-	condition:
-		androguard.url("http://192.168.100.4:8101") or 
-		(androguard.url("http://91.226.11.200") or 
-		cuckoo.network.dns_lookup(/91\.226\.11\.200/)  or 
-		cuckoo.network.http_request(/91\.226\.11\.200/)) or 
-		androguard.url("http://91.226.11.200/pl/alior/index.html") or 
-		androguard.url("http://91.226.11.200/pl/bzwbk/index.html") or 
-		androguard.url("http://91.226.11.200/pl/ingbank/index.html") or 
-		androguard.url("http://91.226.11.200/pl/mbank/index.html") or 
-		androguard.url("http://91.226.11.200/pl/millennium/index.html") or 
-		androguard.url("http://91.226.11.200/pl/pekao/index.html") or 
-		androguard.url("http://91.226.11.200/pl/pkobp/index.html") or 
-		androguard.url("http://91.226.11.200/pl/plusonline/index.html") or 
-		androguard.url("http://91.226.11.200/pl/raiffeisen/index.html") or 
-		androguard.url("http://91.226.11.200/pl/smartbank/index.html")
-}
-rule detection_c
+rule android_coinhive_fake_hackpp
 {
-    strings:
-	  $ = "Added %1$s to %2$s balance"  nocase
-	  $ = "money_was_add"  nocase
-	  $ = "!!Touch to sign in to your account"  nocase
-	  $ = "You will be automatically charged %1$s"  nocase
-	  $ = "adm_win"  nocase
-	  $ = "shhtdi"  nocase
-	  $ = "chat_interface"  nocase
-	  $ = "chat_receive"  nocase
-	  $ = "chat_sent"  nocase
-	  $ = "chat_row" nocase
-	condition:
-		all of them
-}
-rule android_coinhive_fake_hack_app_a {
   meta:
 		description = "This rule detects Android Fake App, that uses Coinhive"
-		author = "Corsin Camichel, @cocaman"
-		version = "2018-01-07"
 		in_the_wild = true
-    tlp = "green"
+        tlp = "green"
   strings:
     $string_1 = "Jakaminen:"
     $string_2 = "Hack"
@@ -10844,123 +9199,17 @@ rule android_coinhive_fake_hack_app_a {
   	all of ($string_*)
 }
 
-rule BANKBOT_a: malware
+rule PornSlocker
 {
 	meta:
-		date = "2018-01-19"
-	strings:
-		$a = {2f 70 72 69 76 61 74 65 2f 74 75 6b 5f 74 75 6b 2e 70 68 70}
-	condition:
-		all of them
-}
-rule BANKBOT_VERSION_a: malware
-{
-	meta:
-		date = "2018-01-18"
-		sample = "40ad2444b83f6a1c25dd153214a1a16bcaa2640ebaf7735d6f1ee2591989e58e"
-	strings:
-		$a1 = {2f 70 72 69 76 61 74 65 2f 63 68 65 63 6b 50 61 6e 65 6c 2e 70 68 70}
-		$a2 = {2f 70 72 69 76 61 74 65 2f 74 75 6b 5f 74 75 6b 2e 70 68 70}
-	condition:
-		all of them
-}
-rule ollvm_v3_4: obfuscator
-{
-  meta:
-    description = "Obfuscator-LLVM version 3.4"
-    info        = "https://github.com/obfuscator-llvm/obfuscator/wiki"
-    example     = "cd16ad33bf203dbaa9add803a7a0740e3727e8e60c316d33206230ae5b985f25"
-  strings:
-    $clang_version = "Obfuscator-clang version 3.4 "
-    $based_on      = "(based on LLVM 3.4"
-  condition:
-    all of them
-}
-rule ollvm_v3_6_1: obfuscator
-{
-  meta:
-    description = "Obfuscator-LLVM version 3.6.1"
-    info        = "https://github.com/obfuscator-llvm/obfuscator/wiki"
-    example     = "d84b45856b5c95f7a6e96ab0461648f22ad29d1c34a8e85588dad3d89f829208"
-  strings:
-    $clang_version = "Obfuscator-LLVM clang version 3.6.1 "
-    $based_on      = "(based on Obfuscator-LLVM 3.6.1)"
-  condition:
-    all of them
-}
-rule ollvm_v4_0: obfuscator
-{
-  meta:
-    description = "Obfuscator-LLVM version 4.0"
-    info        = "https://github.com/obfuscator-llvm/obfuscator/wiki"
-    example     = "aaba570388d0fe25df45480ecf894625be7affefaba24695d8c1528b974c00df"
-  strings:
-    $clang_version = "Obfuscator-LLVM clang version 4.0.1 "
-    $based_on      = "(based on Obfuscator-LLVM 4.0.1)"
-  condition:
-    all of them
-}
-rule ollvm_v6_0_strenc: obfuscator
-{
-  meta:
-    description = "Obfuscator-LLVM version 6.0 (string encryption)"
-    info        = "https://github.com/obfuscator-llvm/obfuscator/wiki"
-    example     = "f3a2e6c57def9a8b4730965dd66ca0f243689153139758c44718b8c5ef9c1d17"
-  strings:
-    $clang_version = "Obfuscator-LLVM clang version 6.0."
-    $based_on      = "(based on Obfuscator-LLVM 6.0."
-    $strenc        = /datadiv_decode[0-9]{18,20}/
-  condition:
-    all of them
-}
-rule ollvm_v6_0: obfuscator
-{
-  meta:
-    description = "Obfuscator-LLVM version 6.0"
-    info        = "https://github.com/obfuscator-llvm/obfuscator/wiki"
-    example     = ""
-  strings:
-    $clang_version = "Obfuscator-LLVM clang version 6.0."
-    $based_on      = "(based on Obfuscator-LLVM 6.0."
-  condition:
-    all of them and not ollvm_v6_0_strenc
-}
-rule ollvm: obfuscator
-{
-  meta:
-    description = "Obfuscator-LLVM version unknown"
-    info        = "https://github.com/obfuscator-llvm/obfuscator/wiki"
-  strings:
-    $ollvm1 = "Obfuscator-LLVM "
-    $ollvm2 = "Obfuscator-clang "
-  condition:
-    ($ollvm1 or $ollvm2) and
-    not ollvm_v3_4 and
-    not ollvm_v3_6_1 and
-    not ollvm_v4_0 and
-    not ollvm_v6_0 and
-    not ollvm_v6_0_strenc
-}
-
-
-rule koodouszxs: official
-{
-	strings:
-		$dbhook = "SQLiteDatabaseHook"
-		$message_str = "preMakeApplication FAIL"
-	condition:
-		all of them
-}
-rule PornSlocker_a
-{
-	meta:
-		description = "http://blog.trendmicro.com/trendlabs-security-intelligence/first-kotlin-developed-malicious-app-signs-users-premium-sms-services/"
+		description = "Rule to detect specific Porn related Lockscreen"
 	strings:
 		$ = "52.76.80.41"
 		$ = "adx.gmpmobi.com"
 	condition:
 		all of them
 }
+
 rule koodousgaaaaa: official
 {
 	meta:
@@ -10969,37 +9218,22 @@ rule koodousgaaaaa: official
 		$coinhive = "https://coinhive.com/lib/coinhive.min.js"
 	condition:
 		androguard.permission(/android.permission.INTERNET/) and
-		$coinhive 
+		$coinhive
 }
-rule ANDROIDOS_JSMINER_a
+
+rule ANDROIDOS_JSMINER
 {
 	meta:
-		description = "http://blog.trendmicro.com/trendlabs-security-intelligence/coin-miner-mobile-malware-returns-hits-google-play/; 		https://twitter.com/LukasStefanko/status/925010737608712195"
+	    description = "This rule detects coinhive Apps"
 		sample = "22581e7e76a09d404d093ab755888743b4c908518c47af66225e2da991d112f0"
 	strings:
 		$url = "coinhive.com/lib/coinhive.min.js"
 		$s1 = "CoinHive.User"
 		$s2 = "CoinHive.Anonymous"
 	condition:
-		$url and 1 of ($s*)	
+		$url and 1 of ($s*)
 }
-rule YaYaExobot_a: rule0 {
-	meta:
-		author = "YaYaGen -- Yet Another Yara Rule Generator (*) v0.4_winter17/18"
-		date = "05 Jan 2018"
-		url = "https://koodous.com/apks?search=1cd3095b176520e4bf7d3fa86ec91e852ee93b2172c8bd3113f91e2569a7c481%20OR%20%20ca2cc26e81196a2031a5cdeda91a6624ba9d34e03e5b1448dd682b0215134d15%20OR%20%2077e26712490e8ec681881b584c5e381af0dcece21f0dcfa483661f125a399a2d%20OR%20%208e9bdb1f5a37471f3f50cc9d482ea63c377e84b73d9bae6d4f37ffe403b9924e%20OR%20%20ca859564cfbfca3c99ab38c9cb30ad33ec9049fe67734bae9d9b69cd68845188%20OR%20%2059ada6b530bd2c7c15d8c552c7ebf3afcc14976bfa789a6e2c2fca3e354baab0%20OR%20%20c1ef19c9abc479070d7841846ff6b4c973b34b2035428b50999ebe63eb0547db%20OR%20%20da68cc23a89c2b794827e9f846ed5d1e371a1c14229696bc46a4d9ec380425d4%20OR%20%20498304e3f60abe29bb06661b21e579d5a25f104eb96ebf0d5d573ce9f8308b89%20OR%20%20690310a635b5c82c28a76332b83a7b34b8604e822ed8f8e4eb1f0be85c177c62%20OR%20%20ae4ed005f891101b297689530e9d07068e0a0779c7a03abe36f30b991b065ff9%20OR%20%20c28b6346d59a828ce319e94d08c35b530ae39fd5801d17e6f84a02a592621e2d%20OR%20%201cd3095b176520e4bf7d3fa86ec91e852ee93b2172c8bd3113f91e2569a7c481%20OR%20%20b8b424866ba77728034e231f295399f523154accf587424c9d42cbb1c8edba9e%20OR%20%2092c560d55ac0943022be38404fee8fd70da53cca33d7e340ea98712af389f780%20OR%20%20856d1f7cf037e031dda4accc3454d84115bc91be488b74817580e541be6abbad%20OR%20%202d1d9cabf564bc9c3a37c21cd98c7c045453dc583fab4479fe12d8e4e70f339a%20OR%20%20f6851790dc811b3a9acc425730ffeaab49c5cde4cb0a39cfcc659c4d29c908ad%20OR%20%2010931ae2c165d4786fdd9585c419a6b1d2dd07d96242d26d23daab14d684f4e0"
-	condition:
-		androguard.filter("android.app.action.DEVICE_ADMIN_ENABLED") and 
-		androguard.filter("android.intent.action.BOOT_COMPLETED") and 
-		androguard.filter("android.intent.action.QUICKBOOT_POWERON") and 
-		androguard.filter("android.provider.Telephony.SMS_RECEIVED") and 
-		androguard.permission(/android.permission.READ_PHONE_STATE/) and
-		androguard.permission(/android.permission.READ_SMS/) and
-		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/) and
-		androguard.permission(/android.permission.RECEIVE_SMS/) and
-		androguard.permission(/android.permission.SEND_SMS/) and
-		androguard.permission(/android.permission.USES_POLICY_FORCE_LOCK/)
-}
+
 rule newdress_b: official
 {
 	meta:
@@ -11007,8 +9241,9 @@ rule newdress_b: official
 	strings:
 		$a = "wun03_mrxhn_mvg"
 	condition:
-		$a 
+		$a
 }
+
 rule koodoushaaaaa: SuspiciousBanker_C
 {
 	meta:
@@ -11029,6 +9264,7 @@ rule koodoushaaaaa: SuspiciousBanker_C
 	condition:
 		2 of ($a*) and (3 of ($b*) or (2 of ($b*) and 2 of ($c*))) and $hexstr_targetSdkVersion and filesize < 180KB
 }
+
 rule koodousiaaaaa: SuspiciousPermission_D
 {
 	meta:
@@ -11060,7 +9296,7 @@ $a1 = "android.permission.SYSTEM_ALERT_WINDOW" wide
 		$exclude7 = "com.facebook.sdk." wide
 		$exclude8 = "GRANT_RUNTIME_PERMISSIONS" wide
 		$exclude9 = "appstore.battery" wide
-		$exclude10 = "com.google.android.c2dm.permission.RECEIVE" wide	
+		$exclude10 = "com.google.android.c2dm.permission.RECEIVE" wide
 		$exclude11 = "accountsdk.auth" wide
 		$exclude12 = "android.permission.WRITE_SECURE_SETTINGS" wide
 		$exclude13 = "android.permission.UPDATE_DEVICE_STATS" wide
@@ -11073,60 +9309,52 @@ $a1 = "android.permission.SYSTEM_ALERT_WINDOW" wide
 		$hexstr_targetSdkVersion and not (any of ($exclude*)) and filesize < 40KB and
 		(
 			(
-				all of ($a*) 
-				and 
+				all of ($a*)
+				and
 				(
 					(3 of ($b*)) or (2 of ($b*) and 2 of ($c*)) or (2 of ($c*) and (2 of ($d*) or 1 of ($e*)))
 				)
-			) 
+			)
 			or
 			($a2 and 3 of ($b*) and 2 of ($c*) and (2 of ($d*) or ( 1 of ($d*) and 1 of ($e*))))
-		)	
+		)
 }
-rule CCAvenueTracker_a
+
+rule CCAvenueTracker
 {
 	meta:
 		description = "All CCAvenue SDK Apps"
 	condition:
-		androguard.activity("com.ccavenue.indiasdk.PayOptionsActivity")		
+		androguard.activity("com.ccavenue.indiasdk.PayOptionsActivity")
 }
-rule koodousjaaaaa: official
-{
-	condition:
-		androguard.service("com.shunwang.service.CoreService")		
-}
-rule sdks_a
-{
-	condition:
-		androguard.app_name(/bank/)
-}
-rule AadhaareKYCTracker_a
+
+rule AadhaareKYCTracker
 {
 	meta:
 		description = "This rule detects potential Aadhaar eKYC apps"
 	strings:
 		$a = "Aadhaar"
 		$b = "eKYC"
-		$c = "eSign"		
+		$c = "eSign"
 	condition:
 		(($a) and ($b or $c)) and
 		androguard.permission(/android.permission.INTERNET/)
 }
-rule DigitalLockerTracker_a
+
+rule DigitalLockerTracker
 {
 	meta:
 		description = "This rule detects DigitalLocker SDK"
 	strings:
 		$a = "https://api.digitallocker.gov.in/"
 		$b = "https://api.digitallocker.gov.in/public/oauth2/1/token"
-		$c = "https://api.digitallocker.gov.in/public/oauth2/1/authorize"		
+		$c = "https://api.digitallocker.gov.in/public/oauth2/1/authorize"
 	condition:
 		($a or $b or $c) and
 		androguard.permission(/android.permission.INTERNET/)
 }
 
-
-rule bs_packer_a: packer
+rule bs_packer: packer
 {
 	meta:
 		description = "CrackProof packer"
@@ -11180,12 +9408,8 @@ rule bs_packer_a: packer
 	condition:
 		all of them
 }
-rule sec_a: v1
-{
-	condition:
-		androguard.package_name(/seC./) 
-}
-rule DigioESignSDKTrackerActivity_a
+
+rule DigioESignSDKTrackerActivity
 {
 	meta:
 		description = "All Digio eSign SDK Apps"
@@ -11195,7 +9419,9 @@ rule DigioESignSDKTrackerActivity_a
 		($a or
 		androguard.activity("com.digio.in.esign2sdk.DigioEsignActivity"))
 }
-rule eicar_substring_test_a {
+
+rule eicar_substring_test
+{
     meta:
         description = "Standard AV test, checking for an EICAR substring"
         author = "Austin Byers | Airbnb CSIRT"
@@ -11204,7 +9430,8 @@ rule eicar_substring_test_a {
     condition:
         all of them
 }
-rule AdwareAL_a
+
+rule AdwareAL
 {
 	meta:
 		description = "Android Adware"
@@ -11217,52 +9444,58 @@ rule AdwareAL_a
 	condition:
 		all of ($a_*)
 }
-rule icici_a
+
+rule icici
 {
 	meta:
 		description = "Rule to find fakebank"
 	condition:
 		not androguard.package_name(/com.csam.icici.bank.imobile/) and
-		androguard.app_name("icici") and not androguard.certificate.issuer(/O=ICICI BANK/)		
+		androguard.app_name("icici") and not androguard.certificate.issuer(/O=ICICI BANK/)
 }
-rule hdfc_a
+
+rule hdfc
 {
 	meta:
 		description = "Rule to find fakebank"
 	condition:
 		not androguard.package_name(/com.snapwork.hdfcbank/) and
-		androguard.app_name("hdfc") and not androguard.certificate.issuer(/O=Snapwork/)			
+		androguard.app_name("hdfc") and not androguard.certificate.issuer(/O=Snapwork/)
 }
-rule axis_a
+
+rule axis
 {
 	meta:
 		description = "Rule to find fakebank"
 	condition:
 		not androguard.package_name(/com.axis.mobile/) and
-		androguard.app_name("axis") and not androguard.certificate.issuer(/O=AXIS BANK/)			
+		androguard.app_name("axis") and not androguard.certificate.issuer(/O=AXIS BANK/)
 }
-rule skype_a: notofficial
+
+rule skype: notofficial
 {
 	meta:
 		description = "Skype not valit key"
 	condition:
 		androguard.package_name("com.skype.raider") and
 		not androguard.certificate.sha1("385567F1AEFB2647E8B42430C9AAF6259619C99C") and
-		not androguard.certificate.sha1("93D59489E99C8FBE54F75C90EA87A76E86937C9C") 
+		not androguard.certificate.sha1("93D59489E99C8FBE54F75C90EA87A76E86937C9C")
 }
-rule CreditVidyaTracker_a
+
+rule CreditVidyaTracker
 {
 	meta:
 		description = "This rule detects CreditVidya SDK"
 	strings:
 		$a = "https://api.creditvidya.com"
 		$b = "https://api.creditvidya.com/sdk/api/"
-		$c = "https://api.creditvidya.com/sdk/api/token/v3"		
+		$c = "https://api.creditvidya.com/sdk/api/token/v3"
 	condition:
 		($a or $b or $c) and
 		androguard.permission(/android.permission.INTERNET/)
 }
-rule secenh_a: packer
+
+rule secenh: packer
 {
   meta:
 	description = "Secenh"
@@ -11274,7 +9507,7 @@ rule secenh_a: packer
 	$b1 = "assets/respatcher.jar"
 	$b2 = "assets/res.zip"
   condition:
-	1 of ($a*) 
+	1 of ($a*)
 	and 1 of ($b*)
 }
 
@@ -11289,7 +9522,7 @@ rule marcher_v2_b
 		androguard.receiver(/\.p0[0-9]{2}[a-z]\b/)
 }
 
-rule storage_a
+rule storage
 {
 	meta:
 		description = "This rule detects READ_SOCIAL_STREAM"
@@ -11303,10 +9536,11 @@ rule koodouspaaaaa: official
 		description = "https://blog.zimperium.com/fake-whatsapp-real-malware-zlabs-discovered/"
 		sample = "1daa6ff47d451107b843be4b31da6e5546c00a164dc5cfbf995bac24fef3bc6d "
 	condition:
-		androguard.url(/systemofram\.com/) or 
+		androguard.url(/systemofram\.com/) or
 		cuckoo.network.dns_lookup(/systemofram\.com/)
 }
-rule smstrojan_a: smstrojan
+
+rule smstrojan: smstrojan
 {
 	meta:
 		description = "Android album-like malware, contains malicious apk."
@@ -11317,21 +9551,6 @@ rule smstrojan_a: smstrojan
 		$c = "ois.Android.xinxi.apk"
 	condition:
 		all of them
-}
-
-rule findbutton_a
-{
-	condition:
-		cuckoo.network.dns_lookup(/www.ub7o.com/) or
-		cuckoo.network.dns_lookup(/www.lemonmobi.com/) or
-		cuckoo.network.dns_lookup(/www.woomobi.com/)	or
-		cuckoo.network.dns_lookup(/new.havefunonyourphone.com/) or 
-		cuckoo.network.dns_lookup(/api.jsian.com/) or
-		cuckoo.network.dns_lookup(/igbli.com/) or
-		cuckoo.network.dns_lookup(/api.jesgoo.com/) or
-		cuckoo.network.dns_lookup(/api.moogos.com/) or
-		cuckoo.network.dns_lookup(/api.smallkoo.com/) or
-		cuckoo.network.dns_lookup(/cdn.jesgoo.com/)
 }
 
 rule koodousraaaaa: official
@@ -11347,23 +9566,25 @@ rule koodousraaaaa: official
 	condition:
 		$a and
 		$b and
-		$c and 
-		$d and 
+		$c and
+		$d and
 		$e and
 		androguard.activity(/MyAccessibilityServiceTmp/) and
 		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/) and
 		androguard.permission(/android.permission.READ_PHONE_STATE/)
 }
-rule Dresscode_a: official
+
+rule Dresscode: official
 {
 	meta:
 		description = "http://blog.checkpoint.com/2016/08/31/dresscode-android-malware-discovered-on-google-play/"
 		sample = "3bb858e07a1efeceb12d3224d0b192fc6060edc8f5125858ca78cdeee7b7adb9"
 	condition:
 		androguard.url(/inappertising\.org/) or
-		cuckoo.network.dns_lookup(/inappertising\.org/) 
+		cuckoo.network.dns_lookup(/inappertising\.org/)
 }
-rule ElGato_a: Ransom
+
+rule ElGato: Ransom
 {
 	meta:
 		description = "https://blogs.mcafee.com/mcafee-labs/cat-loving-mobile-ransomware-operates-control-panel/"
@@ -11373,13 +9594,7 @@ rule ElGato_a: Ransom
     condition:
        $text_string or $text_2
  }
-rule SeSeAOV_a: SexApp
-{
-	meta:
-		sample = "f93222a685f45487732e1692d6c1cbeb3748997c28ca5d61c587b21259791599"
-	condition:
-		cuckoo.network.dns_lookup(/h.\.tt-hongkong.com/)
-}
+
 rule koodoussaaaaa: official
 {
 	meta:
@@ -11392,13 +9607,15 @@ rule koodoussaaaaa: official
 		cuckoo.network.dns_lookup(/ixintui\.com/) or
 		cuckoo.network.dns_lookup(/wit-wifi\.com/)
 }
-rule ezeeworld_a
+
+rule ezeeworld
 {
 	meta:
 		description = "This rule detects application including Ezeeworld SDK"
 	condition:
 		androguard.receiver("com.ezeeworld.b4s.android.sdk.monitor.SystemEventReceiver")
 }
+
 rule MalignantFeatures_b: jcarneiro
 {
 	meta:
@@ -11416,7 +9633,8 @@ rule MalignantFeatures_b: jcarneiro
 		androguard.activity(/ServiceList_io.mobby.loader.android.SyncService/)	or
 		androguard.activity(/BroadcastReceiverList_io.mobby.loader.android.receiver.SDCardMountedReceiver/)
 }
-rule AndroidAdServer_a
+
+rule AndroidAdServer
 {
 	meta:
 		description = "Rule to catch APKs speaking to a noisy ad server"
@@ -11425,40 +9643,8 @@ rule AndroidAdServer_a
 		androguard.url("123.56.205.151") or
 		cuckoo.network.dns_lookup(/123\.56\.205\.151/)
 }
-rule mobby_a
-{
-	strings:
-		$a = "io/mobby/sdk/receiver"
-		$b = "io/mobby/sdk/activity"
-		$c = "mobby"
-	condition:
-		any of them
-}
-rule koodoustaaaaa: official
-{
-	meta:
-		author = "Sdesai"
-		sample = "df8b64f1e3843b50735d5996bd980981"
-	strings:
-		$hash="SHA1:dda09d19354d25833153d64077cd396c970bb1d4"
-		$url="AMStrings:https://www.Spy-datacenter.com/send_data.php"
-		$per_1="Permission:android.permission.RECEIVE_SMS"
-		$per_2="Permission:android.permission.RECORD_AUDIO"
-		$str_2="AMStrings:recording_phone"
-		$str_3="AMStrings:disable_call_recording"
-		$str_4="AMStrings:#takepic"
-		$str_5="AMStrings:#recordaudio"
-		$str_6="AMStrings:#lockphone"
-		$str_7="AMStrings:unlock_phone_pass"
-		$str_8="AMStrings:take_pic_front"
-		$str_9="android.intent.action.NEW_OUTGOING_CALL"
-		$str_10="AMStrings:content://call_log/calls"
-		$str_11="AMStrings:content://com.android.chrome.browser/history"
-		$str_13="AMStrings:hide_icon"
-	condition:
-		($hash and $url and $per_1 and $per_2) or (all of ($str_*))
-}
-rule TikTok_1_a: Malware
+
+rule TikTok_1: Malware
 {
 	meta:
 		description = "TikTok Malware"
@@ -11472,6 +9658,7 @@ rule TikTok_1_a: Malware
 		any of ($name_*) and
 		not androguard.certificate.sha1("00a584e375b5573c89e1f06f5cf60d0d65ddb632")
 }
+
 rule TikTok_1_b: Malware
 {
 	meta:
@@ -11486,6 +9673,7 @@ rule TikTok_1_b: Malware
 		any of ($name_*) and
 		not androguard.certificate.sha1("00a584e375b5573c89e1f06f5cf60d0d65ddb632")
 }
+
 rule koodousuaaaaa: official
 {
 	meta:
@@ -11503,7 +9691,8 @@ rule koodousuaaaaa: official
 	condition:
 		all of them
 }
-rule Joker_a
+
+rule Joker
 {
 	meta:
 		author = "Tom_Sara"
@@ -11513,15 +9702,18 @@ rule Joker_a
 	$required_2 = "getLine1Number"
 	$required_3 = "getDeviceId"
 condition:
-	all of ($required_*) and 		
+	all of ($required_*) and
 	androguard.activity("/com.google.android.gms.ads.AdActivity/")
 }
-rule android_joker_d {
+
+rule android_joker_d
+{
 meta:
 	description = "To Detect Joker Trojans"
 condition:
         androguard.activity("com.google.android.gms.ads.AdActivity")
 }
+
 rule koodousvaaaaa: official
 {
 	meta:
@@ -11548,6 +9740,7 @@ rule koodousvaaaaa: official
 	condition:
 		 all of them
 }
+
 rule koodousaa: BTC_ETH
 {
 	meta:
@@ -11557,9 +9750,10 @@ rule koodousaa: BTC_ETH
 		$b = "/^(1|3)[a-zA-Z0-9]{24,33}$/"
 		$c = "/^[^0OlI]{25,34}$/"
 	condition:
-		$a or ($b and $c)		
+		$a or ($b and $c)
 }
-rule UntrustedDevelopers_a
+
+rule UntrustedDevelopers
 {
 	meta:
 		description = "This rule detects applications by untrusted developers."
@@ -11567,15 +9761,17 @@ rule UntrustedDevelopers_a
 		androguard.certificate.sha1("A623DE0D0517731162C0D50CE439AFFCAA4B3A8B") and
 		androguard.certificate.sha1("166073937926629F3FFE054BE80850B7F4CEFFEB")
 }
-rule Minergate_a
+
+rule Minergate
 {
 	meta:
 		description = "This rule detects the Minergate string"
 	strings:
 		$a = "minergate.com"
 	condition:
-		$a 
+		$a
 }
+
 rule Banker_d: BlackRock
 {
 	meta:
@@ -11597,30 +9793,20 @@ rule Banker_d: BlackRock
 			androguard.permission(/android.permission.BIND_ACCESSIBILITY_SERVICE/)
 		)
 }
-rule ransomware_generic_a
-{
-	strings:
-		$notice_1 = "All your files are encrypted" nocase
-		$notice_2 = "Your phone is locked until paymenti" nocase
-		$notice_3 = "your files have been encrypted!" nocase
-		$notice_4 = "your Device has been locked" nocase
-		$notice_5 = "All information listed below successfully uploaded on the FBI Cyber Crime Depar" nocase
-		$notice_6 = "Your phone is locked , and all your personal data" nocase
-	condition:
-		1 of them	
-}
-rule BlackRock_a
+
+rule BlackRock
 {
 	meta:
 		description = "This rule detects the BlackRock malware"
 		sample = "81fda9ff99aec1b6f7b328652e330d304fb18ee74e0dbd0b759acb24e7523d8c"
 		src = "https://www.threatfabric.com/blogs/blackrock_the_trojan_that_wanted_to_get_them_all.html"
 	condition:
-		androguard.app_name("Google Update") and 
+		androguard.app_name("Google Update") and
 		androguard.receiver(/Smsmnd.MmsReceiver/i) and
 		androguard.receiver(/Admins/i) and
 		androguard.receiver(/AlarmBroadcastReceiver/i)
 }
+
 rule videogames_c
 {
     meta:
@@ -11628,6 +9814,7 @@ rule videogames_c
     condition:
         androguard.package_name(/videogame/)
 }
+
 rule PornSlocker_b
 {
 	meta:
@@ -11641,10 +9828,11 @@ strings:
       $ = "Wc1rLTQNhJtMbIiyNxmyw1jcNS8"
       $ = "YPcRkdktCfVzEA4Fd83WkmXnO3w"
       $ = "ZqjexisfZj0WmcuFhrJhh6jB2Gk"
-      $ = "pH7PIBTiJ94EaJWpZa1ITsUP1FI"	 
+      $ = "pH7PIBTiJ94EaJWpZa1ITsUP1FI"
 	condition:
 		1 of them
 }
+
 rule Trojan_g: trojans_ttp
 {
 	meta:
@@ -11662,14 +9850,15 @@ rule Trojan_g: trojans_ttp
 	condition:
       androguard.package_name("com.itau") and any of them
 }
-rule android_bankbot_a
+
+rule android_bankbot
 {
 	meta:
 		description = "This rule detects possible android bankbot like Cerberus or Anubis"
 	strings:
 		$a = "accessibilityservice"
 	condition:
-		$a and 
+		$a and
         androguard.permission(/android.permission.ACCESS_NETWORK_STATE/) and
         androguard.permission(/android.permission.SEND_SMS/) and
         androguard.permission(/android.permission.WAKE_LOCK/) and
@@ -11686,50 +9875,8 @@ rule android_bankbot_a
         androguard.permission(/android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS/) and
         androguard.permission(/android.permission.READ_CONTACTS/)
 }
-rule xmrigStrings_a
-{
-    strings:
-        $fee = "fee.xmrig.com" wide ascii
-        $nicehash = "nicehash.com" wide ascii
-        $minergate = "minergate.com" wide ascii
-        $stratum = "stratum+tcp://" wide ascii
-    condition:
-       $fee and
-       $nicehash and
-       $minergate and
-       $stratum 
-}
-rule test_c: official
-{
-	condition:
-		androguard.filter("android.intent.action.PHONE_STATE")
-}
-rule WireX_a
-{
-	strings:
-		$ = "g.axclick.store"
-		$ = "ybosrcqo.us"
-		$ = "u.axclick.store"
-    	$ = "p.axclick.store"
-	condition:
-		1 of them
-}
-rule KikDroid_a {
-	strings:
-		$s1 = "wss://arab-chat.site"
-		$s2 = "wss://chat-messenger.site"
-		$s3 = "wss://chat-world.site"
-		$s4 = "wss://free-apps.us"
-		$s5 = "wss://gserv.mobi"
-		$s6 = "wss://kikstore.net"
-		$s7 = "wss://network-lab.info"
-		$s8 = "wss://onlineclub.info"
-		$a1 = "/data/kik.android"
-		$a2 = "spydroid"
-	condition:
-		1 of ($s*) and 1 of ($a*)
-}
-rule dexprotector_old_a: packer
+
+rule dexprotector_old: packer
 {
   meta:
     description = "DexProtector"
@@ -11747,6 +9894,7 @@ rule dexprotector_old_a: packer
   condition:
     2 of ($encrptlib_*) and $encrptcustom
 }
+
 rule BankBot_c: banker
 {
 	meta:
@@ -11762,7 +9910,7 @@ rule BankBot_c: banker
 		2 of ($strings_*)
 }
 
-rule SmsFraudUsingUrls_a: smsfraud
+rule SmsFraudUsingUrls: smsfraud
 {
 	meta:
 		cluster_url = "https://koodous.com/apks?search=57392579046725034bb95dd1f60dc6de61b4ea8dc8a74c6567f389874248dd85%20OR%20365264012541ee0991afc7344e0f8c34e6a0166b76b7b3e82f2a2458262aca79%20OR%20c3d41e5b91c1c436fcaf3f3ccf053b17a6c9ff609d5b75dbbf162a3aaf211992%20OR%2087aa082a58590a3ed721c43ada4974d2257012748b25377815a8c57be5212be6%20OR%208fa10258025b49963793d9864ba344d426f2f952a7b082a9a0e6a4888ce55ba7%20OR%2034c4d8a7947c83c773af1bc682d1a389ef8dc25e3d8ac02b2ecb469949be3a74%20OR%2013eebcb6b37d40267fdcfc1b778c3cd57a663ccea736fd6256aaa69666b6819f%20OR%20db96bf5052a29fb6b44c270bfb94294ce90f05dbc5aba7fcab3729a0ca89245c%20OR%20396ec6d18430abe8949ddc39cf10d008e189be9b41fff598cfde73a67987da5e%20OR%209a69a20ae5128e5646ac84334a1a86cdb6cba95d93c6bba5e6e143fa5f6ad226%20OR%200b14afb604707f1348d3e6a3d949255033e233f1300a4346b37dda69edbddc3c%20OR%209f8a76bf08c49d2ea9984303210ad65e57d39504a3f6a032e6126039039d4689%20OR%203c9d52e75a37645a726bd5373f176767eab3c67a6e97f12650f81a6faa7d7598%20OR%20a7fb9d9317d2593da7b45af032e16729612378d9bdc124812348bc3fb720fd9a%20OR%203d314d5ba462fa1bfb1f940c9760fe925318e1ec3990190f238be44cf1bded8a%20OR%20f64609a98cc6e3f23b210bc1d87a2d1cd969b4a7561f2d18073c7804ca8e4b93%20OR%203a9e7545301c7dee2d3e90ab350710b30acf4aea30e221b88829761c91f24ca1%20OR%20cb7a6e6c60ae51e3eb38e3956b46de607769aa37e172a62c40579487cb36ebd2%20OR%20aa72e50e45767bf57f0edd6874fc79430dec6bd9314b50c3ba020748ed5c17c2%20OR%203eabcb500ca484091897365263e48add7904ad1e67956a09cffb94f60ba0389d"
@@ -11771,12 +9919,8 @@ rule SmsFraudUsingUrls_a: smsfraud
 		androguard.url(/tools\.zhxapp\.com/)
 		or androguard.url(/app\.tbjyz\.com\/tools\/zhxapp_hdus(\w+)?/)
 }
-rule Test7_a
-{
-	condition:
-		androguard.package_name("com.estrongs.android.pop")
-}
-rule kevdroid_a
+
+rule kevdroid
 {
 	meta:
 		description = "This rule detects suspicious KevDroid certificate"
@@ -11786,7 +9930,8 @@ rule kevdroid_a
 	condition:
 		androguard.certificate.sha1("A638D0C9CC18AC0E5D2EC83144EA237DFFA1FA2A")
 }
-rule svpeng_a
+
+rule svpeng
 {
 	meta:
 		description = "Trojan-Banker.AndroidOS.Svpeng"
@@ -11795,13 +9940,7 @@ rule svpeng_a
 		androguard.receiver("com.up.net.PoPoPo") or
 		androguard.receiver("com.up.net.PusyCat")
 }
-rule svpeng2_a
-{
-	strings:
-		$= "http://217.182.174.92/jack.zip"
-	condition:
-		all of them
-}
+
 rule koodousca: official
 {
 	meta:
@@ -11812,7 +9951,8 @@ rule koodousca: official
 	condition:
 		$a
 }
-rule Xafecopy_a
+
+rule Xafecopy
 {
 	meta:
 		author = "Ransombleed"
@@ -11828,33 +9968,7 @@ rule Xafecopy_a
 	condition:
 		1 of ($a*) or 2 of ($b*)
 }
-rule android_tempting_cedar_spyware_a
-{
-	meta:
-    	Author = "@X0RC1SM"
-        Date = "2018-03-06"
-        Reference = "https://blog.avast.com/avast-tracks-down-tempting-cedar-spyware"
-	strings:
-		$PK_HEADER = {50 4B 03 04}
-		$MANIFEST = "META-INF/MANIFEST.MF"
-		$DEX_FILE = "classes.dex"
-		$string = "rsdroid.crt"
-	condition:
-    	$PK_HEADER in (0..4) and $MANIFEST and $DEX_FILE and any of ($string*)
-}
 
-rule Banker_Acecard_b
-{
-meta:
-author = "https://twitter.com/SadFud75"
-more_information = "https://threats.kaspersky.com/en/threat/Trojan-Banker.AndroidOS.Acecard/"
-samples_sha1 = "ad9fff7fd019cf2a2684db650ea542fdeaaeaebb 53cca0a642d2f120dea289d4c7bd0d644a121252"
-strings:
-$str_1 = "Cardholder name"
-$str_2 = "instagram.php"
-condition:
-((androguard.package_name("starter.fl") and androguard.service("starter.CosmetiqFlServicesCallHeadlessSmsSendService")) or androguard.package_name("cosmetiq.fl") or all of ($str_*)) and androguard.permissions_number > 19
-}
 rule Fake_Flash_Player_b
 {
   meta:
@@ -11863,9 +9977,10 @@ rule Fake_Flash_Player_b
 		$string_1 = "pay"
    condition:
 	 $string_1 and
-       (androguard.package_name(/com\.adobe\.flash/i) or androguard.app_name(/Adobe Flash/i)) 
+       (androguard.package_name(/com\.adobe\.flash/i) or androguard.app_name(/Adobe Flash/i))
 }
-rule QR_drop_a
+
+rule QR_drop
 {
 	meta:
 		description = "This rule detects malicious samples hiding behind QR apps"
@@ -11875,7 +9990,8 @@ rule QR_drop_a
 		androguard.service(/android.support.graphics.base.BaseService/) and
 		androguard.receiver(/android.support.graphics.broadcast.RestartServiceBroadCast/)
 }
-rule reddrop2_a
+
+rule reddrop2
 {
 	meta:
 		description = "This rule detects malicious samples belonging to Reddrop campaign"
@@ -11887,99 +10003,6 @@ rule reddrop2_a
 		all of ($a_*)
 }
 
-rule appsix_a
-{
-    strings:
-		$a1 = "cvc_visa" 
-		$a2 = "controller.php"  
-		$a3 = "mastercard" 
-	condition:
-        androguard.package_name(/app.six/) and 
-		2 of ($a*)
-}
-
-rule weixin_a: fakeapp
-{
-	strings:
-		$decode_0 = "subindex"
-		$decode_1 = "domain"
-		$decode_2 = "system_jjss_limitCount"
-		$start_0 = "startUpDebugTimer"
-		$start_1 = "controlBizStart"
-		$url_0 = "/cbase/client/record1"
-		$log_0 = "DefaultUrlStart"
-		$log_1 = "DeviceBasicInfoStart"
-		$advert_0 = "advertlist"
-		$advert_1 = "AdvertBrowser"
-	condition:
-		all of ($decode_*) or
-		all of ($start_*) or
-		all of ($url_*) or
-		all of ($log_*) or
-		all of ($advert_*) or
-		cuckoo.network.dns_lookup(/www\.d3k9\.com/) or
-		cuckoo.network.dns_lookup(/112\.213\.127\.144/) or
-		cuckoo.network.dns_lookup(/www\.d7l9\.com/) or
-		cuckoo.network.dns_lookup(/112\.213\.127\.142/) or
-		cuckoo.network.dns_lookup(/www\.g5h9\.com/) or
-		cuckoo.network.dns_lookup(/112\.213\.127\.149/) or
-		cuckoo.network.dns_lookup(/www\.g7h9\.com/) or
-		cuckoo.network.dns_lookup(/112\.213\.127\.225/) or
-		cuckoo.network.dns_lookup(/www\.m4n6\.com/) or
-		cuckoo.network.dns_lookup(/112\.213\.127\.191/)
-}
-
-rule yundong_24xia_a: fakeapp
-{
-	strings:
-		$domain_0 = "yirenna.com"
-		$domain_1 = "24xia.com"
-		$domain_2 = "wapfit.com"
-		$pkgname_0 = "com.yundong.dex"
-		$pkgname_1 = "com.abc.demo"
-		$pkgname_2 = "com.yundong.plugin"
-		$pkgname_3 = "com.uc.addon."
-		$pkgname_4 = "com.jiahe.school"
-		$s1_0 = "UpdateDexService"
-		$s1_1 = "AliveService"
-		$s2_0 = "UpdatePluginService"
-		$s2_1 = "getUpdateUrl"
-		$s2_2 = "DEX_UPDATE_CHECK_FINISH"
-		$s3_0 = "updateAppBean"
-		$s3_1 = "DEX_DOWNLOAD_FINISHED"
-		$s3_2 = "dexVersion"
-		$s4_0 = "startUploadWifi"
-		$s4_1 = "uploadWifiBeanList"
-		$s5_0 = ".taskservice.UpdateDexService"
-		$s6_0 = "requestWifiTask"
-		$s6_1 = "getWifiKeyPassword"
-		$s7_0 = "task/taskList.do?"
-		$s7_1 = "TASK_URL"
-	condition:
-		any of ($domain_*) or
-		any of ($pkgname_*) or
-		all of ($s1_*) or
-		all of ($s2_*) or
-		all of ($s3_*) or
-		all of ($s4_*) or
-		all of ($s5_*) or
-		all of ($s6_*) or
-		all of ($s7_*) or
-		androguard.package_name("com.abc.demo") or
-		androguard.package_name("com.yundong.plugin") or
-		androguard.package_name(/com.uc.addon./) or
-		androguard.package_name("com.jiahe.school")
-}
-rule koodousda: skymobi
-{
-	meta:
-		source = "https://blog.malwarebytes.org/mobile-2/2015/06/complex-method-of-obfuscation-found-in-dropper-realshell/"
-	strings:
-		$a = "Java_com_skymobi_pay_common_util_LocalDataDecrpty_Decrypt"
-		$b = "Java_com_skymobi_pay_common_util_LocalDataDecrpty_Encrypt"
-	condition:
-		all of them
-}
 rule WireX_b
 {
 	meta:
@@ -11991,7 +10014,8 @@ rule WireX_b
    	condition:
     	1 of them
 }
-rule MMVideo_Camera_a: MMVideo
+
+rule MMVideo_Camera: MMVideo
 {
 	meta:
 		description = "This rule used to sort samples about 3457571382@qq.com"
@@ -12001,7 +10025,7 @@ rule MMVideo_Camera_a: MMVideo
 		cuckoo.network.dns_lookup(/33649\.com\.cn/)
 }
 
-rule MUK_Banks_Trojan_a
+rule MUK_Banks_Trojan
 {
 	meta:
 		description = "This rule detects Mazain banker"
@@ -12011,37 +10035,10 @@ rule MUK_Banks_Trojan_a
 		$ = "twitter.com"
 	condition:
 		1 of them
-		and androguard.package_name("com.acronic")	
+		and androguard.package_name("com.acronic")
 }
 
-rule Trojan_BankBot_7878_a {
-	strings:
-		$a0 = "twitter.com"
-		$a1 = ":7878"
-		$b0 = "Security protection"
-		$b1 = "admin"
-		$b2 = "WebServiceRobot"
-		$c0 = "b3betb4"
-		$c1 = "drenpngepgod235v"
-		$c2 = "fkmlcbvio4eboi45"
-		$c3 = "odsvr4i35b3"
-		$c4 = "ooifjceiu523v"
-		$c5 = "powv34b439"
-		$c10 = "botId"
-		$c11 = "bot_id"
-	    $d0 = "url_db5o45"
-	    $d1 = "url_dbnu56un4"
-	    $d2 = "url_debrm454"
-	    $d3 = "url_dnednr8643fg"
-	    $d4 = "url_dnjs456y3"
-	condition:
-		all of ($a*) 
-		and 2 of ($b*) 
-		and 2 of ($c*) 
-		and 1 of ($d*) 
-}
-
-rule MMVideo_Pay_1_a: MMVideo
+rule MMVideo_Pay_1: MMVideo
 {
 	meta:
 		description = "this is used to filter one of the MMVideo by its pay configuaration"
@@ -12066,7 +10063,8 @@ rule MMVideo_Pay_1_a: MMVideo
 	condition:
 		any of them
 }
-rule MMVideo_Cfg_a: MMVideo
+
+rule MMVideo_Cfg: MMVideo
 {
 	meta:
 		description = "This rule detects mmvideo by its online config info"
@@ -12094,21 +10092,11 @@ rule MMVideo_Cfg_a: MMVideo
 	condition:
 		all of ($url_*) or
 		all of ($price_*) or
-		all of ($pic_*) or 
+		all of ($pic_*) or
 		$channel
 }
 
-rule VT_Sonicspy_a: Spy
-{
-	meta:
-		detail = "https://blog.lookout.com/sonicspy-spyware-threat-technical-research"
-	strings:
-		$ = "dt7C1uP3c2al6l0ib"
-		$ = "not concteed"
-	condition:
-		all of them
-}
-rule DirtyGirl_a
+rule DirtyGirl
 {
 	meta:
 		description = "This rule detects dirtygirl samples"
@@ -12117,6 +10105,7 @@ rule DirtyGirl_a
 		androguard.service(/com\.door\.pay\.sdk\.sms\.SmsService/) or
 		androguard.url(/120\.26\.106\.206/)
 }
+
 rule PornSlocker_c
 {
 	meta:
@@ -12144,6 +10133,7 @@ strings:
 	condition:
 		2 of them
 }
+
 rule dxshield_c: packer
 {
   meta:
@@ -12155,6 +10145,7 @@ rule dxshield_c: packer
   condition:
     ($decryptlib and $res)
 }
+
 rule appguard_c: packer
 {
   meta:
@@ -12166,6 +10157,7 @@ rule appguard_c: packer
   condition:
     ($stub and $encrypted_dex)
 }
+
 rule secneo_c: packer
 {
   meta:
@@ -12178,6 +10170,7 @@ rule secneo_c: packer
   condition:
     any of ($encrypted_dex, $encryptlib2, $encryptlib1)
 }
+
 rule dexprotector_d: packer
 {
   meta:
@@ -12192,6 +10185,7 @@ rule dexprotector_d: packer
   condition:
     any of ($encrptlib, $encrptlib1, $encrptlib2, $encrptlib3) and $encrptcustom
 }
+
 rule apkprotect_b: packer
 {
   meta:
@@ -12203,6 +10197,7 @@ rule apkprotect_b: packer
   condition:
     ($key or $dir or $lib)
 }
+
 rule kirozx: packer
 {
   meta:
@@ -12213,6 +10208,7 @@ rule kirozx: packer
   condition:
     $kiro_lib and $sbox
 }
+
 rule qihoo360_d: packer
 {
   meta:
@@ -12222,6 +10218,7 @@ rule qihoo360_d: packer
   condition:
     $a and not kirozx
 }
+
 rule ijiami_d: packer
 {
   meta:
@@ -12233,6 +10230,7 @@ rule ijiami_d: packer
   condition:
     ($old_dat or $new_ajm or $ijm_lib)
 }
+
 rule medusah_c: packer
 {
   meta:
@@ -12243,6 +10241,7 @@ rule medusah_c: packer
   condition:
     $lib
 }
+
 rule medusah_d: packer
 {
   meta:
@@ -12253,7 +10252,8 @@ rule medusah_d: packer
   condition:
     $lib
 }
-rule medusah_appsolid_c: packer
+
+rule medusahppsolid_c: packer
 {
   meta:
     description = "Medusah (AppSolid)"
@@ -12263,6 +10263,7 @@ rule medusah_appsolid_c: packer
   condition:
     $encrypted_dex
 }
+
 rule kony_c: packer
 {
   meta:
@@ -12275,6 +10276,7 @@ rule kony_c: packer
   condition:
     $lib and $decrypt_keys and $encrypted_js
 }
+
 rule yidun_b: packer
 {
   meta:
@@ -12288,6 +10290,7 @@ rule yidun_b: packer
   condition:
     (#lib > 1) or ($anti_trick and $entry_point and $jni_func)
 }
+
 rule approov_c: packer
 {
   meta:
@@ -12299,6 +10302,7 @@ rule approov_c: packer
   condition:
     $lib and $sdk_config
 }
+
 rule pangxie_d: packer
 {
   meta:
@@ -12309,6 +10313,7 @@ rule pangxie_d: packer
   condition:
     $lib
 }
+
 rule baidu_d: packer
 {
   meta:
@@ -12319,6 +10324,7 @@ rule baidu_d: packer
   condition:
     ($lib or $encrypted)
 }
+
 rule alibaba_d: packer
 {
   meta:
@@ -12328,6 +10334,7 @@ rule alibaba_d: packer
   condition:
     $lib
 }
+
 rule tencent_b: packer
 {
   meta:
@@ -12340,6 +10347,7 @@ rule tencent_b: packer
   condition:
     ($classpath or $decryptor_lib or $zip_lib or $mix_dex)
 }
+
 rule nqshield_c: packer
 {
   meta:
@@ -12351,6 +10359,7 @@ rule nqshield_c: packer
   condition:
     any of ($lib, $lib_sec1, $lib_sec2)
 }
+
 rule app_fortify_c: packer
 {
   meta:
@@ -12360,6 +10369,7 @@ rule app_fortify_c: packer
   condition:
     $lib
 }
+
 rule liapp_b: packer
 {
   meta:
@@ -12370,6 +10380,7 @@ rule liapp_b: packer
   condition:
     any of ($dir, $lib)
 }
+
 rule bangcle_b: packer
 {
   meta:
@@ -12383,7 +10394,8 @@ rule bangcle_b: packer
   condition:
     any of ($main_lib, $second_lib, $container, $encrypted_jar, $encrypted_jar2)
 }
-rule CNProtect_dex_a: protector
+
+rule CNProtect_dex: protector
 {
   meta:
     description = "CNProtect (anti-disassemble)"
@@ -12395,7 +10407,8 @@ rule CNProtect_dex_a: protector
   condition:
     $code_segment
 }
-rule Android_Bankosy_nt_a
+
+rule Android_Bankosy_nt
 {
 meta:
 	description = "Try Android.Bankosy"
@@ -12408,9 +10421,10 @@ strings:
 	$string_4 = "#intercept_sms_stop"
 condition:
 	all of ($string_*) and
-	androguard.permission(/android.permission.SEND_SMS/) 
+	androguard.permission(/android.permission.SEND_SMS/)
 }
-rule Exploit_a
+
+rule Exploit
 {
 	meta:
 		description = "Detects some exploits"
@@ -12421,7 +10435,8 @@ rule Exploit_a
 	condition:
 		all of them
 }
-rule crisis_a
+
+rule crisis
 {
 	meta:
 		description = "Crisis pack / Hacking team"
@@ -12429,21 +10444,12 @@ rule crisis_a
 	strings:
         $a = "background_Tr6871623"
 	condition:
-		$a and 
-		androguard.permission(/android.permission.SEND_SMS/) and 
+		$a and
+		androguard.permission(/android.permission.SEND_SMS/) and
 		androguard.permission(/android.permission.PROCESS_OUTGOING_CALLS/) and
 		androguard.permission(/android.permission.RECORD_AUDIO/)
 }
-rule Leecher_A_a
-{
-    condition:
-        androguard.certificate.sha1("B24C060D41260C0C563FEAC28E6CA1874A14B192")
-}
-rule Service_a:Gogle
-{
-	condition:
-		androguard.service("com.module.yqural.gogle")
-}
+
 rule koodousfa: official
 {
 	meta:
@@ -12456,7 +10462,8 @@ rule koodousfa: official
 	condition:
 		all of them
 }
-rule Android_GMBot_Variant_a
+
+rule Android_GMBot_Variant
 {
 	meta:
 		author = "Jacob Soo Lead Re"
@@ -12469,7 +10476,8 @@ rule Android_GMBot_Variant_a
 		androguard.receiver(/\.MmsRcvr/i) and
 		androguard.receiver(/\.BootReceiver/i)
 }
-rule Raxir_a: ccm
+
+rule Raxir: ccm
 {
         meta:
         description = "This rule was produced by CreateYaraRule and CommonCode, it detects RAXIR string decription routine"
@@ -12480,19 +10488,7 @@ rule Raxir_a: ccm
     condition:
         all of them
 }
-rule spynote_a: RAT
-{
-	meta:
-		sample = "bd3269ec0d8e0fc2fbb8f01584a7f5de320a49dfb6a8cc60119ad00c7c0356a5"
-	condition:
-		androguard.package_name("com.spynote.software.stubspynote")
-}
-rule RuMMS_a {
-	strings:
-		$ = "5.45.78.20"
-	condition:
-		all of them
-}
+
 rule koodousga: official
 {
 	meta:
@@ -12506,9 +10502,10 @@ rule koodousga: official
 		filesize < 300KB and
 		$a and
 		$b and
-		$c		
+		$c
 }
-rule exaspy_a: OnlyParsersCode
+
+rule exaspy: OnlyParsersCode
 {
 	meta:
 		description = "This rule detects exaspy, its focused only on custom code to 'Parse' information from phone"
@@ -12642,41 +10639,7 @@ rule exaspy_a: OnlyParsersCode
 	condition:
 		all of them
 }
-rule Banker2_c {
-	strings:
-		$r1 = "SmsReceiver"
-		$r2 = "BootReceiver"
-		$r3 = "AdminReceiver"
-		$r4 = "AlarmReceiver"
-		$r5 = "ServiceDestroyReceiver"
-		$r6 = "AdminRightsReceiver"
-		$r7 = "MessageReceiver"
-		$s1 = "USSDService"
-		$s2 = "GPService"
-		$s3 = "FDService"
-		$s4 = "MainService"
-		$as1 = "AdminService"
-		$as2 = "AdminRightsService"
-	condition:
-	3 of ($r*) and all of ($s*) and 1 of ($as*)
-}
-rule Trojan_SMS_a:Banker {
-	strings:
-		$ = "Landroid/telephony/SmsManager"
-		$ = "szClassname"
-		$ = "szICCONSEND"
-		$ = "szModuleSmsStatus"
-		$ = "szModuleSmsStatusId"
-		$ = "szName"
-		$ = "szNomer"
-		$ = "szNum"
-		$ = "szOk"
-		$ = "szTel"
-		$ = "szText"
-		$ = "szpkgname"
-	condition:
-		all of them
-}
+
 rule koodousha: official
 {
 	meta:
@@ -12690,7 +10653,8 @@ rule koodousha: official
 	condition:
 		androguard.url("http://www.exaspy.com/a.apk") or androguard.url("http://api.andr0idservices.com") or all of them
 }
-rule demo2_a
+
+rule demo2
 {
 	meta:
 		description = "demo"
@@ -12700,8 +10664,9 @@ rule demo2_a
 		$c = "Madrid1"
 		$d = "Shield4J"
 	condition:
-		all of them		
+		all of them
 }
+
 rule koodousia: official
 {
 	meta:
@@ -12710,6 +10675,7 @@ rule koodousia: official
 	condition:
 		androguard.package_name(/com.cib.bankcib/)
 }
+
 rule locker_b: ccm
 {
 	meta:
@@ -12724,7 +10690,8 @@ rule locker_b: ccm
 	condition:
 		all of them
 }
-rule twittor_a: ccm
+
+rule twittor: ccm
 {
 	meta:
 		description = "This rule detects twitoor samples based on ccm"
@@ -12741,7 +10708,8 @@ rule twittor_a: ccm
 	condition:
 		all of them
 }
-rule adwareCh_a: ccm
+
+rule adwareCh: ccm
 {
 	meta:
 		description = "Test for chinease adware base on ccm"
@@ -12756,12 +10724,8 @@ rule adwareCh_a: ccm
 	condition:
 		all of them
 }
-rule koodousja: official
-{
-	condition:
-		androguard.certificate.sha1("74D37EED750DBA0D962B809A7A2F682C0FB0D4A5") 
-}
-rule shield4j_a: ccm
+
+rule shield4j: ccm
 {
 	meta:
 		description = "This rule detects shield4j obfuscator"
@@ -12783,9 +10747,10 @@ $S_6_22598 = { 22 01 ?? ?? 07 15 07 51 07 52 1a 03 ?? ?? 71 10 ?? ?? 03 00 0c 03
 $S_12_0742 = { 07 60 07 71 07 82 07 93 07 04 70 10 ?? ?? 04 00 07 04 07 15 5b 45 ?? ?? 07 04 07 ?? 5b 45 ?? ?? 07 04 07 ?? 5b 45 ?? ?? 0e 00 }
 $S_21_0766 = { 07 a0 07 b1 12 04 07 42 07 04 07 15 71 00 ?? ?? 00 00 0c 06 12 07 71 00 ?? ?? 00 00 0c 08 21 88 71 00 ?? ?? 00 00 0c 09 1f 09 ?? ?? 74 06 ?? ?? 04 00 0c 04 07 42 07 24 07 40 11 00 0d 04 07 43 28 fb }
 	condition:
-10 of them		
+10 of them
 }
-rule SmsFraudUsingURLsAndDNS_a: smsfraud
+
+rule SmsFraudUsingURLsAndDNS: smsfraud
 {
 	meta:
 		description = "This rule should match applications that send SMS"
@@ -12796,7 +10761,8 @@ rule SmsFraudUsingURLsAndDNS_a: smsfraud
 		or cuckoo.network.dns_lookup(/app\.tbjyz\.com/)
 		or cuckoo.network.dns_lookup(/tools\.zhxapp\.com/)
 }
-rule smsspy_a
+
+rule smsspy
 {
 	meta:
 		description = "This rule detects SMSSpy from Korea"
@@ -12816,7 +10782,8 @@ rule smsspy_a
 	condition:
 		all of them
 }
-rule khashayar_talebi_a
+
+rule khashayar_talebi
 {
 	meta:
 		description = "Possible Threats, Domains registered for khashayar.talebi@yahoo.com"
@@ -12837,7 +10804,8 @@ rule khashayar_talebi_a
 	condition:
 		1 of them
 }
-rule urls_a
+
+rule urls
 {
 	meta:
 		description = "Lukas Stefanko https://twitter.com/LukasStefanko/status/877842943142281216"
@@ -12850,7 +10818,8 @@ rule urls_a
 	condition:
 		1 of them
 }
-rule android_ransom_wannacry_a
+
+rule android_ransom_wannacry
 {
 	meta:
 		description = "This rule detects wannacry lockscreen display ransomware"
@@ -12862,7 +10831,8 @@ rule android_ransom_wannacry_a
 	condition:
 		all of ($a_*)
 }
-rule Xavier2_a: ccm
+
+rule Xavier2: ccm
 {
         meta:
         description = "This rule was produced by CreateYaraRule and CommonCode, it detects suspicious communications from Xavier"
@@ -12886,7 +10856,8 @@ rule Xavier2_a: ccm
     condition:
         10 of them
 }
-rule Want2Badmin_a
+
+rule Want2Badmin
 {
 	meta:
 		description = "Apps that want to be admins through intents"
@@ -12897,7 +10868,8 @@ rule Want2Badmin_a
 	condition:
 		$a or $b or $c
 }
-rule SUexec_a
+
+rule SUexec
 {
 	meta:
 		description = "Caution someone wants to execute a superuser command"
@@ -12905,9 +10877,11 @@ rule SUexec_a
 		$a = "\"su\", \"-c\""
 		$b ="su -c"
 	condition:
-		$a or $b		
+		$a or $b
 }
-rule SandroRAT_a{
+
+rule SandroRAT
+{
 	meta :
 		description = "rule for detected SandroRAT Samples"
 	strings:
@@ -12919,34 +10893,22 @@ rule SandroRAT_a{
 		$f = "SandroRat_CurrentSMS_Database"
 		$g = "SandroRat_Contacts_Database"
 	condition:
-		any of them or 
+		any of them or
 		androguard.receiver(/net.droidjack.server/i) or
 		androguard.package_name("net.droidjack.server")
 }
-rule XavierCampaign_a
+
+rule XavierCampaign
 {
 	meta:
 		description = "This rule detects samples from the Xavier campaign"
 		sample = "8a72124709dd0cd555f01effcbb42078"
 		reference = "http://blog.trendmicro.com/trendlabs-security-intelligence/analyzing-xavier-information-stealing-ad-library-android/"
 	condition:
-		androguard.service(/xavier.lib.message/) and 
+		androguard.service(/xavier.lib.message/) and
 		androguard.receiver(/xavier.lib.Xavier/)
 }
-rule smssender_FakeAPP_a
-{
-	condition:
-		androguard.certificate.sha1("405E03DF2194D1BC0DDBFF8057F634B5C40CC2BD") or 
-		androguard.package_name("test.app") or 
-		androguard.receiver("b93478b8cdba429894e2a63b70766f91.ads.Receiver")
-}
-rule SMSFraud_d
-{
-	condition:
-		androguard.certificate.sha1("003274316DF850853687A26FCA9569A916D226A0") or 
-		androguard.package_name("com.googleapi.cover") or 
-		androguard.package_name("ru.android.apps")
-}
+
 rule koodouska: official
 {
 	meta:
@@ -12960,18 +10922,6 @@ rule koodouska: official
 		not androguard.permission(/android.permission.BLUETOOTH_ADMIN/)
 }
 
-rule Downloader_b {
-	condition:
-		androguard.package_name("com.mopub") and
-		androguard.filter("android.intent.action.ACTION_SHUTDOWN") and
-		androguard.filter("android.net.wifi.supplicant.CONNECTION_CHANGE") and
-		androguard.filter("android.intent.action.QUICKBOOT_POWEROFF") and
-		androguard.filter("android.net.wifi.STATE_CHANGE") and
-		androguard.filter("android.intent.action.BOOT_COMPLETED") and
-		androguard.filter("android.net.conn.CONNECTIVITY_CHANGE") and
-		androguard.filter("android.net.wifi.WIFI_STATE_CHANGED") and
-		androguard.filter("android.intent.action.REBOOT")
-}
 rule Xavier_b: basic
 {
 	meta:
@@ -12982,18 +10932,8 @@ rule Xavier_b: basic
 		androguard.activity("xavier.lib.XavierActivity") and
 		androguard.service("xavier.lib.message.XavierMessageService")
 }
-rule sensual_woman_c: chinese
-{
-	condition:
-		androguard.package_name(/com.phone.gzlok.live/)
-		or androguard.package_name(/com.yongrun.app.sxmn/)
-		or androguard.package_name(/com.wnm.zycs/)
-		or androguard.package_name(/com.charile.chen/i)
-		or androguard.package_name(/com.sp.meise/i)
-		or androguard.package_name(/com.legame.wfxk.wjyg/)
-}
 
-rule Durak_a: MobiDash
+rule Durak: MobiDash
 {
 	meta:
 		description = "This rule detects cardgame durak, MobiDash malware"
@@ -13005,24 +10945,11 @@ rule Durak_a: MobiDash
 		androguard.app_name("durak") and
 		androguard.filter(/SCREEN_OFF/) and
 		androguard.filter(/USER_PRESENT/) and
-		androguard.certificate.sha1("b41d8296242c6395eee9e5aa7b2c626a208a7acce979bc37f6cb7ec5e777665a") and 
-		$a 	
+		androguard.certificate.sha1("b41d8296242c6395eee9e5aa7b2c626a208a7acce979bc37f6cb7ec5e777665a") and
+		$a
 }
-rule spywareSMS_a
-{
-	meta:
-		description = "This rule detects spyware send SMS"
-		sample = "ff8ccead81eca2154cf9e891e15f52c8a154ea3aba5e62498b11fb843135837f"
-		source = "http://pastebin.com/rLPux7ts"
-	strings:
-		$a = "sendMultipartTextMessage"
-		$b = "l68g66qypPs="
-		$c = "MY7WPp+JQGc="
-		$d = "com.android.install"
-	condition:
-		all of them
-}
-rule Bad_news_a: badnews
+
+rule Bad_news: badnews
 {
 	meta:
 		description = "This Yara rule detects things familiar to badnews"
@@ -13047,7 +10974,8 @@ rule Bad_news_a: badnews
 		$d and
 		$c)
 }
-rule privacy_and_adware_detection_a: privacy_and_adware
+
+rule privacynddware_detection: privacynddware
 {
 	meta:
 		description = "This rule detects adware and/or potential privacy violating elements of the mightyfrog app and/or other element in the fish.rezepte package "
@@ -13062,12 +10990,14 @@ rule privacy_and_adware_detection_a: privacy_and_adware
 		(androguard.activity(/LinkActivity/i) and
 		androguard.activity(/BannerActivity/i) and
 		androguard.activity(/InAppPushActivity/i))
-		or 
+		or
 		(androguard.permission(/android.permission.INTERNET/) and
 		androguard.permission(/android.permission.WRITE_EXTERNAL_STORAGE/))
 		)
 }
-rule trojan_b {
+
+rule trojan_b
+ {
 	meta:
 		description = "Yara rule to find trojan apps"
 		author = "Luc Schouten & Dylan macquine"
@@ -13078,7 +11008,9 @@ rule trojan_b {
 	condition:
 		(androguard.permission(/android.permission.READ_SMS/) and androguard.permission(/android.permission.RECEIVE_SMS/) and androguard.permission(/android.permission.WRITE_SMS/) and androguard.permission(/android.permission.SEND_SMS/) and $function1) and (androguard.permission(/android.permission.KILL_BACKGROUND_PROCESSES/) or androguard.permission(/android.permission.READ_PHONE_STATE/) or androguard.permission(/android.permission.GET_TASKS/)) and androguard.app_name(/battery/)
 }
-rule spyware_a {
+
+rule spyware
+ {
 	meta:
 		description = "This rule detects similar applications like the Save Me spyware application that can make phone calls"
 		sample = "Save Me"
@@ -13089,19 +11021,7 @@ rule spyware_a {
 	condition:
 	(androguard.service(/CHECKUPD/) and androguard.service(/GTSTSR/) and androguard.url("http://xxxxmarketing.com") and androguard.url("http://topemarketing.com/app.html") and $string1)
 }
-rule koodousna: official
-{
-	meta:
-		Author = "Rens en Frank"
-		description = "This rule detects Cajino"
-		reference = "http://kharon.gforge.inria.fr/dataset/malware_Cajino.html"
-	strings:
-		$a = "com.baidu.android.pushservice.action.MESSAGE"
-		$b = "com.baidu.android.pushservice.action.RECEIVE"
-		$c = "com.baidu.android.pushservice.action.notification.CLICK"
-	condition:
-		all of them
-}
+
 rule SimpLockerRansom
 {
 	meta:
@@ -13112,7 +11032,8 @@ rule SimpLockerRansom
 		androguard.package_name("org.simplelocker") and
 		androguard.package_name("org.torproject")
 }
-rule EwindTrojan_a
+
+rule EwindTrojan
 {
 	meta:
 		description = "This rule detects an Ewind Trojan"
@@ -13140,13 +11061,14 @@ rule koodousoa: official
 		androguard.certificate.sha1("6a96e534d7aae84b989859ac9c20c5adb5da2507") and
 		cuckoo.network.dns_lookup(/settings.crashlytics.com/)
 }
-rule find_SimpLocker_a
+
+rule find_SimpLocker
 {
 	meta:
 		authors = "Igor and Elize"
 		date = "13 November"
 		description = "This is a YARA rule to find SimpLocker"
-	strings: 
+	strings:
 		$a = "org/simplocker/MainService.java"
 		$b = "org/simplocker/MainService$4.java"
 		$c = "org/simplocker/TorSender.java"
@@ -13157,6 +11079,7 @@ rule find_SimpLocker_a
 	condition:
 		($a and $b and $c and $d and $e and $f and $g)
 }
+
 rule Android_Malware_b: iBanking
 {
 	meta:
@@ -13171,12 +11094,13 @@ rule Android_Malware_b: iBanking
 	condition:
 		($pk at 0 and 2 of ($file*) and ($string1 or $string2))
 }
-rule feckeny_a
+
+rule feckeny
 {
 	meta:
 		description = "This ruleset looks for feckeny's apps"
 	condition:
-		androguard.certificate.issuer(/feckeny/) 
+		androguard.certificate.issuer(/feckeny/)
 		or androguard.certificate.subject(/feckeny/)
 }
 
@@ -13190,6 +11114,7 @@ rule adw
 	condition:
 		$b and $c
 }
+
 rule facebookopt: banker
 {
 	meta:
@@ -13200,6 +11125,7 @@ rule facebookopt: banker
 		and androguard.permission(/android.permission.CALL_PHONE/)
 		and androguard.certificate.sha1("BF0DE1B54673F2092FDC5A75DA4FFC26F65E1602")
 }
+
 rule podec_fobus: smstrojan
 {
 	meta:
@@ -13211,7 +11137,8 @@ rule podec_fobus: smstrojan
 		and androguard.certificate.sha1("671FEA3319B82E5325AB19218188EC35CC2619E5")
 		and androguard.url("https://api.rollbar.com/api/1/items/")
 }
-rule virus_de_la_policia_a
+
+rule virus_de_la_policia
 {
 	meta:
 		description = "Virus de la policia"
@@ -13245,7 +11172,8 @@ rule rusSMSfraud
 	condition:
 		all of them
 }
-rule sending2smtp_a
+
+rule sending2smtp
 {
 	meta:
 		description = "Connects with remote chinese servers"
@@ -13255,7 +11183,8 @@ rule sending2smtp_a
 	condition:
 		$a and $b
 }
-rule smsBilling_a
+
+rule smsBilling
 {
 	meta:
 		description = "Sends SMS and connects to remote host."
@@ -13278,7 +11207,8 @@ rule smsBilling_a
 	condition:
 		any of them
 }
-rule droidap_a
+
+rule droidap
 {
 	meta:
 		description = "This rule detects DroidAp trojans"
@@ -13293,7 +11223,8 @@ rule droidap_a
 	condition:
 		all of them
 }
-rule droidap2_a
+
+rule droidap2
 {
 	meta:
 		description = "This rule detects DroidAp trojans"
@@ -13308,16 +11239,18 @@ rule droidap2_a
 	condition:
 		all of them
 }
-rule subscript_a
+
+rule subscript
 {
 	meta:
 		description = "Coonecting to one of those sites (Splitting ',') and getting the user into a subscription."
 	strings:
 		$a = "fapecalijobutaka.biz,ymokymakyfe.biz,kugoheba.biz"
 	condition:
-		$a 
+		$a
 }
-rule rusSMS_a
+
+rule rusSMS
 {
 	meta:
 		description = "Russian app, connects to remote server (http://googlesyst.com/) and gets the user to answer SMS (and a fake funds balance). Apparently, to unlock the app you have to send reiterate SMS."
@@ -13328,7 +11261,7 @@ rule rusSMS_a
 		$a and $b
 }
 
-rule smsPaym_a
+rule smsPaym
 {
 	meta:
 		description = "AppSMSPayLog.aspx always returning true when no payment was done. Getting user to pay through SMS"
@@ -13339,7 +11272,8 @@ rule smsPaym_a
 	condition:
 		$a or $b or $c
 }
-rule infoLeak_a
+
+rule infoLeak
 {
 	meta:
 		description = "Get user info (IP, IMEI, SMS...) sent to remote address. "
@@ -13350,6 +11284,7 @@ rule infoLeak_a
 	condition:
 		$a or $b or $c
 }
+
 rule unknown_b:agent
 {
 	meta:
@@ -13364,7 +11299,8 @@ rule unknown_b:agent
 	condition:
 		all of them
 }
-rule SMSRegister_a
+
+rule SMSRegister
 {
 	meta:
 		description = "This rule detects applications that register sms and send"
@@ -13388,7 +11324,7 @@ rule SMSRegister_a
 		($key and $ip) and (any of ($number*))
 }
 
-rule boibaSender_a
+rule boibaSender
 {
 	meta:
 		description = "Collects info and sends SMS to contacts. Usually faking Candy Crush"
@@ -13400,7 +11336,7 @@ rule boibaSender_a
 		$a or $b or $c
 }
 
-rule droidcollector_a
+rule droidcollector
 {
 	meta:
 		description = "Detect stealer tool (Sending collected data to ext server"
@@ -13411,14 +11347,15 @@ rule droidcollector_a
 		androguard.url(/85\.10\.199\.40/) or $a or $b
 }
 
-rule Umeng_a
+rule Umeng
 {
 	meta:
 		description = "Evidences of Umeng advertisement library / Adware "
 	condition:
 		cuckoo.network.dns_lookup(/alog.umeng.com/) or cuckoo.network.dns_lookup(/oc.umeng.com/)
 }
-rule taskhijack_a: official
+
+rule taskhijack: official
 {
 	meta:
 		date = "2015-09-21"
@@ -13431,6 +11368,7 @@ rule taskhijack_a: official
 	condition:
 		$file and ($a or $b)
 }
+
 rule basebridge_b
 {
 	meta:
@@ -13442,7 +11380,8 @@ rule basebridge_b
 	condition:
 		all of them
 }
-rule potential_malware_a
+
+rule potential_malware
 {
 	meta:
 		description = "Potential malware"
@@ -13465,7 +11404,8 @@ rule smsSender_b
 	condition:
 		androguard.package_name("com.software.application") and ($mfprice or $price2)
 }
-rule dropperMapin_a
+
+rule dropperMapin
 {
 	meta:
 		description = "This rule detects mapin dropper files"
@@ -13479,7 +11419,7 @@ rule dropperMapin_a
 		all of them
 }
 
-rule Lockerpin2_a: ransomware
+rule Lockerpin2: ransomware
 {
 	meta:
 		description = "Lockerpin"
@@ -13490,8 +11430,9 @@ rule Lockerpin2_a: ransomware
 		(androguard.permission(/android\.permission\.READ_CONTACTST/) or
 		androguard.permission(/android\.permission\.DISABLE_KEYGUARD/) or
 		androguard.permission(/android\.permission\.WRITE_SETTINGS/)) and
-		$alert_text	
+		$alert_text
 }
+
 rule lockerpin_b
 {
 	meta:
@@ -13508,7 +11449,8 @@ rule lockerpin_b
 	condition:
 		all of them
 }
-rule FakeGooglePlay_a
+
+rule FakeGooglePlay
 {
 	meta:
 		description = "Fake Google Play applications"
@@ -13516,7 +11458,8 @@ rule FakeGooglePlay_a
 		androguard.app_name(/google play/i) and
 		not androguard.certificate.sha1("38918A453D07199354F8B19AF05EC6562CED5788")
 }
-rule FakeWhatsApp_a
+
+rule FakeWhatsApp
 {
 	meta:
 		description = "Fake WhatsApp applications"
@@ -13524,18 +11467,8 @@ rule FakeWhatsApp_a
 		androguard.app_name("WhatsApp") and
 		not androguard.certificate.sha1("38A0F7D505FE18FEC64FBF343ECAAAF310DBD799")
 }
-rule ransomware_e: svpeng
-{
-	meta:
-		description = "Ransomware"
-		in_the_wild = true
-	strings:
-		$a =  {6e 64 20 79 6f 75 72 27 73 20 64 65 76 69 63 65 20 77 69 6c 6c 20 72 65 62 6f 6f 74 20 61 6e 64}
-		$b = "ADD_DEVICE_ADMI"
-	condition:
-		$a and $b
-}
-rule Locker_a: official
+
+rule Locker: official
 {
 	meta:
 		description = "This rule detects one variant of Locker malware"
@@ -13548,7 +11481,8 @@ rule Locker_a: official
 	condition:
 		$a and $b and $c and $d
 }
-rule locker_a_a
+
+rule locker
 {
 	meta:
 		description = "Locker.A"
@@ -13557,7 +11491,8 @@ rule locker_a_a
 	condition:
 		$a
 }
-rule simplelocker_a_a
+
+rule simplelocker
 {
 	meta:
 		description = "SimpleLocker.A"
@@ -13566,7 +11501,8 @@ rule simplelocker_a_a
 	condition:
 		$a
 }
-rule Android_Dogspectus_rswm_a
+
+rule Android_Dogspectus_rswm
 {
 	meta:
 		description = "Yara rule for Dogspectus intial ransomware apk"
@@ -13580,15 +11516,16 @@ rule Android_Dogspectus_rswm_a
 		(androguard.package_name("net.prospectus") and
 		 androguard.app_name("System update")) or
 		androguard.certificate.sha1("180ADFC5DE49C0D7F643BD896E9AAC4B8941E44E") or
-		(androguard.activity(/Loganberry/i) or 
-		androguard.activity("net.prospectus.pu") or 
-		androguard.activity("PanickedActivity")) or 
+		(androguard.activity(/Loganberry/i) or
+		androguard.activity("net.prospectus.pu") or
+		androguard.activity("PanickedActivity")) or
 		(androguard.permission(/android.permission.INTERNET/) and
-		 androguard.permission(/android.permission.WAKE_LOCK/) and 
+		 androguard.permission(/android.permission.WAKE_LOCK/) and
 		 androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/) and
 		 all of ($str_*))
 }
-rule spynote_pkg_a
+
+rule spynote_pkg
 {
 	meta:
 		description = "Yara rule for detection of different Spynote based on pkg"
@@ -13597,10 +11534,11 @@ rule spynote_pkg_a
 	strings:
 		$str_1 = "SERVER_IP" nocase
 	condition:
-		androguard.package_name("dell.scream.application") and 
+		androguard.package_name("dell.scream.application") and
 		$str_1
 }
-rule andr_sk_bank_a
+
+rule andr_sk_bank
 {
 	meta:
 		description = "Yara rule for Banking trojan targeting South Korean banks"
@@ -13617,20 +11555,22 @@ rule andr_sk_bank_a
 		androguard.package_name("com.qbjkyd.rhsxa") or
 		androguard.certificate.sha1("543382EDDAFC05B435F13BBE97037BB335C2948B") or
 		(androguard.permission(/android.permission.RECEIVE_SMS/) and
-		androguard.permission(/android.permission.INTERNET/) and 
-		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/) and 
+		androguard.permission(/android.permission.INTERNET/) and
+		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/) and
 		all of ($str_*))
 }
-rule simplerule_b
+
+rule SMS_Fraud
 {
 	meta:
 		description = "This rule detects a SMS Fraud malware"
 		sample = "4ff3169cd0dc6948143bd41cf3435f95990d74538913d8efd784816f92957b85"
 	condition:
-		androguard.package_name("com.hsgame.hmjsyxzz") or 
+		androguard.package_name("com.hsgame.hmjsyxzz") or
 		androguard.certificate.sha1("4ECEF2C529A2473C19211F562D7246CABD7DD21A")
 }
-rule Lockscreen_a: malware
+
+rule Lockscreen: malware
 {
 	meta:
 		description = "https://www.symantec.com/security_response/writeup.jsp?docid=2015-032409-0743-99&tabid=2"
@@ -13639,7 +11579,8 @@ rule Lockscreen_a: malware
 		androguard.permission(/android.permission.KILL_BACKGROUND_PROCESSES/) and
 		androguard.filter(/android.intent.action.BOOT_COMPLETED/)
 }
-rule Godless_malware_a
+
+rule Godless_malware
 {
 	meta:
 		description = "GODLESS Mobile Malware"
@@ -13660,7 +11601,7 @@ rule koodousqa: official
 		$a = "com.android.engine"
 		$b = "divideMessage"
 	condition:
-		$a and $b and 
+		$a and $b and
 		androguard.permission(/com\.android\.launcher\.permission\.UNINSTALL_SHORTCUT/) and
 		androguard.permission(/com\.android\.browser\.permission\.READ_HISTORY_BOOKMARKS/) and
 		androguard.permission(/com\.android\.browser\.permission\.WRITE_HISTORY_BOOKMARKS/) and
@@ -13696,7 +11637,8 @@ rule koodousqa: official
 		androguard.permission(/android\.permission\.DOWNLOAD_WITHOUT_NOTIFICATION/) and
 		androguard.permission(/android\.permission\.GET_ACCOUNTS/)
 }
-rule dialer_a
+
+rule dialer
 {
 	meta:
 		description = "Android Dialers"
@@ -13707,9 +11649,10 @@ rule dialer_a
 		$a and
 		androguard.activity(/com\.phonegap\.proy/) and
 		androguard.activity(/com\.keyes\.youtube/) and
-		androguard.activity(/com\.phonegap\.plugins/) and 
-		androguard.permission(/android\.permission\.CALL_PHONE/) 
+		androguard.activity(/com\.phonegap\.plugins/) and
+		androguard.permission(/android\.permission\.CALL_PHONE/)
 }
+
 rule koodousra: official
 {
 	meta:
@@ -13717,9 +11660,10 @@ rule koodousra: official
 		sample = "110f2bd7ff61cd386993c28977c19ac5c0b565baec57272c99c4cad6c4fc7dd4"
 	condition:
 		androguard.permission(/android.permission.SEND_SMS/) and
-		androguard.certificate.sha1("4B01DF162934A8E6CF0651CE4810C83BF715A55D") 
+		androguard.certificate.sha1("4B01DF162934A8E6CF0651CE4810C83BF715A55D")
 }
-rule volcman_dropper_a
+
+rule volcman_dropper
 {
 	meta:
 		description = "Dropper"
@@ -13746,6 +11690,7 @@ rule SlemBunk
 	condition:
 		all of them
 }
+
 rule QuadRooter
 {
 	meta:
@@ -13756,7 +11701,7 @@ rule QuadRooter
 		$a
 }
 
-rule BadNews_a: official
+rule BadNews: official
 {
 	meta:
 		description = "This rule detects BadNews malware, used to show all Yara rules potential"
@@ -13772,19 +11717,8 @@ rule BadNews_a: official
 		$b and
 		$c
 }
-rule cajino
-{
-	meta:
-		description = "This rule is made to identify Cajino or apps that are similar to Cajino"
-	strings:
-		$a = "com.baidu.android.pushservice.action.MESSAGE" nocase
-		$b = "com.baidu.android.pushservice.action.RECEIVE" nocase
-		$c = "com.baidu.android.pushservice.action.notification.CLICK" nocase
-		$d = "BaiduUtils" nocase
-	condition:
-		$a and $b and $c or $d
-}
-rule CHEAT_a
+
+rule CHEAT
 {
 	meta:
 		description = "YARA rule assignment 2 Itcs, cheat APK"
@@ -13793,9 +11727,10 @@ rule CHEAT_a
 		$b = "SEND_SMS"
 		$c = "dropper" nocase
 	condition:
-		$a and $b and $c 		
+		$a and $b and $c
 }
-rule Maliciousapk_a: Maliciousstrings
+
+rule Maliciousapk: Maliciousstrings
 {
 	meta:Authors = "M.Q. Romeijn & M. De Rooij"
 		description = "This rule applies to malware from type DroidKungFu. We check for the package name, to check whether a fake google package is present. We focus on a couple of strings that look suspicious or relate to malicious activities. We also look if the exploit -the rage against the cage- is present. This string being present in the code is suspicious."
@@ -13810,12 +11745,13 @@ rule Maliciousapk_a: Maliciousstrings
 		(androguard.package_name("com.allen.mp-1")
 		or androguard.package_name("com.google.ssearch"))
 		and (
-		$a 
-		or $b 
-		or $c 
+		$a
+		or $b
+		or $c
 		or ($d and $e))
 }
-rule Potential_Cajino_Variant_a
+
+rule Potential_Cajino_Variant
 {
     meta:
         description = "Malware that could potentially belong to Cajino family"
@@ -13825,10 +11761,10 @@ rule Potential_Cajino_Variant_a
         $a = "ca.ji.no.method2"
         $b = "ca/ji/no/method3/MainActivity.java"
     condition:
-        $a or $b 
+        $a or $b
 }
 
-rule Tojan_a: SMS
+rule Tojan: SMS
 {
 	meta:
 		Authors = "M.Q. Romeijn & M. De Rooij"
@@ -13837,20 +11773,21 @@ rule Tojan_a: SMS
 	strings:
 		$a = "http://www.pv.com/pvns/"
 	condition:
-		(androguard.package_name("18042_Video_Player.apk") 
+		(androguard.package_name("18042_Video_Player.apk")
 		or androguard.app_name("HD Video Player"))
 		and
-		(androguard.receiver(/excite.dolphin.strategy.bot.sms.ComposeSmsActivity/) 
-		or androguard.receiver(/excite.dolphin.strategy.bot.sms.MmsReceiver/)) 
+		(androguard.receiver(/excite.dolphin.strategy.bot.sms.ComposeSmsActivity/)
+		or androguard.receiver(/excite.dolphin.strategy.bot.sms.MmsReceiver/))
 		and
-		(androguard.permission(/android.permission.RECEIVE_SMS/) 
+		(androguard.permission(/android.permission.RECEIVE_SMS/)
 		or androguard.permission(/android.permission.WRITE_SMS/)
 		or androguard.permission(/android.permission.READ_SMS/)
-		or androguard.permission(/android.permission.SEND_SMS/)) 
-		and 
-		$a		
+		or androguard.permission(/android.permission.SEND_SMS/))
+		and
+		$a
 }
-rule Potential_BankBot_a
+
+rule Potential_BankBot
 {
     meta:
         description = "Potential BankBot"
@@ -13865,59 +11802,20 @@ rule Potential_BankBot_a
     condition:
         $a or $b or $c or $d or $e
 }
-rule BadNewsAPK_a
+
+rule BadNewsAPK
 {
     meta:
         description = "A rule to detect the malicious BadNews APK"
     strings:
-        $a= "fillPostDate.java" 
+        $a= "fillPostDate.java"
         $b= "onStartCommand.java"
         $c= "startUpdater.java"
         $d= "sendRequest.java"
     condition:
         $a and $b and $c and $d
 }
-rule Cajino_c
-{
-    meta:
-        Description = "This is a basic YARA rule "
-        Sample = "f5abe3a486de57ce82dcc89e1a63376a"
-    strings:
-		$a = "http://ad.flurry.com/getAndroidApp.do"
-        $b = "http://ad.flurry.com/getCanvas.do"
-        $c = "http://d371dlrbpeyd2.cloudfront.net/upgrade/"
-        $d = "http://data.flurry.com/aap.do"
-        $e = "http://github.com/droidfu/schema"
-        $f = "http://lp.mobsqueeze.com/"
-        $g = "http://moba.rsigma.com/Localytics/Upload/%s"
-        $h = "http://sigma.sgadtracker.com/Event/Put/"
-        $i = "http://www.androiddoctor.com/help"
-        $j = "https://bugsense.appspot.com/api/errors"
-        $k = "https://chart.googleapis.com/chart?cht=p3&chs=250x300&chd=t:"
-        $l = "https://data.flurry.com/aap.do"
-        $m = "https://market.android.com/details?id="
-        $n = "https://ws.tapjoyads.com/"
-        $o = "https://ws.tapjoyads.com/connect?"
-        $p = "https://ws.tapjoyads.com/offer_completed?"
-        $q = "https://ws.tapjoyads.com/set_publisher_user_id?"
-        $r = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8246419"
-    condition:
-        $a and $b and $c or all of them
-}
-rule Cajino_d
-{
-    meta:
-        Description = "This is a basic YARA rule for a CEO fraud with Caijno"
-        Sample = "B3814CA9E42681B32DAFE4A52E5BDA7A"
-    strings:
-        $a = "method3/MainActivity.java"
-        $b = "method3/BaiduUtils.java"
-        $c = "getIt.java"
-        $d = "getLocation.java"
-        $e = "method2/BaiduUtils.java"
-    condition:
-        $a and $b and $c or all of them
-}
+
 rule adware_g
 {
 	meta:
@@ -13926,6 +11824,7 @@ rule adware_g
 		androguard.url("1downloadss0ftware.xyz") or cuckoo.network.dns_lookup(/1downloadss0ftware\.xyz/)
 		or androguard.url("checkandgo.info") or cuckoo.network.dns_lookup(/checkandgo\.info/)
 }
+
 rule SimpLocker_b
 {
 	meta:
@@ -13942,11 +11841,12 @@ rule SimpLocker_b
 		androguard.permission(/android.permission.READ_EXTERNAL_STORAGE/) and
 		androguard.permission(/android.permission.WRITE_EXTERNAL_STORAGE/)
 }
-rule basic_spyware_a
+
+rule basic_spyware
 {
 	meta:
 		description = "This very basic rule aims to detect spyware"
-	strings: 
+	strings:
 		$a = "http://ec2-54-197-38-201.compute-1.amazonaws.com:22222?model="
 	condition:
 		$a or
@@ -13960,6 +11860,7 @@ rule basic_spyware_a
 		androguard.permission(/android.permission.READ_SMS/) and
 		androguard.permission(/android.permission.SEND_SMS/)
 }
+
 rule Cajino_e
 {
 	meta:
@@ -13975,7 +11876,8 @@ rule Cajino_e
 		$record and
 		$sms
 }
-rule antiWipeLocker_a
+
+rule antiWipeLocker
 {
 	meta:
 		description = "Rule against the antiWipeLocker malware"
@@ -13989,24 +11891,8 @@ rule antiWipeLocker_a
 	condition:
 		$preDeletion or ($hideApp and ($doubleCheck0 or $doubleCheck1 or $doubleCheck2 or $doubleCheck3))
 }
-rule Cajino_f: official
-{
-	meta:
-		Author = "Teun de Mast"
-		Studentnumber = "2656566"
-		Description = "A rule to detect Cajino (remote controlled spyware)"
-		Reference = "http://kharon.gforge.inria.fr/dataset/malware_Cajino.html"
-	strings:
-		$a = "com.baidu.android.pushservice.action.MESSAGE"
-		$b = "com.baidu.android.pushservice.action.RECEIVE"
-		$c = "com.baidu.android.pushservice.action.notification.CLICK"
-		$d = "업데이트"
-		$e = "새버전으로 업데이트 합니다 "
-		$f = "application/vnd.android.package-archive"
-	condition:
-		$a and $b and $c and $d and $e and $f
-}
-rule ScamCampaign_ModifiedPaymentGateway_a
+
+rule ScamCampaign_ModifiedPaymentGateway
 {
 	meta:
 		description = "This campaign spreads fake applications like undresser camera, modifies the payment gateway using javascript in webview to change the payment amount"
@@ -14020,10 +11906,10 @@ rule ScamCampaign_ModifiedPaymentGateway_a
 		($SuperCamera_1 and $SuperCamera_2) or
 		($PocketTV_1 and $PocketTV_2) or
 		androguard.activity("md552a6ea15d8d57b628a7925702f10e901.Cameraaa") or
-		androguard.activity("md5d8359e76a35968359354b626b6df299b.listchanels")		
+		androguard.activity("md5d8359e76a35968359354b626b6df299b.listchanels")
 }
 
-rule edwin_a: malware
+rule edwin: malware
 {
 	meta:
 		description = "edwin adware"
@@ -14034,7 +11920,8 @@ rule edwin_a: malware
 		androguard.activity(/delete.off/i)) and
 		androguard.certificate.sha1("405E03DF2194D1BC0DDBFF8057F634B5C40CC2BD")
 }
-rule RootedCheck_a
+
+rule RootedCheck
 {
 	meta:
 		description = "This rule detects applications checking for/or requiring root access."
@@ -14055,7 +11942,8 @@ rule RootedCheck_a
 	condition:
 		all of them
 }
-rule cordova_a
+
+rule cordova
 {
 	meta:
 		description = "This rule detects Cordova Apps"
@@ -14065,7 +11953,8 @@ rule cordova_a
 	condition:
 		$a or $b
 }
-rule Marcher_new_a
+
+rule Marcher_new
 {
 	meta:
 		description = "This rule detects new Marcher variant with device admin notification screen"
@@ -14075,7 +11964,8 @@ rule Marcher_new_a
 	condition:
 		$a
 }
-rule bazdidyabScamCampaign_a
+
+rule bazdidyabScamCampaign
 {
 	meta:
 		description = "A sample from Scam and Mass Advertisement campaign spreading their scamware over telegram, making money by scamming users and adding them to mass advertisement channels in Telegram"
@@ -14083,6 +11973,7 @@ rule bazdidyabScamCampaign_a
 	condition:
 		androguard.url(/^https?:\/\/([\w\d]+\.)?bazdidyabtelgram\.com\/?.*$/)
 }
+
 rule OmniRAT: RAT
 {
 	meta:
@@ -14119,7 +12010,8 @@ rule ransomware_f
 		androguard.package_name("com.cyanogenmod.eleven"))
 		and $a
 }
-rule Malicious_iFrame_a
+
+rule Malicious_iFrame
 {
 	meta:
 		description = "This rule detectes apps with hidden malicious iframe"
@@ -14142,7 +12034,8 @@ rule AirPush_b
    	condition:
     	1 of them
 }
-rule Developers_with_known_malicious_apps_b
+
+rule Developers_with_known_maliciouspps_b
 {
 	meta:
 		description = "This rule lists app from developers with a history of malicious apps"
@@ -14159,26 +12052,9 @@ rule Developers_with_known_malicious_apps_b
 		($b and androguard.certificate.sha1("79981C39859BFAC4CDF3998E7BE26148B8D94197")) or
 		($c and androguard.certificate.sha1("CA763A4F5650A5B685EF07FF31587FA090F005DD")) or
 		($d and androguard.certificate.sha1("4CC79D06E0FE6B0E35E5B4C0CB4F5A61EEE4E2B8")) or
-		($e and androguard.certificate.sha1("69CE857378306A329D1DCC83A118BC1711ABA352")) 
+		($e and androguard.certificate.sha1("69CE857378306A329D1DCC83A118BC1711ABA352"))
 }
 
-rule Trojan_h: BankBot
-{
-	meta:
-        description = "Trojan targeting Banks with Overlays"
-		source = "https://securify.nl/blog/SFY20170401/banking_malware_in_google_play_targeting_many_new_apps.html"
-	strings:
-		$c2_1 = "/private/tuk_tuk.php" nocase
-		$c2_2 = "/private/add_log.php" nocase
-		$c2_3 = "/private/set_data.php" nocase
-		$c2_4 = "activity_inj" nocase
-	condition:
-		2 of ($c2_*)
-		and (
-			androguard.permission(/android.permission.RECEIVE_SMS/) 
-			or androguard.permission(/android.permission.READ_SMS/)
-		)
-}
 rule Trojan_2_c: BankBot
 {
 	meta:
@@ -14200,8 +12076,7 @@ rule Trojan_2_c: BankBot
 		and	androguard.permission(/android.permission.RECEIVE_SMS/)
 }
 
-
-rule marcher_a
+rule marcher
 {
 	meta:
 		description = "This rule detects Sicherheits-App Banker Trojans, also known as Marcher"
@@ -14211,20 +12086,23 @@ rule marcher_a
 		androguard.app_name(/.*Sicherheits[- ]App$/) and
 		androguard.filter("android.app.action.DEVICE_ADMIN_ENABLED")
 }
-rule AirPaySDKActivity_a
+
+rule AirPaySDKActivity
 {
 	meta:
 		description = "All AirPay SDK Apps"
 	condition:
 		androguard.activity("com.airpay.airpaysdk_simplifiedotp.AirpayActivity")
 }
-rule PayNimoActivity_a
+
+rule PayNimoActivity
 {
 	meta:
 		description = "All PayNimo SDK Apps"
 	condition:
 		androguard.activity("com.paynimo.android.payment.PaymentActivity")
 }
+
 rule mobstspy
 {
 	meta:
@@ -14235,7 +12113,8 @@ rule mobstspy
 	condition:
 		$a
 }
-rule ZaakPayTracker_a
+
+rule ZaakPayTracker
 {
 	meta:
 		description = "This rule detects ZaakPay gateway powered apps"
@@ -14244,16 +12123,18 @@ rule ZaakPayTracker_a
 		$b = "https://api.zaakpay.com/"
 	condition:
 		($a or $b) and
-		androguard.permission(/android.permission.INTERNET/)		
+		androguard.permission(/android.permission.INTERNET/)
 }
-rule MasterPassQRActivityTracker_a
+
+rule MasterPassQRActivityTracker
 {
 	meta:
 		description = "All Masterpass QR Scan Apps"
 	condition:
 		androguard.activity("com.masterpassqrscan.MasterPassQrCodeCaptureActivity")
 }
-rule FingPayActivity_a
+
+rule FingPayActivity
 {
 	meta:
 		description = "All FingPay SDK Apps"
@@ -14263,53 +12144,60 @@ rule FingPayActivity_a
 		($a) or
 		androguard.activity("com.tapits.fingpay.FingerPrintScreen")
 }
-rule KhoslaSDKTrackerActivity_a
+
+rule KhoslaSDKTrackerActivity
 {
         meta:
              description = "All Khosla SDK Apps"
         condition:
              androguard.activity("com.khoslalabs.aadhaarbridge.AadhaarBridge")
 }
-rule AxisMerchantSDKActivity_a
+
+rule AxisMerchantSDKActivity
 {
 	meta:
 		description = "All Axis Merchant SDK Apps"
 	condition:
 		androguard.activity("com.axis.axismerchantsdk.activity.PayActivity")
 }
-rule aadhaar_vid_generators_a
+
+rule aadhaar_vid_generators
 {
 	meta:
 		description = "This rule detects Aadhaar VID Generation in apps"
 	strings:
 		$a = "https://resident.uidai.gov.in/web/resident/vidgeneration"
-		$b = "https://resident.uidai.gov.in/vidgeneration"		
+		$b = "https://resident.uidai.gov.in/vidgeneration"
 	condition:
 		($a or $b) and
-		androguard.permission(/android.permission.INTERNET/)		
+		androguard.permission(/android.permission.INTERNET/)
 }
-rule JDPaySDKTrackerActivity_a
+
+rule JDPaySDKTrackerActivity
 {
 	meta:
 		description = "All JDPay SDK Apps"
 	condition:
 		androguard.activity("com.justdialpayui.PaymentsActivity")
 }
-rule BenowSDKTrackerActivity_a
+
+rule BenowSDKTrackerActivity
 {
 	meta:
 		description = "All Benow SDK Apps"
 	condition:
 		androguard.activity("com.benow.paymentsdk.activities.WebViewActivity")
 }
-rule NSDLESignSDKTrackerActivity_a
+
+rule NSDLESignSDKTrackerActivity
 {
 	meta:
 		description = "All NSDL eSign SDK Apps"
 	condition:
 		androguard.activity("com.nsdl.egov.esignaar.NsdlEsignActivity")
 }
-rule SignDeskESignSDKTrackerActivity_a
+
+rule SignDeskESignSDKTrackerActivity
 {
 	meta:
 		description = "All SignDesk eSign SDK Apps"
@@ -14317,7 +12205,7 @@ rule SignDeskESignSDKTrackerActivity_a
 		androguard.activity("in.signdesk.esignsdk.esign.eSign")
 }
 
-rule Gen_AIDE_a
+rule Gen_AIDE
 {
 	meta:
 		description = "Rule to detect malware variant (ex:Jisut)"
@@ -14335,6 +12223,7 @@ rule Gen_AIDE_a
 		 androguard.receiver("com.cute.pin.Pin") or
 		 androguard.receiver("com.sunglab.bigbanghd.Service")
 }
+
 rule Marcher_b: more obfuscated versions
 {
 	meta:
@@ -14351,7 +12240,8 @@ rule Marcher_b: more obfuscated versions
 		and androguard.permission(/android.permission.GET_TASKS/)
 		and androguard.filter(/.*DEVICE_ADMIN_ENABLED.*/)
 }
-rule Marcher2_a: more obfuscated versions
+
+rule Marcher2: more obfuscated versions
 {
 	meta:
 		description = "This rule detects more obfuscated versions of marcher - 2017-06-08"
@@ -14368,6 +12258,7 @@ rule Marcher2_a: more obfuscated versions
 		and androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/)
 		and androguard.filter(/.*DEVICE_ADMIN_ENABLED.*/)
 }
+
 rule Banker_f: Cosmetiq Targeting German Banks
 {
 	meta:
@@ -14391,10 +12282,11 @@ rule Banker_f: Cosmetiq Targeting German Banks
 		$com7 = "gp_password_master"
 	condition:
 		all of ($c2*)
-		and 1 of ($target*) 
-		and 2 of ($com*) 
+		and 1 of ($target*)
+		and 2 of ($com*)
 		and androguard.permission(/android.permission.RECEIVE_SMS/)
 }
+
 rule Slempo_b: targeting installed Apps
 {
 	meta:
@@ -14410,7 +12302,8 @@ rule Slempo_b: targeting installed Apps
 		and $installedAppsMethod
 		and androguard.permission(/android.permission.RECEIVE_SMS/)
 }
-rule Slempo_2_a: targeting MastercardData
+
+rule Slempo_2: targeting MastercardData
 {
     meta:
     	description = "Banker 'Slempo' targeting installed Apps with Overlay"
@@ -14425,7 +12318,8 @@ rule Slempo_2_a: targeting MastercardData
 		and $overlay
 		and androguard.permission(/android.permission.RECEIVE_SMS/)
 }
-rule AceCard_a: Overlay Trojan
+
+rule AceCard: Overlay Trojan
 {
 	meta:
 		description = "AceCard Trojan / Overlay-Attacks"
@@ -14443,6 +12337,7 @@ rule AceCard_a: Overlay Trojan
 		androguard.permission(/android.permission.GET_TASKS/) and
 		androguard.filter(/.*DEVICE_ADMIN_ENABLED.*/)
 }
+
 rule Marcher_c: Targeting German Banks
 {
 	meta:
@@ -14455,38 +12350,40 @@ rule Marcher_c: Targeting German Banks
 		$target5 = ".dkbpushtan" nocase
 		$configC2 = "%API_URL%%PARAM%" nocase
 	condition:
-		1 of ($target*) 
-		and $configC2 
+		1 of ($target*)
+		and $configC2
 		and androguard.permission(/android.permission.RECEIVE_SMS/)
 }
-rule Dropper_a: OmniRAT Dropper
+
+rule Dropper: OmniRAT Dropper
 {
 	meta:
         description = "Dropper for OmniRAT"
 	condition:
-		androguard.permission(/android.permission.WRITE_EXTERNAL_STORAGE/) 
+		androguard.permission(/android.permission.WRITE_EXTERNAL_STORAGE/)
 		and androguard.activity(/net.filsh.youtubeconverter.MainActivity/)
 }
 
-rule Android_Switcher_a
+rule Android_Switcher
 {
 	meta:
 		description = "This rule detects Android wifi Switcher variants"
 		sample = "d3aee0e8fa264a33f77bdd59d95759de8f6d4ed6790726e191e39bcfd7b5e150"
 		source = "https://securelist.com/blog/mobile/76969/switcher-android-joins-the-attack-the-router-club/"
 	strings:
-		$str_1 = "javascript:scrollTo"		
+		$str_1 = "javascript:scrollTo"
 		$str_5 = "javascript:document.getElementById('dns1')"
 		$str_6 = "admin:"
 		$dns_2 = "101.200.147.153"
 		$dns_3 = "112.33.13.11"
 		$dns_4 = "120.76.249.59"
 	condition:
-		androguard.certificate.sha1("2421686AE7D976D19AB72DA1BDE273C537D2D4F9") or 
+		androguard.certificate.sha1("2421686AE7D976D19AB72DA1BDE273C537D2D4F9") or
 		(androguard.permission(/android.permission.INTERNET/) and
-		androguard.permission(/android.permission.ACCESS_WIFI_STATE/) and 
+		androguard.permission(/android.permission.ACCESS_WIFI_STATE/) and
 		($dns_2 or $dns_3 or $dns_4) and all of ($str_*))
 }
+
 rule waef: official
 {
 	meta:
@@ -14497,7 +12394,8 @@ rule waef: official
 	condition:
 		$a
 }
-rule ExaSpySimple_a
+
+rule ExaSpySimple
 {
 	meta:
 		description = "https://www.skycure.com/blog/exaspy-commodity-android-spyware-targeting-high-level-executives/"
@@ -14507,6 +12405,7 @@ rule ExaSpySimple_a
 	condition:
 		$a
 }
+
 rule xafe: official
 {
 	meta:
@@ -14515,11 +12414,11 @@ rule xafe: official
 	strings:
 		$str_1 = "cnlybnq.qrk" // encrypted string "payload.dex"
 	condition:
-		$str_1 and 
-		androguard.receiver(/\.AppBoot$/)		
+		$str_1 and
+		androguard.receiver(/\.AppBoot$/)
 }
 
-rule Android_pinkLocker_a
+rule Android_pinkLocker
 {
 	meta:
 		description = "Yara detection for Android Locker app named Pink Club"
@@ -14529,26 +12428,28 @@ rule Android_pinkLocker_a
 		$str_1 = "arnrsiec sisani"
 		$str_2 = "rhguecisoijng ts"
 		$str_3 = "assets/data.db"
-		$str_4 = "res/xml/device_admin_sample.xmlPK" 
+		$str_4 = "res/xml/device_admin_sample.xmlPK"
 	condition:
-		androguard.url(/lineout\.pw/) or 
+		androguard.url(/lineout\.pw/) or
 		androguard.certificate.sha1("D88B53449F6CAC93E65CA5E224A5EAD3E990921E") or
 		androguard.permission(/android.permission.INTERNET/) and
 		androguard.permission(/android.permission.DISABLE_KEYGUARD/) and
 		all of ($str_*)
 }
-rule backdoor_a
+
+rule backdoor
 {
 	meta:
 		description = "This rule detects samples with a backdoor"
 		sample = "0c3bc51952c71e5bb05c35346005da3baa098faf3911b9b45c3487844de9f539"
 	condition:
-		androguard.url("http://sys.wksnkys7.com") 
-		or androguard.url("http://sys.hdyfhpoi.com") 
-		or androguard.url("http://sys.syllyq1n.com") 
+		androguard.url("http://sys.wksnkys7.com")
+		or androguard.url("http://sys.hdyfhpoi.com")
+		or androguard.url("http://sys.syllyq1n.com")
 		or androguard.url("http://sys.aedxdrcb.com")
 		or androguard.url("http://sys.aedxdrcb.com")
 }
+
 rule Android_Dendroid_b
 {
 	meta:
@@ -14561,6 +12462,7 @@ rule Android_Dendroid_b
 		androguard.activity(/com.connect.Dendroid/i)) and
         androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/i)
 }
+
 rule pokemongo_b: fake
 {
 	meta:
@@ -14569,7 +12471,8 @@ rule pokemongo_b: fake
 		(androguard.package_name("com.nianticlabs.pokemongo") or androguard.app_name("Pokemon GO")) and not
 		androguard.certificate.sha1("321187995BC7CDC2B5FC91B11A96E2BAA8602C62")
 }
-rule Android_Banker_Sberbank_a
+
+rule Android_Banker_Sberbank
 {
 	meta:
 		author = "Jacob Soo Lead Re"
@@ -14577,11 +12480,12 @@ rule Android_Banker_Sberbank_a
 		description = "This rule try to detects Android Banker Sberbank"
 		source = "https://www.zscaler.com/blogs/research/android-banker-malware-goes-social"
 	condition:
-		androguard.service(/MasterInterceptor/i) and 
-		androguard.receiver(/MasterBoot/i) and 
+		androguard.service(/MasterInterceptor/i) and
+		androguard.receiver(/MasterBoot/i) and
 		androguard.filter(/ACTION_POWER_DISCONNECTED/i)
 }
-rule BaDoink_a: official
+
+rule BaDoink: official
 {
 	meta:
 		description = "Virus de la Policia - android"
@@ -14593,8 +12497,9 @@ rule BaDoink_a: official
 	condition:
 		androguard.app_name("BaDoink") or
 		$type_a_1 or
-		all of ($type_b*) 
+		all of ($type_b*)
 }
+
 rule AirPush_c: AirPush
 {
 	meta:
@@ -14621,13 +12526,8 @@ rule yaff: official
 	condition:
 		$a and $b and androguard.permission(/android.permission.SEND_SMS/)
 }
-rule chineseSMSSender_a
-{
-	condition:
-		androguard.package_name("com.android.phonemanager") and
-		androguard.permission(/android.permission.SEND_SMS/)
-}
-rule sologame_a: fakeapps
+
+rule sologame: fakeapps
 {
 	meta:
 		description = "This rule detetcs fake apps"
@@ -14637,7 +12537,8 @@ rule sologame_a: fakeapps
 	condition:
 		$ic and cuckoo.network.dns_lookup(/aff.mclick.mobi/)
 }
-rule mobidash_a: advertising
+
+rule mobidash: advertising
 {
 	meta:
 		description = "This rule detects MobiDash advertising"
@@ -14648,6 +12549,7 @@ rule mobidash_a: advertising
 	condition:
 		($a or $b) and androguard.activity(/mobi.dash.*/)
 }
+
 rule adware_h: ads
 {
 	meta:
@@ -14661,7 +12563,8 @@ rule adware_h: ads
 	condition:
 		all of ($string_*)
 }
-rule fake_apps_a
+
+rule fakepps
 {
 	meta:
 		description = "Fake Apps"
@@ -14671,35 +12574,8 @@ rule fake_apps_a
 	condition:
 		$a or $b
 }
-rule dropper_f:realshell {
-	meta:
-		source = "https://blog.malwarebytes.org/mobile-2/2015/06/complex-method-of-obfuscation-found-in-dropper-realshell/"
-	strings:
-		$b = "Decrypt.malloc.memset.free.pluginSMS_encrypt.Java_com_skymobi_pay_common_util_LocalDataDecrpty_Encrypt.strcpy"
-	condition:
-		$b
-}
-rule chineseporn5_a: SMSSend
-{
-	condition:
-		androguard.package_name("com.shenqi.video.ycef.svcr") or 
-		androguard.package_name("dxas.ixa.xvcekbxy") or
-		androguard.package_name("com.video.ui") or 
-		androguard.package_name("com.qq.navideo") or
-		androguard.package_name("com.android.sxye.wwwl") or
-		androguard.certificate.issuer(/llfovtfttfldddcffffhhh/)
-}
-rule test_d: adware
-{
-    condition:
-		androguard.app_name(/{d0 a3 d1 81 d1 82 d0 b0 d0 bd d0 be d0 b2 d0 ba d0 b0}/) or androguard.package_name(/com\.tujtr\.rtbrr/)
-}
-rule fake_market_b
-{
-	condition:
-		androguard.package_name("com.minitorrent.kimill") 
-}
-rule moscow_fake_a: banker
+
+rule moscow_fake: banker
 {
 	meta:
 		description = "Moskow Droid Development"
@@ -14714,25 +12590,16 @@ rule moscow_fake_a: banker
 	condition:
 		all of ($string_*)
 }
-rule chineseporn4_a: SMSSend
-{
-	condition:
-		androguard.activity(/com\.shenqi\.video\.Welcome/) or
-		androguard.package_name("org.mygson.videoa.zw")
-}
-rule londatiga_a
-{
-	condition:
-		androguard.certificate.sha1("ECE521E38C5E9CBEA53503EAEF1A6DDD204583FA")
-}
-rule Installer_a: banker
+
+rule Installer: banker
 {
 	meta:
 		description = "Applications with Installer as an application name"
 	condition:
 		androguard.package_name("Jk7H.PwcD")
 }
-rule FinSpy_a
+
+rule FinSpy
 {
 	meta:
 		description = "FinSpy"
@@ -14742,44 +12609,16 @@ rule FinSpy_a
 	condition:
 		$a
 }
-rule ransomware_g: svpeng
+
+rule MetaMaskClipper
 {
-	meta:
-		description = "Ransomware"
-		in_the_wild = true
-	strings:
-		$a =  {6e 64 20 79 6f 75 72 27 73 20 64 65 76 69 63 65 20 77 69 6c 6c 20 72 65 62 6f 6f 74 20 61 6e 64}
-		$b = "ADD_DEVICE_ADMI"
-	condition:
-		$a and $b
-}
-rule chinese_porn_a: SMSSend
-{
-	condition:
-		androguard.package_name("com.tzi.shy") or
-		androguard.package_name("com.shenqi.video.nfkw.neim") or
-		androguard.package_name("com.tos.plabe")
-}
-rule minecraft_a
-{
-	condition:
-		( androguard.app_name("Minecraft: Pocket Edition") or 
-			androguard.app_name("Minecraft - Pocket Edition") )
-		and not androguard.package_name("com.mojang.minecraftpe")
-}
-rule hostingmy_a
-{
-	condition:
-		androguard.certificate.issuer(/hostingmy0@gmail.com/)
-}
-rule MetaMaskClipper_a {
 	meta:
 		description = "Detects association with the clipper used in the MetaMask impersonating trojan"
 	strings:
 		$ethAddress = "0xfbbb2EF692B5101f16d3632f836461904C761965"
-		$btcAddress = "17M66AG2uQ5YZLFEMKGpzbzh4F1EsFWkmA"	
+		$btcAddress = "17M66AG2uQ5YZLFEMKGpzbzh4F1EsFWkmA"
 		$methodName = "onPrimaryClipChanged"
-		$setterName = "setPrimaryClip"		
+		$setterName = "setPrimaryClip"
 	condition:
 		$ethAddress and
 		$btcAddress and
@@ -14791,7 +12630,8 @@ rule MetaMaskClipper_a {
 		androguard.url(/api\.telegram\.org/)) or
 		androguard.certificate.sha1("14F52769440E01A4CEF3991FB081637CD10BDBB3")
 }
-rule covid19ransom_a
+
+rule covid19ransom
 {
 	meta:
 		description = "This rule detects the Covid19 APK with Ransomware"
@@ -14803,7 +12643,8 @@ rule covid19ransom_a
 		cuckoo.network.http_request(/https:\/\/qmjy6\.bemobtracks\.com\/go\/4286a004-62c6-43fb-a614-d90b58f133e5/)
 		)
 }
-rule ijoysoft_a
+
+rule ijoysoft
 {
 	meta:
 		description = "Detect ijoysoft ad library"
@@ -14815,24 +12656,8 @@ rule ijoysoft_a
 	condition:
 		$name or any of ($a*)
 }
-rule Trojan_i: BankBot
-{
-	meta:
-        description = "Trojan targeting Banks with Overlays"
-		source = "https://securify.nl/blog/SFY20170401/banking_malware_in_google_play_targeting_many_new_apps.html"
-	strings:
-		$c2_1 = "/private/tuk_tuk.php" nocase
-		$c2_2 = "/private/add_log.php" nocase
-		$c2_3 = "/private/set_data.php" nocase
-		$c2_4 = "activity_inj" nocase
-	condition:
-		2 of ($c2_*)
-		and (
-			androguard.permission(/android.permission.RECEIVE_SMS/) 
-			or androguard.permission(/android.permission.READ_SMS/)
-		)
-}
-rule ElfEqual_MobileOffers_a
+
+rule ElfEqual_MobileOffers
 {
 	meta:
 		description = "A 'MobileOffers' app"
@@ -14845,9 +12670,10 @@ rule ElfEqual_MobileOffers_a
 		$ = "x1"
 		$ = { 7f 45 4c 46 3d }
 	condition:
-		all of them	
+		all of them
 }
-rule Obfuscapk_LibEncryption_a
+
+rule Obfuscapk_LibEncryption
 {
   meta:
     description = "Obfuscapk - LibEncryption plugin"
@@ -14860,7 +12686,8 @@ rule Obfuscapk_LibEncryption_a
   condition:
     any of them
 }
-rule APK_PK336_CL2_1R_a
+
+rule APK_PK336_CL2_1R
 {
 	meta:
 		description = "2 classes, 1 generated R class and all those strings... Has payload 100% guaranteed"
@@ -14881,7 +12708,8 @@ rule APK_PK336_CL2_1R_a
 	condition:
 		all of them
 }
-rule legu_a: packer
+
+rule legu: packer
 {
     meta:
 		description = "test rule to identify Legu Packer"
@@ -14893,7 +12721,8 @@ rule legu_a: packer
 	condition:
 		$b and ($a or $c or $d)
 }
-rule redrabbit_a: ShadowVoice
+
+rule redrabbit: ShadowVoice
 {
 	meta:
 		description = "This rule detects the voicephishing app targeted for Korean"
@@ -14901,7 +12730,8 @@ rule redrabbit_a: ShadowVoice
 		androguard.package_name("com.red.rabbit") and
 		androguard.permission(/android.permission.PROCESS_OUTGOING_CALL/)
 }
-rule redrainbow_a: ShadowVoice
+
+rule redrainbow: ShadowVoice
 {
 	meta:
 		description = "This rule detects the voicephishing app targeted for Korean"
@@ -14909,6 +12739,7 @@ rule redrainbow_a: ShadowVoice
 		androguard.package_name("com.red.rainbow") and
 		androguard.permission(/android.permission.PROCESS_OUTGOING_CALL/)
 }
+
 rule APT_hmza
 {
 	meta:
@@ -14921,124 +12752,14 @@ rule APT_hmza
 		date = "25-December-2018"
 	condition:
 		(androguard.service(/NetService/i)
-		and androguard.receiver(/hmzaSurvival/i) 
-		and androguard.receiver(/SystemUpteen/i)) or 
+		and androguard.receiver(/hmzaSurvival/i)
+		and androguard.receiver(/SystemUpteen/i)) or
 		(androguard.service(/NtSrvice/i)
-		and androguard.receiver(/hzaSrvval/i) 
+		and androguard.receiver(/hzaSrvval/i)
 		and androguard.receiver(/SystmUptn/i))
 }
-rule Chrome_a: fake
-{
-	condition:
-		(
-		androguard.app_name(/^Chr[o0]me$/i) or
-		androguard.package_name(/com.chrome/) or
-		androguard.package_name(/com.android.chrome/)
-		) and not (
-		androguard.certificate.sha1("38918A453D07199354F8B19AF05EC6562CED5788") or
-		androguard.certificate.sha1("D3CC1758A154EB7DD9FFBE5295016733C9682161")
-		)
-}
-rule Discord_a: fake
-{
-	condition:
-		(
-		androguard.app_name(/^D[il1]sc[o0]rd$/i) or
-		androguard.package_name(/com.discord/)
-		) and not (
-		androguard.certificate.sha1("B07FC6AECCD21FCBD40543C85112CAFE099BA56F")
-		)
-}
-rule Facebook_a: fake
-{
-	condition:
-		(
-		androguard.app_name(/^Faceb[o0][o0]k$/i) or
-		androguard.package_name(/com.facebook/)
-		) and not (
-		androguard.certificate.sha1("8A3C4B262D721ACD49A4BF97D5213199C86FA2B9") or
-		androguard.certificate.sha1("7BA7EFE97151AFEB57103266B1200D85A805D7D6")
-		)
-}
-rule Facebook_Lite_a: fake
-{
-	condition:
-		(
-		androguard.app_name(/^Faceb[o0][o0]k[ ]?L[il1]te$/i) or
-		androguard.app_name(/^L[il1]te$/i) or
-		androguard.package_name(/com.facebook.lite/)
-		) and not (
-		androguard.certificate.sha1("8A3C4B262D721ACD49A4BF97D5213199C86FA2B9")
-		)
-}
-rule Google_Apps_a: fake
-{
-	condition:
-		(
-		androguard.package_name(/com.google/) or
-		androguard.package_name(/com.android.google/)
-		) and not (
-		androguard.certificate.sha1("38918A453D07199354F8B19AF05EC6562CED5788") or
-		androguard.certificate.sha1("24BB24C05E47E0AEFA68A58A766179D9B613A600") or
-		androguard.certificate.sha1("0980A12BE993528C19107BC21AD811478C63CEFC") or
-		androguard.certificate.sha1("203997BC46B8792DC9747ABD230569071F9A0439") or
-		androguard.certificate.sha1("1F387CB25E0069EFCA490ADE28C060E09D37DD45") or
-		androguard.certificate.sha1("9FA50D00B0F4BDAA5D8F371BEA982FB598B7E697") or
-		androguard.certificate.sha1("EE3E2B5D95365C5A1CCC2D8DFE48D94EB33B3EBE") or
-		androguard.certificate.sha1("26710BDB08F6463B1F5842E2775169E31DD07301")
-		)
-}
-rule Instagram_a: fake
-{
-	condition:
-		(
-		androguard.app_name(/^[Il1]nstagram$/i) or
-		androguard.package_name(/com.instagram/)
-		) and not (
-		androguard.certificate.sha1("C56FB7D591BA6704DF047FD98F535372FEA00211")
-		)
-}
-rule Telegram_a: fake
-{
-	condition:
-	(
-	androguard.app_name(/^Telegram$/i) or
-	androguard.package_name(/org.telegram.messenger/)
-	) and not (
-	androguard.certificate.sha1("9723E5838612E9C7C08CA2C6573B6026D7A51F8F")
-	)
-}
-rule Twitter_a: fake
-{
-	condition:
-	(
-	androguard.app_name(/^Tw[il1]tter$/i) or
-	androguard.package_name(/com.twitter/)
-	) and not (
-	androguard.certificate.sha1("40F3166BB567D3144BCA7DA466BB948B782270EA")
-	)
-}
-rule WhatsApp_b: fake
-{
-	condition:
-		(
-		androguard.app_name(/^What[']?s[ ]?App$/i) or
-		androguard.package_name(/com.whatsapp/)
-		) and not (
-		androguard.certificate.sha1("38A0F7D505FE18FEC64FBF343ECAAAF310DBD799")
-		)
-}
-rule BeiTaPlugin_a
-{
-	strings:
-		$a1 = "assets/beita.renc"
-		$a2 = "assets/icon-icomoon-gemini.renc"
-		$a3 = "assets/icon-icomoon-robin.renc"
-		$b = "Yaxiang Robin High"   // Decryption key
-	condition:
-		any of them// and
-}
-rule CopyCat_a: adware
+
+rule CopyCat: adware
 {
 	meta:
 		description = "Detects domains used by the CopyCat adware"
@@ -15058,7 +12779,8 @@ rule CopyCat_a: adware
 		androguard.url(/.tracksummer.com/i)
 		)
 }
-rule reddit_adware_a
+
+rule redditdware
 {
 	meta:
 		description = "Reddit adware"
@@ -15070,7 +12792,8 @@ rule reddit_adware_a
 	condition:
 		all of ($a_*)
 }
-rule apkeasy_tool_a: repack
+
+rule apkeasy_tool: repack
 {
 	meta:
 		description = "apkeasy tool deafaulr sert for compiling source code"
@@ -15079,6 +12802,7 @@ condition:
 		androguard.certificate.sha1("0C2440C055C753A8F0493B4E602D3EA0096B1023") or
 		androguard.certificate.sha1("485900563D272C46AE118605A47419AC09CA8C11")
 		}
+
 rule potential_miners_by_strings_b: miner
 {
 	meta:
@@ -15996,7 +13720,7 @@ rule potential_miners_by_strings_b: miner
         $api024 = "Lcom/minergate/miner/services/MinerService"
         $api025 = "startMiner"
 	condition:
-	androguard.permission(/android.permission.INTERNET/) and 
+	androguard.permission(/android.permission.INTERNET/) and
 	(
         androguard.url(/my.electroneum.com/i) or cuckoo.network.dns_lookup(/my.electroneum.com/i) or
         androguard.url(/api.electroneum.com/i) or cuckoo.network.dns_lookup(/api.electroneum.com/i) or
@@ -16728,11 +14452,12 @@ rule potential_miners_by_strings_b: miner
         androguard.url(/3d0cb547.space/i) or cuckoo.network.dns_lookup(/3d0cb547.space/i) or
         (any of ($id*)) or
         (any of ($link*)) or
-        (any of ($js*)) or 
+        (any of ($js*)) or
         (any of ($lib*)) or
         (any of ($api*)) or
         (false))
 }
+
 rule zaas: official
 {
 	meta:
@@ -16740,16 +14465,7 @@ rule zaas: official
 	condition:
 		androguard.url(/cafebazaar\.ir/)
 }
-rule Downloader_c
-{
-    strings:
-        $a = "res/mipmap-xxhdpi-v4/ic_launcher_antivirus.pngPK"
-		$b = "file:///android_asset"
-		$c = "market://"
-		$d = "MKKSL/x}^<"
-    condition:
-        all of them
-		}
+
 rule avdobfuscator_b: obfuscator
 {
   meta:
@@ -16770,6 +14486,7 @@ rule avdobfuscator_b: obfuscator
   condition:
     any of them
 }
+
 rule promon_b: packer
 {
   meta:
@@ -16788,7 +14505,8 @@ rule promon_b: packer
     ($a and $b and $c and $d) and
     2 of ($s*)
 }
-rule WoscSpy_a
+
+rule WoscSpy
 {
   meta:
     description = "Rule for the detection of a Spyware by 'Wosc Development'"
@@ -16806,7 +14524,8 @@ rule WoscSpy_a
 	androguard.package_name(/\*.wosc.\*/) or
 	$mainactivity
   }
-rule Android_MazarBOT_a
+
+rule Android_MazarBOT
 {
 	meta:
 		description = "Rule to detect different variants of MazarBOT"
@@ -16827,27 +14546,29 @@ rule Android_MazarBOT_a
 	condition:
 		4 of them
 }
-rule package_name_a
+
+rule package_name
 {
-	meta: 
+	meta:
 		author = "https://twitter.com/roskyfrosky"
 		description = "This rule detects all banker apps with specific package_names"
 	condition:
-		androguard.package_name("com.note.donote") or 
-		androguard.package_name("cosmetiq.fl") or 
+		androguard.package_name("com.note.donote") or
+		androguard.package_name("cosmetiq.fl") or
 		androguard.package_name("com.glory") or
-		androguard.package_name("org.slempo.service") or 
-		androguard.package_name("com.construct") or 
+		androguard.package_name("org.slempo.service") or
+		androguard.package_name("com.construct") or
 		androguard.package_name("com.avito") or
-		androguard.package_name("com.wood") or 
-		androguard.package_name("ru.drink.lime") or 
-		androguard.package_name("com.constre") or  	
+		androguard.package_name("com.wood") or
+		androguard.package_name("ru.drink.lime") or
+		androguard.package_name("com.constre") or
 		androguard.package_name("com.motion") or
 		androguard.package_name("app.six") or
 		androguard.package_name("com.example.street.two") or
 		androguard.package_name("com.example.livemusay.myapplication")
 }
-rule rootnik_a: sites
+
+rule rootnik: sites
 {
 	meta:
 		description = "sites created as of Feb 2015"
@@ -16855,32 +14576,7 @@ rule rootnik_a: sites
 	condition:
 		cuckoo.network.http_request(/http:\/\/applight\.mobi/) and 		cuckoo.network.http_request(/http:\/\/jaxfire\.mobi/)  and cuckoo.network.http_request(/http:\/\/superflashlight\.mobi/) and 		cuckoo.network.http_request(/http:\/\/shenmeapp\.mobi/)
 }
-rule rootnik2_a: sites2
-{
-	strings:
-	 $a = "aHR0cDovL2Nkbi5hcHBsaWdodC5tb2JpL2FwcGxpZ2h0LzIwMTUvMTQ0MjgyNDQ2MnJlcy5iaW4=" // base 64 encoded: /http:\/\/cdn.applight.mobi\/applight\/2015\/1442824462res.bin/
-	condition:
-		 cuckoo.network.http_request(/http:\/\/api.jaxfire\.mobi\/app\/getTabsResBin/) and (cuckoo.network.http_request(/http:\/\/cdn.applight.mobi\/applight\/2015\/1442824462res.bin/) or $a)
-}
-rule rootnik3_a: string
-{
-	strings:
-	$a = "http://api.shenmeapp.info/info/report"
-	condition:
-	$a or (androguard.url(/applight\.mobi/) and androguard.url(/jaxfire\.mobi/))
-}
-rule rooting_a {
-	meta:
-		sample = "7fce9e19534b0a0590c7383c7180b9239af3ad080e0df9d42b0493bb6e0e0ef7" // SHA256
-	strings: 
-	$a= "http://api01.app001.cn/action/init_dev.php"
-$b = "http://api02.app001.cn/action/check_auto_upgrade.php"
-$c = "http://api02.app001.cn/action/check_connect.php"
-$d = "http://api02.app001.cn/action/check_push.php"
-$e = "http://api02.app001.cn/action/get_rooting_app.php"
-	condition: 
-	$a or $b or $c or $d or $e
-}
+
 rule shuanet_c:dropper
 {
 	meta:
@@ -16893,7 +14589,7 @@ rule shuanet_c:dropper
 		all of them
 }
 
-rule banker_ip_control_a: banker candc
+rule banker_ip_control: banker candc
 {
 	meta:
 		description = "g = string = properties.getProperty('xmpp', '126.5.122.217');"
@@ -16903,9 +14599,10 @@ rule banker_ip_control_a: banker candc
 	condition:
 		any of them
 }
-rule banker_cromosome_a
+
+rule banker_cromosome
 {
-	meta: 
+	meta:
 		description = "get strings for cromosome.py use a lot of samples"
 	strings:
 		$string_a = "http://impl.service.server.phonemanager.org"
@@ -16915,7 +14612,8 @@ rule banker_cromosome_a
 	condition:
 		($string_a or $string_b) and any of ($string_c, $string_d)
 }
-rule banker_cert_a: cert
+
+rule banker_cert: cert
 {
 	meta:
 		description = "This rule detects by banker certificates. Valid certificate A828FB8872A1127B131232F00B46B6DA05DEAF51"
@@ -16930,11 +14628,12 @@ rule banker_cert_a: cert
 		androguard.certificate.sha1("8527B91FE37B33FEC02E6F3E176C63A425A799C6") or
 		androguard.certificate.sha1("0F1CA787A6F5760CF7D74CEB7475AD1BC83ADECC") or
 		androguard.certificate.sha1("DB03AEC0586929BF8B4EFAF54BAD0AC5509FD8BE") or
-		androguard.certificate.sha1("6EAC736931F21F7ED5525A69B52BF7D3274542A1") or		
+		androguard.certificate.sha1("6EAC736931F21F7ED5525A69B52BF7D3274542A1") or
    		androguard.certificate.sha1("C21676E8EFBA88235C8FCE4D023797173401FE3C") or
 		androguard.certificate.sha1("01AAD3AA7949A89B36F1F44AFA266F3113C6E615") or
 		androguard.certificate.sha1("7F565F25BA98DEF913538F411914EF0EE74F10EE")
 }
+
 rule apk_inside_b
 {
 	meta:
@@ -16946,14 +14645,6 @@ rule apk_inside_b
 		$a
 }
 
-rule random_a: adware
-{
-    strings:
-        $a = /cellphone-tips\.com/
-    condition:
-        androguard.url(/cellphone-tips\.com/) or 
-		$a
-}
 rule packers_n
 {
 	meta:
@@ -16966,6 +14657,7 @@ rule packers_n
 	condition:
 		any of them
 }
+
 rule packers_o
 {
 	meta:
@@ -16978,6 +14670,7 @@ rule packers_o
 	condition:
 		any of them
 }
+
 rule packers_p
 {
 	meta:
@@ -16990,6 +14683,7 @@ rule packers_p
 	condition:
 		any of them
 }
+
 rule packers_q
 {
 	meta:
@@ -17002,6 +14696,7 @@ rule packers_q
 	condition:
 		any of them
 }
+
 rule packers_r
 {
 	meta:
@@ -17016,6 +14711,7 @@ rule packers_r
 	condition:
 		any of them
 }
+
 rule packers_s
 {
 	meta:
@@ -17031,7 +14727,8 @@ rule packers_s
 	condition:
 		any of them
 }
-rule banker_string_a: banker string
+
+rule banker_string: banker string
 {
 	meta:
 		description = "This family detect your region for subscribe to MMS premium msg. Use ThoughtCrime for WhisperSystems"
@@ -17045,9 +14742,10 @@ rule banker_string_a: banker string
 		$string_f = "Saving attachment to SD card..."
 		$string_g = "NUMERO DI TELEFONO"
 	condition:
-		all of ($string_*)		
+		all of ($string_*)
 }
-rule banker_certificate_a: banker certificate
+
+rule banker_certificate: banker certificate
 {
 	meta:
 		description = "This rule detects banker"
@@ -17058,14 +14756,16 @@ rule banker_certificate_a: banker certificate
 		androguard.certificate.sha1("06220B02289A3B44A969E8E5F23F7598D2CE563C") or
 		androguard.certificate.sha1("27051D4C951095B6DC3BA59C1F21B9BCEEC02CEF")
 }
-rule thoughtcrime_a
+
+rule thoughtcrime
 {
 	meta:
 		description = "https://github.com/WhisperSystems/Signal-Android/tree/master/src/org/thoughtcrime/securesms"
 	condition:
 		androguard.permission(/org\.thoughtcrime\.securesms\.ACCESS_SECRETS/) or
-		androguard.activity(/org\.thoughtcrime\.securesms\.*/) 
+		androguard.activity(/org\.thoughtcrime\.securesms\.*/)
 }
+
 rule testing_d
 {
 	meta:
@@ -17077,6 +14777,7 @@ rule testing_d
 	condition:
 		any of them
 }
+
 rule testing_e
 {
 	meta:
@@ -17103,6 +14804,7 @@ rule testing_e
 	condition:
 		all of them
 }
+
 rule TencentLocation_b: spy
 {
 	meta:
@@ -17113,6 +14815,7 @@ rule TencentLocation_b: spy
 	condition:
 		all of ($a*)
 }
+
 rule Kemoge: Adware Rooter
 {
 	meta:
@@ -17122,29 +14825,7 @@ rule Kemoge: Adware Rooter
 	condition:
 		any of them or androguard.url(/kemoge\.net/)
 }
-rule Agent_Smith_a
-{
-	strings:
-		$a1 = "whatsapp"
-    	$a2 = "lenovo.anyshare.gps"
-    	$a3 = "mxtech.videoplayer.ad"
-    	$a4 = "jio.jioplay.tv"
-    	$a5 = "jio.media.jiobeats"
-    	$a6 = "jiochat.jiochatapp"
-    	$a7 = "jio.join"
-    	$a8 = "good.gamecollection"
-    	$a9 = "opera.mini.native"
-   		$a10 = "startv.hotstar"
-    	$a11 = "meitu.beautyplusme"
-    	$a12 = "domobile.applock"
-    	$a13 = "touchtype.swiftkey"
-    	$a14 = "flipkart.android"
-    	$a15 = "cn.xender"
-    	$a16 = "eterno"
-    	$a17 = "truecaller"
-	condition:
-		all of them
-}
+
 rule Clipper_b
 {
 	meta:
@@ -17156,6 +14837,7 @@ rule Clipper_b
 	condition:
 		all of ($a*)
 }
+
 rule caanmjmf: official
 {
 	meta:
@@ -17172,37 +14854,16 @@ rule caanmjmf: official
 	condition:
 		$a or $b or $c or $d or $d or $e or $f or $g or $h
 }
-rule anubisNew_July2019_a {
-        meta:
-                md5="3157e807e597bcd89f9af94e512583f6"
-				blog="https://blog.trendmicro.com/trendlabs-security-intelligence/anubis-android-malware-returns-with-over-17000-samples/"
-        strings:
-                $a1 = "android.permission.WRITE_EXTERNAL_STORAGE"
-                $a2 = "android.permission.READ_EXTERNAL_STORAGE"
-                $b1 = "level_name"
-                $b2 = "password"
-                $b3 = "username"
-                $b4 = "salary"
-                $b5 = "name"
-                $b6 = "id"
-                $b7 = "employee"
-                $c1 = "aHR0cDovL21hcmt1ZXpkbmJycy5vbmxpbmUvZGVuZW1lL2FwaTIucGhw"
-                $c2 = "kdv.xml"
-                $c3 = "aHR0cDovL3N1Y2Nlc3Npb25kYXIueHl6L2NvbnRpbnVpbmcvcmVzaWduZWQucGhw"
-                $c4 = "config.xml"
-        condition:
-                all of ($a*) and
-                all of ($b*) and
-                2 of ($c*)
-}
-rule PayNimoMandateActivity_a
+
+rule PayNimoMandateActivity
 {
 	meta:
 		description = "All PayNimo Mandate Activity Tracker"
 	condition:
 		androguard.activity("com.paynimo.android.payment.DigitalMandateActivity")
 }
-rule LockerRansomware_a
+
+rule LockerRansomware
 {
 	meta:
 		description = "This rule detects apks relatedto the one mentioned on Twitter"
@@ -17216,7 +14877,8 @@ rule LockerRansomware_a
 	condition:
 		all of ($a*)
 }
-rule TwoFaStealer_a
+
+rule TwoFaStealer
 {
 	meta:
 		sample = "126547985987c3ecb1321a3a565d8565b64d437fd28418a6ba4bbc3220f684d2"
@@ -17230,7 +14892,8 @@ rule TwoFaStealer_a
 	condition:
 		all of ($a*)
 }
-rule SpywareSpyNote_a
+
+rule SpywareSpyNote
 {
 	meta:
 		description = "Android SpyNote spyware"
@@ -17245,7 +14908,8 @@ rule SpywareSpyNote_a
 		and
 		filesize < 2MB
 }
-rule VerificationScam_a
+
+rule VerificationScam
 {
 	meta:
 		description = "Android Verification scam"
@@ -17256,31 +14920,8 @@ rule VerificationScam_a
 	condition:
 		all of ($a_*)
 }
-rule Samsung_a: Chrysaor
-{
-    strings:
-        $a = "ade8bef0ac29fa363fc9afd958af0074478aef650adeb0318517b48bd996d5d5"
-	condition:
-		androguard.package_name("com.network.android") and		
-		$a
-}
-rule anubis3_a: Dropper
-{
-	condition:
-	  androguard.permission(/READ_EXTERNAL_STORAGE/) and
-	  androguard.permission(/RECEIVE_BOOT_COMPLETED/) and
-	  androguard.permission(/REQUEST_INSTALL_PACKAGES/) and
-	  androguard.permission(/INTERNET/) and
-	  androguard.permission(/WRITE_EXTERNAL_STORAGE/) and
-	  androguard.permissions_number < 10
-}
-rule GGTRACK_detecrot_a: trojan
-{
-	condition:
-		androguard.url("http://ggtrack.org/") or
-		androguard.url(/ggtrack\.org/) 
-}
-rule Android_Trojan_SuspiciousPermission_LauncherMiss_a
+
+rule Android_Trojan_SuspiciousPermission_LauncherMiss
 {
 	meta:
 		Updated_description = "rules checks the missing launcher"
@@ -17308,7 +14949,8 @@ private rule activity
 		androguard.url(/hotappsxx\.com/) or
 		androguard.url(/xvideozlive\.xxx/)
 }
-rule youpornxxx_a
+
+rule youpornxxx
 {
 	meta:
 		description = "SMSReg variant related with Youpornxxx"
@@ -17318,7 +14960,8 @@ rule youpornxxx_a
 	condition:
 		$a or activity
 }
-rule Adflex_a
+
+rule Adflex
 {
 	meta:
 		description = "AdFlex SDK evidences"
@@ -17331,6 +14974,7 @@ rule Adflex_a
 	condition:
 		all of them
 }
+
 rule HummingBad_c: urls
 {
 	meta:
@@ -17343,7 +14987,8 @@ rule HummingBad_c: urls
 	condition:
 		($string_1 or $string_3) and $string_2
 }
-rule Android_HummingBad_a
+
+rule Android_HummingBad
 {
 	meta:
 		description = "This rule detects Android.HummingBad, trying to root the device"
@@ -17355,10 +15000,11 @@ rule Android_HummingBad_a
 		$string_3 = "#!/system/bin/sh\n#Power by www.rootzhushou.com\n#Pansing\n\nTEMPPATH=/data/data/$PACKAGE/files\nBUSYBOX=/data/data/$PACKAGE/files/busybox\nexport PATH=$TEMPPATH:$PATH\n\nchmod 777 $TEMPPATH/busybox\nuid=$(busybox id -u)\nif [ $uid -ne 0 ]; then\necho \"Are you root ? OK ,try anyway.\"\nfi\nbusybox mount -o remount,rw /system\nbusybox cat $TEMPPATH/su > /system/xbin/su\nchown 0.0 /system/xbin/su\nchmod 6755 /system/xbin/su\nbusybox cat $TEMPPATH/busybox > /system/xbin/busybox\nchown 0.0 /system/xbin/busybox\nchmod 755 /system/xbin/busybox\necho \"Now, your device is rooted !\"\nsync\n"
 		$string_4 = "#!/system/bin/sh\nmount -o rw,remount /system\n/data/data/$PACKAGE/files/busybox mount -o rw,remount /system\n/system/bin/stop nac_server\n/data/data/$PACKAGE/files/busybox rm -r -f /system/xbin/su\n/data/data/$PACKAGE/files/busybox rm -r -f /system/bin/su\n/data/data/$PACKAGE/files/busybox rm -r -f /system/bin/ipm\n/data/data/$PACKAGE/files/busybox rm -r -f /system/xbin/daemonsu\n/data/data/$PACKAGE/files/busybox cat /data/data/$PACKAGE/files/su > /system/bin/su\n/data/data/$PACKAGE/files/busybox cat /data/data/$PACKAGE/files/ipm > /system/bin/ipm\n/data/data/$PACKAGE/files/busybox chown 0.0 /system/bin/su\n/data/data/$PACKAGE/files/busybox chmod 6755 /system/bin/su\n/data/data/$PACKAGE/files/busybox chown 0.0 /system/bin/ipm\n/data/data/$PACKAGE/files/busybox chmod 6755 /system/bin/ipm\n/data/data/$PACKAGE/files/busybox cat /system/bin/su > /system/xbin/su\n/data/data/$PACKAGE/files/busybox chown 0.0 /system/xbin/su\n/data/data/$PACKAGE/files/busybox chmod 6755 /system/xbin/su\n/data/data/$PACKAGE/files/busybox cat /system/xbin/su > /system/xbin/daemonsu\n/data/data/$PACKAGE/files/busybox chown 0.0 /system/xbin/daemonsu\n/data/data/$PACKAGE/files/busybox chmod 6755 /system/xbin/daemonsu\n/data/data/$PACKAGE/files/busybox cat /system/xbin/su > /system/xbin/ku.sud\n/data/data/$PACKAGE/files/busybox chown 0.0 /system/xbin/ku.sud\n/data/data/$PACKAGE/files/busybox chmod 6755 /system/xbin/ku.sud\n/data/data/$PACKAGE/files/busybox cat /data/data/$PACKAGE/files/install-recovery.sh > /system/etc/install-recovery.sh\n/data/data/$PACKAGE/files/busybox chown 0.0 /system/etc/install-recovery.sh\n/data/data/$PACKAGE/files/busybox chmod 6755 /system/etc/install-recovery.sh\n/data/data/$PACKAGE/files/busybox cat /data/data/$PACKAGE/files/99SuperSUDaemon > /system/etc/init.d/99SuperSUDaemon\n/data/data/$PACKAGE/files/busybox chown 0.0 /system/etc/init.d/99SuperSUDaemon\n/data/data/$PACKAGE/files/busybox chmod 6755 /system/etc/init.d/99SuperSUDaemon\n\nmount -o ro,remount /system\n/data/data/$PACKAGE/files/busybox mount -o ro,remount /system\necho \"Now, script finish!\"\n"
 		$string_5 = "#!/system/bin/sh\n#Power by www.rootzhushou.com\n#Pansing\n\nTEMPPATH=/data/data/$PACKAGE/files\nBUSYBOX=/data/data/$PACKAGE/files/busybox\nexport PATH=$TEMPPATH:$PATH\n\nchmod 777 $TEMPPATH/busybox\nuid=$(busybox id -u)\nif [ $uid -ne 0 ]; then\necho \"Are you root ? OK ,try anyway.\"\nfi\nmount -o remount,rw /system\n$BUSYBOX mount -o remount,rw /system\nif [ -e \"/system/xbin/su\" -o -L \"/system/xbin/su\" ]; then\necho \"Delete xbin su ...\"\n$BUSYBOX rm -rf /system/xbin/su\nfi\nr\nif [ -e \"/system/bin/su\" -o -L \"/system/bin/su\" ]; then\necho \"Delete bin su ...\"\n$BUSYBOX rm -rf /system/bin/su\nfi\n/system/bin/stop nac_server\n$BUSYBOX cat $TEMPPATH/su > /system/xbin/su\n$BUSYBOX chown 0.0 /system/xbin/su\n$BUSYBOX chmod 6755 /system/xbin/su\n$BUSYBOX cat /system/xbin/su > /system/bin/su\n$BUSYBOX chown 0.0 /system/bin/su\n$BUSYBOX chmod 6755 /system/bin/su\n$BUSYBOX cat $TEMPPATH/busybox > /system/xbin/busybox\n$BUSYBOX chown 0.0 /system/xbin/busybox\n$BUSYBOX chmod 755 /system/xbin/busybox\n\necho \"Now, your device is rooted !\"\nsync\n"
-		$string_6 = "http://ppsdk.hmapi.com:10081/ppsdkpost.do"	
+		$string_6 = "http://ppsdk.hmapi.com:10081/ppsdkpost.do"
 	condition:
 		$string_1 and $string_2 and $string_3 and $string_4 and $string_5 and $string_6
 }
+
 rule Android_HummingBad_b
 {
 	meta:
@@ -17371,6 +15017,7 @@ rule Android_HummingBad_b
 	condition:
 		$string_1 or $string_2
 }
+
 rule marcher_b: official
 {
 	meta:
@@ -17385,6 +15032,7 @@ rule marcher_b: official
 	condition:
 		all of ($cromosome_*)
 }
+
 rule smsfraud_d
 {
 	meta:
@@ -17398,20 +15046,8 @@ rule smsfraud_d
 	condition:
 		all of them
 }
-rule smsfraud2_b {
-        meta:
-                sample = "0200a454f0de2574db0b58421ea83f0f340bc6e0b0a051fe943fdfc55fea305b"
-                sample2 = "bff3881a8096398b2ded8717b6ce1b86a823e307c919916ab792a13f2f5333b6"
-        strings:
-                $a = "pluginSMS_decrypt"
-                $b = "pluginSMS_encrypt"
-                $c = "__dso_handle"
-                $d = "lib/armeabi/libmylib.soUT"
-                $e = "]Diok\"3|"
-        condition:
-                all of them
-}
-rule binka_a
+
+rule binka
 {
 	meta:
 		description = "Binka banker trojan"
@@ -17433,6 +15069,7 @@ rule binka_a
 	condition:
 		all of them
 }
+
 rule Dropper_b: official
 {
 	meta:
@@ -17442,6 +15079,7 @@ rule Dropper_b: official
 		androguard.service("com.lx.a.ds") and
 		androguard.receiver("com.lx.a.er")
 }
+
 rule Banker_g: official
 {
 	meta:
@@ -17454,6 +15092,7 @@ rule Banker_g: official
 	condition:
 		$a and $b and $c
 }
+
 rule SMSReg_b
 {
 	meta:
@@ -17467,6 +15106,7 @@ rule SMSReg_b
 	condition:
 		all of them
 }
+
 rule BaDoink_b
 {
 	meta:
@@ -17479,7 +15119,9 @@ rule BaDoink_b
 	condition:
 		$a
 }
-rule adware_i:aggressive {
+
+rule adware_i:aggressive
+{
 	meta:
 		description = "This rule detects an aggressive adware that shows in your screen applications to download"
 		sample = "bd3629e451fb294b4573a6aad94ae6789e654d9ce8e8a5aae92095bf440a17cf"
@@ -17490,7 +15132,8 @@ rule adware_i:aggressive {
     condition:
         all of them
 }
-rule LockeScreen_a
+
+rule LockeScreen
 {
 	meta:
 		description = "https://twitter.com/LukasStefanko/status/687533750838792192"
@@ -17502,9 +15145,10 @@ rule LockeScreen_a
 		$string_d = "force-lock"
 	condition:
 		all of ($string_*) and
-		androguard.permission(/android.permission.KILL_BACKGROUND_PROCESSES/) 
+		androguard.permission(/android.permission.KILL_BACKGROUND_PROCESSES/)
 }
-rule HillClimbRacing_a
+
+rule HillClimbRacing
 {
 	meta:
 		description = "This rule detects fake application of Hill Climb Racing"
@@ -17513,6 +15157,7 @@ rule HillClimbRacing_a
 		androguard.package_name("com.fingersoft.hillclimb") and
 		not androguard.certificate.sha1("9AA52CC5C1EA649B45F295611417B4B6DA6324EA")
 }
+
 rule smsreg_b
 {
 	meta:
@@ -17530,11 +15175,12 @@ rule clicker_c: url
 		description = "This rule detects the Fake installer malwares by using visited URL"
 		sample = "aa560b913446d45d29c5c0161bbe6e4c16f356afd818af412c56cde0ae5a6611"
 	condition:
-		cuckoo.network.http_request(/^http?:\/\/suitepremiumds\.ru/) or 
-		cuckoo.network.http_request(/suitepremiumds\.ru/) or 
-		androguard.url(/^http?:\/\/suitepremiumds\.ru/) or 
+		cuckoo.network.http_request(/^http?:\/\/suitepremiumds\.ru/) or
+		cuckoo.network.http_request(/suitepremiumds\.ru/) or
+		androguard.url(/^http?:\/\/suitepremiumds\.ru/) or
 		androguard.url(/suitepremiumds\.ru/)
 }
+
 rule clicksummer_b
 {
 	meta:
@@ -17549,6 +15195,7 @@ rule clicksummer_b
 	condition:
  		1 of them
 }
+
 rule ZooParkv1
 {
 	meta:
@@ -17557,6 +15204,7 @@ rule ZooParkv1
 	condition:
 		androguard.url(/rhubarb2\.com/)
 }
+
 rule ZooParkv2
 {
 	meta:
@@ -17565,7 +15213,8 @@ rule ZooParkv2
 	condition:
 		androguard.url(/rhubarb3\.com/)
 }
-rule Type1_a
+
+rule Type1
 {
 	meta:
 		description = "This rule detects MysteryBot connections"
@@ -17576,7 +15225,8 @@ rule Type1_a
 		androguard.url("http://89.42.211.24/site/") or
 		androguard.url("http://89.42.211.24/sfdsdfsdf/")
 }
-rule SilverBox_a:Bot
+
+rule SilverBox:Bot
 {
 	meta:
 		description = "This rule detects SilverBox bot Malware"
@@ -17608,63 +15258,7 @@ rule SilverBox_a:Bot
 		androguard.permission(/android.permission.READ_CONTACTS/)
 }
 
-rule Trojan_j: BankBot
-{
-	meta:
-        description = "Trojan targeting Banks with Overlays"
-		source = "https://securify.nl/blog/SFY20170401/banking_malware_in_google_play_targeting_many_new_apps.html"
-	strings:
-		$c2_1 = "/private/tuk_tuk.php" nocase
-		$c2_2 = "/private/add_log.php" nocase
-		$c2_3 = "/private/set_data.php" nocase
-		$c2_4 = "activity_inj" nocase
-	condition:
-		2 of ($c2_*)
-		and (
-			androguard.permission(/android.permission.RECEIVE_SMS/) 
-			or androguard.permission(/android.permission.READ_SMS/)
-		)
-}
-rule Trojan_2_d: BankBot
-{
-	meta:
-		sample = "b314e54a1161deccb2f582aaf6356f2e66a2f983dd1c1ebf7a5c5d9f5a873dba"
-	strings:
-		$sms_1 = "Sms Is Deleted !" nocase
-		$sms_2 = "SMS is NOT DELETED" nocase
-		$c2_1 = "/set/log_add.php" nocase
-		$c2_2 = "/set/receiver_data.php " nocase
-		$c2_3 = "/set/set.php" nocase
-		$c2_4 = "/set/tsp_tsp.php" nocase
-		$cmd_1 = "/proc/%d/cmdline" nocase
-		$cmd_2 = "/proc/%d/cgroup" nocase
-	condition:
-		1 of ($sms_*)
-		and 2 of ($c2_*)
-		and 1 of ($cmd_*)
-		and	androguard.permission(/android.permission.RECEIVE_SMS/)
-}
-rule Trojan_3_d: BankBot
-{
-	meta:
-		sample = "ade518199cc4db80222403439ef6c7ee37cd57f820167cf59ee0fcdf5dcd2613"
-	strings:
-		$c2_1 = "settings.php" nocase
-		$c2_2 = "set_data.php" nocase
-		$c2_3 = "add_log.php" nocase
-		$c2_4 = "activity_inj" nocase
-		$cmd_1 = "/proc/%d/cmdline" nocase
-		$cmd_2 = "/proc/%d/cgroup" nocase
-	condition:
-		2 of ($c2_*)
-		and 1 of ($cmd_*)
-		and (
-			androguard.permission(/android.permission.RECEIVE_SMS/) 
-			or androguard.permission(/android.permission.READ_SMS/)
-		)
-}
-
-rule Android_OverSeer_a
+rule Android_OverSeer
 {
 	meta:
 		author = "Jacob Soo Lead Re"
@@ -17677,7 +15271,8 @@ rule Android_OverSeer_a
 		androguard.receiver(/test\.parse\.NetworkReceiver/i) and
 		androguard.filter(/dex\.SEND_ACTION/i)
 }
-rule MysteryBot_a
+
+rule MysteryBot
 {
 	meta:
 		description = "This rule will be able to tag all MysteryBot samples"
@@ -17689,11 +15284,11 @@ rule MysteryBot_a
 		date = "17-June-2018"
 	condition:
 		androguard.service(/CommandService/i)
-		and androguard.receiver(/Cripts/i) 
-		and androguard.receiver(/Scrynlock/i) 
+		and androguard.receiver(/Cripts/i)
+		and androguard.receiver(/Scrynlock/i)
 		and androguard.permission(/android\.permission\.BIND_DEVICE_ADMIN/i)
 		and androguard.permission(/PACKAGE_USAGE_STATS/i)
-		and androguard.filter(/android\.app\.action\.DEVICE_ADMIN_DISABLED/i) 
+		and androguard.filter(/android\.app\.action\.DEVICE_ADMIN_DISABLED/i)
 }
 
 rule POB_1_b
@@ -17704,7 +15299,8 @@ rule POB_1_b
 		(androguard.receiver(/android\.app\.admin\.DeviceAdminReceiver/) and
 		 androguard.service(/pob\.xyz\.WS/))
 }
-rule blacklisted_strings_a: jcarneiro
+
+rule blacklisted_strings: jcarneiro
 {
 	meta:
 		description = "This rule fake apps strings"
@@ -17735,28 +15331,31 @@ rule blacklisted_strings_a: jcarneiro
 	condition:
 		any of them
 }
-rule Practica4_a
+
+rule Practica4
 {
 	meta:
 		description = "Practica4-Slempo"
-		sample = "7dab21d4920446027a3742b651e3ef8d"		
+		sample = "7dab21d4920446027a3742b651e3ef8d"
 	strings:
-		$a = "org/slempo/service" 
+		$a = "org/slempo/service"
 		$b = "http://185.62.188.32/app/remote/"
 		$c = "http://185.62.188.32/app/remote/forms"
 		$d = "org.slempo.service"
 	condition:
 		1 of them
 }
-rule SMSFraude_a
+
+rule SMSFraude
 {
 	meta:
 		autor = "sadfud"
 		description = "Se conecta a un panel desde el que descarga e instala nuevas aplicaciones"
 	condition:
-		androguard.url(/app\.yx93\.com/)		
+		androguard.url(/app\.yx93\.com/)
 }
-rule zitmo_test_a
+
+rule zitmo_test
 {
 	meta:
 		description = "Zitmo"
@@ -17773,7 +15372,8 @@ rule zitmo_test_a
 		androguard.permission(/android.permission.SEND_SMS/) and
 		androguard.permission(/android.permission.RECEIVE_SMS/)
 }
-rule VikingMalware_a
+
+rule VikingMalware
 {
 	meta:
 		description = "Viking like malware"
@@ -17784,20 +15384,8 @@ rule VikingMalware_a
 		androguard.url(/reportreward10\.info/) or
 		cuckoo.network.dns_lookup(/185\.159\.81\.155/)
 }
-rule ransomware_h
-{
-	meta:
-		description = "This rule detects ijimu.com and bluerobo.com see source"
-		sample = "c2f5175eb7a9833bbba8ee6652e9fa69a0026fb18a614f96a4910380a5960d3f"
-		source = "http://www.hotforsecurity.com/blog/android-malware-promises-porn-but-roots-device-and-installs-other-malware-13900.html"
-	strings:
-		$a = "http://root.ijimu.com:7354/"
-		$b = "http://p.bluerobo.com:7354/"
-		$c = "http://p2.bluerobo.com:7354/"
-	condition:
-		1 of them
-}
-rule Chineseporn_3_a
+
+rule Chineseporn_3
 {
 	meta:
 		description = "Detects few Chinese Porn apps"
@@ -17806,7 +15394,7 @@ rule Chineseporn_3_a
 		 androguard.receiver(/lx\.Csver/))
 }
 
-rule allatori_a: obfuscator
+rule allatori: obfuscator
 {
   meta:
     description = "Allatori (likely)"
@@ -17816,6 +15404,7 @@ rule allatori_a: obfuscator
   condition:
     $s and not $demo
 }
+
 rule allatori_demo_b: obfuscator
 {
   meta:
@@ -17825,6 +15414,7 @@ rule allatori_demo_b: obfuscator
   condition:
     $s
 }
+
 rule Android_Triada_c: android
 {
 	meta:
@@ -17841,6 +15431,7 @@ rule Android_Triada_c: android
 		androguard.permission(/android.permission.SYSTEM_ALERT_WINDOW/) and
 		androguard.permission(/android.permission.GET_TASKS/)
 }
+
 rule gaarht: official
 {
 	meta:
@@ -17850,7 +15441,8 @@ rule gaarht: official
 	condition:
 		$a
 }
-rule apkpacker_a: packer
+
+rule apkpacker: packer
 {
     meta:
         description = "ApkPacker"
@@ -17860,7 +15452,8 @@ rule apkpacker_a: packer
     condition:
         all of them
 }
-rule IRRat_a
+
+rule IRRat
 {
 	meta:
 		author = "R"
@@ -17869,7 +15462,8 @@ rule IRRat_a
 		androguard.service(/botcontril/i) and
 		androguard.url(/api.telegram.org\/bot/)
 }
-rule dexprotector_new_a: packer
+
+rule dexprotector_new: packer
 {
   meta:
     description = "DexProtector"
@@ -17890,18 +15484,20 @@ rule dexprotector_new_a: packer
     2 of ($encrptlib_*) and $encrptcustom and
 	not any of ($a_*)
 }
-rule odd_behaviours_a
+
+rule odd_behaviours
 {
 	meta:
 		authors = "Igor and Elize"
 		date = "13 November"
 		description = "This rule detects odd behaviours"
-	strings: 
+	strings:
 		$a = "android.intent.action.NEW_OUTGOING_CALL"
 		$b = "config.cloudzad.com"
 	condition:
 		($a or $b)
 }
+
 rule haajmjg: official
 {
 	meta:
@@ -17917,14 +15513,15 @@ rule haajmjg: official
 		androguard.service(".google.ssearch") and
 		all of ($a*)
 }
-rule flipcat_a
+
+rule flipcat
 {
 	meta:
 		description = "This ruleset detects apps that could be malicious as ru.flipcat.niceplace"
 	condition:
 		androguard.url("https://mir-s3-cdn-cf.behance.net/project_modules/disp/3fd50115627063.562951a013590.jpg") and
 		androguard.url("http://vignette2.wikia.nocookie.net/logopedia/images/d/d2/Google_icon_2015.png") or
-		androguard.activity("org.mightyfrog.android.simplenotepad.NoteEditor") or 
+		androguard.activity("org.mightyfrog.android.simplenotepad.NoteEditor") or
 		androguard.activity("com.oneminorder.pizzagirl.sdk.activity.StartActivity") and
 		androguard.permission(/android.permission.BLUETOOTH/) and
 		androguard.permission(/android.permission.CHANGE_WIFI_STATE/) and
@@ -17933,7 +15530,8 @@ rule flipcat_a
 		androguard.permission(/android.permission.READ_PHONE_STATE/) and
 		androguard.permission(/android.permission.WRITE_EXTERNAL_STORAGE/)
 }
-rule CryptoLocker_a: SimpLocker
+
+rule CryptoLocker: SimpLocker
 {
     meta:
         description = "Ruleset that detects the SimpLocker application"
@@ -17945,6 +15543,7 @@ rule CryptoLocker_a: SimpLocker
     condition:
         all of them
 }
+
 rule Trojan_k: SmsBoxer
 {
     meta:
@@ -17956,10 +15555,11 @@ rule Trojan_k: SmsBoxer
     condition:
         all of ($string_*)
         and (
-            androguard.permission(/android.permission.RECEIVE_SMS/) 
+            androguard.permission(/android.permission.RECEIVE_SMS/)
             or androguard.permission(/android.permission.READ_SMS/)
         )
 }
+
 rule SaveMe_b
 {
 	meta:
@@ -17972,7 +15572,8 @@ rule SaveMe_b
 		$a and
 		$b
 }
-rule Similar_to_Facebook_Free_Basics_a
+
+rule Similar_to_Facebook_Free_Basics
 {
 	meta:
 		description = "This rule detects APK's with the same permissions as the Facebook (Free Basics) APK"
@@ -17981,24 +15582,9 @@ rule Similar_to_Facebook_Free_Basics_a
 		androguard.permission(/android.permission.READ_SMS/) and
 		androguard.permission(/android.permission.SEND_SMS/) and
 		androguard.permission(/android.permission.WRITE_SMS/) and
-		androguard.permission(/android.permission.RECIEVE_SMS/)	
+		androguard.permission(/android.permission.RECIEVE_SMS/)
 }
-rule Hack_game_candy_a
-{
-    meta:
-        package_name = "com.hdc.bookmark189248"
-		Author = "Lorensius W. L. T"
-        email = "lorenz@londatiga.net"
-        sample = "6ad5fa4ce0c0d92540c89580868da133"
-    strings:
-        $a = "http://mobileapp.url.ph"
-        $b = "com.hdc.bookmark189248.MainActivity"
-		$c = "com.hdc.bookmark189248.WebActivity"
-		$d = "android.intent.category.LAUNCHER"
-		$e = "android.intent.action.MAIN"
-    condition:
-        all of them
-}
+
 rule iaajmj: official
 {
 	meta:
@@ -18012,16 +15598,18 @@ rule iaajmj: official
 		androguard.certificate.sha1("13586b6fe4f5d4c16e17d8b1b6c43883708125e3") and
 		cuckoo.network.dns_lookup(/settings.crashlytics.com/) //Yes, we use crashlytics to debug our app!
 }
-rule SaveMeProtection_a
+
+rule SaveMeProtection
 {
-meta: 
+meta:
 description = "Protect against the harmful SaveMe application"
-strings: 
+strings:
 	$a = "http://xxxxmarketing.com"
 	$b = "GTSTSR.EXT_SMS"
 condition:
 	($a and $b)
 }
+
 rule jaamjm: official
 {
 	meta:
@@ -18042,75 +15630,7 @@ rule jaamjm: official
 		cuckoo.network.dns_lookup(/settings.crashlytics.com/) //Yes, we use crashlytics to debug our app!
 }
 
-rule Banks_Strings_bbva_a {
-	strings:
-		$string_1 = /bbva\.es/
-		$string_2 = /bbvanetcash\.com/
-	condition:
-		1 of ($string_*)
-}
-rule Banks_Strings_scotiabank_a {
-	strings:
-		$string_1 = /scotiabank\.com/
-	condition:
-		1 of ($string_*)
-}
-rule Banks_Strings_bancosantander_a {
-	strings:
-		$string_1 = /bancosantander\.es/
-	condition:
-		1 of ($string_*)
-}
-rule Banks_Strings_bankia_a {
-	strings:
-		$string_1 = /bankia\.es/
-	condition:
-		1 of ($string_*)
-}
-rule Banks_Strings_lacaixa_a {
-	strings:
-		$string_1 = /lacaixa\.es/
-	condition:
-		1 of ($string_*)
-}
-rule Banks_Strings_bancsabadell_a {
-	strings:
-		$string_1 = /bancsabadell\.com/
-	condition:
-		1 of ($string_*)
-}
-rule Banks_Strings_banamex_a {
-	strings:
-		$string_1 = /banamex\.com/
-	condition:
-		1 of ($string_*)
-}
-rule Banks_Strings_caixabank_a {
-	strings:
-		$string_1 = /caixabank\.es/
-	condition:
-		1 of ($string_*)
-}
-rule Banks_Strings_citibank_a {
-	strings:
-		$string_1 = /citibank\.com/
-	condition:
-		1 of ($string_*)
-}
-rule bicho_a {
-	strings:
-		$string_1 = /CREATE TABLE IF NOT EXISTS raw_events/
-		$string_2 = /com\.google\.firebase\.provider\.FirebaseInitProvider/
-	condition:
-		1 of ($string_*) and
-		androguard.permission(/android.permission.READ_SMS/) and 
-		androguard.permission(/android.permission.CAMERA/) and 
-		androguard.permission(/com.google.android.c2dm.permission.RECEIVE/) and 
-		androguard.permission(/android.permission.INTERNET/) and 
-		androguard.permission(/android.permission.ACCESS_NETWORK_STATE/)
-}
-
-rule Malicious_certificate_a
+rule Malicious_certificate
 {
 	meta:
 		description = "This rule detects Mazarbot samples for Raiffeisen bank"
@@ -18118,16 +15638,7 @@ rule Malicious_certificate_a
 	condition:
 		androguard.certificate.sha1("219D542F901D8DB85C729B0F7AE32410096077CB")
 }
-rule sorter_b: official
-{
-	condition:
-		cuckoo.network.dns_lookup(/ds.dd.15/) or
-		cuckoo.network.dns_lookup(/is.ca.15/) or
-		cuckoo.network.dns_lookup(/q1.zxl/) or 
-		cuckoo.network.dns_lookup(/sdk.vacuu/) or
-		cuckoo.network.dns_lookup(/www.tb/) or
-		cuckoo.network.dns_lookup(/www.vu/)
-}
+
 rule kaamjjm: official
 {
 	meta:
@@ -18139,6 +15650,7 @@ rule kaamjjm: official
     condition:
         all of ($str_*)
 }
+
 rule HummingWhale_c
 {
 	meta:
@@ -18150,6 +15662,7 @@ rule HummingWhale_c
 	condition:
  		1 of them
 }
+
 rule approov_d
 {
 	meta:
@@ -18159,7 +15672,8 @@ rule approov_d
 	condition:
 		any of them
 }
-rule laahjjm: BTC_ETH_addr_detection
+
+rule laahjjm: BTC_ETHddr_detection
 {
 	meta:
 		description = "This rule detects bitcoin and ethereum addresses"
@@ -18167,8 +15681,9 @@ rule laahjjm: BTC_ETH_addr_detection
 		$a = "/^(0x)?[0-9a-fA-F]{40}$/"
 		$b = "/^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,39}$/"
 	condition:
-		$a or $b		
+		$a or $b
 }
+
 rule packers_t: NS
 {
 	meta:
@@ -18179,41 +15694,45 @@ rule packers_t: NS
 		$launcher
 }
 
-rule FakeGoogleUpdate_a
+rule FakeGoogleUpdate
 {
 	meta:
 		description = "Detects Fake Google Update Apps"
 	condition:
-		androguard.app_name("Google Update") 
+		androguard.app_name("Google Update")
 }
-rule AdwareRule_a: Adware {
+
+rule AdwareRule: Adware
+{
 	meta:
 		description = "Detects Adware Apps"
 	condition:
-		androguard.package_name("com.chownow.manafoodbar") 
+		androguard.package_name("com.chownow.manafoodbar")
 		or
-		androguard.package_name("xyz.fiestaapps.burnbellyfat") 
+		androguard.package_name("xyz.fiestaapps.burnbellyfat")
 		or
-		androguard.package_name("com.app.stoneoven") 
+		androguard.package_name("com.app.stoneoven")
 		or
-		androguard.package_name("com.ResepPempek.rizaluye") 
+		androguard.package_name("com.ResepPempek.rizaluye")
 		or
-		androguard.package_name("tdd.tdd.tdd") 
+		androguard.package_name("tdd.tdd.tdd")
 		or
-		androguard.package_name("com.paytronicapp.admin.pizzafactory") 
+		androguard.package_name("com.paytronicapp.admin.pizzafactory")
 		}
-rule anjian_1_a: jinling
+
+rule anjian_1: jinling
 {
 	meta:
 		description = "anjianjianling"
 		sample = "ce84bbd4359a621084f405635c4eb7853b7af8647e819a6d4b4b40db81511e92"
 	strings:
 		$a = "assets/script.lc" //rule_1
-		$b = "mobileanjian.com" 
+		$b = "mobileanjian.com"
 	condition:
 		$a or $b
 }
-rule xposed_1_a: xposed
+
+rule xposed_1: xposed
 {
 	meta:
 		description = "xposed"
@@ -18223,7 +15742,8 @@ rule xposed_1_a: xposed
 	condition:
 		$a
 }
-rule autojs_1_a: autojs
+
+rule autojs_1: autojs
 {
 	meta:
 		description = "aujojs"
@@ -18234,7 +15754,8 @@ rule autojs_1_a: autojs
 	condition:
 		$a or $b
 }
-rule mainjsd_1_a: mainjsd
+
+rule mainjsd_1: mainjsd
 {
 	meta:
 		description = "manjsd"
@@ -18259,7 +15780,8 @@ rule paa: official
 		$password and
 		$addJavaScript
 }
-rule instagram_thief_phishing_a
+
+rule instagram_thief_phishing
 {
 	meta:
 		description = "This rule detects the instagram password stealing in apks"
@@ -18281,6 +15803,7 @@ rule instagram_thief_phishing_a
 	condition:
 		any of ($string_a_*)
 }
+
 rule Miners_cpuminer_b: coinminer
 {
 	meta:
@@ -18294,6 +15817,7 @@ rule Miners_cpuminer_b: coinminer
 	condition:
 		any of them
 }
+
 rule Miners_lib_b: coinminer
 {
 	meta:
@@ -18305,6 +15829,7 @@ rule Miners_lib_b: coinminer
 	condition:
 		$a1 or $a2
 }
+
 rule Androidos_js_b: coinminer
 {
 	meta:
@@ -18316,9 +15841,10 @@ rule Androidos_js_b: coinminer
 		$s1 = "CoinHive.User"
 		$s2 = "CoinHive.Anonymous"
 	condition:
-		$url and 1 of ($s*)	
+		$url and 1 of ($s*)
 }
-rule Miner_a_b: coinminer
+
+rule Miner_b: coinminer
 {
 	meta:
 		    description = "Coinhive"
@@ -18338,7 +15864,8 @@ rule Miner_a_b: coinminer
 	condition:
 	    any of them
 }
-rule miner_adb_b
+
+rule minerdb_b
 {
 	meta:
 		description = "This rule detects adb miner "
@@ -18349,9 +15876,10 @@ rule miner_adb_b
 		$aa_1 = "pool.monero.hashvault.pro:5555"
 		$aa_2 = "pool.minexmr.com:7777"
 	condition:
-		$a_1 and 
+		$a_1 and
 		any of ($aa_*)
 }
+
 rule miner_b_b: coinminer
 {
 	meta:
@@ -18371,8 +15899,9 @@ rule miner_b_b: coinminer
 		$url9 = "http://eruuludam.mn/web/coinhive.min.js" nocase
 		$url10 = "http://www.playerhd2.pw/js/adsensebase.js" nocase
 	condition:
-		$a1 or $a2 or 1 of ($url*)	
+		$a1 or $a2 or 1 of ($url*)
 }
+
 rule miner_b_c: coinminer
 {
 	meta:
@@ -18392,9 +15921,10 @@ rule miner_b_c: coinminer
 		$url9 = "http://eruuludam.mn/web/coinhive.min.js" nocase
 		$url10 = "http://www.playerhd2.pw/js/adsensebase.js" nocase
 	condition:
-		$a1 or $a2 or 1 of ($url*)	
+		$a1 or $a2 or 1 of ($url*)
 }
-rule miner_adb_c
+
+rule minerdb_c
 {
 	meta:
 		description = "This rule detects adb miner "
@@ -18405,10 +15935,11 @@ rule miner_adb_c
 		$aa_1 = "pool.monero.hashvault.pro:5555"
 		$aa_2 = "pool.minexmr.com:7777"
 	condition:
-		$a_1 and 
+		$a_1 and
 		any of ($aa_*)
 }
-rule Miner_a_c: coinminer
+
+rule Miner_c: coinminer
 {
 	meta:
 		    description = "Coinhive"
@@ -18428,6 +15959,7 @@ rule Miner_a_c: coinminer
 	condition:
 	    any of them
 }
+
 rule Androidos_js_c: coinminer
 {
 	meta:
@@ -18439,8 +15971,9 @@ rule Androidos_js_c: coinminer
 		$s1 = "CoinHive.User"
 		$s2 = "CoinHive.Anonymous"
 	condition:
-		$url and 1 of ($s*)	
+		$url and 1 of ($s*)
 }
+
 rule Miners_lib_c: coinminer
 {
 	meta:
@@ -18452,6 +15985,7 @@ rule Miners_lib_c: coinminer
 	condition:
 		$a1 or $a2
 }
+
 rule Miners_cpuminer_c: coinminer
 {
 	meta:
@@ -18465,7 +15999,8 @@ rule Miners_cpuminer_c: coinminer
 	condition:
 		any of them
 }
-rule Fornite_a: fake
+
+rule Fornite: fake
 {
 	meta:
 		description = "This rule detects Fortnite Fake APKs"
@@ -18474,14 +16009,16 @@ rule Fornite_a: fake
 		(androguard.package_name("com.epicgames.portal") or androguard.app_name("Fortnite")) and not
 		androguard.certificate.sha1("707566F8B09B4C8BFD772E1B536D581F19BC3012")
 }
+
 rule PayTMActivity_b
 {
 	meta:
-		description = "All PayTM SDK Apps"	
+		description = "All PayTM SDK Apps"
 	condition:
-		androguard.activity("com.paytm.pgsdk.PaytmPGActivity")		
+		androguard.activity("com.paytm.pgsdk.PaytmPGActivity")
 }
-rule potential_miners_by_url_a: miner
+
+rule potential_miners_by_url: miner
 {
 	meta:
 		description = "This rule detects potential miners using urls"
@@ -18547,36 +16084,11 @@ rule potential_miners_by_url_a: miner
         $url58 = "papoto.js"
         $url59 = "miner.php"
 	condition:
-		androguard.permission(/android.permission.INTERNET/) and 
+		androguard.permission(/android.permission.INTERNET/) and
 		(any of them)
 }
-rule YaYAXinyinhe_a {
-	meta:
-		author = "YaYaGen -- Yet Another Yara Rule Generator (*) v0.4_winter17/18"
-		date = "29 Dec 2017"
-		url = "https://koodous.com/apks?search=12b8da40ec9e53a83a7c4b1d490db397730123efa5e8ed39ee596d3bae42f80d%20OR%208b5b898c7ad2fc6b516800f411b7181877a89124a94ba8a9fa0e974972c67553%20OR%20d65696c077b480bb0afab2390f1efd37d701ca2f6cbaa91977d4ac76957438c7%20OR%203a5bbe5454124ba5fbaa0dc7786fd2361dd903f84ccf65be65b0b0b77d432e6e%20OR%20b05013bbabf0a24a2c8b9c7b3f3ad79b065c6daaaec51c2e61790b05932dbb58%20OR%20396324dc3f34785aca1ece255a6f142f52e831b22bf96906c2a10b61b1da4713%20OR%2098bdad683b0ae189ed0fa56fb1e147c93e96e085dff90565ee246a4f6c4e2850%20OR%20f46c21a2976af7ba23e0af54943eacdaad2fd0b3108fde6d1502879fe9c83d07%20OR%20b3c3d131200369d1c28285010b99d591f9a9c0629b0ba9fedd1b4ffe0170cf4c%20OR%200a63ca301d97930eb8352c0772fb39015e4b89cd82e72391213ee82414e60cf8"
-	condition:
-		androguard.filter("android.intent.action.BOOT_COMPLETED") and
-		androguard.filter("android.intent.action.USER_PRESENT") and
-		androguard.filter("android.net.conn.CONNECTIVITY_CHANGE") and
-		androguard.permission(/android.permission.ACCESS_MTK_MMHW/) and
-		androguard.permission(/android.permission.ACCESS_NETWORK_STATE/) and
-		androguard.permission(/android.permission.ACCESS_WIFI_STATE/) and
-		androguard.permission(/android.permission.CAMERA/) and
-		androguard.permission(/android.permission.INTERNET/) and
-		androguard.permission(/android.permission.READ_PHONE_STATE/) and
-		androguard.permission(/android.permission.RECEIVE_BOOT_COMPLETED/) and
-		androguard.permission(/android.permission.WAKE_LOCK/)
-}
-rule redalert_b {
-	strings:
-		$string_1 = /http:\/\/\S+:7878/
-		$string_2 = ">sban</string>"
-		$string_3 = ">gt</string>"
-	condition:
-		1 of ($string_*)
-}
-rule Fake_video_apps_a
+
+rule Fake_videopps
 {
 	meta:
 		description = "Detects few Video Player apps"
@@ -18594,9 +16106,10 @@ rule Fake_video_apps_a
 		$b_9 = "http://get.confhz.space"
 		$b_10 = "http://mi1k.io"
 	condition:
-		all of ($a_*) and 
- 		any of ($b_*)	
+		all of ($a_*) and
+ 		any of ($b_*)
 }
+
 rule qaavvwzv: official
 {
 	meta:
@@ -18604,6 +16117,7 @@ rule qaavvwzv: official
 	condition:
 		androguard.url(/hamrahpay\.com/)
 }
+
 rule raaevevv: official
 {
 	meta:
@@ -18612,6 +16126,7 @@ rule raaevevv: official
 		androguard.activity(/ir.adad/i) or
 		androguard.url(/s\.adad\.ir/)
 }
+
 rule saaavwvz: official
 {
 	meta:
@@ -18619,6 +16134,7 @@ rule saaavwvz: official
 	condition:
 		androguard.url(/mirror1\.harsobh\.com/)
 }
+
 rule taazvvwvz: official
 {
 	meta:
@@ -18627,6 +16143,7 @@ rule taazvvwvz: official
 		androguard.activity(/ronash/i) or
 		androguard.url(/ronash\.co/)
 }
+
 rule uaaavwv: official
 {
 	meta:
@@ -18637,23 +16154,7 @@ rule uaaavwv: official
 		androguard.url(/cheshmak\.me/) or
 		androguard.url(/123\.cheshmak\.me/)
 }
-rule Trojan_l: BankBot
-{
-	meta:
-        description = "Trojan targeting Banks with Overlays"
-		source = "https://securify.nl/blog/SFY20170401/banking_malware_in_google_play_targeting_many_new_apps.html"
-	strings:
-		$c2_1 = "/private/tuk_tuk.php" nocase
-		$c2_2 = "/private/add_log.php" nocase
-		$c2_3 = "/private/set_data.php" nocase
-		$c2_4 = "activity_inj" nocase
-	condition:
-		2 of ($c2_*)
-		and (
-			androguard.permission(/android.permission.RECEIVE_SMS/) 
-			or androguard.permission(/android.permission.READ_SMS/)
-		)
-}
+
 rule Trojan_2_e: BankBot
 {
 	meta:
@@ -18675,7 +16176,6 @@ rule Trojan_2_e: BankBot
 		and	androguard.permission(/android.permission.RECEIVE_SMS/)
 }
 
-
 rule Trojan_4_e: BankBot
 {
 	meta:
@@ -18688,7 +16188,7 @@ rule Trojan_4_e: BankBot
 	condition:
 		all of ($c_*)
 		and (
-			androguard.permission(/android.permission.RECEIVE_SMS/) 
+			androguard.permission(/android.permission.RECEIVE_SMS/)
 			or androguard.permission(/android.permission.READ_SMS/)
 		)
 }
@@ -18709,10 +16209,10 @@ rule hacking_team_b: stcert
 		$string_d = "nv-sa1"
 	condition:
 		(any of ($string_a_*) and any of ($string_b_*) and $string_c and $string_d) or
-		androguard.certificate.sha1("B1BC968BD4F49D622AA89A81F2150152A41D829C") or 	  
-		androguard.certificate.sha1("3FEC88BA49773680E2A3040483806F56E6E8502E") or 
-		androguard.certificate.sha1("C1F04E3A7405D9CFA238259730F096A17FCF2A4F") or 
-		androguard.certificate.sha1("6961124AF170D9C0FF2B0571328CB6C71D6FD096") or 
+		androguard.certificate.sha1("B1BC968BD4F49D622AA89A81F2150152A41D829C") or
+		androguard.certificate.sha1("3FEC88BA49773680E2A3040483806F56E6E8502E") or
+		androguard.certificate.sha1("C1F04E3A7405D9CFA238259730F096A17FCF2A4F") or
+		androguard.certificate.sha1("6961124AF170D9C0FF2B0571328CB6C71D6FD096") or
 		androguard.certificate.sha1("D198025BF15D7A19488B780E1B9AAD27BBE6C4A9")	or
 		androguard.certificate.sha1("24575B8782D44CACB72253FEEB9DF811D0E12C37") or
 		androguard.certificate.sha1("4E40663CC29C1FE7A436810C79CAB8F52474133B") or
@@ -18721,6 +16221,7 @@ rule hacking_team_b: stcert
 		androguard.certificate.sha1("C4CF31DBEF79393FD2AD617E79C27BFCF19EFBB3") or
 		androguard.certificate.sha1("2125821BC97CF4B7591E5C771C06C9C96D24DF8F")
 }
+
 rule Android_Bankosy
 {
 	meta:
@@ -18734,8 +16235,9 @@ rule Android_Bankosy
 		$string_4 = "#intercept_sms_start"
 	condition:
 		all of ($string_*) and
-		androguard.permission(/android.permission.SYSTEM_ALERT_WINDOW/) 
+		androguard.permission(/android.permission.SYSTEM_ALERT_WINDOW/)
 }
+
 rule Banker_h:Gugi
 {
 	meta:
@@ -18747,6 +16249,7 @@ rule Banker_h:Gugi
 	condition:
 		$a and $b
 }
+
 rule ransomware_i
 {
 	meta:
@@ -18760,23 +16263,25 @@ rule ransomware_i
 	condition:
 		all of them
 }
+
 rule wormHole_b
 {
 	meta:
 		description = "Wormhome vulnerability found in com.qihoo.secstore con GPlay. After app launch, a SimpleWebServer service is called listening to 0.0.0.0:38517. It uses yunpan to upload files and get a 360 domain. App protected by proguard."
 	strings:
-		$a = "/getModel0" 
+		$a = "/getModel0"
 		$b = "/in" // download and install apk
 		$c = "/openPage" // Open URL
 		$d = "/openActivity" // Launch activity
 		$e = "/isAppInstalled" // Check app existance
-		$f = ".360.cn" 
-		$g = ".so.com" 
+		$f = ".360.cn"
+		$g = ".so.com"
 		$h = ".qihoo.net"
 		$i = ".gamer.cn"
 	condition:
 		($a or $b or $c or $d or $e) and ($f or $g or $h  or $i)
 }
+
 rule Kemoge_b: official
 {
 	meta:
@@ -18793,7 +16298,7 @@ rule Kemoge_b: official
 		$a and $b and $c and $d and $e and $f
 }
 
-rule Kemoge_2_a: official
+rule Kemoge_2: official
 {
 	meta:
 		description = "This rule detects Kemoge aggresive Adware"
@@ -18807,24 +16312,25 @@ rule Kemoge_2_a: official
 		$a and $b and $c and $d
 }
 
-rule andr_tordow_a
+rule andr_tordow
 {
 	meta:
 		description = "Yara for variants of Trojan-Banker.AndroidOS.Tordow. Test rule"
 		source = "https://securelist.com/blog/mobile/76101/the-banker-that-can-steal-anything/"
 		author = "https://twitter.com/5h1vang"
 	condition:
-		androguard.package_name("com.di2.two") or		
+		androguard.package_name("com.di2.two") or
 		(androguard.activity(/API2Service/i) and
 		androguard.activity(/CryptoUtil/i) and
 		androguard.activity(/Loader/i) and
-		androguard.activity(/Logger/i) and 
+		androguard.activity(/Logger/i) and
 		androguard.permission(/android.permission.INTERNET/)) or
 		androguard.certificate.sha1("78F162D2CC7366754649A806CF17080682FE538C") or
 		androguard.certificate.sha1("BBA26351CE41ACBE5FA84C9CF331D768CEDD768F") or
 		androguard.certificate.sha1("0B7C3BC97B6D7C228F456304F5E1B75797B7265E")
 }
-rule dresscode_a: trojan
+
+rule dresscode: trojan
 {
     meta:
         description = "DressCode proxy bot: http://blog.checkpoint.com/2016/08/31/dresscode-android-malware-discovered-on-google-play/"
@@ -18837,10 +16343,11 @@ rule dresscode_a: trojan
 	  $f = "RESPONSE_HELLO"
 	  $g = "RESPONSE_PONG"
     condition:
-        ($a and $b and $c and $d and $e and $f and $g) or 
+        ($a and $b and $c and $d and $e and $f and $g) or
         (androguard.service(/com\.a\.c\.Service/) and androguard.receiver(/com\.a\.c\.Receiver/))
 }
-rule VikingBotnet_a
+
+rule VikingBotnet
 {
 	meta:
 		description = "Rule to detect Viking Order Botnet."
@@ -18853,23 +16360,10 @@ rule VikingBotnet_a
 		$e = "http://176.9.138.114:7777/ecspectapatronum/"
 		$f = "http://telbux.pw:11111/knock/"
 	condition:
-		($a and $c) or ($b or $d or $e or $f) 
+		($a and $c) or ($b or $d or $e or $f)
 }
-rule trojanSMS_c
-{
-	meta:
-		description = "This rule detects trojan SMS"
-		sample = "ff8ccead81eca2154cf9e891e15f52c8a154ea3aba5e62498b11fb843135837f"
-		source = "http://pastebin.com/rLPux7ts"
-	strings:
-		$a = "sendMultipartTextMessage"
-		$b = "l68g66qypPs="
-		$c = "MY7WPp+JQGc="
-		$d = "com.android.install"
-	condition:
-		all of them
-}
-rule Coudw_a: official
+
+rule Coudw: official
 {
 	meta:
 		description = "This rule detects one Coudw variant"
@@ -18881,17 +16375,20 @@ rule Coudw_a: official
 		$a and $b
 		or androguard.url(/s\.cloudsota\.com/)
 }
+
 rule Android_Anubis_v3_b
 {
 	meta:
 		author = "Jacob Soo Lead Re"
 		description = "Anubis newer version."
 	condition:
-		(androguard.filter(/android.intent.action.DREAMING_STOPPED/i) 
-		and androguard.filter(/android.intent.action.EXTERNAL_APPLICATIONS_AVAILABLE/i) 
+		(androguard.filter(/android.intent.action.DREAMING_STOPPED/i)
+		and androguard.filter(/android.intent.action.EXTERNAL_APPLICATIONS_AVAILABLE/i)
 		and androguard.filter(/android.intent.action.USER_PRESENT/i))
 }
-rule Trojan_Banker_Marcher_a {
+
+rule Trojan_Banker_Marcher
+{
 	meta:
 	description = "Trojan-Banker targeting Erste Bank Austria, and many others (Marcher)"
 	strings:
@@ -18938,7 +16435,9 @@ rule Trojan_Banker_Marcher_a {
 	condition:
 	1 of them and not androguard.package_name(/deebrowser/)
 }
-rule Trojan_Banker_Marcher2_a {
+
+rule Trojan_Banker_Marcher2
+{
 	meta:
 	    description = "Trojan-Banker targeting Erste Bank Austria, and many others (Marcher)"
 	strings:
@@ -18947,7 +16446,8 @@ rule Trojan_Banker_Marcher2_a {
 	condition:
 	all of them
 }
-rule Pegasus_a: official
+
+rule Pegasus: official
 {
 	meta:
 		description = "This rule detects Pegasus variants"
@@ -18971,11 +16471,12 @@ rule Pegasus_a: official
 	(all of ($string_varone_*) ) or
 	(all of ($string_vartwo_*) ) or
 	(all of ($string_varthree_*) and $string_varone_1 ) or
-	androguard.certificate.sha1("516f8f516cc0fd8db53785a48c0a86554f75c3ba") or 
-	androguard.certificate.sha1("44f6d1caa257799e57f0ecaf4e2e216178f4cb3d") or 
+	androguard.certificate.sha1("516f8f516cc0fd8db53785a48c0a86554f75c3ba") or
+	androguard.certificate.sha1("44f6d1caa257799e57f0ecaf4e2e216178f4cb3d") or
 	androguard.certificate.sha1("7771af1ad3a3d9c0b4d9b55260bb47c2692722cf") or
 	androguard.certificate.sha1("31a8633c2cd67ae965524d0b2192e9f14d04d016")
 }
+
 rule Mazain_c: Banker
 {
 	meta:
@@ -19012,7 +16513,8 @@ rule Mazain_c: Banker
 		or androguard.package_name("kris.myapplication")
 		or androguard.package_name("com.bagirase.livemusay.hrre")
 }
-rule Mazain_strings_a: Banker
+
+rule Mazain_strings: Banker
 {
 	meta:
 		description = "This rule detects Mazain malware based on strings"
@@ -19034,8 +16536,11 @@ rule Mazain_strings_a: Banker
 	condition:
 		all of ($required_*) and 2 of ($opt_*)
 }
-rule ChinesePorn_a
+
+rule ChinesePorn
 {
+    meta:
+    	description = "Detects few Chinese Porn apps"
 	condition:
 		androguard.url(/apk.iuiss.com/i) or
 		androguard.url(/a0.n3117.com/i) or
@@ -19043,16 +16548,11 @@ rule ChinesePorn_a
 		cuckoo.network.dns_lookup(/apk.iuiss.com/i) or
 		cuckoo.network.dns_lookup(/a0.n3117.com/i)
 }
-rule Shedun_a
+
+rule porn: chinese
 {
-	strings:
-		$a = "hehe you never know what happened!!!!"
-		$b = "madana!!!!!!!!!"
-	condition:
- 		all of them
-}
-rule porn_a: chinese
-{
+    meta:
+        description = "This rule detects porn apps"
 	condition:
 		androguard.url(/www\.4006000790\.com/) or
 		androguard.url(/wap\.xykernel\.cn/) or
@@ -19062,19 +16562,7 @@ rule porn_a: chinese
 		cuckoo.network.dns_lookup(/www\.4006000790\.com/)
 }
 
-rule towelhacking_analysis_a
-{
-	meta:
-		description = "From static analysis"
-		sample = "258c34428e214d2a49d3de776db98d26e0bd0abc452249c8be8cdbcb10218e8c"
-	strings:
-		$analysis_a = "LoganberryApplication"
-		$analysis_b = "attachBaseContext"
-		$analysis_c = "Obstetric"
-	condition:
-		all of them
-}
-rule towelhacking_cromosome_a
+rule towelhacking_cromosome
 {
 	meta:
 		description = "From cromosome.py"
@@ -19104,16 +16592,18 @@ rule kemoge_b
 	condition:
 		all of them
 }
-rule FamilyDroidKungFu_a
+
+rule FamilyDroidKungFu
 {
 	meta:
-		description = "Prevents FamilyDroidKungFu from activating"  
+		description = "Prevents FamilyDroidKungFu from activating"
 	strings:
 		$a = "/system/app/com.google.ssearch.apk"
 		$b = "/data/app/com.allen.mp-1.apk"
 	condition:
 		($a or $b)
 }
+
 rule vaavavse: official
 {
 	meta:
@@ -19134,11 +16624,12 @@ rule vaavavse: official
 		androguard.permission(/android.permission.READ_SMS/) and
 		androguard.permission(/android.permission.SEND_SMS/) and
 		androguard.permission(/android.permission.WRITE_EXTERNAL_STORAGE/) and
-		androguard.url("http://kharon.gforge.inria.fr\\dataset\\malware_Cajino.html") and 
-		$a and 
+		androguard.url("http://kharon.gforge.inria.fr\\dataset\\malware_Cajino.html") and
+		$a and
 		$b and
 		cuckoo.network.dns_lookup(/settings.crashlytics.com/) //Yes, we use crashlytics to debug our app!
 }
+
 rule waadce: official
 {
 	meta:
@@ -19153,20 +16644,6 @@ rule waadce: official
 	condition:
 		all of them
 }
-rule Cajino_g
-{
-	meta:
-		name = "Olav Witvliet, Long Long Chen"
-		Studentnumber = "s2642964, s2403846"
-		Description = "Rule to detect Cajino (remote controlled spyware)"
-		Reference = "http://kharon.gforge.inria.fr/dataset/malware_Cajino.html"
-	strings:
-		$a = "com.baidu.android.pushservice.action.MESSAGE"
-		$b = "com.baidu.android.pushservice.action.RECEIVE"
-		$c = "com.baidu.android.pushservice.action.notification.CLICK"
-	condition:
-		all of them
-}
 
 rule SimpLocker_c: official
 {
@@ -19178,7 +16655,8 @@ rule SimpLocker_c: official
 		androguard.activity(/android.intent.action.BOOT_COMPLETED/) and
 		androguard.permission(/android.permission.INTERNET/)
 }
-rule Media_Player_a: official
+
+rule Media_Player: official
 {
 	meta:
 		description = "This rule detects the Media Player application, hoping to stop other malware like it"
@@ -19187,6 +16665,7 @@ rule Media_Player_a: official
 		androguard.package_name("com.BestGame.StickmanOnlineWarriors3") and
 		cuckoo.network.dns_lookup(/drius.aefrant.com/)
 }
+
 rule Trojan_m: SnacksRecipes
 {
 	meta:
@@ -19200,6 +16679,7 @@ rule Trojan_m: SnacksRecipes
 		androguard.permission(/android.permission.WRITE_EXTERNAL_STORAGE/) and
 		androguard.permission(/android.permission.GET_TASKS/)
 }
+
 rule SaveMe_c: remote controlled spyware
 {
 	meta:
@@ -19222,12 +16702,12 @@ rule SaveMe_c: remote controlled spyware
 		$end_call_6 = "fake" nocase
 		$end_call_7 = "phone" nocase
 		$end_call_8 = "endCall" nocase
-		$steal_contacts_1 = "content://icc/adn" nocase		
+		$steal_contacts_1 = "content://icc/adn" nocase
 		$steal_contacts_2 = "getColumnIndex" nocase
 		$steal_contacts_3 = "name" nocase
-		$steal_contacts_4 = "number" nocase		
+		$steal_contacts_4 = "number" nocase
 		$steal_contacts_5 = "PHONE APP" nocase
-		$steal_contacts_6 = "DatabaseOperations" nocase		
+		$steal_contacts_6 = "DatabaseOperations" nocase
 		$steal_contacts_7 = "sendcontact" nocase
 		$pickContact_sendSMS = "deleteUser" nocase
 		$remove_icon_1 = "setComponentEnabledSetting" nocase
@@ -19246,6 +16726,7 @@ rule SaveMe_c: remote controlled spyware
 			any of ($remove_icon_*)
 		)
 }
+
 rule xaasvav: official
 {
 	meta:
@@ -19262,18 +16743,6 @@ rule xaasvav: official
 		$a
 }
 
-rule advservice_datacollection_detection
-{
-	meta:
-		description =  "entifies this specific BadNews apk by the AdvService creation and information gathering by the use of variables."
-	strings:
-		$advservicelog_event = "AdvService started"
-		$datavesn = "vesn"
-		$datapacnme = "pacNme"
-		$dataphMl = "phMl"
-	condition:
-		$advservicelog_event and $datavesn and $datapacnme and $dataphMl
-}
 rule zaadvs: official
 {
 	meta:
@@ -19281,11 +16750,11 @@ rule zaadvs: official
 		sample = "fd694cf5ca1dd4967ad6e8c67241114c"
 	strings:
 		$a = "http://xeyocsu7fu2vjhxs.onion/"
-		$b = "19" 
+		$b = "19"
 		$c = "DISABLE_LOCKER"
 		$d = "FILES_WAS_ENCRYPTED"
 		$e = "127.0.0.1"
-		$f = "jndlasf074hr" 
+		$f = "jndlasf074hr"
 	condition:
 		androguard.app_name(/SimpLocker/) and
 		androguard.activity(/BOOT_COMPLETED/) and
@@ -19296,6 +16765,7 @@ rule zaadvs: official
 		all of them and
 		cuckoo.network.dns_lookup(/settings.crashlytics.com/) //Yes, we use crashlytics to debug our app!
 }
+
 rule Trojan_n: WipeLocker
 {
 	meta:
@@ -19311,10 +16781,10 @@ rule Trojan_n: WipeLocker
 		androguard.permission(/android.permission.SEND_SMS/) and
 		androguard.permission(/android.permission.WRITE_EXTERNAL_STORAGE/)
 }
-rule CAJINO_a {
+
+rule CAJINO
+{
     meta:
-      author 		= "Matthijs en Nils"
-      date 			= "10/11/2020"
       description 	= "This is a YARA rule for Cajino"
     strings:
       $register = "getApplicationContext()"
@@ -19331,24 +16801,9 @@ rule CAJINO_a {
     condition:
       $register and $phone and 1 of ($feature*)
 }
-rule baaafd: official
+
+rule fake_AVG
 {
-    meta:
-		author = "Matthijs en Nils"
-		date = "10/11/2020"
-		description = "This is a YARA rule for Cyber Security APK 1"
-    strings:
-        $a = "http://www.whoishostingthis.com/tools/user-agent/"
-        $b = "android.permission.GET_TASKS"
-        $c = "android.permission.INTERNET"
-        $d = "android.permission.WRITE_EXTERNAL_STORAGE"
-        $e = "android.permission.READ_PHONE_STATE"
-        $f = "android@android.com"
-	 	$g = "note"
-    condition:
-        $a and $b and $c and $d and $e and $f and $g
-}
-rule fake_AVG_a {
     meta:
         description = "Detects a fake AVG Antivirus APK which contains adware."
         in_the_wild = true
@@ -19363,27 +16818,11 @@ rule fake_AVG_a {
         androguard.certificate.sha1("6d0e7c4e30bfdb012bb6272a483434f60f41e7e0") and
         androguard.package_name("com.liudev.simplecakerecipes")
 }
-rule Cajino_h
-{
-	meta:
-		Authors = "Teun de Mast and Lennard Hordijk"
-		Studentnumbers = "respectively: 2656566 and 2716143"
-		Description = "A rule to detect Cajino (remote controlled spyware)"
-		Reference = "http://kharon.gforge.inria.fr/dataset/malware_Cajino.html"
-	strings:
-		$a = "com.baidu.android.pushservice.action.MESSAGE"
-		$b = "com.baidu.android.pushservice.action.RECEIVE"
-		$c = "com.baidu.android.pushservice.action.notification.CLICK"
-		$d = "application/vnd.android.package-archive"
-	condition:
-		$a and $b and $c and $d
-}
+
 rule ransomware_j: svpeng android
 {
 	meta:
-		author = "Fernando Denis https://twitter.com/fdrg21"
-		reference = "https://koodous.com/"
-		description = "Ransomware"
+		description = "This rule detects Ransomware"
 		in_the_wild = true
 	strings:
 		$a =  {6e 64 20 79 6f 75 72 27 73 20 64 65 76 69 63 65 20 77 69 6c 6c 20 72 65 62 6f 6f 74 20 61 6e 64}
@@ -19391,11 +16830,10 @@ rule ransomware_j: svpeng android
 	condition:
 		$a and $b
 }
+
 rule Ransomware_d: banker android
 {
 	meta:
-		author = "Fernando Denis https://twitter.com/fdrg21"
-		reference = "https://koodous.com/"
 		description = "Ransomware Test 2"
 		thread_level = 3
 		in_the_wild = true
@@ -19420,7 +16858,7 @@ rule nang
 		all of them
 }
 
-rule SMSSender_a
+rule SMSSender
 {
 	meta:
 		description = "This rule detects a type of SMSSender trojan"
@@ -19437,7 +16875,7 @@ rule SMSSender_a
 		all of them
 }
 
-rule PornClicker_a
+rule PornClicker
 {
 	meta:
 		description = "It detects remote servers used in these trojans. Probably they are still at play store"
@@ -19533,7 +16971,7 @@ rule PornClicker_a
 		$llll = "http://d.benapps3.xyz"
 		$mmmm = "http://dwqs.xnxxtubes.net/"
 	condition:
-			any of them 
+			any of them
 }
 
 rule AgeWap
@@ -19543,23 +16981,26 @@ rule AgeWap
 	condition:
 		androguard.certificate.issuer(/C=RU\/ST=Unknown\/L=Moscow\/O=AgeWap\/OU=AgeWap Corp\.\/CN=AgeWap/) and androguard.permission(/android.permission.SEND_SMS/)
 }
+
 rule Londaniga
 {
 	meta:
 		description = "Rule to detect Londaniga fake apps. SMS Fraud in most."
 	condition:
-		androguard.certificate.issuer(/lorenz@londatiga.net/) and androguard.permission(/android.permission.SEND_SMS/)		
+		androguard.certificate.issuer(/lorenz@londatiga.net/) and androguard.permission(/android.permission.SEND_SMS/)
 }
+
 rule Londaniga2: urls
 {
-	meta: 
-		description = "IPs receiving info from user in Londaniga apps." 
+	meta:
+		description = "IPs receiving info from user in Londaniga apps."
 	strings:
 		$a = "http://211.136.165.53/adapted/choose.jsp?dest=all&chooseUrl=QQQwlQQQrmw1sQQQpp66.jsp"
 		$b = "http://211.136.165.53/wl/rmw1s/pp66.jsp"
 	condition:
 		all of them
 }
+
 rule gsr
 {
 	meta:
@@ -19568,31 +17009,21 @@ rule gsr
 	condition:
 		androguard.certificate.sha1("943BC6E0827F09B050B02830685A76734E566168")
 }
-rule smsReg {
-	strings:
-		$mmmm = "http://zhxone.com/"
-		$oooo = "http://coco.zhxone.com"
-		$nnnn = "http://tools.8282.net"
-		$jjjj = "http://coco.zhxone.com/tools/datatools"
- 		$pppp = "www.zhxone.com/service.php?api=apkinstall&pk=%s&aid=1000002"
- 		$qqqq = "http://auto.zhxone.com/adredirect.php?ct=%d&ag=%s&u=%s"
-		$rrrr = "http://auto.zhxone.com/adredirect.php?ct=%d"
-		$ssss = "http://tools.8782.net/stat.php?ac=upsts&did=%s&ag=%d&md=%s&sdk=%s&rel=%s&cp=%s&s=1"
-		$tttt = "www.zhxone.com/service.php?api=uslog&n=hdus_start&u=%s"
-		$uuuu = "http://tools.8782.net/stat.php?ac=uperr&did=%s&tg=%s&er=%s"
-	condition:
-		any of them
-}
-rule PornSMS {
+
+rule PornSMS
+{
+     meta:
+		description = "Detects few  Porn apps"
 	 condition:
-	 	androguard.package_name("com.shenqi.video.ycef.svcr") or 
+	 	androguard.package_name("com.shenqi.video.ycef.svcr") or
 		androguard.package_name("com.shenqi.video.tjvi.dpjn)") or
 		androguard.package_name("dxas.ixa.xvcekbxy") or
-		androguard.package_name("com.video.ui") or 
+		androguard.package_name("com.video.ui") or
 		androguard.package_name("com.qq.navideo") or
 		androguard.package_name("com.android.sxye.wwwl") or
 		androguard.certificate.issuer(/llfovtfttfldddcffffhhh/)
-		}
+}
+
 rule SMSSender_b
 {
 	meta:
@@ -19607,7 +17038,8 @@ rule SMSSender_b
 	condition:
 		all of them
 }
-rule SMSSender2_a
+
+rule SMSSender2
 {
 	meta:
 		description = "This rule detects another type of SMSSender"
@@ -19621,7 +17053,8 @@ rule SMSSender2_a
 	condition:
 		all of them
 }
-rule mkero_a
+
+rule mkero
 {
 	meta:
 		description = "This rule detects MKero malware family"
@@ -19682,7 +17115,7 @@ rule APT37
          androguard.certificate.sha1("13ec1cd6a64c848c5727742e95c3a40ce7685381")
  }
 
- rule APT41
+rule APT41
  {
      meta:
          description = "APT41, active since as early as 2012,It has financial motivations"
@@ -19691,7 +17124,7 @@ rule APT37
          androguard.certificate.sha1("920769fd7e2f82eeeb7c424313e94484c4d6d586")
  }
 
- rule Sphinx
+rule Sphinx
  {
     meta:
          description = "APT-C-15 is related to cyber espionage activities in the Middle East targeting countries such as Egypt and Israel to steal confidential information"
@@ -19704,7 +17137,7 @@ rule APT37
          androguard.certificate.sha1("7e1f991042aac237694fd2168f241e9f6a9cdc58")
  }
 
- rule AridViper
+rule AridViper
  {
     meta:
        description =  "Native Arabic-speaking cybercriminals have built advanced methods and tools to deliver, hide and operate malware to compromise Windows and Android platform used by specific targets."
@@ -19861,7 +17294,7 @@ rule APT37
         androguard.certificate.sha1("344f1a9dc7f8abd88d1c94f4323646829d80c555")
  }
 
- rule Goldmouse
+rule Goldmouse
  {
     meta:
         description =  "APT-C-27 is located in the Syrian region with ability to attack Windows and Android platform"
@@ -19949,6 +17382,7 @@ rule PatBear
             androguard.certificate.sha1("7a61ba2214144729d610e7853605249b0cdde3f5") or
             androguard.certificate.sha1("0b2c65bcf9a40ae513c903aafc35fcc47adb7c40")
 }
+
 rule APTC44
 {
     meta:
@@ -20039,7 +17473,6 @@ rule BladeEagle
         androguard.certificate.sha1("7b2e88e135672eb93a806d09a297c74d77228d72") or
         androguard.certificate.sha1("33a1b7323dbda6e462b0e693be5dce1bad09b9da")
 }
-
 
 rule Newscaster
 {
@@ -20314,7 +17747,8 @@ rule Nokki
          androguard.certificate.sha1("986212b84f9bd3facafc39a6765885edd945dca4") or
          androguard.certificate.sha1("b1691e0f0732ce145579e65db8b930d3f394f0b2")
  }
- rule LazarusGroup
+
+rule LazarusGroup
  {
      meta:
          description= "In the middle of 2017, the WannaCry malware which leverages the leaked EternalBlue exploits affected as many as 300,000 computers worldwide."
@@ -20326,7 +17760,7 @@ rule Nokki
          androguard.certificate.sha1("aab27ff4a57162485d59410b6b675b58fab1857e")
  }
 
-  rule ZooPark
+rule ZooPark
   {
       meta:
           description= "It is a sophisticated cyberespionage operation that has been focusing on Android device users in the Middle East countries"
@@ -20383,7 +17817,6 @@ rule MuddyWater
           androguard.certificate.sha1("cd29a38eb52dac83be1f1e36b9830f5f0fdc362b") or
           androguard.certificate.sha1("2ca3210dcc8123dcec312913a5c626ec829cd309") or
           androguard.certificate.sha1("0b7518dac9d10d2ff187b9c7e05084134c52b8e3")
-
 }
 
 rule OceanLotus
@@ -20916,11 +18349,3 @@ rule Urpage
         androguard.certificate.sha1("cbc478b4d0cd481f48ab2dd7d9a47cb785057da9") or
         androguard.certificate.sha1("8697a3a7919c23772478f0aa00e9cc63863f4fd8")
 }
-
-
-
-
-
-
-
-
