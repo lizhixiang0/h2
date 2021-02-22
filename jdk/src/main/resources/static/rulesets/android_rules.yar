@@ -399,6 +399,58 @@ rule aamo: obfuscator
     $a and $b
 }
 
+rule appguard_kr: packer
+{
+  meta:
+    description = "AppGuard (TOAST-NHNent)"
+    url         = "https://docs.toast.com/en/Security/AppGuard/en/Overview/"
+    url2        = "https://www.toast.com/service/security/appguard"
+    sample      = "80ac3e9d3b36613fa82085cf0f5d03b58ce20b72ba29e07f7c744df476aa9a92"
+	strings:
+    $a1 = "assets/classes.jet"
+    $a2 = "assets/classes.zip"
+    $a3 = "assets/classes2.jet"
+    $a4 = "assets/classes2.zip"
+    $a5 = "assets/classes3.jet"
+    $a6 = "assets/classes3.zip"
+    $b1 = "lib/armeabi-v7a/libloader.so"
+    $b2 = "lib/x86/libloader.so"
+    $b3 = "lib/armeabi-v7a/libdiresu.so"
+    $b4 = "lib/x86/libdiresu.so"
+    $c1 = "assets/m7a"
+    $c2 = "assets/m8a"
+    $c3 = "assets/agconfig"    //appguard cfg?
+    $c4 = "assets/agmetainfo"
+  condition:
+    2 of ($a*) and 1 of ($b*) and 1 of ($c*)
+	}
+
+rule chornclickers: packer
+{
+  meta:
+    description = "Custom Chinese 'ChornClickers'"
+    url         = "https://github.com/rednaga/APKiD/issues/93"
+    example     = "0c4a26d6b27986775c9c58813407a737657294579b6fd37618b0396d90d3efc3"
+  strings:
+    $a = "libhdus.so"
+    $b = "libwjus.so"
+  condition:
+    all of them
+}
+
+rule chornclickers_b: packer
+{
+  meta:
+    description = "Custom Chinese 'ChornClickers'"
+    url         = "https://github.com/rednaga/APKiD/issues/93"
+    example     = "0c4a26d6b27986775c9c58813407a737657294579b6fd37618b0396d90d3efc3"
+  strings:
+    $a = "lib/armeabi/libhdus.so"
+    $b = "lib/armeabi/libwjus.so"
+  condition:
+    all of them
+}
+
 rule fortniteppclone
 {
 	meta:
@@ -477,6 +529,18 @@ rule LokiBot
 		and androguard.receiver(/Scrynlock/i)
 		and androguard.permission(/android\.permission\.BIND_DEVICE_ADMIN/i)
 		and androguard.filter(/android\.app\.action\.DEVICE_ADMIN_ENABLED/i)
+		}
+
+rule jiagupktoolplus: packer
+{
+    meta:
+        description = "Jiagu (ApkToolPlus)"
+    strings:
+        $a = "assets/jiagu_data.bin"
+        $b = "assets/sign.bin"
+        $c = "libapktoolplus_jiagu.so"
+    condition:
+        all of them
 }
 
 rule POB_1
@@ -1665,6 +1729,34 @@ rule algo360_detect
 		($a or $b) and
 		androguard.permission(/android.permission.INTERNET/)
 }
+private rule upx_elf32_arm_stub : packer
+{
+  meta:
+    description = "Contains a UPX ARM stub"
+  strings:
+    $UPX_STUB = { 1E 20 A0 E3 14 10 8F E2 02 00 A0 E3 04 70 A0 E3 00 00 00 EF 7F 00 A0 E3 01 70 A0 E3 00 00 00 EF }
+  condition:
+    $UPX_STUB
+}
+
+rule promon: packer
+{
+  meta:
+    description = "Promon Shield"
+    url         = "https://promon.co/"
+    sample      = "6a3352f54d9f5199e4bf39687224e58df642d1d91f1d32b069acd4394a0c4fe0"
+  strings:
+    $a = "libshield.so"
+    $b = "deflate"
+    $c = "inflateInit2"
+    $d = "crc32"
+    $s1 = /.ncc/  // Code segment
+    $s2 = /.ncd/  // Data segment
+    $s3 = /.ncu/  // Another segment
+  condition:
+    ($a and $b and $c and $d) and
+    2 of ($s*)
+}
 
 rule ba: official
 {
@@ -2231,6 +2323,56 @@ rule dexguard_new: obfuscator
         (($Loaux or $Locon))
         or
         ( ($Lolcase or $Loucase or $Lo2c or 1 of ($Loif*)) and ($Lo2crap or $Lo3crap) )
+}
+
+rule unk_packer: packer
+{
+  meta:
+    description = "Unknown packer"
+    url         = "https://github.com/rednaga/APKiD/issues/71"
+    example     = "673b3ab2e06f830e7ece1e3106a6a8c5f4bacd31393998fa73f6096b89f2df47"
+  strings:
+    $str_0 = { 11 61 74 74 61 63 68 42 61 73 65 43 6F 6E 74 65 78 74 00 } // "attachBaseContext"
+    $str_1 = { 04 2F 6C 69 62 00 } // "/lib"
+    $str_2 = { 17 4C 6A 61 76 61 2F 6C 61 6E 67 2F 43 6C 61 73 73 4C 6F 61 64 65 72 3B 00 } // Ljava/lang/ClassLoader;
+    $str_3 = { 77 72 69 74 65 64 44 65 78 46 69 6C 65 00 } // writedDexFile
+    $attachBaseContextOpcodes = {
+        6f20??00??00   // invoke-super {v3, v4}, Landroid/app/Application.attachBaseContext(Landroid/content/Context;)V
+        6e10??00??00   // invoke-virtual {v3}, Ljava/lang/Object.getClass()Ljava/lang/Class;
+        0c??           // move-result-object v0
+        1a01??00       // const-string v1, str.MS4zNiguNyIBJCQ9HAU ; 0xdfd
+        6e20??00??00   // invoke-virtual {v3, v1}, Lpykqdxlnyt/iytDlJSoOg.GaoAoxCoJpRm(Ljava/lang/String;)Ljava/lang/String;
+        0c??           // move-result-object v1
+        12??           // const/4 v2, 0               ; Protect.java:79
+        2322??00       // new-array v2, v2, [Ljava/lang/Class; ; 0x3b8
+        6e30??00????   // invoke-virtual {v0, v1, v2}, Ljava/lang/Class.getDeclaredMethod(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;
+        0c??           // move-result-object v0
+        12??           // const/4 v1, 0
+        2311??00       // new-array v1, v1, [Ljava/lang/Object; ; 0x3bc
+        6e30??00????   // invoke-virtual {v0, v3, v1}, Ljava/lang/reflect/Method.invoke(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
+        0e00           // return-void
+        0d00           // move-exception v0
+        28fe           // goto 0x00002984
+    }
+    $xor_key = {
+       21 ??         //  array-length        v2, p1
+       23 ?? 17 00   //  new-array           v1, v2, [B
+       12 00         //  const/4             v0, 0
+       21 ??         //  array-length        v2, p1
+       35 ?? ?? 00   //  if-ge               v0, v2, :2A
+       48 02 ?? 00   //  aget-byte           v2, p1, v0
+       21 ?3         //  array-length        v3, p2
+       94 03 ?? ??   //  rem-int             v3, v0, v3
+       48 03 ?? ??   //  aget-byte           v3, p2, v3
+       B7 ??         //  xor-int/2addr       v2, v3
+       8D ??         //  int-to-byte         v2, v2
+       4F 02 ?? ??   //  aput-byte           v2, v1, v0
+       D8 00 ?? ??   //  add-int/lit8        v0, v0, 1
+       28 F0         //  goto                :8
+       11 01         //  return-object       v1
+    }
+  condition:
+    $attachBaseContextOpcodes and $xor_key and 3 of ($str_*)
 }
 
 rule lipizzan_1
@@ -4015,6 +4157,165 @@ rule Cajino
 	  	androguard.certificate.sha1("db27bc861665495329fb93df30017e24ddda8d27")
 }
 
+rule otherpacker
+{
+  meta:
+    description = "AppGuard"
+  strings:
+    $stub = "assets/appguard/"
+    $encrypted_dex = "assets/classes.sox"
+  condition:
+   ($stub and $encrypted_dex)
+}
+
+rule dxshield: otherpacker
+{
+  meta:
+    description = "DxShield"
+  strings:
+    $decryptlib = "libdxbase.so"
+    $res = "assets/DXINFO.XML"
+  condition:
+     ($decryptlib and $res)
+}
+
+rule secneo: otherpacker
+{
+  meta:
+    description = "SecNeo"
+  strings:
+    $encryptlib1 = "libDexHelper.so"
+    $encryptlib2 = "libDexHelper-x86.so"
+    $encrypted_dex = "assets/classes0.jar"
+  condition:
+     any of ($encrypted_dex, $encryptlib2, $encryptlib1)
+}
+
+rule dexprotector: otherpacker
+{
+  meta:
+    author = "Jasi2169"
+    description = "DexProtector"
+  strings:
+    $encrptlib = "assets/dp.arm.so.dat"
+    $encrptlib1 = "assets/dp.arm-v7.so.dat"
+    $encrptlib2 = "assets/dp.arm-v8.so.dat"
+    $encrptlib3 = "assets/dp.x86.so.dat"
+    $encrptcustom = "assets/dp.mp3"
+  condition:
+     any of ($encrptlib, $encrptlib1, $encrptlib2, $encrptlib3) and $encrptcustom
+}
+
+rule kiro: otherpacker
+{
+  meta:
+    description = "Kiro"
+  strings:
+    $kiro_lib = "libkiroro.so"
+    $sbox = "assets/sbox"
+  condition:
+     $kiro_lib and $sbox
+}
+
+rule qdbh_packer: otherpacker
+{
+  meta:
+    description = "'qdbh' (?)"
+  strings:
+    $qdbh = "assets/qdbh"
+  condition:
+     $qdbh
+}
+
+rule unknown_packer_lib: otherpacker
+{
+  meta:
+    description = "'jpj' packer (?)"
+  strings:
+    $pre_jar = { 00 6F 6E 43 72 65 61 74 65 00 28 29 56 00 63 6F 6D 2F 76 }
+    $jar_data = { 2E 6A 61 72 00 2F 64 61 74 61 2F 64 61 74 61 2F 00 2F }
+    $post_jar = { 2E 6A 61 72 00 77 00 6A 61 76 61 2F 75 74 69 6C 2F 4D 61 70 00 67 65 74 49 6E 74 00 }
+  condition:
+    ($pre_jar and $jar_data and $post_jar)
+}
+
+rule unicom_loader: otherpacker
+{
+  meta:
+    description = "Unicom SDK Loader"
+  strings:
+    $decrypt_lib = "libdecrypt.jar"
+    $unicom_lib = "libunicomsdk.jar"
+    $classes_jar = "classes.jar"
+  condition:
+     ($unicom_lib and ($decrypt_lib or $classes_jar))
+}
+
+rule app_fortify: otherpacker
+{
+  meta:
+    description = "App Fortify"
+  strings:
+    $lib = "libNSaferOnly.so"
+  condition:
+     $lib
+}
+
+rule nqshield: otherpacker
+{
+  meta:
+    description = "NQ Shield"
+  strings:
+    $lib = "libnqshield.so"
+    $lib_sec1 = "nqshield"
+    $lib_sec2 = "nqshell"
+  condition:
+     any of ($lib, $lib_sec1, $lib_sec2)
+}
+
+rule medusah: otherpacker
+{
+  meta:
+    description = "Medusah"
+  strings:
+    $lib = "libmd.so"
+  condition:
+    $lib
+}
+
+rule medusahppsolid: otherpacker
+{
+  meta:
+    description = "Medusah (AppSolid)"
+  strings:
+    $encrypted_dex = "assets/high_resolution.png"
+  condition:
+     $encrypted_dex and not medusah
+}
+
+rule kony: otherpacker
+{
+  meta:
+    description = "Kony"
+  strings:
+    $lib = "libkonyjsvm.so"
+    $decrypt_keys = "assets/application.properties"
+    $encrypted_js = "assets/js/startup.js"
+  condition:
+    $lib and $decrypt_keys and $encrypted_js
+}
+
+rule approov: otherpacker
+{
+  meta:
+    description = "Aproov"
+  strings:
+    $lib = "libapproov.so"
+    $sdk_config = "assets/cbconfig.JSON"
+  condition:
+     $lib and $sdk_config
+}
+
 rule PornHubAPK
 {
     meta:
@@ -5106,6 +5407,127 @@ rule bankingsha: versi0ne
 		any of them
 }
 
+rule cryptoshellpkguard: packer
+{
+  meta:
+    description = "APKGuard/CryptoShell"
+    url         = "http://apkguard.io/"
+    example     = "d9c98fff427646883ecb457fc2e9d2a8914ba7a9ee194735e0a18f56baa26cca"
+    url2        = "http://cryptoshell.io"
+    example2    = "d6745c1533b440c93f7bdfbb106470043b23aafdf91506c52332ed192d7b7003"
+  strings:
+    $attachBaseContextOpcodes = {
+        120b            // const/4 v11, 0
+        6f20 0100 fe00  // invoke-super {v14, v15}, Landroid/app/Application.attachBaseContext(Landroid/content/Context;)V ; 0x1
+        2206 ??00       // new-instance v6, Ljava/io/File; ; 0x180
+        6e10 ??00 0e00  // invoke-virtual {v14}, Llctavku/ngbdjdfqf.getFilesDir()Ljava/io/File; ; 0x19
+        0c09            // move-result-object v9
+        1a0a ??00       // const-string v10, str.mtuECIoALWpjXcVYbOOKBHNTMligrjLQpGFKT.zip ; 0x239c
+        7030 ???? 960a  // invoke-direct {v6, v9, v10}, Ljava/io/File.<init>(Ljava/io/File;Ljava/lang/String;)V ; 0xa
+        1a09 ??00       // const-string v9, str.UEsDBBQAAAAIAAMAi0tT_4a5ihQAAGArAAALABwAY2xhc3Nlcy5kZXhVVAkAA1Wg....
+        7120 ??00 b900  // invoke-static {v9, v11}, Landroid/util/Base64;.decode:(Ljava/lang/String;I)[B // method@0003
+        0c02            // move-result-object v2
+        2205 ??00       // new-instance v5, Ljava/io/FileOutputStream; // type@0007
+        7020 ??00 6500  // invoke-direct {v5, v6}, Ljava/io/FileOutputStream;.<init>:(Ljava/io/File;)V // method@000c
+        2201 ??00       // new-instance v1, Ljava/io/BufferedOutputStream; // type@0005
+        7020 ??00 5100  // invoke-direct {v1, v5}, Ljava/io/BufferedOutputStream;.<init>:(Ljava/io/OutputStream;)V // method@0006
+        6e20 ??00 2100  // invoke-virtual {v1, v2}, Ljava/io/BufferedOutputStream;.write:([B)V // method@0009
+        6e10 ??00 0100  // invoke-virtual {v1}, Ljava/io/BufferedOutputStream;.flush:()V // method@0008
+        6e10 ??00 0100  // invoke-virtual {v1}, Ljava/io/BufferedOutputStream;.close:()V // method@0007
+        6e10 ??00 0600  // invoke-virtual {v6}, Ljava/io/File;.getAbsolutePath:()Ljava/lang/String; // method@000b
+        0c03            // move-result-object v3
+        6e10 ??00 0e00  // invoke-virtual {v14}, Lyxlhycuqv/weudayy;.getFilesDir:()Ljava/io/File; // method@0019
+        0c09            // move-result-object v9
+        6e10 ??00 0900  // invoke-virtual {v9}, Ljava/io/File;.getAbsolutePath:()Ljava/lang/String; // method@000b
+        0c07            // move-result-object v7
+        6e10 ??00 0e00  // invoke-virtual {v14}, Lyxlhycuqv/weudayy;.getClassLoader:()Ljava/lang/ClassLoader; // method@0018
+        0c00            // move-result-object v0
+        2204 ??00       //  new-instance v4, Ldalvik/system/DexClassLoader; // type@0004
+        1209            // const/4 v9, #int 0 // #0
+        7050 ??00 3497  // invoke-direct {v4, v3, v7, v9, v0}, Ldalvik/system/DexClassLoader;.<init>:(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/ClassLoader;)V // method@0004
+        1a09 ??00       // const-string v9, "yabno/blkngwigpd" // string@003d
+        6e20 ??00 9400  // invoke-virtual {v4, v9}, Ldalvik/system/DexClassLoader;.loadClass:(Ljava/lang/String;)Ljava/lang/Class; // method@0005
+        0c09            // move-result-object v9
+        120a            // const/4 v10, #int 0 // #0
+        23aa ??00       // new-array v10, v10, [Ljava/lang/Class; // type@0016
+        6e20 ??00 a900  // invoke-virtual {v9, v10}, Ljava/lang/Class;.getConstructor:([Ljava/lang/Class;)Ljava/lang/reflect/Constructor; // method@000d
+        0c09            // move-result-object v9
+        120a            // const/4 v10, #int 0 // #0
+        23aa ??00       // new-array v10, v10, [Ljava/lang/Object; // type@0017
+        6e20 ??00 a900  // invoke-virtual {v9, v10}, Ljava/lang/reflect/Constructor;.newInstance:([Ljava/lang/Object;)Ljava/lang/Object; // method@0013
+        0c09            // move-result-object v9
+        5be9 0000       // iput-object v9, v14, Lyxlhycuqv/weudayy;.aaa:Ljava/lang/Object; // field@0000
+        54e9 0000       // iget-object v9, v14, Lyxlhycuqv/weudayy;.aaa:Ljava/lang/Object; // field@0000
+        6e10 ??00 0900  // invoke-virtual {v9}, Ljava/lang/Object;.getClass:()Ljava/lang/Class; // method@0012
+        0c09            // move-result-object v9
+        1a0a ??00       // const-string v10, "attachBaseContext" // string@0022
+        121b            // const/4 v11, #int 1 // #1
+        23bb ??00       // new-array v11, v11, [Ljava/lang/Class; // type@0016
+        120c            // const/4 v12, #int 0 // #0
+        1c0d ??00       // const-class v13, Landroid/content/Context; // type@0002
+        4d0d ????       // aput-object v13, v11, v12
+        6e30 ??00 a90b  // invoke-virtual {v9, v10, v11}, Ljava/lang/Class;.getDeclaredMethod:(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method; // method@000e
+        0c09            // move-result-object v9
+        54ea 0000       // iget-object v10, v14, Lyxlhycuqv/weudayy;.aaa:Ljava/lang/Object; // field@0000
+        121b            // const/4 v11, #int 1 // #1
+        23bb ??00       // new-array v11, v11, [Ljava/lang/Object; // type@0017
+        120c            // const/4 v12, #int 0 // #0
+        4d0e ????       // aput-object v14, v11, v12
+        6e30 ??00 a90b  // invoke-virtual {v9, v10, v11}, Ljava/lang/reflect/Method;.invoke:(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object; // method@0015
+        0e00            // return-void
+        0d08            // move-exception v8
+        6e10 ??00 0800  // invoke-virtual {v8}, Ljava/lang/Exception;.printStackTrace:()V // method@000f
+        28fb            // goto 0073 // -0005
+}
+  condition:
+    $attachBaseContextOpcodes
+}
+
+rule unicom_loader_b: packer
+{
+  meta:
+    description = "Unicom SDK Loader"
+  strings:
+    $decrypt_lib = "libdecrypt.jar"
+    $unicom_lib = "libunicomsdk.jar"
+    $classes_jar = "classes.jar"
+  condition:
+    ($unicom_lib and ($decrypt_lib or $classes_jar))
+}
+
+rule liapp: packer
+{
+  meta:
+    description = "LIAPP"
+  strings:
+    $dir = "/LIAPPEgg"
+    $lib = "LIAPPClient.sc"
+  condition:
+    any of ($dir, $lib)
+}
+
+rule app_fortify_b: packer
+{
+  meta:
+    description = "App Fortify"
+  strings:
+    $lib = "libNSaferOnly.so"
+  condition:
+    $lib
+}
+
+rule nqshield_b: packer
+{
+  meta:
+    description = "NQ Shield"
+  strings:
+    $lib = "libnqshield.so"
+    $lib_sec1 = "nqshield"
+    $lib_sec2 = "nqshell"
+  condition:
+    any of ($lib, $lib_sec1, $lib_sec2)
+}
+
 rule bitwisentiskid: obfuscator
 {
   meta:
@@ -5362,6 +5784,98 @@ rule postepay_smsFraud
 		androguard.permission(/android.permission.READ_SMS/)
 }
 
+rule testing
+{
+	meta:
+		description = "This rule is a test"
+	strings:
+	  $a1 = "file.separator"
+	  $a2 = "java.class.path"
+	  $a3 = "java.class.version"
+	  $a4 = "java.compiler"
+	  $a5 = "java.ext.dirs"
+	  $a6 = "java.home"
+	  $a7 = "java.io.tmpdir"
+	  $a8 = "java.library.path"
+	  $a9 = "java.specification.name"
+	  $a22 = "java.specification.vendor"
+	  $a11 = "java.specification.version"
+	  $a33 = "java.vendor"
+	  $a44 = "java.vendor.url"
+	  $a55 = "java.version"
+	  $a66 = "java.vm.name"
+	  $a77 = "java.vm.specification.name"
+	  $a88 = "java.vm.specification.vendor"
+	  $a99 = "java.vm.specification.version"
+	  $a00 = "java.vm.vendor"
+	  $a23 = "java.vm.version"
+	  $a34 = "line.separator"
+	  $a45 = "os.arch"
+	  $a56 = "os.name"
+	  $a78 = "os.version"
+	  $a89 = "path.separator"
+	  $a09 = "user.dir"
+	  $a98 = "user.home"
+	  $a87 = "user.name"
+	condition:
+		all of them
+}
+
+rule testing_b
+{
+	meta:
+		description = "This rule is a test"
+	strings:
+	  $a1 = "file.separator"
+	  $a2 = "java.class.path"
+	  $a3 = "java.class.version"
+	  $a4 = "java.compiler"
+	  $a5 = "java.ext.dirs"
+	  $a6 = "java.home"
+	  $a7 = "java.io.tmpdir"
+	  $a8 = "java.library.path"
+	  $a9 = "java.specification.name"
+	  $a22 = "java.specification.vendor"
+	  $a11 = "java.specification.version"
+	  $a33 = "java.vendor"
+	  $a44 = "java.vendor.url"
+	  $a55 = "java.version"
+	  $a66 = "java.vm.name"
+	  $a77 = "java.vm.specification.name"
+	  $a88 = "java.vm.specification.vendor"
+	  $a99 = "java.vm.specification.version"
+	  $a00 = "java.vm.vendor"
+	  $a23 = "java.vm.version"
+	  $a34 = "line.separator"
+	  $a45 = "os.arch"
+	  $a56 = "os.name"
+	  $a78 = "os.version"
+	  $a89 = "path.separator"
+	  $a09 = "user.dir"
+	  $a98 = "user.home"
+	  $a87 = "user.name"
+	  $b1 = "1xRTT"
+	  $b2 = "CDMA"
+	  $b3 = "EDGE"
+	  $b4 = "eHRPD"
+	  $b5 = "EDVO revision 0"
+	  $b6 = "EDVO revision A"
+	  $b7 = "EDVO revision B"
+	  $b8 = "GPRS"
+	  $b9 = "HSDPA"
+	  $b11 = "HSPA"
+	  $b12 = "HSPA+"
+	  $b13 = "HSUPA"
+	  $b14 = "iDen"
+	  $b15 = "LTE"
+	  $b16 = "UMTS"
+	  $b17 = "CDMA"
+	  $b18 = "GSM"
+	  $b19 = "SIP"
+	condition:
+		all of them
+}
+
 rule whatsdog: test
 {
 	meta:
@@ -5387,6 +5901,31 @@ rule smsfraud
 		sample = "79b35a99f16de6912d6193f06361ac8bb75ea3a067f3dbc1df055418824f813c"
 	condition:
 		androguard.certificate.sha1("1B70B4850F862ED0D5D495EC70CA133A4598C007")
+}
+
+rule packers
+{
+	meta:
+		description = "packers"
+		thread_level = 3
+		in_the_wild = true
+	strings:
+		$strings_b = "libmobisecy1"
+	condition:
+		$strings_b
+}
+
+rule packers_b
+{
+	meta:
+		description = "androidarmor"
+		thread_level = 3
+		in_the_wild = true
+	strings:
+		$strings_b = "cc.notify-and-report.net"
+		$strings_c = "FK_G+IL7~t-6"
+	condition:
+		$strings_b or $strings_c
 }
 
 rule yaaa: official
@@ -5528,6 +6067,27 @@ rule fakeInstaller_c
 		one_sample = "fb20c78f51eb781d7cce77f501ee406a37327145cf43667f8dc4a9d77599a74d"
 	condition:
 		androguard.certificate.sha1("E030A31BE312FF938AAF3F314934B1E92AF25D60")
+}
+
+rule libAPKProtect: packer
+{
+	meta:
+		description = "Packer libAPKProtect"
+	strings:
+		$a = "APKMainAPP"
+		$b = "libAPKProtect"
+	condition:
+		any of them
+}
+
+rule libprotectClass_b: packer
+{
+	meta:
+		description = "Packer libProtect"
+	strings:
+		$a = "libprotectClass"
+	condition:
+		$a
 }
 
 rule SMSFraud_c: chinese
@@ -6507,6 +7067,184 @@ rule metasploit_obsfuscated
 		all of them
 }
 
+rule qihoo360_b: packer
+{
+	meta:
+		description = "Qihoo 360"
+	strings:
+		$a = "libprotectClass.so"
+	condition:
+		$a
+}
+
+rule ijiami_b: packer
+{
+	meta:
+		description = "Ijiami"
+	strings:
+		$old_dat = "assets/ijiami.dat"
+		$new_ajm = "ijiami.ajm"
+		$ijm_lib = "assets/ijm_lib/"
+	condition:
+		$old_dat or $new_ajm or $ijm_lib
+}
+
+rule naga_b: packer
+{
+	meta:
+		description = "Naga"
+	strings:
+		$lib = "libddog.so"
+	condition:
+		 $lib
+}
+
+rule alibaba_b: packer
+{
+	meta:
+		description = "Alibaba"
+	strings:
+		$lib = "libmobisec.so"
+	condition:
+		 $lib
+}
+
+rule baidu_b: packer
+{
+	meta:
+		description = "Baidu"
+	strings:
+		$lib = "libbaiduprotect.so"
+		$encrypted = "baiduprotect1.jar"
+	condition:
+		$lib or $encrypted
+}
+
+rule pangxie_b: packer
+{
+	meta:
+		description = "PangXie"
+	strings:
+		$lib = "libnsecure.so"
+	condition:
+	 	$lib
+}
+
+rule Tencent
+{
+	meta:
+		description = "Tencent"
+    strings:
+		$tencent_1 = "TxAppEntry"
+		$tencent_2 = "StubShell"
+		$tencent_3 = "com.tencent.StubShell.ProxyShell"
+		$tencent_4 = "com.tencent.StubShell.ShellHelper"
+	condition:
+        any of them
+}
+
+rule Ijiami
+{
+	meta:
+		description = "Ijiami"
+    strings:
+		$1jiami_1 = "assets/ijiami.dat"
+		$1jiami_2 = "ijiami.ajm"
+		$1jiami_3 = "assets/ijm_lib/"
+		$1jiami_4 = "libexecmain.so"
+		$1jiami_5 = "libexec.so"
+		$1jiami_6 = "rmeabi/libexecmain.so"
+		$1jiami_7 = "neo.proxy.DistributeReceiver"
+	condition:
+        any of them
+}
+
+rule Naga
+{
+	meta:
+		description = "Naga"
+    strings:
+		$naga_1 = "libddog.so"
+	condition:
+        any of them
+}
+
+rule Nagapt
+{
+	meta:
+		description = "Nagapt (chaosvmp)"
+    strings:
+		$nagapt_1 = "chaosvmp"
+		$nagapt_2 = "ChaosvmpService"
+	condition:
+        any of them
+}
+
+rule Alibaba
+{
+	meta:
+		description = "Alibaba"
+    strings:
+		$ali_1 = "libmobisec.so"
+		$ali_2 = "libmobisecy1.zip"
+		$ali_3 = "mobisecenhance"
+		$ali_4 = "StubApplication"
+	condition:
+        any of them
+}
+
+rule Baidu
+{
+	meta:
+		description = "Baidu"
+    strings:
+		$baidu_1 = "libbaiduprotect.so"
+		$baidu_2 = "baiduprotect1.jar"
+		$baidu_3 = "baiduprotect.jar"
+		$baidu_4= "libbaiduprotect_x86.so"
+		$baidu_5 = "com.baidu.protect.StubApplication"
+		$baidu_6 = "com.baidu.protect.StubProvider"
+		$baidu_7 = "com.baidu.protect.A"
+		$baidu_8 = "libbaiduprotect"
+	condition:
+        any of them
+}
+
+rule Apkprotect
+{
+	meta:
+		description = "Apkprotect"
+    strings:
+		$apkprotect_1 = ".apk@"
+    	$apkprotect_2 = "libAPKProtect"
+		$apkprotect_3 = "APKMainAPP"
+	condition:
+         ($apkprotect_1 and $apkprotect_2) or $apkprotect_3
+}
+
+rule PangXie
+{
+	meta:
+		description = "PangXie"
+    strings:
+		$pangxie_1 = "libnsecure.so"
+	condition:
+        any of them
+}
+
+rule LIAPP
+{
+	meta:
+		description = "LIAPP"
+    strings:
+		$liapp_1 = "LiappClassLoader"
+		$liapp_2 = "LIAPPEgg"
+		$liapp_3 = "LIAPPClient"
+		$liapp_4 = "LIAPPEgg.dex"
+	condition:
+        any of them
+}
+
 rule Fake_Flash_Player
 {
   meta:
@@ -6553,7 +7291,7 @@ rule CopyCatRule: official
 rule psserviceonline: urlbased
 {
 	meta:
-		description = "This rule detects APKs that contat a well-known malware infection source"
+		description = "This rule detects APKs that contat a well-known malware infection source 						https://blog.checkpoint.com/2015/09/21/braintest-a-new-level-of-sophistication-in-mobile-malware/"
 		sample = "422fec2e201600bb2ea3140951563f8c6fbd4f8279a04a164aca5e8e753c40e8"
 	strings:
 		$malicious_url = "psserviceonline.com"
@@ -7196,6 +7934,87 @@ rule DroidJack
 		($a and $b)
 }
 
+rule packers_c: Ijiami
+{
+	meta:
+		description = "This rule detects packers based on files used by them"
+	strings:
+		$Ijiami_1 = "libexecmain.so"
+		$Ijiami_2 = "libexec.so"
+		$Ijiami_3 = "ijiami.ajm"
+	condition:
+		all of them
+}
+
+rule packers_d: qihoo
+{
+	meta:
+		description = "This rule detects packers based on files used by them"
+		description2 = "This is for an old version, new versions use 360 and qihoo activities"
+	strings:
+		$qihoo_1 = "monster.dex"
+    	$qihoo_2 = "libprotectClass"
+	condition:
+		2 of them
+}
+
+rule packers_e: bangcle
+{
+	meta:
+		description = "This rule detects packers based on files used by them"
+	strings:
+		$bangcle_1 = "libsecmain.so"
+		$bangcle_2 = "libsecexe.so"
+		$bangcle_3 = "bangcleplugin"
+	condition:
+		all of them
+}
+
+rule packers_f: ali
+{
+	meta:
+		description = "This rule detects packers based on files used by them"
+	strings:
+		$ali_1 = "libmobisecy.so"
+		$ali_2 = "libmobisecy1.zip"
+	condition:
+		any of them
+}
+
+rule packers_g: liapp
+{
+	meta:
+		description = "This rule detects packers based on files used by them"
+	strings:
+		$liapp_1 = "LIAPPEgg.dex"
+    	$liapp_2 = "LIAPPEgg"
+	condition:
+		2 of them
+}
+
+rule packers_h: tencent
+{
+	meta:
+		description = "This rule detects packers based on files used by them"
+	strings:
+		$tencent_1 = "libmain.so"
+		$tencent_2 = "libshell.so"
+	condition:
+		2 of them
+}
+
+rule packers_j: baidu
+{
+	meta:
+		description = "This rule detects packers based on files used by them"
+	strings:
+		$baidu_1 = "libbaiduprotect.so"
+		$baidu_2 = "baiduprotect.jar"
+		$baidu_3= "libbaiduprotect_x86.so"
+	condition:
+		all of them
+}
+
 rule Locker_K
 {
 	meta:
@@ -7207,6 +8026,31 @@ rule Locker_K
 	condition:
 		androguard.filter(/DEVICE_ADMIN_ENABLED/) and
 		androguard.permission(/android.permission.KILL_BACKGROUND_PROCESSES/) and $a
+}
+
+rule packers_k
+{
+	meta:
+		description = "This rule detects packers based on files used by them"
+	strings:
+		$bangcle_1 = "libsecmain.so"
+		$bangcle_2 = "libsecexe.so"
+		$i360_1 = "libjiagu.so"
+		$i360_2 = "libjiagu_art.so"
+		$ali_1 = "libmobisecy.so"
+		$ali_2 = "libmobisecy1.zip"
+		$baidu_1 = "libbaiduprotect.so"
+		$baidu_2 = "baiduprotect.jar"
+		$baidu_3= "libbaiduprotect_x86.so"
+		$tencent_1 = "libmain.so"
+		$tencent_2 = "libshell.so"
+		$qihoo_1 = "monster.dex"
+    	$qihoo_2 = "/libprotectClass"
+		$liapp_1 = "LIAPPEgg.dex"
+    	$liapp_2 = "/LIAPPEgg"
+		$apkprotect_1 = ".apk@"
+	condition:
+		2 of them
 }
 
 rule ransomware_d: from_cromosome
@@ -7333,6 +8177,79 @@ rule android_metasploit: android
 	  $d = "Lcom/metasploit/stage/Payload;"
 	condition:
 	  $a or $b or $c or $d
+}
+
+rule qihoo360_c: packer
+{
+	meta:
+		description = "Qihoo 360"
+	strings:
+		$a = "libprotectClass.so"
+	condition:
+		$a
+}
+
+rule ijiami_c: packer
+{
+	meta:
+		description = "Ijiami"
+	strings:
+		$old_dat = "assets/ijiami.dat"
+		$new_ajm = "ijiami.ajm"
+		$ijm_lib = "assets/ijm_lib/"
+	condition:
+		$old_dat or $new_ajm or $ijm_lib
+}
+
+rule naga_c: packer
+{
+	meta:
+		description = "Naga"
+	strings:
+		$lib = "libddog.so"
+	condition:
+		 $lib
+}
+
+rule alibaba_c: packer
+{
+	meta:
+		description = "Alibaba"
+	strings:
+		$lib = "libmobisec.so"
+	condition:
+		 $lib
+}
+
+rule medusa: packer
+{
+	meta:
+		description = "Medusa"
+	strings:
+		$lib = "libmd.so"
+	condition:
+		$lib
+}
+
+rule baidu_c: packer
+{
+	meta:
+		description = "Baidu"
+	strings:
+		$lib = "libbaiduprotect.so"
+		$encrypted = "baiduprotect1.jar"
+	condition:
+		$lib or $encrypted
+}
+
+rule pangxie_c: packer
+{
+	meta:
+		description = "PangXie"
+	strings:
+		$lib = "libnsecure.so"
+	condition:
+	 	$lib
 }
 
 rule riskyndroid_certificates
@@ -7617,6 +8534,20 @@ rule Mapin:trojan
 		all of them
 }
 
+rule Btest
+{
+	meta:
+		description = "btest"
+		thread_level = 3
+		in_the_wild = true
+	strings:
+		$strings_a = "aschannel" fullword
+		$strings_b = "activesend" fullword
+		$strings_c = "b_zq_lemon001" fullword
+	condition:
+		$strings_a or $strings_b or $strings_b or $strings_c
+}
+
 rule clicker_b: url
 {
 	meta:
@@ -7771,6 +8702,17 @@ rule Anubis_Variant: BankBot
 			or androguard.permission(/android.permission.READ_SMS/)
 			or androguard.permission(/android.permission.SEND_SMS/)
 		)
+}
+
+rule packers_l: apkprotect
+{
+	meta:
+		description = "This rule detects packers based on files used by them"
+	strings:
+		$apkprotect_1 = ".apk@"
+    	$apkprotect_2 = "libAPKProtect"
+	condition:
+		2 of them
 }
 
 rule gazon
@@ -8412,6 +9354,61 @@ rule DigitalLockerTracker
 		androguard.permission(/android.permission.INTERNET/)
 }
 
+rule bs_packer: packer
+{
+	meta:
+		description = "CrackProof packer"
+	strings:
+		$j_do_asm_syscall = {
+			00 48 2D E9 //   PUSH {R11,LR}
+			04 B0 8D E2 //   ADD  R11, SP, #4
+			28 D0 4D E2 //   SUB  SP, SP, #0x28
+			10 00 0B E5 //   STR  R0, [R11,#var_10]
+			14 10 0B E5 //   STR  R1, [R11,#a1]
+			18 20 0B E5 //   STR  R2, [R11,#a2]
+			1C 30 0B E5 //   STR  R3, [R11,#a3]
+			00 30 A0 E3 //   MOV  R3, #0
+			08 30 0B E5 //   STR  R3, [R11,#r]
+			08 30 9B E5 //   LDR  R3, [R11,#a6]
+			00 30 8D E5 //   STR  R3, [SP,#0x2C+var_2C] ; a5
+			0C 30 9B E5 //   LDR  R3, [R11,#a7]
+			04 30 8D E5 //   STR  R3, [SP,#0x2C+var_28] ; a6
+			00 30 A0 E3 //   MOV  R3, #0
+			08 30 8D E5 //   STR  R3, [SP,#0x2C+var_24] ; a7
+			10 30 1B E5 //   LDR  R3, [R11,#var_10]
+			0C 30 8D E5 //   STR  R3, [SP,#0x2C+svc_nr] ; svc_nr
+			14 00 1B E5 //   LDR  R0, [R11,#a1] ; a1
+			18 10 1B E5 //   LDR  R1, [R11,#a2] ; a2
+			1C 20 1B E5 //   LDR  R2, [R11,#a3] ; a3
+			04 30 9B E5 //   LDR  R3, [R11,#a5] ; a4
+			?? ?? ?? EB //   BL   do_asm_syscall
+			00 30 A0 E1 //   MOV  R3, R0
+			08 30 0B E5 //   STR  R3, [R11,#r]
+			08 30 1B E5 //   LDR  R3, [R11,#r]
+			10 00 1B E5 //   LDR  R0, [R11,#var_10] ; svc_nr
+			03 10 A0 E1 //   MOV  R1, R3  ; r
+			?? ?? ?? EB //   BL   sub_4D78C
+			00 30 A0 E1 //   MOV  R3, R0
+			08 30 0B E5 //   STR  R3, [R11,#r]
+			08 30 1B E5 //   LDR  R3, [R11,#r]
+			03 00 A0 E1 //   MOV  R0, R3
+			04 D0 4B E2 //   SUB  SP, R11, #4
+			00 88 BD E8 //   POP  {R11,PC}
+		}
+		$do_asm_syscall = {
+			FE 4F 2D E9  //  PUSH  {R1-R11,LR}
+			2C B0 8D E2  //  ADD   R11, SP, #0x2C
+			04 40 9B E5  //  LDR   R4, [R11,#a5]
+			08 50 9B E5  //  LDR   R5, [R11,#a6]
+			0C 60 9B E5  //  LDR   R6, [R11,#a7]
+			10 70 9B E5  //  LDR   R7, [R11,#svc_nr]
+			00 00 00 EF  //  SVC   0
+			FE 8F BD E8  //  POP   {R1-R11,PC}
+		}
+	condition:
+		all of them
+}
+
 rule DigioESignSDKTrackerActivity
 {
 	meta:
@@ -8496,6 +9493,22 @@ rule CreditVidyaTracker
 	condition:
 		($a or $b or $c) and
 		androguard.permission(/android.permission.INTERNET/)
+}
+
+rule secenh: packer
+{
+  meta:
+	description = "Secenh"
+	sample = "0709d38575e15643f03793445479d869116dca319bce2296cb8af798453a8752"
+	author = "Nacho Sanmillan"
+  strings:
+	$a1 = "assets/libseceh.so"
+	$a2 = "assets/libseceh_x86.so"
+	$b1 = "assets/respatcher.jar"
+	$b2 = "assets/res.zip"
+  condition:
+	1 of ($a*)
+	and 1 of ($b*)
 }
 
 rule marcher_v2_b
@@ -8863,6 +9876,25 @@ rule android_bankbot
         androguard.permission(/android.permission.READ_CONTACTS/)
 }
 
+rule dexprotector_old: packer
+{
+  meta:
+    description = "DexProtector"
+  strings:
+    $encrptlib_1 = "assets/dp.arm-v7.art.kk.so"
+    $encrptlib_2 = "assets/dp.arm-v7.art.l.so"
+    $encrptlib_3 = "assets/dp.arm-v7.dvm.so"
+    $encrptlib_4 = "assets/dp.arm.art.kk.so"
+    $encrptlib_5 = "assets/dp.arm.art.l.so"
+    $encrptlib_6 = "assets/dp.arm.dvm.so"
+    $encrptlib_7 = "assets/dp.x86.art.kk.so"
+    $encrptlib_8 = "assets/dp.x86.art.l.so"
+    $encrptlib_9 = "assets/dp.x86.dvm.so"
+    $encrptcustom = "assets/dp.mp3"
+  condition:
+    2 of ($encrptlib_*) and $encrptcustom
+}
+
 rule BankBot_c: banker
 {
 	meta:
@@ -9101,6 +10133,268 @@ strings:
 	condition:
 		2 of them
 }
+
+rule dxshield_c: packer
+{
+  meta:
+    description = "DxShield"
+    url = "http://www.nshc.net/wp/portfolio-item/dxshield_eng/"
+  strings:
+    $decryptlib = "libdxbase.so"
+    $res = "assets/DXINFO.XML"
+  condition:
+    ($decryptlib and $res)
+}
+
+rule appguard_c: packer
+{
+  meta:
+    description = "AppGuard"
+    url = "http://appguard.nprotect.com/en/index.html"
+  strings:
+    $stub = "assets/appguard/"
+    $encrypted_dex = "assets/classes.sox"
+  condition:
+    ($stub and $encrypted_dex)
+}
+
+rule secneo_c: packer
+{
+  meta:
+    description = "SecNeo"
+    url = "http://www.secneo.com"
+  strings:
+    $encryptlib1 = "libDexHelper.so"
+    $encryptlib2 = "libDexHelper-x86.so"
+    $encrypted_dex = "assets/classes0.jar"
+  condition:
+    any of ($encrypted_dex, $encryptlib2, $encryptlib1)
+}
+
+rule dexprotector_d: packer
+{
+  meta:
+    author = "Jasi2169"
+    description = "DexProtector"
+  strings:
+    $encrptlib = "assets/dp.arm.so.dat"
+    $encrptlib1 = "assets/dp.arm-v7.so.dat"
+    $encrptlib2 = "assets/dp.arm-v8.so.dat"
+    $encrptlib3 = "assets/dp.x86.so.dat"
+    $encrptcustom = "assets/dp.mp3"
+  condition:
+    any of ($encrptlib, $encrptlib1, $encrptlib2, $encrptlib3) and $encrptcustom
+}
+
+rule apkprotect_b: packer
+{
+  meta:
+    description = "APKProtect"
+  strings:
+    $key = "apkprotect.com/key.dat"
+    $dir = "apkprotect.com/"
+    $lib = "libAPKProtect.so"
+  condition:
+    ($key or $dir or $lib)
+}
+
+rule kirozx: packer
+{
+  meta:
+    description = "Kiro"
+  strings:
+    $kiro_lib = "libkiroro.so"
+    $sbox = "assets/sbox"
+  condition:
+    $kiro_lib and $sbox
+}
+
+rule qihoo360_d: packer
+{
+  meta:
+    description = "Qihoo 360"
+  strings:
+    $a = "libprotectClass.so"
+  condition:
+    $a and not kirozx
+}
+
+rule ijiami_d: packer
+{
+  meta:
+    description = "Ijiami"
+  strings:
+    $old_dat = "assets/ijiami.dat"
+    $new_ajm = "ijiami.ajm"
+    $ijm_lib = "assets/ijm_lib/"
+  condition:
+    ($old_dat or $new_ajm or $ijm_lib)
+}
+
+rule medusah_c: packer
+{
+  meta:
+    description = "Medusah"
+    url = "https://medusah.com/"
+  strings:
+    $lib = "libmd.so"
+  condition:
+    $lib
+}
+
+rule medusah_d: packer
+{
+  meta:
+    description = "Medusah"
+    url = "https://medusah.com/"
+  strings:
+    $lib = "libmd.so"
+  condition:
+    $lib
+}
+
+rule medusahppsolid_c: packer
+{
+  meta:
+    description = "Medusah (AppSolid)"
+    url = "https://appsolid.co/"
+  strings:
+    $encrypted_dex = "assets/high_resolution.png"
+  condition:
+    $encrypted_dex
+}
+
+rule kony_c: packer
+{
+  meta:
+    description = "Kony"
+	  url = "http://www.kony.com/"
+  strings:
+    $lib = "libkonyjsvm.so"
+    $decrypt_keys = "assets/application.properties"
+    $encrypted_js = "assets/js/startup.js"
+  condition:
+    $lib and $decrypt_keys and $encrypted_js
+}
+
+rule yidun_b: packer
+{
+  meta:
+    description = "yidun"
+	  url = "https://dun.163.com/product/app-protect"
+  strings:
+    $anti_trick = "Lcom/_" // Class path of anti-trick
+    $entry_point = "Lcom/netease/nis/wrapper/Entry"
+    $jni_func = "Lcom/netease/nis/wrapper/MyJni"
+    $lib = "libnesec.so"
+  condition:
+    (#lib > 1) or ($anti_trick and $entry_point and $jni_func)
+}
+
+rule approov_c: packer
+{
+  meta:
+    description = "Aproov"
+	  url = "https://www.approov.io/"
+  strings:
+    $lib = "libapproov.so"
+    $sdk_config = "assets/cbconfig.JSON"
+  condition:
+    $lib and $sdk_config
+}
+
+rule pangxie_d: packer
+{
+  meta:
+    description = "PangXie"
+    example = "ea70a5b3f7996e9bfea2d5d99693195fdb9ce86385b7116fd08be84032d43d2c"
+  strings:
+    $lib = "libnsecure.so"
+  condition:
+    $lib
+}
+
+rule baidu_d: packer
+{
+  meta:
+    description = "Baidu"
+  strings:
+    $lib = "libbaiduprotect.so"
+    $encrypted = "baiduprotect1.jar"
+  condition:
+    ($lib or $encrypted)
+}
+
+rule alibaba_d: packer
+{
+  meta:
+    description = "Alibaba"
+  strings:
+    $lib = "libmobisec.so"
+  condition:
+    $lib
+}
+
+rule tencent_b: packer
+{
+  meta:
+    description = "Tencent"
+  strings:
+    $decryptor_lib = "lib/armeabi/libshell.so"
+    $zip_lib = "lib/armeabi/libmobisecy.so"
+    $classpath = "com/tencent/StubShell"
+    $mix_dex = "/mix.dex"
+  condition:
+    ($classpath or $decryptor_lib or $zip_lib or $mix_dex)
+}
+
+rule nqshield_c: packer
+{
+  meta:
+    description = "NQ Shield"
+  strings:
+    $lib = "libnqshield.so"
+    $lib_sec1 = "nqshield"
+    $lib_sec2 = "nqshell"
+  condition:
+    any of ($lib, $lib_sec1, $lib_sec2)
+}
+
+rule app_fortify_c: packer
+{
+  meta:
+    description = "App Fortify"
+  strings:
+    $lib = "libNSaferOnly.so"
+  condition:
+    $lib
+}
+
+rule liapp_b: packer
+{
+  meta:
+    description = "LIAPP"
+  strings:
+    $dir = "/LIAPPEgg"
+    $lib = "LIAPPClient.sc"
+  condition:
+    any of ($dir, $lib)
+}
+
+rule bangcle_b: packer
+{
+  meta:
+    description = "Bangcle"
+  strings:
+    $main_lib = "libsecexe.so"
+    $second_lib = "libsecmain.so"
+    $container = "assets/bangcleplugin/container.dex"
+    $encrypted_jar = "bangcleclasses.jar"
+    $encrypted_jar2 = "bangcle_classes.jar"
+  condition:
+    any of ($main_lib, $second_lib, $container, $encrypted_jar, $encrypted_jar2)
+}
+
 rule CNProtect_dex: protector
 {
   meta:
@@ -11415,6 +12709,19 @@ rule APK_PK336_CL2_1R
 		all of them
 }
 
+rule legu: packer
+{
+    meta:
+		description = "test rule to identify Legu Packer"
+	strings:
+		$a = "assets/toversion"
+		$b = "assets/0OO00l111l1l"
+		$c = "assets/0OO00oo01l1l"
+		$d = "assets/o0oooOO0ooOo.dat"
+	condition:
+		$b and ($a or $c or $d)
+}
+
 rule redrabbit: ShadowVoice
 {
 	meta:
@@ -13180,6 +14487,25 @@ rule avdobfuscator_b: obfuscator
     any of them
 }
 
+rule promon_b: packer
+{
+  meta:
+    description = "Promon Shield"
+    info        = "https://promon.co/"
+    example     = "6a3352f54d9f5199e4bf39687224e58df642d1d91f1d32b069acd4394a0c4fe0"
+  strings:
+    $a = "libshield.so"
+    $b = "deflate"
+    $c = "inflateInit2"
+    $d = "crc32"
+    $s1 = /.ncc/  // Code segment
+    $s2 = /.ncd/  // Data segment
+    $s3 = /.ncu/  // Another segment
+  condition:
+    ($a and $b and $c and $d) and
+    2 of ($s*)
+}
+
 rule WoscSpy
 {
   meta:
@@ -13319,6 +14645,89 @@ rule apk_inside_b
 		$a
 }
 
+rule packers_n
+{
+	meta:
+		description = "Tencent Packer"
+		thread_level = 3
+		in_the_wild = true
+	strings:
+		$strings_b = "com.tencent.StubShell.ProxyShell"
+		$strings_a = "com.tencent.StubShell.ShellHelper"
+	condition:
+		any of them
+}
+
+rule packers_o
+{
+	meta:
+		description = "Tencent Packer"
+		thread_level = 3
+		in_the_wild = true
+	strings:
+		$strings_b = "com.tencent.StubShell.ProxyShell"
+		$strings_a = "com.tencent.StubShell.ShellHelper"
+	condition:
+		any of them
+}
+
+rule packers_p
+{
+	meta:
+		description = "Ijiami Packer"
+		thread_level = 3
+		in_the_wild = true
+	strings:
+		$strings_b = "rmeabi/libexecmain.so"
+		$strings_a = "neo.proxy.DistributeReceiver"
+	condition:
+		any of them
+}
+
+rule packers_q
+{
+	meta:
+		description = "Bangcle Packer"
+		thread_level = 3
+		in_the_wild = true
+	strings:
+		$strings_b = "assets/bangcleplugin"
+		$strings_a = "neo.proxy.DistributeReceiver"
+	condition:
+		any of them
+}
+
+rule packers_r
+{
+	meta:
+		description = "360 Packer"
+		thread_level = 3
+		in_the_wild = true
+	strings:
+		$strings_b = "libprotectClass"
+		$strings_a = "libqupc"
+		$strings_c = "com.qihoo.util.StubApplication"
+		$strings_d = "com.qihoo.util.DefenceReport"
+	condition:
+		any of them
+}
+
+rule packers_s
+{
+	meta:
+		description = "BaiduPacker"
+		thread_level = 3
+		in_the_wild = true
+	strings:
+		$strings_b = "com.baidu.protect.StubApplication"
+		$strings_a = "com.baidu.protect.StubProvider"
+		$strings_c = "com.baidu.protect.A"
+		$strings_d = "baiduprotect.jar"
+		$strings_f = "libbaiduprotect"
+	condition:
+		any of them
+}
+
 rule banker_string: banker string
 {
 	meta:
@@ -13367,6 +14776,33 @@ rule testing_d
 	  $b3 = "346a23652a46392b4d73257c67317e352e3372482177652c"
 	condition:
 		any of them
+}
+
+rule testing_e
+{
+	meta:
+		description = "This rule is a test"
+	strings:
+	  $b1 = "1xRTT"
+	  $b2 = "CDMA"
+	  $b3 = "EDGE"
+	  $b4 = "eHRPD"
+	  $b5 = "EDVO revision 0"
+	  $b6 = "EDVO revision A"
+	  $b7 = "EDVO revision B"
+	  $b8 = "GPRS"
+	  $b9 = "HSDPA"
+	  $b11 = "HSPA"
+	  $b12 = "HSPA+"
+	  $b13 = "HSUPA"
+	  $b14 = "iDen"
+	  $b15 = "LTE"
+	  $b16 = "UMTS"
+	  $b17 = "CDMA"
+	  $b18 = "GSM"
+	  $b19 = "SIP"
+	condition:
+		all of them
 }
 
 rule TencentLocation_b: spy
@@ -14006,14 +15442,47 @@ rule gaarht: official
 		$a
 }
 
+rule apkpacker: packer
+{
+    meta:
+        description = "ApkPacker"
+    strings:
+        $a = "assets/ApkPacker/apkPackerConfiguration"
+        $b = "assets/ApkPacker/classes.dex"
+    condition:
+        all of them
+}
+
 rule IRRat
 {
 	meta:
-		author = "This rule detects IRRAT"
+		author = "R"
 		description = "https://researchcenter.paloaltonetworks.com/2018/03/unit42-telerat-another-android-trojan-leveraging-telegrams-bot-api-to-target-iranian-users/"
 	condition:
 		androguard.service(/botcontril/i) and
 		androguard.url(/api.telegram.org\/bot/)
+}
+
+rule dexprotector_new: packer
+{
+  meta:
+    description = "DexProtector"
+ strings:
+    $encrptlib_1 = /assets\/[A-Za-z0-9.]{2,50}\.arm\-v7\.so\.dat/
+    $encrptlib_2 = /assets\/[A-Za-z0-9.]{2,50}\.arm\-v8\.so\.dat/
+    $encrptlib_3 = /assets\/[A-Za-z0-9.]{2,50}\.arm\.so\.dat/
+    $encrptlib_4 = /assets\/[A-Za-z0-9.]{2,50}\.dex\.dat/
+    $encrptlib_5 = /assets\/[A-Za-z0-9.]{2,50}\.x86\.so\.dat/
+    $encrptlib_6 = /assets\/[A-Za-z0-9.]{2,50}\.x86\_64\.so\.dat/
+    $encrptcustom = /assets\/[A-Za-z0-9.]{2,50}\.mp3/
+	$a_1 = "assets/dp.arm.so.dat"
+    $a_2 = "assets/dp.arm-v7.so.dat"
+    $a_3 = "assets/dp.arm-v8.so.dat"
+    $a_4 = "assets/dp.x86.so.dat"
+    $a_5 = "assets/dp.mp3"
+  condition:
+    2 of ($encrptlib_*) and $encrptcustom and
+	not any of ($a_*)
 }
 
 rule odd_behaviours
@@ -14213,6 +15682,16 @@ rule laahjjm: BTC_ETHddr_detection
 		$b = "/^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,39}$/"
 	condition:
 		$a or $b
+}
+
+rule packers_t: NS
+{
+	meta:
+		description = "find NS apks"
+	strings:
+		$launcher = "com.tns.NativeScriptActivity"
+	condition:
+		$launcher
 }
 
 rule FakeGoogleUpdate
