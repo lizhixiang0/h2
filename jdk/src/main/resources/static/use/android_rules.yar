@@ -3,6 +3,17 @@ import "cuckoo"
 import "hash"
 import "elf"
 
+ rule virus_total
+ {
+ 	meta:
+ 		description = "VT is a website that provides a free suspicious file analysis service"
+ 	condition:
+ 		androguard.certificate.sha1("56d74e4200fdf5b8fae10aa15eb511ecf58dbb76") or
+ 		androguard.certificate.sha1("5f1d27a08f7ce7672f1622e6f91184273eb271d8") or
+ 		androguard.certificate.sha1("cf9026613ea061159929b344ef2e9f5ec1a157ea")
+ }
+
+
 rule shedun
 {
 	meta:
@@ -20,7 +31,6 @@ rule SMSsend
 {
 	meta:
         description = "This rule detects applications that send SMSs"
-		sample = "cbadcd7d1b99f330665b3fc68d1bdafb5d0a38f36c76505b48b283a2c1bbb48a"
 	strings:
 		$a = "SHA1-Digest: ZEVCPDHNa58Z+ad4DBPhHzHs2Q0="
 		$b = "5148cfbb-cd66-447b-a3dc-f0b4e416d152"
@@ -46,7 +56,6 @@ rule SMSSend2_b
 {
     meta:
         description = "This rule detects applications that send SMSs"
-		sample3 = "0deb55c719b4104ba1715da20efbc30e8f82cbff7da4d4c00837428e6dc11a24"
 	strings:
 		$a = "unicom_closepress"
 		$b = "UpDownArrow=02195"
@@ -60,9 +69,6 @@ rule Android_Trojan_FakeAd_B
 {
 	meta:
 		description = "Rule used to detect jio and paytm fakeapp"
-		source = "Lastline"
-		Author = "Anand Singh"
-		Date = "24/04/2019"
 	strings:
 		$a1 = "JIO NUMBER[local]"
 		$a2 = "JioWebService/rest"
@@ -1844,15 +1850,6 @@ rule Ahmyth_test
 		all of ($a*)
 }
 
-rule AppInstaller
-{
-    meta:
-	description = "The app installs other apps or at least interested in newly installed Apps"
-    condition:
-	androguard.filter(/com.android.vending.INSTALL_REFERRER/) or
-	androguard.permission(/INSTALL_PACKAGES/)
-}
-
 rule Keylogger
 {
     meta:
@@ -2683,14 +2680,6 @@ rule loki_skd
 		$b = "com.loki.sdk.ClientService"
 	condition:
 		$a or $b
-}
-
-rule groups: authors2
-{
-	meta:
-		description = "To find groups of apps with old testing certificate, signapk tool used it. Recently apps should not have this certificate"
-	condition:
-		androguard.certificate.sha1("61ED377E85D386A8DFEE6B864BD85B0BFAA5AF81")
 }
 
 rule marcher_v2
@@ -12014,16 +12003,6 @@ rule redditdware
 		all of ($a_*)
 }
 
-rule apkeasy_tool: repack
-{
-	meta:
-		description = "apkeasy tool deafaulr sert for compiling source code"
-condition:
-        androguard.certificate.sha1("61ED377E85D386A8DFEE6B864BD85B0BFAA5AF81") or
-		androguard.certificate.sha1("0C2440C055C753A8F0493B4E602D3EA0096B1023") or
-		androguard.certificate.sha1("485900563D272C46AE118605A47419AC09CA8C11")
-		}
-
 rule potential_miners_by_strings_b: miner
 {
 	meta:
@@ -14872,52 +14851,6 @@ rule AdwareRule: Adware
 		androguard.package_name("tdd.tdd.tdd")
 		or
 		androguard.package_name("com.paytronicapp.admin.pizzafactory")
-		}
-
-rule anjian_1: jinling
-{
-	meta:
-		description = "anjianjianling"
-		sample = "ce84bbd4359a621084f405635c4eb7853b7af8647e819a6d4b4b40db81511e92"
-	strings:
-		$a = "assets/script.lc" //rule_1
-		$b = "mobileanjian.com"
-	condition:
-		$a or $b
-}
-
-rule xposed_1: xposed
-{
-	meta:
-		description = "xposed"
-		sample = "25093f6d4e9e73ecf9c83f635722ea84117f56b6a673a72d0bc6529b24768553"
-	strings:
-		$a = "assets/xposed_init" //rule_1
-	condition:
-		$a
-}
-
-rule autojs_1: autojs
-{
-	meta:
-		description = "aujojs"
-		sample = "ca39abfbca6f508329434186cf38d35e37bf5c0999eb39d1ad08f21a6b059ca9"
-	strings:
-		$a = "assets/project/main.js" //rule_1
-		$b = "assets/project/project.json"
-	condition:
-		$a or $b
-}
-
-rule mainjsd_1: mainjsd
-{
-	meta:
-		description = "manjsd"
-		sample = "7f23e272f5e946bd3bae08debe9fef0e980913d6cc0a5b6a8efcd5d756c7b750"
-	strings:
-		$a = "assets/main.jsd" //rule_1
-	condition:
-		$a
 }
 
 rule paa: official
@@ -17833,12 +17766,12 @@ rule Cajino_c
 }
 
 rule GGTRACK_detecrot
-{
-	meta:
-		description = "This ruleset detects a family of smsfraud trojans"
-	condition:
-		androguard.permission(/android.permission.SEND_SMS/) and
-		androguard.certificate.sha1("4B01DF162934A8E6CF0651CE4810C83BF715A55D") or
-		androguard.url(/ggtrack\.org/) or
-		androguard.url("http://ggtrack.org")
-}
+ {
+ 	meta:
+ 		description = "This ruleset detects a family of smsfraud trojans"
+ 	condition:
+ 		androguard.permission(/android.permission.SEND_SMS/) and
+ 		androguard.certificate.sha1("4B01DF162934A8E6CF0651CE4810C83BF715A55D") or
+ 		androguard.url(/ggtrack\.org/) or
+ 		androguard.url("http://ggtrack.org")
+ }

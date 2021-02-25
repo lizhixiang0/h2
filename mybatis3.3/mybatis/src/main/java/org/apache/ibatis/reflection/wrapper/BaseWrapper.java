@@ -44,7 +44,7 @@ public abstract class BaseWrapper implements ObjectWrapper {
   }
 
   /**
-   * 解析集合
+   * 分解集合，普通包装器和Map包装器会调用
    */
   protected Object resolveCollection(PropertyTokenizer prop, Object object) {
     // 这个是干啥的？？
@@ -56,7 +56,7 @@ public abstract class BaseWrapper implements ObjectWrapper {
   }
 
   /**
-   * 取集合&数组的值
+   * 取集合 || 列表的值   （集合直接通过key的hash值取出，列表则通过下标）
    */
   protected Object getCollectionValue(PropertyTokenizer prop, Object collection) {
     if (collection instanceof Map) {
@@ -90,7 +90,7 @@ public abstract class BaseWrapper implements ObjectWrapper {
   }
 
   /**
-   *  设集合&数组的值
+   *  设置集合 || 列表的值
    */
   protected void setCollectionValue(PropertyTokenizer prop, Object collection, Object value) {
     if (collection instanceof Map) {

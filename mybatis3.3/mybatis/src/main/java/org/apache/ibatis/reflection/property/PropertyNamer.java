@@ -20,7 +20,7 @@ import java.util.Locale;
 import org.apache.ibatis.reflection.ReflectionException;
 
 /**
- * getter、setter 处理器
+ * getter、setter 处理器，围绕方法名判断是否 getter/setter 方法，提取属性名。
  * 例如  isFlag 、getName , setName  ,去掉前缀
  * @author Clinton Begin
  */
@@ -41,8 +41,7 @@ public final class PropertyNamer {
     } else {
       throw new ReflectionException("Error parsing property name '" + name + "'.  Didn't start with 'is', 'get' or 'set'.");
     }
-    //1、如果只有1个字母-->转为小写     A ---> a
-    //2、如果大于1个字母且第二个字母是小写-->转为小写   getUrL ---> url
+    //将上面拿到的Xxx、Yyy、Zzz转化为xxx、yyy、zzz，注意只处理首字母转化为小写
     if (name.length() == 1 || (name.length() > 1 && !Character.isUpperCase(name.charAt(1)))) {
       name = name.substring(0, 1).toLowerCase(Locale.ENGLISH) + name.substring(1);
     }

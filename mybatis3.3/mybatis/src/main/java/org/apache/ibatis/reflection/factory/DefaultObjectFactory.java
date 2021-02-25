@@ -51,14 +51,14 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
   @SuppressWarnings("unchecked")
   @Override
   public <T> T create(Class<T> type, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
-    //1.获取对应的实现类
+    //1.解析集合接口，返回集合常用实现类类型
     Class<?> classToCreate = resolveInterface(type);
     //2.实例化类、类型是可分配的
     return (T) instantiateClass(classToCreate, constructorArgTypes, constructorArgs);
   }
 
   /**
-   * 1、解析出具体类型,如果是接口则转为对应的实现类
+   * 1、对于常见的集合接口，返回其对应常用的实现类
    *
    * 例如：
    *      如果不是接口最好，返回自己的类型，如果是接口则分情况讨论
@@ -126,7 +126,7 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
 
   @Override
   public <T> boolean isCollection(Class<T> type) {
-    //判断type是不是Collection的子类或者子接口
+    //判断是否为Collection集合类型
     return Collection.class.isAssignableFrom(type);
   }
 

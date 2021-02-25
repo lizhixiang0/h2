@@ -246,13 +246,21 @@ public class Configuration {
   protected AutoMappingBehavior autoMappingBehavior = AutoMappingBehavior.PARTIAL;
 
   /**
-   * 20、对象构造工厂,mybatis提供了默认实现,支持定制化
+   * 20、对象工厂,mybatis提供了默认实现,支持定制化
    */
   protected ObjectFactory objectFactory = new DefaultObjectFactory();
   /**
-   * 21、对象包装器工厂,,mybatis提供了默认实现,支持定制化
+   * 21、包装器工厂,mybatis提供了默认实现,支持定制化
    */
   protected ObjectWrapperFactory objectWrapperFactory = new DefaultObjectWrapperFactory();
+
+  /**
+   * 22、创建元对象,弄啥嘞？
+   *
+   */
+  public MetaObject newMetaObject(Object object) {
+    return MetaObject.forObject(object, objectFactory, objectWrapperFactory);
+  }
   /**
    * 映射注册机
    */
@@ -361,11 +369,6 @@ public class Configuration {
 
   public LanguageDriver getDefaultScriptingLanuageInstance() {
     return languageRegistry.getDefaultDriver();
-  }
-
-  //创建元对象
-  public MetaObject newMetaObject(Object object) {
-    return MetaObject.forObject(object, objectFactory, objectWrapperFactory);
   }
 
   //创建参数处理器

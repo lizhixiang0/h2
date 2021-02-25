@@ -1,9 +1,12 @@
 package com.zx.arch.io;
 
+import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -32,7 +35,39 @@ public class CollectHash {
         }
     }
 
+    /**
+     * 去重   sha2->sha
+     * @throws IOException
+     */
+    public static void aa() throws IOException {
+        Path src  = Path.of("C:\\Users\\admin\\PycharmProjects\\pythonProject\\sha256_collects");
+        Path dest  = Path.of("C:\\Users\\admin\\PycharmProjects\\pythonProject\\sha2");
+        Stream<String> stream = Files.readAllLines(src).stream();
+        stream.distinct().forEach( i-> {
+            try {
+                Files.writeString(dest,i.concat("\r\n"), StandardOpenOption.CREATE,StandardOpenOption.APPEND);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    /**
+     * 提取sha1
+     */
+    public static void bb() throws IOException {
+        Path src  = Path.of("D:\\JetBrains\\workspace\\h2\\jdk\\src\\main\\resources\\static\\use\\virus_total.yar");
+        Path dest  = Path.of("D:\\JetBrains\\workspace\\h2\\jdk\\src\\main\\resources\\static\\use\\virus_total.sha");
+        Files.readAllLines(src).stream().filter(i->i.contains("sha1")).map(i->i.replaceAll(" ","")).
+                map(i->i.substring(29,69)).forEach(i->{
+            try {
+                Files.writeString(dest,i.concat("\r\n"), StandardOpenOption.CREATE,StandardOpenOption.APPEND);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
     public static void main(String[] args) throws IOException {
-        collectHash();
+       aa();
     }
 }

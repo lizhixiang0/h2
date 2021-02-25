@@ -23,11 +23,8 @@ import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.reflection.property.PropertyTokenizer;
 
 /**
+ * Collection类型包装器，Collection类型就是个单列容器,不存在给容器类加Field，所有只有添加元素这个方法
  * @author Clinton Begin
- */
-/**
- * Collection包装器
- *
  */
 public class CollectionWrapper implements ObjectWrapper {
 

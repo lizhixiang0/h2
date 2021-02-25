@@ -44,9 +44,9 @@ public class PropertyTokenizer implements Iterable<PropertyTokenizer>, Iterator<
    * 第二步、对name进行进一步的解析,如果包含了字符[,则获取从[到name属性的倒数第二个字符之间的内容赋值给index属性,并把字符[前面的内容赋值给name
    *        如果name属性中不包含字符[,不进行任何操作。
    *
-   *  * 例一、 person[0].birthDate.year,将依次取得
+   *  * 例一、 person[0].birthDate,将依次取得
    *  *                                      name = person
-   *  *                                      children = birthDate.year
+   *  *                                      children = birthDate
    *  *                                      indexedName = person[0]
    *  *                                      index = 0
    *  *

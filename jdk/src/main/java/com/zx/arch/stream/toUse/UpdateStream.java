@@ -49,9 +49,12 @@ public class UpdateStream {
         Stream<String> stream3 = streamB.flatMap(str -> Arrays.stream(str));
         stream3.distinct().forEach(System.out::print);
 
-        // peek并不是对流中数据进行处理!而是会将流中数据进行一个外部展示，流中数据没啥变化
-        // 而map是对流中数据进行处理,必须是能改变流中元素,所以不能用streamA.map(System.out::println);
-        streamA.peek(System.out::println);
+        // 最重要的一点是map可以改变返回值类型，而peek无法改变返回值类型，但peek可用来修改数据；
+        // 注意： map 和peek 都有返回值为Stream ,且注意两者执行函数的时机不同
+        // @blog https://www.jianshu.com/p/4fabc8a7abca
+        // 下面是不会执行的，因为这两个方法都是中间操作,不是终止操作 @blog https://blog.csdn.net/weixin_26969967/article/details/113015509
+        streamA.peek(System.out::println).map(str -> Arrays.stream(str));
+
 
     }
 
@@ -162,18 +165,60 @@ public class UpdateStream {
         // 数据准备完毕
         // 1、以年龄为key,Person为value ,将元素放到一个Map中
         // Map<Integer, Person> map = stream.collect(Collectors.toMap(Person::getAge, Function.identity()));
-        // 2、上面语句会报错IllegalStateException ,因为14岁的有两位,所以得加入第三个函数引元啦来处理特殊情况,即如果新元素产生的key在Map中已经出现过了，第三个参数就会定义解决的办法
+        // 2、上面语句会报错IllegalStateException ,因为14岁的有两位,所以得加入第三个函数引元啦来处理特殊情况,即如果新元素产生的key在Map中已经出现过了，
+        // 第三个参数定义处理方法,这个处理方法既可以是使用旧值或新值，也可以抛出异常
+        // 第四个参数可以定义返回值类型，比如我们想要TreeMap ！！
         // @blog "https://www.cnblogs.com/ampl/p/10904306.html
-        Map<Integer, Person> map = stream.collect(Collectors.toMap(Person::getAge, Function.identity(), (existing, replacement) ->{throw new IllegalStateException();}));
+        // Map<Integer, Person> map = stream.collect(Collectors.toMap(Person::getAge, Function.identity(), (existing, replacement) ->existing));
+        Map<Integer, Person> map = stream.collect(Collectors.toMap(Person::getAge, Function.identity(), (existing, replacement) ->{throw new IllegalStateException();},TreeMap::new));
+
+        //最后补充，如果Map<key,value>中的value是集合类型，那第三个参数可以对已有的集合和新集合做合并操作(这里使用Locale来帮助描述,例程的主要目的是收集给定国家的所有语言)
+        Map<String,Set<String>> maps = Stream.of(Locale.getAvailableLocales())
+                .collect(Collectors.toMap
+                        (
+                            Locale::getDisplayCountry,
+                            l->Set.of(l.getDisplayLanguage()),
+                            (a,b)-> {
+                                Set<String> union = new HashSet<>(a);
+                                union.addAll(b);
+                                return union;
+                            }
+                        )
+                );
+
     }
 
+    /**
+     * 将stream流中具有相同特性的的值 群聚成组
+     */
+    public static void  group(){
+        Stream<Locale> stream = Stream.of(Locale.getAvailableLocales());
+        //1、groupingBy将相同国家的local收集到一块,换成人则可以将相同岁数的人放到一起去。
+        Map<String,List<Locale>> map = stream.collect(Collectors.groupingBy(Locale::getCountry));
+        //  CN是中国的域名,有6种locale ,[bo_CN, yue_CN_#Hans粤语, zh_CN , ii_CN 彝语, zh_CN_#Hans, ug_CN 维吾尔语(中国)]
+        List<Locale> locales = map.get("CN");
+        //2、将local分为中国和其他国家两类，使用partitioningBy
+        Map<Boolean,List<Locale>> map1 = stream.collect(Collectors.partitioningBy(l->l.getCountry().equals("CN")));
+        List<Locale> china = map1.get(true);
+
+        //3、如果想要返回的是集合而不是列表，那就加一个下游处理器：Collectors.toSet()
+        Map<Boolean,Set<Locale>> map2 = stream.collect(Collectors.partitioningBy(l->l.getCountry().equals("CN"),Collectors.toSet()));
+        //4、我们可以看到返回的<k,v>中v类型为Set<Locale>,而我们需要Set<String> ,这里可以使用Collectors.mapping,将函数应用到收集到的每个元素
+        Map<Boolean,Set<String>> map5= stream.collect(Collectors.partitioningBy(l->l.getCountry().equals("CN"),Collectors.mapping(Locale::getDisplayLanguage,Collectors.toSet())));
+        //5、我们可以使用Collectors.collectingAndThen,先返回为set,然后求set的大小
+        Map<Boolean,Integer> map4 = stream.collect(Collectors.partitioningBy(l->l.getCountry().equals("CN"),Collectors.collectingAndThen(Collectors.toSet(),Set::size)));
+        //6、也可以加数字收集器 Collectors.counting()，计算每个国家有多少个locale
+        Map<String,Long> map3 = stream.collect(Collectors.groupingBy(Locale::getCountry,Collectors.counting()));
+        //7、另外还有 Collectors.maxBy(Comparator.comparing(Person::getAge))、Collectors.minBy(),可以计算年纪最大的和年纪最小的
+        //8、还有   Collectors.summingInt(Person::getAge) ,可以计算所有人岁数加起来多大
+        //9、可以加Collectors.filtering(p->p.getAge()>20) ,只需要大于20岁的人
 
 
-
-
+    }
 
     public static void main(String[] args) {
-        map();
+        Stream<Integer> stream = Stream.of(1,2,3,4);
+        stream.peek(System.out::println).collect(Collectors.toList());
     }
 
 }

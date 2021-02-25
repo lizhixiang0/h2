@@ -18,3 +18,6 @@
  * Reflection utils.
  */
 package org.apache.ibatis.reflection;
+
+
+// mybatis反射模块：https://www.jianshu.com/p/73fd23615c17

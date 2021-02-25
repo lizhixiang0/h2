@@ -78,17 +78,17 @@ public interface ObjectWrapper {
   MetaObject instantiatePropertyValue(String name, PropertyTokenizer prop, ObjectFactory objectFactory);
 
   /**
-   * 是否是集合
+   * 是否是单列集合
    */
   boolean isCollection();
 
   /**
-   * 添加属性
+   * 添加元素，专门给单列集合用的，普通bean和集合调用这个直接抛出异常
    */
   void add(Object element);
 
   /**
-   * 添加属性
+   * 添加一堆元素
    */
   <E> void addAll(List<E> element);
 

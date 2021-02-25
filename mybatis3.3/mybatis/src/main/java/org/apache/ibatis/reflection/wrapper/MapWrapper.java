@@ -25,11 +25,8 @@ import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.reflection.property.PropertyTokenizer;
 
 /**
+ * Map类型包装器
  * @author Clinton Begin
- */
-/**
- * Map包装器
- *
  */
 public class MapWrapper extends BaseWrapper {
 
@@ -44,7 +41,7 @@ public class MapWrapper extends BaseWrapper {
   //get,set是允许的，
   @Override
   public Object get(PropertyTokenizer prop) {
-      //如果有index,说明是集合，那就要分解集合,调用的是BaseWrapper.resolveCollection 和 getCollectionValue
+      //Map包装器在那种情况下有index  ??
     if (prop.getIndex() != null) {
       Object collection = resolveCollection(prop, map);
       return getCollectionValue(prop, collection);
@@ -70,12 +67,12 @@ public class MapWrapper extends BaseWrapper {
 
   @Override
   public String[] getGetterNames() {
-    return map.keySet().toArray(new String[map.keySet().size()]);
+    return map.keySet().toArray(new String[0]);
   }
 
   @Override
   public String[] getSetterNames() {
-    return map.keySet().toArray(new String[map.keySet().size()]);
+    return map.keySet().toArray(new String[0]);
   }
 
   @Override

@@ -42,8 +42,9 @@ import org.apache.ibatis.reflection.invoker.SetFieldInvoker;
 import org.apache.ibatis.reflection.property.PropertyNamer;
 
 /**
- *   Reflector是Mybatis中反射模块的基础，每个Reflector对象都对应着一个类。
- * @blog "https://blog.csdn.net/hou_ge/article/details/100666259
+ * Reflector是整个反射器模块的基础，每个Reflector对象都对应一个类，
+ * 在其构造函数中，根据传入的Class对象，调用Java的反射API获取这个类的元信息 (其中会用到缓存)
+ * @blog "https://www.jianshu.com/p/cd4a5e3f884c
  * @author Clinton Begin
  */
 @Data
@@ -61,6 +62,7 @@ public class Reflector {
   //这里使用了一个Map来做缓存，注意使用的是ConcurrentHashMap,保证线程安全
   private static final Map<Class<?>, Reflector> REFLECTOR_MAP = new ConcurrentHashMap<>();
 
+  //对应的Class类型
   private Class<?> type;
 
   //默认构造函数
@@ -69,15 +71,15 @@ public class Reflector {
   private String[] readablePropertyNames;
   //可写属性的名称集合，可写属性就是存在相应setter方法的属性，初始值为空数纽
   private String[] writeablePropertyNames;
-  //属性相应的setter方法，key是属性名称,value是MethodInvoker对象（mybatis实现的Invoker类,MethodInvoker(?,?)相当于调用set方法）
+  //属性相应的setter方法，key是属性名称,value是MethodInvoker对象（mybatis实现的Invoker类,实际运行中如将SQL执行返回结果集映射为Java对象，设置对象属性的操作需要反射(Invoker)来完成）
   private Map<String, Invoker> setMethods = new HashMap<>();
-  //属性相应的getter方法集合， key是属性名称， value是MethodInvoker对象（mybatis实现的Invoker类,MethodInvoker(?,?)相当于调用get方法）
+  //属性相应的getter方法集合， key是属性名称， value是MethodInvoker对象,通setMethods
   private Map<String, Invoker> getMethods = new HashMap<>();
-  //属性相应的setter方法的参数值类型， key是属性名称， value是setter方法的参数类型
+  //属性相应的setter方法的参数值类型， key是属性名称， value是setter方法的参数类型,不管是执行SQL前参数的预编译，还是执行完之后将结果集映射为Java对象，都需要知道属性的类型
   private Map<String, Class<?>> setTypes = new HashMap<>();
-  //属性相应的getter方法的返回位类型， key是属性名称， value是getter方法的返回值类型
+  //属性相应的getter方法的返回位类型， key是属性名称， value是getter方法的返回值类型,通setTypes
   private Map<String, Class<?>> getTypes = new HashMap<>();
-  //所有属性名称的集合
+  //所有属性名称的集合,key统一记录成大写
   private Map<String, String> caseInsensitivePropertyMap = new HashMap<>();
 
   /*
@@ -117,7 +119,7 @@ public class Reflector {
     //根据getMethods/setMethods集合，初始化可读/写属性的名称集合
     readablePropertyNames = getMethods.keySet().toArray(EMPTY_STRING_ARRAY);
     writeablePropertyNames = setMethods.keySet().toArray(EMPTY_STRING_ARRAY);
-    //初始化caseInsensitivePropertyMap集合，其中记录了属性名称,USERNAME:userName
+    //将上面两个集合中的所有属性名的大写作为key来填充caseInsensitivePropertyMap
     for (String propName : readablePropertyNames) {
       caseInsensitivePropertyMap.put(propName.toUpperCase(Locale.ENGLISH), propName);
     }
@@ -146,7 +148,19 @@ public class Reflector {
     }
   }
 
+  /**
+   * 筛选出getter方法:
+   *          1、一般属性名为aaBb对应的getter方法为getAaBb()，
+   *          2、 如果属性是布尔值，则对应的getter方法为isAaBb()
+   *          3、另外，如果子类重写覆盖了父类getter方法导致方法签名不一致
+   *          eg:
+   *            父类定义:  List<String> getList()      方法签名为: java.util.List<String>#getList
+   *            子类定义： ArrayList<String> getList() 方法签名为: java.util.ArrayList<String>#getList
+   *          我们要取的肯定是返回参数类型更加具体的方法，但是方法签名不一致导致冲突，就先将属性名和对应的冲突方法缓存到conflictingGetters，再交给resolveGetterConflicts()方法进一步处理
+   * @param cls class
+   */
   private void addGetMethods(Class<?> cls) {
+    //定义属性名和对应getter方法的映射，这里<k,v>中v类型取的list
     Map<String, List<Method>> conflictingGetters = new HashMap<>(16);
     //得到所有方法，包括private方法，包括父类方法.包括接口方法,所以如果接口或者父类有 都有getName(String name),那name对应的get方法就会有两个或以上
     Method[] methods = getClassMethods(cls);
@@ -168,54 +182,57 @@ public class Reflector {
         }
       }
     }
-    // 收集到所有get()方法信息后开始处理
+    // 收集到所有get()方法信息后开始处理,主要是解决方法名相同签名不同 getter 方法，一般一个方法名只对应一个getter方法
     resolveGetterConflicts(conflictingGetters);
   }
 
   private void addMethodConflict(Map<String, List<Method>> conflictingMethods, String name, Method method) {
-    //这个 List<Method> 是 Map<String, List<Method>> 其中key对应的list ,所以看起来是重新创建了一个list ,其实不是
-    // 这么写比较好理解：conflictingMethods.computeIfAbsent(name, k -> new ArrayList<>()).add(method);
-    //就是判断Map有没有这个<k,v> ,没有就创建 ,有就直接操作这个k对应的v
-    List<Method> list = conflictingMethods.computeIfAbsent(name, k -> new ArrayList<>());
-    list.add(method);
+    //就是判断Map有没有这个<k,v> ,没有就创建 ,有就直接操作这个k对应的list
+    conflictingMethods.computeIfAbsent(name, k -> new ArrayList<>()).add(method);
   }
 
   private void resolveGetterConflicts(Map<String, List<Method>> conflictingGetters) {
-    // 循环遍历Map集合，如果Value里只有一个元素（method），那就直接调用addGetMethod(name,method)方法
-    // 如果对应的Method集合里有多个元素，则需要判断方法的返回值类型，（会把父类或者接口的也拿过来，此时需要筛选出当前类属性真正匹配的get方法）
-    // 没有入参，所以不需要判断入参的类型
+    //循环遍历Map集合
     for (String propName : conflictingGetters.keySet()) {
       List<Method> getters = conflictingGetters.get(propName);
       Iterator<Method> iterator = getters.iterator();
       Method firstMethod = iterator.next();
+      //如果Value里只有一个元素（method），那就直接调用addGetMethod(name,method)方法
       if (getters.size() == 1) {
         addGetMethod(propName, firstMethod);
-      } else {
+      }
+      //如果同一属性名称存在多个getter方法，则需要对比这些getter方法的返回值（会把父类或者接口的也拿过来，此时需要筛选出当前类属性真正匹配的get方法）
+      else {
+        // 迭代过程中的临时变量，用于记录迭代到目前为止最适合作为getter方法的Method
         Method getter = firstMethod;
         Class<?> getterType = firstMethod.getReturnType();
         while (iterator.hasNext()) {
           Method method = iterator.next();
           Class<?> methodType = method.getReturnType();
-          // 如果两个方法的返回值类型一样则直接抛出异常
+          // 如果两个方法的返回值类型一样则直接抛出异常,因为前面处理过，这里一样肯定是出错了
           if (methodType.equals(getterType)) {throw new ReflectionException("Illegal overloaded getter method with ambiguous type for property " + propName + " in class " + firstMethod.getDeclaringClass() + ".  This breaks the JavaBeans " + "specification and can cause unpredicatble results."); }
-          // 如果getterType是methodType的子类,那就不处理
+          // methodType是getterType的父类或接口，那就不做处理,最适合的还是getterType
           else if (methodType.isAssignableFrom(getterType)) {}
-          // 如果getterType是methodType的父类,那就把子类拿出来
+          // methodType是getterType的子类,那就把最适合的变为methodType
           else if (getterType.isAssignableFrom(methodType)) {
             getter = method;
             getterType = methodType;
-          }
-          // 其他情况直接报错
-          else {throw new ReflectionException("Illegal overloaded getter method with ambiguous type for property " + propName + " in class " + firstMethod.getDeclaringClass() + ".  This breaks the JavaBeans " + "specification and can cause unpredicatble results."); }
+          }else {
+            //如果不同的 getter 只是刚好方法名相同，实际上返回类型既不完全相同，也没有继承派生关系，则证明开发人员写的类不符合 JavaBean 的规范，此时直接抛出异常
+            throw new ReflectionException("Illegal overloaded getter method with ambiguous type for property " + propName + " in class " + firstMethod.getDeclaringClass() + ".  This breaks the JavaBeans " + "specification and can cause unpredicatble results."); }
         }
+        //while循环结束筛选出最合适的方法之后，调用addGetMethod()方法填充getMethods和getTypes集合
         addGetMethod(propName, getter);
       }
     }
   }
 
   private void addGetMethod(String name, Method method) {
+    // 筛选过滤掉非法的属性名
     if (isValidPropertyName(name)) {
+      // 将属性名以及对应的MethodInvoker对象添加到getMethods集合中，MethodInvoker是对Method对象反射操作的封装
       getMethods.put(name, new MethodInvoker(method));
+      // 这里如果返回值是泛型会出问题
       getTypes.put(name, method.getReturnType());
     }
   }
@@ -245,7 +262,8 @@ public class Reflector {
       if (setters.size() == 1) {
         addSetMethod(propName, firstMethod);
       } else {
-        //查看name对应的get方法，如果没有就抛出异常   （这个reflector要求当setName方法不止一个时，目标类必须有一个getName方法）
+        //查看name对应的get方法返回类型，拿不到抛出异常
+        //一个符合 JavaBean 规范的类应该同时有 getter 和 setter，并且 getter 的返回类型和 setter 的参数类型一致；程序先去处理 getter，所以这里先根据属性名从 getTypes 获取到 getter 的返回类型。
         Class<?> expectedType = getTypes.get(propName);
         if (expectedType == null) {
           throw new ReflectionException("Illegal overloaded setter method with ambiguous type for property " + propName + " in class " + firstMethod.getDeclaringClass() + ".  This breaks the JavaBeans " + "specification and can cause unpredicatble results.");
@@ -254,7 +272,7 @@ public class Reflector {
           Method setter = null;
           while (methods.hasNext()) {
             Method method = methods.next();
-            //找出与当前属性get方法匹配的set  ,匹配规则就是入参个数和返回参数的类型
+            //setter参数个数应该只有一个并且参数类型跟getter方法的返回值类型相同，不符合则循环
             if (method.getParameterTypes().length == 1 && expectedType.equals(method.getParameterTypes()[0])) {
               setter = method;
               break;
@@ -277,6 +295,7 @@ public class Reflector {
   }
 
   private void addFields(Class<?> clazz) {
+    // 获取类中声明的所有field属性
     Field[] fields = clazz.getDeclaredFields();
     for (Field field : fields) {
       if (canAccessPrivateMethods()) {
@@ -287,9 +306,8 @@ public class Reflector {
       if (field.isAccessible()) {
         // 处理没有set方法的属性
         if (!setMethods.containsKey(field.getName())) {
-          // 返回属性的修饰符。  例如 public static   @blog "https://www.yiibai.com/javareflect/javareflect_field_getmodifiers.html
+          // 获取类的修饰符，过滤掉被声明为static final的属性，这些属性只能被类加载器设置其初始值  @blog "https://www.yiibai.com/javareflect/javareflect_field_getmodifiers.html
           int modifiers = field.getModifiers();
-          // 不能是finale和static修饰的
           if (!(Modifier.isFinal(modifiers) && Modifier.isStatic(modifiers))) {
             addSetField(field);
           }
@@ -309,6 +327,7 @@ public class Reflector {
   // 我以为木有set方法的属性就不管了，没想到木有set的属性待遇更高，直接给他构造Invoker，黄袍加身！！
   private void addSetField(Field field) {
     if (isValidPropertyName(field.getName())) {
+      //创建封装了属性对应Field对象的SetFieldInvoker对象，内部利用Field的set方法来反射设置属性值
       setMethods.put(field.getName(), new SetFieldInvoker(field));
       setTypes.put(field.getName(), field.getType());
     }
@@ -317,13 +336,14 @@ public class Reflector {
   // 木有get方法的属性也是
   private void addGetField(Field field) {
     if (isValidPropertyName(field.getName())) {
+      //创建封装了属性对应Field对象的GetFieldInvoker对象，内部利用Field的get方法来反射获得属性值
       getMethods.put(field.getName(), new GetFieldInvoker(field));
       getTypes.put(field.getName(), field.getType());
     }
   }
 
   /**
-   * 对属性名进行筛选
+   * 筛选过滤掉非法的属性名
    * 另外两个我不晓得，但是serialVersionUID确实会出现，这个么得用
    */
   private boolean isValidPropertyName(String name) {
@@ -336,15 +356,16 @@ public class Reflector {
   private Method[] getClassMethods(Class<?> cls) {
     Map<String, Method> uniqueMethods = new HashMap<>();
     Class<?> currentClass = cls;
-    //这个用了一个while循环,里面是getSuperclass(),这是把父类的方法也都搞出来了
+    // 在while循环体中解析从cls到cls的父类,包括接口
     while (currentClass != null) {
-      //1、获取本类中所有声明的方法,包括私有的(private、protected、默认以及public)的方法
+      //1、获取类内定义的普通方法，包括私有的(private、protected、默认以及public)的方法,对于继承的方法无法通过反射获取,
       addUniqueMethods(uniqueMethods, currentClass.getDeclaredMethods());
       //2、获取接口方法
       Class<?>[] interfaces = currentClass.getInterfaces();
       for (Class<?> anInterface : interfaces) {
         addUniqueMethods(uniqueMethods, anInterface.getMethods());
       }
+      //3、获取从父类继承的方法
       currentClass = currentClass.getSuperclass();
     }
     Collection<Method> methods = uniqueMethods.values();
@@ -353,20 +374,24 @@ public class Reflector {
 
   private void addUniqueMethods(Map<String, Method> uniqueMethods, Method[] methods) {
     for (Method currentMethod : methods) {
-      //判断是不是桥接方法，如果是则不去理会
+      //判断是不是桥接方法，过滤掉桥接方法，桥接方法不是类中定义的方法，而是编译器为了兼容自动生成的方法
       //理解什么是桥接方法：https://blog.csdn.net/jiaobuchong/article/details/83722193
       //https://www.cnblogs.com/wuqinglong/p/9456193.html
       if (!currentMethod.isBridge()) {
-          //取得签名
+        // 通过getSignature方法(mybatis自己构造)得到的方法签名是: 返回值类型#方法名称:参数类型列表。
+        // 例如，Reflector.getSignature(Method)方法的唯一签名是:
+        // java.lang.String#getSignature:java.lang.reflect.Method
+        // 通过Reflector.getSignature()方法得到的方法签名是全局唯一的，可以作为该方法的唯一标识
         String signature = getSignature(currentMethod);
-        //这个知道签名是用来去重的
+        //因为是先传递子类后传父类的方法过来，所以这里的情况是，如果有重复的，代表是子类覆盖的父类的方法，就不要再添加了
         if (!uniqueMethods.containsKey(signature)) {
           if (canAccessPrivateMethods()) {
             try {
-              //使用时取消该方法的访问权限检查
+              //使用时取消该方法的访问权限检查，这样使用时可以直接invoke
               currentMethod.setAccessible(true);
             } catch (Exception ignored) {}
           }
+          //记录该签名和方法的对应关系
           uniqueMethods.put(signature, currentMethod);
         }
       }
@@ -376,6 +401,9 @@ public class Reflector {
   /**
    * java中对方法签名的定义,由方法名称和参数列表(方法的参数的顺序和类型)组成。但不包括返回值类型和访问修饰符 ！！！
    * 这里是mybatis自己构造的方法签名
+   * 其组成规则为：方法返回值类型#方法名:参数1类型,参数2类型,参数3类型,...,参数名n类型
+   * eg：void#addUniqueMethods:Map<String, Method>,Method[]
+
    */
   private String getSignature(Method method) {
     StringBuilder sb = new StringBuilder();
@@ -407,13 +435,17 @@ public class Reflector {
    */
   private static boolean canAccessPrivateMethods() {
     try {
+      // 获取系统安全管理器
       SecurityManager securityManager = System.getSecurityManager();
+      // 如果设置了安全管理器，检查是否有通过反射来访问protected、private的成员和方法的权限
       if (null != securityManager) {
         securityManager.checkPermission(new ReflectPermission("suppressAccessChecks"));
       }
     } catch (SecurityException e) {
+      // 如果没有权限，则权限检查会抛出异常，返回false表示不允许访问私有方法
       return false;
     }
+    // 如果未设置安全管理器，或者有指定权限，则返回true表示允许访问私有方法
     return true;
   }
 
@@ -483,9 +515,5 @@ public class Reflector {
 
   public static void setClassCacheEnabled(boolean classCacheEnabled){
     Reflector.classCacheEnabled = classCacheEnabled;
-  }
-
-  public static void main(String[] args) {
-    System.out.println("userName".toUpperCase(Locale.ENGLISH));
   }
 }

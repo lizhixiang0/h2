@@ -208,7 +208,7 @@ public class MetaObjectTest {
 
   @Test
   public void shouldDemonstrateDeeplyNestedMapProperties() {
-    HashMap<String, String> map = new HashMap<String, String>();
+    HashMap<String, String> map = new HashMap<>();
     MetaObject metaMap = SystemMetaObject.forObject(map);
 
     assertTrue(metaMap.hasSetter("id"));
@@ -243,7 +243,7 @@ public class MetaObjectTest {
 
   @Test
   public void shouldDemonstrateNullValueInMap() {
-    HashMap<String, String> map = new HashMap<String, String>();
+    HashMap<String, String> map = new HashMap<>();
     MetaObject metaMap = SystemMetaObject.forObject(map);
     assertFalse(metaMap.hasGetter("phone.home"));
 
@@ -282,12 +282,12 @@ public class MetaObjectTest {
 
   @Test
   public void shouldMethodHasGetterReturnTrueWhenListElementSet() {
-    List<Object> param1 = new ArrayList<Object>();
+    List<Object> param1 = new ArrayList<>();
     param1.add("firstParam");
     param1.add(222);
     param1.add(new Date());
 
-    Map<String, Object> parametersEmulation = new HashMap<String, Object>();
+    Map<String, Object> parametersEmulation = new HashMap<>();
     parametersEmulation.put("param1", param1);
     parametersEmulation.put("filterParams", param1);
 

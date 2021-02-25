@@ -29,7 +29,7 @@ import org.apache.ibatis.reflection.wrapper.ObjectWrapper;
 import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
 
 /**
- *  MetaObject ,原理是通过反射直接操作对象属性。
+ *  MetaObject ,主要是调用包装器中的方法
  *  支持对普通JavaBean、Collection类、Map类三种类型对象的操作
  *  可以参考MetaObjectTest来跟踪调试，基本上用到了reflection包下所有的类
  * @author Clinton Begin
@@ -38,30 +38,36 @@ import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
 public class MetaObject {
 
   /**
-   * 原始对象 和 对象工厂
+   * 1、原始JavaBean对象
    */
   private Object originalObject;
+  /**
+   * 2、负责实例化原始JavaBean对象的工厂对象
+   */
   private ObjectFactory objectFactory;
   /**
-   * 包装对象、对象包装工厂
+   * 3、封装了originalObject对象的包装对象,根据JavaBean的类型，可能为 BeanWrapper、MapWrapper、CollectionWrapper。
    */
   private ObjectWrapper objectWrapper;
+  /**
+   * 4、负责创建ObjectWrapper的工厂对象
+   */
   private ObjectWrapperFactory objectWrapperFactory;
 
   /**
-   * 构造私有化,只能通过forObject来创建对象
+   * 构造私有化
    */
   private MetaObject(Object object, ObjectFactory objectFactory, ObjectWrapperFactory objectWrapperFactory) {
     this.originalObject = object;
     this.objectFactory = objectFactory;
     this.objectWrapperFactory = objectWrapperFactory;
 
-    // ##最重要的就是找到对应的包装器，主要是通过包装器来操作对象##
     if (object instanceof ObjectWrapper) {
         //如果对象本身已经是ObjectWrapper型，则直接赋给objectWrapper
       this.objectWrapper = (ObjectWrapper) object;
     } else if (objectWrapperFactory.hasWrapperFor(object)) {
-        //如果有包装器(默认是没有),调用ObjectWrapperFactory.getWrapperFor
+      //若objectWrapperFactory能够为该原始对象创建对应的ObjectWrapper对象，则优先使用objectWrapperFactory
+      // 但DefaultObjectWrapperFactory.hasWrapperFor()始终返回false，用户可以自定义ObjectWrapperFactory实现进行扩展。
       this.objectWrapper = objectWrapperFactory.getWrapperFor(this, object);
     } else if (object instanceof Map) {
         //如果是Map型，返回MapWrapper
@@ -83,8 +89,9 @@ public class MetaObject {
    * @return MetaObject
    */
   public static MetaObject forObject(Object object, ObjectFactory objectFactory, ObjectWrapperFactory objectWrapperFactory) {
+    // 若Object为空，则统一返回 SystemMetaObject.NULL_META_OBJECT
+    // 反过来，若判断到一个 JavaBean 对象对应的 MetaObject 为 SystemMetaObject.NULL_META_OBJECT，可以判断对象为空
     if (object == null) {
-        //处理一下null,将null包装起来,直接返回null么得意义
       return SystemMetaObject.NULL_META_OBJECT;
     } else {
       return new MetaObject(object, objectFactory, objectWrapperFactory);

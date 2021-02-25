@@ -27,7 +27,8 @@ import org.apache.ibatis.reflection.invoker.Invoker;
 import org.apache.ibatis.reflection.property.PropertyTokenizer;
 
 /**
- * Bean包装器
+ * 普通Bean包装器，区别于集合和列表
+ * 作用：就是包装器，方法基本都是委派给了MetaClass
  * @author Clinton Begin
  */
 public class BeanWrapper extends BaseWrapper {
