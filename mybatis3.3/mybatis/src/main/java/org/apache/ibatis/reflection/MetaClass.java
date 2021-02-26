@@ -27,13 +27,18 @@ import org.apache.ibatis.reflection.invoker.MethodInvoker;
 import org.apache.ibatis.reflection.property.PropertyTokenizer;
 
 /**
- * 元类,其实就是类的信息聚合成我们易操作的样子,可以看到方法基本都是委派给了Reflector
+ * MetaClass 通过对 Reflector 和 PropertyTokenizer 组合使用，实现了对复杂的属性表达式的解析
+ * 可以看到方法基本都是委派给了Reflector
  * @author Clinton Begin
  */
 public class MetaClass {
 
   private Reflector reflector;
 
+  /**
+   * 构造私有化
+   * @param type
+   */
   private MetaClass(Class<?> type) {
     this.reflector = Reflector.forClass(type);
   }
@@ -50,13 +55,26 @@ public class MetaClass {
     Reflector.setClassCacheEnabled(classCacheEnabled);
   }
 
-  // 获得类中属性的元类，这个方法解决了Reflector的局限性，Reflector值解析当前类的属性，但是不会解析属性的属性
   public MetaClass metaClassForProperty(String name) {
+    // 根据属性名获得属性类型
     Class<?> propType = reflector.getGetterType(name);
+    // 根据指定的类属性名创建对应的MataClass对象。
     return MetaClass.forClass(propType);
   }
+
   /**
-   * 根据给定的name ,来构建类属性的全路径,暂时不晓得这个方法的作用
+   * 根据字符串查找属性名，如果查不到返回null
+   * @param name person.school.address
+   * @return person.school.address
+   */
+  public String findProperty(String name) {
+    // 这里为什么要提前构造一个builder扔进去，因为buildProperty可能是个递归调用,我们要得到的是递归几轮后的那个值
+    StringBuilder prop = buildProperty(name, new StringBuilder());
+    return prop.length() > 0 ? prop.toString() : null;
+  }
+
+  /**
+   * 递归处理属性表达式，并将处理结果返回给 #findProperty() 方法。
    * 例如 Person类中有个School属性,School有属性address
    * @param name  person.school.address
    * @param builder  person.school.address
@@ -81,15 +99,6 @@ public class MetaClass {
     return builder;
   }
 
-  /**
-   * 根据字符串查找类中属性，这个给多深就能查多深
-   * @param name person.school.address
-   * @return person.school.address
-   */
-  public String findProperty(String name) {
-    StringBuilder prop = buildProperty(name, new StringBuilder());
-    return prop.length() > 0 ? prop.toString() : null;
-  }
 
   /**
    * 将user_name转化成username,且因为reflector里面存储的是USERNAME:userName数据格式，所以这里不需要进行驼峰处理，直接把'_'去掉即可

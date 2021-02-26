@@ -1,4 +1,4 @@
-package com.zx.arch.arithmetic;
+package com.zx.arch.arithmetic.four;
 
 import com.google.common.collect.Maps;
 import com.zx.arch.arithmetic.four.Chapter01;
@@ -16,6 +16,12 @@ public class Leader {
      * @blog "https://algs4.cs.princeton.edu/code/
      */
     static HashMap Basic_Study_logs = Maps.newHashMap();
+
+    /**
+     * 一、《算法与数据结构 java语言描述》
+     * @blog "https://algs4.cs.princeton.edu/code/
+     */
+    static HashMap java_study = Maps.newHashMap();
 
 
     static{

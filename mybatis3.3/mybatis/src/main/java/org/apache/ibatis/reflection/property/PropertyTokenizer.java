@@ -21,19 +21,31 @@ import java.util.Iterator;
 
 /**
  * 属性描述符解析器（分词器）,使用到了迭代器模式
- * 例如: object.parent.name,每一个PropertyTokenizer只记录当前属性（object），子属性则通过调用next返回new PropertyTokenizer（parent）获得
+ * 作用：解析属性表达式，比如结果映射或者执行SQL传参，<resultMap> 的 property 属性或 sql 元素中的参数变量占位 #{} 中的内容都可能是一个属性表达式
+ * 例如: person.name
  *
  * @author Clinton Begin
  */
 @Data
 public class PropertyTokenizer implements Iterable<PropertyTokenizer>, Iterator<PropertyTokenizer> {
-
+  /**
+   * 表达式最顶层的属性名
+   */
   private String name;
 
+  /**
+   * 当前表达式的索引名
+   */
   private String indexedName;
 
+  /**
+   * 索引下标
+   */
   private String index;
 
+  /**
+   * 子表达式
+   */
   private String children;
 
   /**
@@ -44,18 +56,18 @@ public class PropertyTokenizer implements Iterable<PropertyTokenizer>, Iterator<
    * 第二步、对name进行进一步的解析,如果包含了字符[,则获取从[到name属性的倒数第二个字符之间的内容赋值给index属性,并把字符[前面的内容赋值给name
    *        如果name属性中不包含字符[,不进行任何操作。
    *
-   *  * 例一、 person[0].birthDate,将依次取得
+   *  * 例一、 person[0].name,将依次取得
    *  *                                      name = person
-   *  *                                      children = birthDate
    *  *                                      indexedName = person[0]
    *  *                                      index = 0
+   *  *                                      children = name
    *  *
-   *  * 例二、birthDate.year  将依次取得
-   *  *                    name =   birthDate
-   *  *                    indexedName = birthDate
-   *  *                    children = year
+   *  * 例二、person.name  将依次取得
+   *  *                    name =   person
+   *  *                    indexedName = person
+   *  *                    children = name
    *  *                    index = null
-   * @param fullname   例如 person[0].birthDate.year
+   * @param fullname
    */
   public PropertyTokenizer(String fullname) {
     //找'.'

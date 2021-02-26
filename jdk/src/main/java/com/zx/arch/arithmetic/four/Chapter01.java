@@ -10,6 +10,5 @@ public class Chapter01 {
     public static void main(String[] args) {
         //1、浮点型转换成整形是截断小数，而非四舍五入
         System.out.println((int)1.6);
-
     }
 }
