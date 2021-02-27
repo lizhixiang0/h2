@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!--1、全局配置文件的根元素-->
+<configuration>
+    <!--mybatis3.3是这么用properties元素的,可以动态引进外部的配置文件中的相关配置,
+    resource：引入类路径下的资源
+    url：引入网络路径或者磁盘路径下的资源
+    -->
+    <!--https://www.jianshu.com/p/45febe135ad8/-->
+    <properties resource="dbconfig.properties"></properties>
+
+    <settings>
+        <!-- 开启二级缓存第一步:设置cacheEnabled为true -->
+        <setting name="cacheEnabled" value="true"/>
+        <setting name="logPrefix" value="dao."/>
+        <setting name="logImpl" value="LOG4J"/>
+
+    </settings>
+
+
+    <typeAliases>
+        <!--
+        第一种方式:通过<typeAlias>标签，直接指定类名
+        -->
+        <typeAlias alias="person" type="com.mybatis.lizx.model.Person"/>
+        <!--
+        第二种方式:通过<package>标签, 指定包名， mybatis会扫描指定包下面的所有javabean,
+        默认设置别名为小写类名,也可以指定（在javabean 加上注解@Alias 来自定义别名， 例如： @Alias(myUser)）。
+         -->
+        <package name="com.mybatis.lizx.model"/>
+
+    </typeAliases>
+
+
+
+    <!--environments表示环境配置,用来配置数据库连接池和事物管理-->
+    <!--可以配置开发环境(development)、测试环境(test)、生产环境(production)等,通过default来选择。-->
+    <!--若和Spring配合使用，则事务的管理和数据库连接池一般都是交给Spring控制,那environments的配置是省略的-->
+    <environments default="development">
+
+
+        <environment id="development">
+
+            <!--transactionManager： 事务管理器,事物工厂类型只有两个取值：JDBC和MANAGED-->
+            <!--这里使用的是事物工厂的实现类别名,
+             JDBC:JdbcTransactionFactory           Mybatis内部的JDBC事务管理器,
+             MANAGED: ManagedTransactionFactory    外部容器事务管理器,由外部容器实现,spring实现了一个叫DataSourceTransactionManager
+            -->
+            <transactionManager type="JDBC" />
+            <!--dataSource: 数据源配置 ,数据源工厂类型有三种:JNDI、POOLED、UNPOOLED-->
+            <!--分别是JndiDataSourceFactory、PooledDataSourceFactory、UnpooledDataSourceFactory的别名-->
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}" />
+                <property name="url" value="${url}" />
+                <property name="username" value="${username}" />
+                <property name="password" value="${password}"/>
+            </dataSource>
+
+        </environment>
+
+    </environments>
+    <mappers>
+        <!--mappers文件路径配置,目录结构必须以斜杠分割-->
+        <mapper resource="com/mybatis/lizx/mapper/PersonMapper.xml"/>
+
+    </mappers>
+
+
+</configuration>
+
