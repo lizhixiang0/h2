@@ -1194,8 +1194,8 @@
         </profile>
     </profiles>
 
-
-    <repositories>
+    <!--不注释下载jar包和插件贼慢-->
+  <!--  <repositories>
         <repository>
             <id>public</id>
             <name>local private nexus</name>
@@ -1204,8 +1204,8 @@
                 <enabled>true</enabled>
             </releases>
         </repository>
-    </repositories>
-    <pluginRepositories>
+    </repositories>-->
+    <!--<pluginRepositories>
         <pluginRepository>
             <id>public</id>
             <name>local private nexus</name>
@@ -1217,6 +1217,6 @@
                 <enabled>false</enabled>
             </snapshots>
         </pluginRepository>
-    </pluginRepositories>
+    </pluginRepositories>-->
 
 </project>
