@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.mybatis</groupId>
@@ -93,7 +94,7 @@
         <impsortGroups>au,com,de,java,javassist,javax,lombok,mockit,net,ognl,org</impsortGroups>
         <maven.min-version>3.2.5</maven.min-version>
         <module.name>org.mybatis.parent</module.name>
-        <spotbugs.onlyAnalyze />
+        <spotbugs.onlyAnalyze/>
 
         <!--
          | Maven confirmation
@@ -116,7 +117,8 @@
         <build-tools.version>1.2.4</build-tools.version>
         <checkstyle-core.version>8.36.1</checkstyle-core.version>
         <fluido.version>1.9</fluido.version>
-        <wagon-git.version>2.0.3</wagon-git.version> <!-- Do not upgrade to 2.0.4 as it does not work with ssh properly -->
+        <wagon-git.version>2.0.3
+        </wagon-git.version> <!-- Do not upgrade to 2.0.4 as it does not work with ssh properly -->
         <wagon-ssh.version>3.4.0</wagon-ssh.version>
 
         <!--
@@ -166,8 +168,8 @@
         <osgi.symbolicName>${project.groupId}.${project.artifactId}</osgi.symbolicName>
         <osgi.export>${project.groupId}.*;version=${project.version};-noimport:=true</osgi.export>
         <osgi.import>*</osgi.import>
-        <osgi.dynamicImport />
-        <osgi.private />
+        <osgi.dynamicImport/>
+        <osgi.private/>
 
         <!-- Animal Sniffer Signature -->
         <signature.group>org.codehaus.mojo.signature</signature.group>
@@ -175,7 +177,7 @@
         <signature.version>1.0</signature.version>
 
         <!-- Add slow test groups here and annotate classes similar to @Tag('groupName') which will auto enable on travis-ci only. -->
-        <excludedGroups />
+        <excludedGroups/>
     </properties>
 
     <build>
@@ -556,7 +558,9 @@
                         <!--
                          | Stop the JAVA_1_n_HOME / JAVA_n_HOME variables from being treated as headers by Bnd if found in settings.xml
                         -->
-                        <_removeheaders>JAVA_1_3_HOME,JAVA_1_4_HOME,JAVA_1_5_HOME,JAVA_1_6_HOME,JAVA_1_7_HOME,JAVA_1_8_HOME,JAVA_1_9_HOME,JAVA_8_HOME,JAVA_9_HOME,JAVA_10_HOME,JAVA_11_HOME,JAVA_12_HOME,JAVA_13_HOME,JAVA_14_HOME,JAVA_15_HOME</_removeheaders>
+                        <_removeheaders>
+                            JAVA_1_3_HOME,JAVA_1_4_HOME,JAVA_1_5_HOME,JAVA_1_6_HOME,JAVA_1_7_HOME,JAVA_1_8_HOME,JAVA_1_9_HOME,JAVA_8_HOME,JAVA_9_HOME,JAVA_10_HOME,JAVA_11_HOME,JAVA_12_HOME,JAVA_13_HOME,JAVA_14_HOME,JAVA_15_HOME
+                        </_removeheaders>
                         <Bundle-SymbolicName>${osgi.symbolicName}</Bundle-SymbolicName>
                         <Export-Package>${osgi.export}</Export-Package>
                         <Private-Package>${osgi.private}</Private-Package>
@@ -833,45 +837,6 @@
 
     <profiles>
         <profile>
-            <id>format</id>
-            <activation>
-                <file>
-                    <exists>format.xml</exists>
-                </file>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>net.revelc.code.formatter</groupId>
-                        <artifactId>formatter-maven-plugin</artifactId>
-                        <configuration>
-                            <configFile>${formatter.config}</configFile>
-                            <skipXmlFormatting>true</skipXmlFormatting>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>format</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>net.revelc.code</groupId>
-                        <artifactId>impsort-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>sort</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
             <id>jdk9on</id>
             <activation>
                 <jdk>[9,)</jdk>
@@ -913,55 +878,13 @@
                                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                                         </manifest>
                                         <manifestEntries>
-                                            <Implementation-Build-Date>${maven.build.timestamp}</Implementation-Build-Date>
+                                            <Implementation-Build-Date>${maven.build.timestamp}
+                                            </Implementation-Build-Date>
                                             <X-Compile-Source-JDK>${maven.compiler.source}</X-Compile-Source-JDK>
                                             <X-Compile-Target-JDK>${maven.compiler.target}</X-Compile-Target-JDK>
                                         </manifestEntries>
                                     </archive>
                                 </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>${javadoc.version}</version>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                                <configuration>
-                                    <archive>
-                                        <manifest>
-                                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                                        </manifest>
-                                        <manifestEntries>
-                                            <Implementation-Build-Date>${maven.build.timestamp}</Implementation-Build-Date>
-                                            <X-Compile-Source-JDK>${maven.compiler.source}</X-Compile-Source-JDK>
-                                            <X-Compile-Target-JDK>${maven.compiler.target}</X-Compile-Target-JDK>
-                                        </manifestEntries>
-                                    </archive>
-                                    <additionalparam>-Xdoclint:-missing</additionalparam>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>${gpg.version}</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
                             </execution>
                         </executions>
                     </plugin>
@@ -978,7 +901,7 @@
                 </property>
             </activation>
             <properties>
-                <excludedGroups />
+                <excludedGroups/>
             </properties>
         </profile>
 
@@ -1021,27 +944,6 @@
         </profile>
 
         <profile>
-            <id>sort</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>tidy-maven-plugin</artifactId>
-                        <version>1.1.0</version>
-                        <executions>
-                            <execution>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>pom</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
             <id>license</id>
             <activation>
                 <file>
@@ -1074,134 +976,9 @@
                     <name>m2e.version</name>
                 </property>
             </activation>
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-                        <plugin>
-                            <groupId>org.eclipse.m2e</groupId>
-                            <artifactId>lifecycle-mapping</artifactId>
-                            <version>${lifecycle.version}</version>
-                            <configuration>
-                                <lifecycleMappingMetadata>
-                                    <pluginExecutions>
-                                        <pluginExecution>
-                                            <pluginExecutionFilter>
-                                                <groupId>org.apache.felix</groupId>
-                                                <artifactId>maven-bundle-plugin</artifactId>
-                                                <versionRange>[${bundle.version},)</versionRange>
-                                                <goals>
-                                                    <goal>manifest</goal>
-                                                </goals>
-                                            </pluginExecutionFilter>
-                                            <action>
-                                                <ignore />
-                                            </action>
-                                        </pluginExecution>
-                                        <pluginExecution>
-                                            <pluginExecutionFilter>
-                                                <groupId>org.jacoco</groupId>
-                                                <artifactId>jacoco-maven-plugin</artifactId>
-                                                <versionRange>[${jacoco.version},)</versionRange>
-                                                <goals>
-                                                    <goal>prepare-agent</goal>
-                                                </goals>
-                                            </pluginExecutionFilter>
-                                            <action>
-                                                <ignore />
-                                            </action>
-                                        </pluginExecution>
-                                        <pluginExecution>
-                                            <pluginExecutionFilter>
-                                                <groupId>org.apache.maven.plugins</groupId>
-                                                <artifactId>maven-enforcer-plugin</artifactId>
-                                                <versionRange>[${enforcer.version},)</versionRange>
-                                                <goals>
-                                                    <goal>enforce</goal>
-                                                </goals>
-                                            </pluginExecutionFilter>
-                                            <action>
-                                                <ignore />
-                                            </action>
-                                        </pluginExecution>
-                                        <pluginExecution>
-                                            <pluginExecutionFilter>
-                                                <groupId>com.mycila</groupId>
-                                                <artifactId>license-maven-plugin</artifactId>
-                                                <versionRange>[${license.version},)</versionRange>
-                                                <goals>
-                                                    <goal>format</goal>
-                                                </goals>
-                                            </pluginExecutionFilter>
-                                            <action>
-                                                <ignore />
-                                            </action>
-                                        </pluginExecution>
-                                        <pluginExecution>
-                                            <pluginExecutionFilter>
-                                                <groupId>net.revelc.code.formatter</groupId>
-                                                <artifactId>formatter-maven-plugin</artifactId>
-                                                <versionRange>[${formatter.version},)</versionRange>
-                                                <goals>
-                                                    <goal>format</goal>
-                                                </goals>
-                                            </pluginExecutionFilter>
-                                            <action>
-                                                <ignore />
-                                            </action>
-                                        </pluginExecution>
-                                        <pluginExecution>
-                                            <pluginExecutionFilter>
-                                                <groupId>net.revelc.code</groupId>
-                                                <artifactId>impsort-maven-plugin</artifactId>
-                                                <versionRange>[${impsort.plugin},)</versionRange>
-                                                <goals>
-                                                    <goal>sort</goal>
-                                                </goals>
-                                            </pluginExecutionFilter>
-                                            <action>
-                                                <execute>
-                                                    <runOnConfiguration>true</runOnConfiguration>
-                                                    <runOnIncremental>true</runOnIncremental>
-                                                </execute>
-                                            </action>
-                                        </pluginExecution>
-                                        <pluginExecution>
-                                            <pluginExecutionFilter>
-                                                <groupId>com.github.dantwining.whitespace-maven-plugin</groupId>
-                                                <artifactId>whitespace-maven-plugin</artifactId>
-                                                <versionRange>[${whitespace.plugin},)</versionRange>
-                                                <goals>
-                                                    <goal>trim</goal>
-                                                </goals>
-                                            </pluginExecutionFilter>
-                                            <action>
-                                                <execute>
-                                                    <runOnConfiguration>true</runOnConfiguration>
-                                                    <runOnIncremental>true</runOnIncremental>
-                                                </execute>
-                                            </action>
-                                        </pluginExecution>
-                                    </pluginExecutions>
-                                </lifecycleMappingMetadata>
-                            </configuration>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-compiler-plugin</artifactId>
-                            <configuration>
-                                <source>${maven.compiler.testSource}</source>
-                                <target>${maven.compiler.testTarget}</target>
-                            </configuration>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-            </build>
         </profile>
     </profiles>
-
-    <!--不注释下载jar包和插件贼慢-->
-  <repositories>
+    <repositories>
         <repository>
             <id>public</id>
             <name>local private nexus</name>
@@ -1210,7 +987,7 @@
                 <enabled>true</enabled>
             </releases>
         </repository>
-    </repositories>-->
+    </repositories>
     <pluginRepositories>
         <pluginRepository>
             <id>public</id>

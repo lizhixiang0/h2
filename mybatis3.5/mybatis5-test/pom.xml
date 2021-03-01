@@ -44,15 +44,8 @@
         </dependency>
         <dependency>
             <groupId>org.mybatis</groupId>
-            <artifactId>mybatis</artifactId>
-            <version>33-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mybatis</groupId>
-            <artifactId>mybatis</artifactId>
-            <version>33-SNAPSHOT</version>
-            <scope>compile</scope>
+            <artifactId>mybatis5</artifactId>
+            <version>3.5.7-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
