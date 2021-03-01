@@ -372,12 +372,16 @@
                     <version>${jacoco.version}</version>
                 </plugin>
 
+                <!--当项目包含大量模块的时候，为他们集体更新版本就变成一件烦人的事情-->
+                <!--https://blog.csdn.net/u012260238/article/details/107841294-->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
                     <version>${versions.version}</version>
                 </plugin>
 
+                <!--可以在Maven构建期间自动（重新）格式化Maven项目，或者验证它的格式-->
+                <!--https://www.5axxw.com/wiki/content/c8p0h9-->
                 <plugin>
                     <groupId>net.revelc.code.formatter</groupId>
                     <artifactId>formatter-maven-plugin</artifactId>
@@ -408,6 +412,8 @@
                     <version>${whitespace.version}</version>
                 </plugin>
 
+                <!--Modernizer Maven 插件能够检测使用已经被现代Java版本取代的遗留Java API-->
+                <!--https://www.ctolib.com/modernizer-maven-plugin.html-->
                 <plugin>
                     <groupId>org.gaul</groupId>
                     <artifactId>modernizer-maven-plugin</artifactId>
@@ -1195,7 +1201,7 @@
     </profiles>
 
     <!--不注释下载jar包和插件贼慢-->
-  <!--  <repositories>
+  <repositories>
         <repository>
             <id>public</id>
             <name>local private nexus</name>
@@ -1205,7 +1211,7 @@
             </releases>
         </repository>
     </repositories>-->
-    <!--<pluginRepositories>
+    <pluginRepositories>
         <pluginRepository>
             <id>public</id>
             <name>local private nexus</name>
@@ -1217,6 +1223,6 @@
                 <enabled>false</enabled>
             </snapshots>
         </pluginRepository>
-    </pluginRepositories>-->
+    </pluginRepositories>
 
 </project>

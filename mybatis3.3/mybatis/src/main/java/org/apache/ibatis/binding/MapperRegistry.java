@@ -27,34 +27,42 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author Clinton Begin
- * @author Eduardo Macarron
- * @author Lasse Voss
- */
-/**
  * 映射器注册机
+ * mapper注册器用于将所有的mapper接口添加到内存中,Mapper注册器自身维护着两个属性，config和knownMappers,
  *
+ * @author admin
  */
 public class MapperRegistry {
 
   private Configuration config;
-  //将已经添加的映射都放入HashMap
-  private final Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<Class<?>, MapperProxyFactory<?>>();
+
+  /**
+   * <k,v>
+   *     k :类路径
+   *     v : 对应的Mapper代理工厂
+   *         MapperProxyFactory的工作就是通过代理模式创建处一个MapperProxy代理类
+   *         MapperProxy实现了InvocationHandler接口,MapperProxy可以通过invoke()方法实现Mapper接口指定方法的调用,
+   *         这意味着MapperProxy并不直接实现Mapper接口的调用,而是在内部维系着一个<Mapper.Method,MapperMethod>的map集合,
+   */
+  private final Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<>();
 
   public MapperRegistry(Configuration config) {
     this.config = config;
   }
 
   @SuppressWarnings("unchecked")
-  //返回代理类
   public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
+    // 1、获取mapper代理工厂类
     final MapperProxyFactory<T> mapperProxyFactory = (MapperProxyFactory<T>) knownMappers.get(type);
+    // 2、在map中找不到则表示没有将mapper类注册进来,抛出BindingException
     if (mapperProxyFactory == null) {
       throw new BindingException("Type " + type + " is not known to the MapperRegistry.");
     }
     try {
+      // 3、使用代理工厂创建一个mapper代理类实例(本质上是通过代理模式创建了一个代理类)
       return mapperProxyFactory.newInstance(sqlSession);
     } catch (Exception e) {
+      // 3.1 创建过程中出现异常抛出BindingException
       throw new BindingException("Error getting mapper instance. Cause: " + e, e);
     }
   }
@@ -63,26 +71,31 @@ public class MapperRegistry {
     return knownMappers.containsKey(type);
   }
 
-  //看一下如何添加一个映射
+  /**
+   * 添加一个映射
+   * @param type 接口类
+   * @param <T>
+   */
   public <T> void addMapper(Class<T> type) {
-    //mapper必须是接口！才会添加
+    // 1、首先排除非接口的类
     if (type.isInterface()) {
+      // 1.1 判断是否已经注册过
       if (hasMapper(type)) {
-        //如果重复添加了，报错
         throw new BindingException("Type " + type + " is already known to the MapperRegistry.");
       }
-      boolean loadCompleted = false;
+      // 1.2 定义一个标识
+      boolean loadCompleted = true;
       try {
+        // 1.3 将mapper接口注册到konowMappers中 ,konowMappers是一个Map集合，用于存储接口和接口的代理类
         knownMappers.put(type, new MapperProxyFactory<T>(type));
-        // It's important that the type is added before the parser is run
-        // otherwise the binding may automatically be attempted by the
-        // mapper parser. If the type is already known, it won't try.
+        // 1.4 此处有引出一个类<MapperAnnotationBuilder>，该类的作用是解析注解配置sql的。
         MapperAnnotationBuilder parser = new MapperAnnotationBuilder(config, type);
         parser.parse();
-        loadCompleted = true;
+        // 1.5 注册成功，改变标识
+        loadCompleted = false;
       } finally {
-        //如果加载过程中出现异常需要再将这个mapper从mybatis中删除,这种方式比较丑陋吧，难道是不得已而为之？
-        if (!loadCompleted) {
+        // 1.6 标识没变，说明try{...}中如果有异常,需要删除放入knownMappers的接口
+        if (loadCompleted) {
           knownMappers.remove(type);
         }
       }
@@ -93,26 +106,32 @@ public class MapperRegistry {
    * @since 3.2.2
    */
   public Collection<Class<?>> getMappers() {
+    // Collections.unmodifiableCollection() 可以得到一个knownMappers集合的镜像（不可变对象）
+    // 后续在操作knownMappers时,该镜像也会随之改变，不能直接操作该镜像
     return Collections.unmodifiableCollection(knownMappers.keySet());
   }
 
   /**
+   * 查找包下所有为superType的类 （子类或其本身）
    * @since 3.2.2
    */
   public void addMappers(String packageName, Class<?> superType) {
-    //查找包下所有是superType的类
-    ResolverUtil<Class<?>> resolverUtil = new ResolverUtil<Class<?>>();
+    // 1、创建一个类路径解析器
+    ResolverUtil<Class<?>> resolverUtil = new ResolverUtil<>();
+      // 1.1 构造一个IsA内部类,传递到find()方法中,这种写法可以学习
     resolverUtil.find(new ResolverUtil.IsA(superType), packageName);
+      // 1.2 获得根据指定条件从包中找到的所有类
     Set<Class<? extends Class<?>>> mapperSet = resolverUtil.getClasses();
+    // 2、循环遍历这些接口和类，调用addMapper(mapperClass)方法，可以认为本方法是addMapper(mapperClass)的批量操作，将整个包下的接口一次性配置。
     for (Class<?> mapperClass : mapperSet) {
       addMapper(mapperClass);
     }
   }
 
   /**
+   * 查找包下所有父类为Object.class的类 ，其实就是所有类
    * @since 3.2.2
    */
-  //查找包下所有类
   public void addMappers(String packageName) {
     addMappers(packageName, Object.class);
   }

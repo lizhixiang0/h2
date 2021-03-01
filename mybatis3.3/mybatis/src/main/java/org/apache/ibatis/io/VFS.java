@@ -29,69 +29,62 @@ import org.apache.ibatis.logging.LogFactory;
 
 /**
  * Provides a very simple API for accessing resources within an application server.
- * 虚拟文件系统(VFS),用来读取服务器里的资源
+ * 抽象类 虚拟文件系统(VFS virtual File System),用来读取服务器里的资源
  *
  * @author Ben Gunter
  */
 public abstract class VFS {
+
   private static final Log log = LogFactory.getLog(ResolverUtil.class);
 
-  /** The built-in implementations. */
-  //默认提供2个实现 JBoss6VFS,DefaultVFS
+  /**
+   * 1、默认提供2个实现类 JBoss6VFS,DefaultVFS
+   */
   public static final Class<?>[] IMPLEMENTATIONS = { JBoss6VFS.class, DefaultVFS.class };
 
-  /** The list to which implementations are added by {@link #addImplClass(Class)}. */
-  //这里是提供一个用户扩展点，可以让用户自定义VFS实现
-  public static final List<Class<? extends VFS>> USER_IMPLEMENTATIONS = new ArrayList<Class<? extends VFS>>();
+  /**
+   * 2、这里是提供一个用户扩展点，可以让用户自定义VFS实现
+   */
+  public static final List<Class<? extends VFS>> USER_IMPLEMENTATIONS = new ArrayList<>();
 
-  /** Singleton instance. */
   private static VFS instance;
 
-  /**
-   * Get the singleton {@link VFS} instance. If no {@link VFS} implementation can be found for the
-   * current environment, then this method returns null.
-   */
   @SuppressWarnings("unchecked")
   public static VFS getInstance() {
+    // 1、已经实例化了，直接返回 （单例模式）
     if (instance != null) {
       return instance;
     }
-
-    // Try the user implementations first, then the built-ins
-    List<Class<? extends VFS>> impls = new ArrayList<Class<? extends VFS>>();
+    // 2、先尝试用户实现，然后再尝试内置实现
+    List<Class<? extends VFS>> impls = new ArrayList<>();
     impls.addAll(USER_IMPLEMENTATIONS);
     impls.addAll(Arrays.asList((Class<? extends VFS>[]) IMPLEMENTATIONS));
 
-    // Try each implementation class until a valid one is found
-    //遍历查找实现类，返回第一个找到的
+    //3、遍历实现类
     VFS vfs = null;
     for (int i = 0; vfs == null || !vfs.isValid(); i++) {
       Class<? extends VFS> impl = impls.get(i);
       try {
+        // 3.1 实例化
         vfs = impl.newInstance();
+        // 3.2 查看是否对当前环境适用
         if (vfs == null || !vfs.isValid()) {
-          log.debug("VFS implementation " + impl.getName() +
-              " is not valid in this environment.");
+          log.debug("VFS implementation " + impl.getName() +" is not valid in this environment.");
         }
-      } catch (InstantiationException e) {
-        log.error("Failed to instantiate " + impl, e);
-        return null;
-      } catch (IllegalAccessException e) {
+      } catch (InstantiationException | IllegalAccessException e) {
         log.error("Failed to instantiate " + impl, e);
         return null;
       }
     }
 
     log.debug("Using VFS adapter " + vfs.getClass().getName());
+    // 4、将当前实例赋值给类属性
     VFS.instance = vfs;
     return VFS.instance;
   }
 
   /**
-   * Adds the specified class to the list of {@link VFS} implementations. Classes added in this
-   * manner are tried in the order they are added and before any of the built-in implementations.
-   *
-   * @param clazz The {@link VFS} implementation class to add.
+   * 添加用户自定义的VFS实现
    */
   public static void addImplClass(Class<? extends VFS> clazz) {
     if (clazz != null) {
@@ -99,11 +92,13 @@ public abstract class VFS {
     }
   }
 
-  /** Get a class by name. If the class is not found then return null. */
+  /**
+   * 根据类名查找类并返回
+   * @param className The class name
+   */
   protected static Class<?> getClass(String className) {
     try {
       return Thread.currentThread().getContextClassLoader().loadClass(className);
-//      return ReflectUtil.findClass(className);
     } catch (ClassNotFoundException e) {
       log.debug("Class not found: " + className);
       return null;
@@ -111,7 +106,7 @@ public abstract class VFS {
   }
 
   /**
-   * Get a method by name and parameter types. If the method is not found then return null.
+   * 根据类名和类方法名以及类参数类型，返回类方法
    *
    * @param clazz The class to which the method belongs.
    * @param methodName The name of the method.
@@ -122,6 +117,7 @@ public abstract class VFS {
       return null;
     }
     try {
+      // 获取Method
       return clazz.getMethod(methodName, parameterTypes);
     } catch (SecurityException e) {
       log.error("Security exception looking for method " + clazz.getName() + "." + methodName + ".  Cause: " + e);
@@ -133,23 +129,19 @@ public abstract class VFS {
   }
 
   /**
-   * Invoke a method on an object and return whatever it returns.
+   * 在一个对象上调用一个方法并返回它返回的任何东西。
    *
    * @param method The method to invoke.
    * @param object The instance or class (for static methods) on which to invoke the method.
    * @param parameters The parameters to pass to the method.
-   * @return Whatever the method returns.
-   * @throws IOException If I/O errors occur
-   * @throws StripesRuntimeException If anything else goes wrong
    */
   @SuppressWarnings("unchecked")
   protected static <T> T invoke(Method method, Object object, Object... parameters)
       throws IOException, RuntimeException {
     try {
+      // 调用method.invoke方法
       return (T) method.invoke(object, parameters);
-    } catch (IllegalArgumentException e) {
-      throw new RuntimeException(e);
-    } catch (IllegalAccessException e) {
+    } catch (IllegalArgumentException | IllegalAccessException e) {
       throw new RuntimeException(e);
     } catch (InvocationTargetException e) {
       if (e.getTargetException() instanceof IOException) {
@@ -161,9 +153,7 @@ public abstract class VFS {
   }
 
   /**
-   * Get a list of {@link URL}s from the context classloader for all the resources found at the
-   * specified path.
-   *
+   * 通过类加载器获取指定路径中所有资源的URl ,返回list
    * @param path The resource path.
    * @return A list of {@link URL}s, as returned by {@link ClassLoader#getResources(String)}.
    * @throws IOException If I/O errors occur
@@ -172,31 +162,28 @@ public abstract class VFS {
     return Collections.list(Thread.currentThread().getContextClassLoader().getResources(path));
   }
 
-  /** Return true if the {@link VFS} implementation is valid for the current environment. */
+  /**
+   * 对当前环境适用则返回true
+   */
   public abstract boolean isValid();
 
   /**
-   * Recursively list the full resource path of all the resources that are children of the
-   * resource identified by a URL.
-   *
+   * 递归得列出给定的url下所有文件的资源路径 ,子类实现
    * @param url The URL that identifies the resource to list.
-   * @param forPath The path to the resource that is identified by the URL. Generally, this is the
-   *            value passed to {@link #getResources(String)} to get the resource URL.
+   * @param forPath The path to the resource that is identified by the URL. Generally, this is the value passed to {@link #getResources(String)} to get the resource URL.
    * @return A list containing the names of the child resources.
    * @throws IOException If I/O errors occur
    */
   protected abstract List<String> list(URL url, String forPath) throws IOException;
 
   /**
-   * Recursively list the full resource path of all the resources that are children of all the
-   * resources found at the specified path.
-   *
+   * 递归得列出给定的path下所有文件的资源路径
    * @param path The path of the resource(s) to list.
    * @return A list containing the names of the child resources.
    * @throws IOException If I/O errors occur
    */
   public List<String> list(String path) throws IOException {
-    List<String> names = new ArrayList<String>();
+    List<String> names = new ArrayList<>();
     for (URL url : getResources(path)) {
       names.addAll(list(url, path));
     }

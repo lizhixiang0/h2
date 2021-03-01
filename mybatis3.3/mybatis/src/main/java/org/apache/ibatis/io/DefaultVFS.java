@@ -55,10 +55,9 @@ public class DefaultVFS extends VFS {
   public List<String> list(URL url, String path) throws IOException {
     InputStream is = null;
     try {
-      List<String> resources = new ArrayList<String>();
+      List<String> resources = new ArrayList<>();
 
-      // First, try to find the URL of a JAR file containing the requested resource. If a JAR
-      // file is found, then we'll list child resources by reading the JAR.
+      // 首先，搞到包含所需资源的JAR文件的URL,文件被找到，我们将列出JAR中读取到的子资源。
       URL jarUrl = findJarForResource(url);
       if (jarUrl != null) {
         is = jarUrl.openStream();
@@ -194,32 +193,31 @@ public class DefaultVFS extends VFS {
   }
 
   /**
-   * Attempts to deconstruct the given URL to find a JAR file containing the resource referenced
-   * by the URL. That is, assuming the URL references a JAR entry, this method will return a URL
-   * that references the JAR file containing the entry. If the JAR cannot be located, then this
-   * method returns null.
-   *
+   * 尝试解构给定的URL，找到包含资源的JAR文件的URL
    * @param url The URL of the JAR entry.
    * @return The URL of the JAR file, if one is found. Null if not.
-   * @throws MalformedURLException
    */
-  protected URL findJarForResource(URL url) throws MalformedURLException {
+  protected URL findJarForResource(URL url) {
     log.debug("Find JAR URL: " + url);
-
-    // If the file part of the URL is itself a URL, then that URL probably points to the JAR
+    // 1、如果URL的文件部分本身就是一个URL，那么该URL可能指向JAR
     try {
+      // 2、死循环 ,就是while(true)
       for (;;) {
         url = new URL(url.getFile());
         log.debug("Inner URL: " + url);
       }
     } catch (MalformedURLException e) {
-      // This will happen at some point and serves as a break in the loop
+      // 必定会在某个点上发生异常，这作为循环的中断
+      // 此时url已经被处理过了
+      // @blog https://vimsky.com/examples/usage/url-getfile-method-in-java-with-examples.html
     }
 
-    // Look for the .jar extension and chop off everything after that
+    // 3、toExternalForm() 构造此 URL 的字符串表示形式
     StringBuilder jarUrl = new StringBuilder(url.toExternalForm());
+    // 4、找.jar后缀的index
     int index = jarUrl.lastIndexOf(".jar");
     if (index >= 0) {
+      // 5、用于在将字符序列替换为新字符序列时设置字符序列的长度 ,作用：/test.jar/person ---> /test.jar
       jarUrl.setLength(index + 4);
       log.debug("Extracted JAR URL: " + jarUrl);
     }

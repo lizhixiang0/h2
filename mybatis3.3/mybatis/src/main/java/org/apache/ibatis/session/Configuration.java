@@ -262,11 +262,28 @@ public class Configuration {
     return MetaObject.forObject(object, objectFactory, objectWrapperFactory);
   }
   /**
-   * 映射注册机
+   * 23、映射注册机,用于注册,获取和判断是否Mapper接口已经被注册的功能
    */
   protected MapperRegistry mapperRegistry = new MapperRegistry(this);
+  //  23.1 添加某个包下的所有符合superType的子类或者子接口
+  public void addMappers(String packageName, Class<?> superType) {mapperRegistry.addMappers(packageName, superType);}
+  //  23.2 ??
+  public void addMappers(String packageName) { mapperRegistry.addMappers(packageName);}
+  // 23.3 添加Mapper接口到knownMappers集合中
+  public <T> void addMapper(Class<T> type) {
+    mapperRegistry.addMapper(type);
+  }
+  // 23.4 获取knownMappers集合中所有已经注册的Mapper接口
+  public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
+    return mapperRegistry.getMapper(type, sqlSession);
+  }
+  // 23.5 判断缓存集合中是否存在Mapper接口
+  public boolean hasMapper(Class<?> type) {
+    return mapperRegistry.hasMapper(type);
+  }
+
   /**
-   * 代理工厂,Using internal Javassist instead of OGNL
+   * 24、代理工厂,Using internal Javassist instead of OGNL
    */
   protected ProxyFactory proxyFactory = new JavassistProxyFactory();
 
@@ -573,27 +590,6 @@ public class Configuration {
 
   public void addInterceptor(Interceptor interceptor) {
     interceptorChain.addInterceptor(interceptor);
-  }
-
-  //将包下所有类加入到mapper
-  public void addMappers(String packageName, Class<?> superType) {
-    mapperRegistry.addMappers(packageName, superType);
-  }
-
-  public void addMappers(String packageName) {
-    mapperRegistry.addMappers(packageName);
-  }
-
-  public <T> void addMapper(Class<T> type) {
-    mapperRegistry.addMapper(type);
-  }
-
-  public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
-    return mapperRegistry.getMapper(type, sqlSession);
-  }
-
-  public boolean hasMapper(Class<?> type) {
-    return mapperRegistry.hasMapper(type);
   }
 
   public boolean hasStatement(String statementName) {
