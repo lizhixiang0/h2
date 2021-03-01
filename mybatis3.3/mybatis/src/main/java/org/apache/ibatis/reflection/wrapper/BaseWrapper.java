@@ -23,7 +23,8 @@ import org.apache.ibatis.reflection.ReflectionException;
 import org.apache.ibatis.reflection.property.PropertyTokenizer;
 
 /**
- * 对象包装器的抽象基类,增加了三个公共方法和两个公共属性，并且实现了对象包装器(ObjectWrapper)接口（继承了其行为）
+ *  BaseWrapper 是实现 ObjectWrapper 接口的抽象子类，主要为子类 BeanWrapper 和 MapWrapper 提供属性值的获取和设置的功能，
+ *  包装了 MetaObject 对象
  * @author Clinton Begin
  */
 public abstract class BaseWrapper implements ObjectWrapper {
@@ -44,24 +45,28 @@ public abstract class BaseWrapper implements ObjectWrapper {
   }
 
   /**
-   * 分解集合，普通包装器和Map包装器会调用
+   * 解析对象中的集合名，调用 MetaObject 的方法获取对应的属性值返回
+   * 普通包装器和Map包装器会调用
    */
   protected Object resolveCollection(PropertyTokenizer prop, Object object) {
-    // 这个是干啥的？？
+    // 如果表达式不合法解析不到属性名，则直接返回默认值
     if ("".equals(prop.getName())) {
       return object;
     } else {
+      // 解析到属性名，调用 MetaObject 的方法获取属性值返回
       return metaObject.getValue(prop.getName());
     }
   }
 
   /**
-   * 取集合 || 列表的值   （集合直接通过key的hash值取出，列表则通过下标）
+   * 根据属性表达式，获取对应集合中的属性值返回，这里的集合指 Map、List、Object[] 和基本类型数组。
    */
   protected Object getCollectionValue(PropertyTokenizer prop, Object collection) {
+    // 如果集合是一个 Map 对象，则表达式中的索引就代表 Map 中对应的 key，eg: map['key']
     if (collection instanceof Map) {
       return ((Map) collection).get(prop.getIndex());
     } else {
+      // 如果集合是一个列表或数组，则下标肯定是一个整数，eg: list[0]/arr[0]
       int i = Integer.parseInt(prop.getIndex());
       if (collection instanceof List) {
         return ((List) collection).get(i);

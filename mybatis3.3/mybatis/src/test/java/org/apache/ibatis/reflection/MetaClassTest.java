@@ -17,6 +17,7 @@ package org.apache.ibatis.reflection;
 
 import static org.junit.Assert.*;
 
+import org.apache.ibatis.domain.misc.Employee;
 import org.apache.ibatis.domain.misc.RichType;
 import org.apache.ibatis.domain.misc.generics.GenericConcrete;
 import org.junit.Test;
@@ -90,14 +91,14 @@ public class MetaClassTest {
     assertEquals(String.class, meta.getGetterType("richProperty"));
     assertEquals(List.class, meta.getGetterType("richList"));
     assertEquals(Map.class, meta.getGetterType("richMap"));
-    assertEquals(List.class, meta.getGetterType("richList[0]"));
+    assertEquals(String.class, meta.getGetterType("richList[0]"));
 
     assertEquals(RichType.class, meta.getGetterType("richType"));
     assertEquals(String.class, meta.getGetterType("richType.richField"));
     assertEquals(String.class, meta.getGetterType("richType.richProperty"));
     assertEquals(List.class, meta.getGetterType("richType.richList"));
     assertEquals(Map.class, meta.getGetterType("richType.richMap"));
-    assertEquals(List.class, meta.getGetterType("richType.richList[0]"));
+    assertEquals(String.class, meta.getGetterType("richType.richList[0]"));
   }
 
   @Test

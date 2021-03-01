@@ -28,6 +28,8 @@ import org.apache.ibatis.reflection.property.PropertyTokenizer;
 
 /**
  * 普通Bean包装器，区别于集合和列表
+ * BeanWrapper 继承了抽象类 BaseWrapper，因此也继承了父类中的 MetaObject 对象，并且在构造方法中根据传入参数初始化该对象，
+ * BeanWrapper 还封装了一个 JavaBean 对象及对应的 MetaClass 对象，都通过传入参数初始化和创建
  * 作用：就是包装器，方法基本都是委派给了MetaClass
  * @author Clinton Begin
  */
@@ -43,7 +45,6 @@ public class BeanWrapper extends BaseWrapper {
   private MetaClass metaClass;
 
   public BeanWrapper(MetaObject metaObject, Object object) {
-    // 元对象传递给父类干啥？
     super(metaObject);
     this.object = object;
     this.metaClass = MetaClass.forClass(object.getClass());
@@ -56,13 +57,15 @@ public class BeanWrapper extends BaseWrapper {
    */
   @Override
   public Object get(PropertyTokenizer prop) {
-      //如果有index(只要有[]括号就不会为null，即为集合或数组)
+    // （1）如果表达式带索引，证明这是个集合(Map、List、数组)
+    // 调用父类方法获得对应集合的对象，再根据索引获取索引对应的值
     if (prop.getIndex() != null) {
-      //调用的是BaseWrapper.resolveCollection来获得当前集合&数组
+      //调用的是BaseWrapper.resolveCollection来获得当前属性(集合||数组)
+      // eg:如果表达式形如：list[0]/map[key]/arr[0]，则先获取对应属性 list/map/arr 对象，再获取索引对应的元素的值。
       Object collection = resolveCollection(prop, object);
       return getCollectionValue(prop, collection);
     } else {
-        //否则，直接getBeanProperty
+      // （2）表达式不带索引，调用getBeanProperty方法获取属性值
       return getBeanProperty(prop, object);
     }
   }

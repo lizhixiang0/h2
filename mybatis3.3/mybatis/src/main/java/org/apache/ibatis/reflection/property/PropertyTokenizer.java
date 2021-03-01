@@ -49,9 +49,9 @@ public class PropertyTokenizer implements Iterable<PropertyTokenizer>, Iterator<
   private String children;
 
   /**
-   * 第一步、首先处理fullname为name和children属性赋值
-   *      如果传到构造方法的fullname包含了'.',则表示他描述的是一个嵌套的多层属性的引用，对于这种场景，PropertyTokenizer会获取第一个'.'前面的部分作为name属性，并把'.'后面的内容赋值为children属性。
-   *      如果传到构造方法的fullname不包含'.',直接把fullname赋值给name属性,children属性赋值为null
+   * 第一步、首先为name和children属性赋值
+   *      如果传到构造方法的fullName包含了'.',则表示他描述的是一个嵌套的多层属性的引用，对于这种场景，PropertyTokenizer会获取第一个'.'前面的部分作为name属性，并把'.'后面的内容赋值为children属性。
+   *      如果传到构造方法的fullName不包含'.',直接把fullName赋值给name属性,children属性赋值为null
    *
    * 第二步、对name进行进一步的解析,如果包含了字符[,则获取从[到name属性的倒数第二个字符之间的内容赋值给index属性,并把字符[前面的内容赋值给name
    *        如果name属性中不包含字符[,不进行任何操作。
@@ -67,17 +67,17 @@ public class PropertyTokenizer implements Iterable<PropertyTokenizer>, Iterator<
    *  *                    indexedName = person
    *  *                    children = name
    *  *                    index = null
-   * @param fullname
+   * @param fullName
    */
-  public PropertyTokenizer(String fullname) {
+  public PropertyTokenizer(String fullName) {
     //找'.'
-    int delim = fullname.indexOf('.');
+    int delim = fullName.indexOf('.');
     if (delim > -1) {
-      name = fullname.substring(0, delim);
-      children = fullname.substring(delim + 1);
+      name = fullName.substring(0, delim);
+      children = fullName.substring(delim + 1);
     } else {
       //找不到.的话，取全部部分
-      name = fullname;
+      name = fullName;
       children = null;
     }
     indexedName = name;

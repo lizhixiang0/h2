@@ -56,9 +56,14 @@ public class MetaClass {
   }
 
   public MetaClass metaClassForProperty(String name) {
-    // 根据属性名获得属性类型
+    // 1、根据属性名获得属性类型
     Class<?> propType = reflector.getGetterType(name);
-    // 根据指定的类属性名创建对应的MataClass对象。
+    // 2、为类的属性创建对应的MataClass对象。
+    return MetaClass.forClass(propType);
+  }
+
+  private MetaClass metaClassForProperty(PropertyTokenizer prop) {
+    Class<?> propType = getGetterType(prop);
     return MetaClass.forClass(propType);
   }
 
@@ -68,7 +73,7 @@ public class MetaClass {
    * @return person.school.address
    */
   public String findProperty(String name) {
-    // 这里为什么要提前构造一个builder扔进去，因为buildProperty可能是个递归调用,我们要得到的是递归几轮后的那个值
+    //将表达式委托给 #buildProperty 方法处理，buildProperty递归调用,提前传递了个StringBuilder引用
     StringBuilder prop = buildProperty(name, new StringBuilder());
     return prop.length() > 0 ? prop.toString() : null;
   }
@@ -82,14 +87,20 @@ public class MetaClass {
    */
   private StringBuilder buildProperty(String name, StringBuilder builder) {
     PropertyTokenizer prop = new PropertyTokenizer(name);
+    // (1) 判断是否有子表达式
     if (prop.hasNext()) {
+      // (1.1) 查找 PropertyTokenizer.name 对应的属性
       String propertyName = reflector.findPropertyName(prop.getName());
       if (propertyName != null) {
+        // 追加属性
         builder.append(propertyName);
         builder.append(".");
+        // (1.2) 为该属性创建对应的MetaClass对象
         MetaClass metaProp = metaClassForProperty(propertyName);
+        // (1.3) 递归解析 PropertyTokenizer.children 字段，并将解析结果添加到 builder 中保存
         metaProp.buildProperty(prop.getChildren(), builder);
       }
+     // (2) 递归出口
     } else {
       String propertyName = reflector.findPropertyName(name);
       if (propertyName != null) {
@@ -121,49 +132,63 @@ public class MetaClass {
     return reflector.getSetablePropertyNames();
   }
 
-  /*
-  * 这个方法麻烦在给定的不一定是 person  ,可能是person.name
-   */
   public Class<?> getSetterType(String name) {
+    // 解析属性表达式
     PropertyTokenizer prop = new PropertyTokenizer(name);
+    // 判断是否存在待处理的子表达式
     if (prop.hasNext()) {
+      // 获取顶层属性对应的 MetaClass 对象，递归调用
       MetaClass metaProp = metaClassForProperty(prop.getName());
       return metaProp.getSetterType(prop.getChildren());
     } else {
+      // 不存在子表达式，直接根据属性名从 reflector 中获取属性 setter 类型
       return reflector.getSetterType(prop.getName());
     }
   }
 
   /**
+   * public class RichType {
    *
+   *   private RichType richType;
+   *
+   *   private String richField;
+   *
+   *   private String richProperty;
+   *
+   *   private Map richMap = new HashMap();
+   *
+   *   private List richList = new ArrayList()
+   *
+   *   private List<RichType> richList1 = new ArrayList()
+   *
+   *  }
+   *
+   *  注意:
+   *       meta.getGetterType("richType.richList[0]") == String.class
    * @param name  richList[0]
    * @return
    */
   public Class<?> getGetterType(String name) {
+    // 解析属性表达式
     PropertyTokenizer prop = new PropertyTokenizer(name);
+    // 判断是否存子表达式children,最终目的是找到最右边的name类型，比如richType.richList[0]，目的是找到[0]的类型
     if (prop.hasNext()) {
+      // 获取顶层属性对应的 MetaClass 对象，递归调用  todo 有一个疑点，为什么获取set类型只需要传递属性名？
       MetaClass metaProp = metaClassForProperty(prop);
       return metaProp.getGetterType(prop.getChildren());
     }
-    // issue #506. Resolve the type inside a Collection Object
     return getGetterType(prop);
-  }
-
-  private MetaClass metaClassForProperty(PropertyTokenizer prop) {
-    Class<?> propType = getGetterType(prop);
-    return MetaClass.forClass(propType);
   }
 
   private Class<?> getGetterType(PropertyTokenizer prop) {
     Class<?> type = reflector.getGetterType(prop.getName());
-    //判断类型是不是Collection的子类或者子接口
     if (prop.getIndex() != null && Collection.class.isAssignableFrom(type)) {
-      // 现在returnType是个Collection类型，例如ArrayList<String> 或者 直接就是 List
+      // 如果表达式中使用了下标，并且顶层属性的是 Collection 的子类,那需要考虑泛型
       Type returnType = getGenericGetterType(prop.getName());
-      // 判断是不是参数化类型,例如ArrayList<String> ,这个用来获取泛型类型，例如ArrayList<String> 的泛型类型是 String
+      // 判断是不是类似ArrayList<String> 的参数化类型,然后获取泛型类型，例如ArrayList<String> 的泛型类型是 String
       if (returnType instanceof ParameterizedType) {
         Type[] actualTypeArguments = ((ParameterizedType) returnType).getActualTypeArguments();
-        // 再验证一次，Collection类型即使存在泛型也只有一个
+        // Collection类型既使存在泛型也应该只有一个
         if (actualTypeArguments != null && actualTypeArguments.length == 1) {
           returnType = actualTypeArguments[0];
           if (returnType instanceof Class) {
@@ -176,40 +201,40 @@ public class MetaClass {
         }
       }
     }
+    // 如果没使用下标，或者解析完毕，返回对应的类型
     return type;
   }
 
   /**
+   * 获取属性名对应的类似ArrayList<String> 的参数化类型
+   * 通过 method.getGenericReturnType()或 field.getGenericType()
    * 属性有的GetInvoker类有两种可能,MethodInvoker和GetFieldInvoker  ,需要分开讨论
    * @param propertyName
    * @return
    */
   private Type getGenericGetterType(String propertyName) {
     try {
+      // 获取属性对应的 getInvoker
       Invoker invoker = reflector.getGetInvoker(propertyName);
       if (invoker instanceof MethodInvoker) {
-        Field _method = MethodInvoker.class.getDeclaredField("method");
-        _method.setAccessible(true);
-        Method method = (Method) _method.get(invoker);
-        return method.getGenericReturnType();
+        Field method = MethodInvoker.class.getDeclaredField("method");
+        method.setAccessible(true);
+        Method method_ = (Method) method.get(invoker);
+        return method_.getGenericReturnType();
       } else if (invoker instanceof GetFieldInvoker) {
-        Field _field = GetFieldInvoker.class.getDeclaredField("field");
-        _field.setAccessible(true);
-        Field field = (Field) _field.get(invoker);
-        return field.getGenericType();
+        Field field = GetFieldInvoker.class.getDeclaredField("field");
+        field.setAccessible(true);
+        Field field_ = (Field) field.get(invoker);
+        return field_.getGenericType();
       }
     } catch (NoSuchFieldException | IllegalAccessException ignored) {
     }
     return null;
   }
 
-  /**
-   * 这个方法麻烦在给定的不一定是 person  ,可能是person.name
-   * @param name
-   * @return
-   */
   public boolean hasSetter(String name) {
     PropertyTokenizer prop = new PropertyTokenizer(name);
+    //若是person.name，需要递归处理
     if (prop.hasNext()) {
       if (reflector.hasSetter(prop.getName())) {
         MetaClass metaProp = metaClassForProperty(prop.getName());
@@ -218,17 +243,14 @@ public class MetaClass {
         return false;
       }
     } else {
+      // 递归出口
       return reflector.hasSetter(prop.getName());
     }
   }
 
-  /**
-   * 这个方法麻烦在给定的不一定是 person  ,可能是person.name
-   * @param name
-   * @return
-   */
   public boolean hasGetter(String name) {
     PropertyTokenizer prop = new PropertyTokenizer(name);
+    //若是person.name，需要递归处理
     if (prop.hasNext()) {
       if (reflector.hasGetter(prop.getName())) {
         MetaClass metaProp = metaClassForProperty(prop);
@@ -237,6 +259,7 @@ public class MetaClass {
         return false;
       }
     } else {
+      // 递归出口
       return reflector.hasGetter(prop.getName());
     }
   }
