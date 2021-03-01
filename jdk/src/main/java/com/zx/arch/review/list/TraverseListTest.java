@@ -21,16 +21,19 @@ public class TraverseListTest {
 
     static {
         list.add("a");
+        list.add("a");
         list.add("b");
         list.add("c");
     }
 
     private static void a(){
-        for (String string:list) {
-            if(StringUtils.equals("b",string)){
+        for (int i =0;i<list.size();i++) {
+            String string = list.get(i);
+            if(StringUtils.equals("a", string)){
                 list.remove(string);
             }
         }
+        list.forEach(System.out::println);
     }
 
     private static void c(){
@@ -59,7 +62,7 @@ public class TraverseListTest {
         System.out.println(Arrays.toString(dest));
     }
     public static void main(String[] args) {
-       c();
+       a();
     }
 
 }
