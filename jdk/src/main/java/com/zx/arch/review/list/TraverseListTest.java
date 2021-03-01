@@ -10,8 +10,11 @@ import java.util.Iterator;
 /**
  * @author lizx
  * @since 1.0.0
- * @description 不能在for循环里进行remove/add 操作,如果需要则使用Iterator
+ * @description 如果使用增强for循环,在循环内部通过iterator增删元素
+ *              如果使用普通for循环,那就直接操作list ,注意使用倒序遍历。有坑。
+ *              总之，不能混用。
  * @blog " https://www.cnblogs.com/liyong888/p/7799272.html
+ * @blog "https://zhuanlan.zhihu.com/p/353103151"
  **/
 public class TraverseListTest {
     private static ArrayList<String> list = Lists.newArrayList();
@@ -19,8 +22,7 @@ public class TraverseListTest {
     static {
         list.add("a");
         list.add("b");
-        // 只有两个元素执行remove会报错!三个元素则不会,具体原因和for循环内部的迭代器有关系!
-        //list.add("c");
+        list.add("c");
     }
 
     private static void a(){
@@ -57,7 +59,6 @@ public class TraverseListTest {
         System.out.println(Arrays.toString(dest));
     }
     public static void main(String[] args) {
-        // 如果需要一边循环一边处理(remove/add)集合中的元素，使用iterator,不要使用for循环
        c();
     }
 
