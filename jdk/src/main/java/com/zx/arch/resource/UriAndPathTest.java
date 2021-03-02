@@ -4,9 +4,11 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.springframework.util.ClassUtils;
 
 import java.io.*;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -125,23 +127,29 @@ public class UriAndPathTest {
 
     }
 
-    public static void e() throws IOException {
+    public static void e() throws IOException, URISyntaxException {
         URL url = new URL("https://imgm.gmw.cn/attachement/jpg/site215/20201119/4364645368520067749.jpg");
 
         System.out.println("toExternalForm():"+url.toExternalForm());
         System.out.println("toString():"+url.toString());
-
         System.out.println("getFile():"+url.getFile());
-        System.out.println("递归 getFile():"+new URL(url.getFile()).getFile());
-
-
-
-        URLEncoder.encode(url.toString(), "UTF-8");
+        // System.out.println("递归 getFile():"+new URL(url.getFile()).getFile());
+        // 使用类加载器加载资源时，如果路径出现空格,会自动编码成%20
+        //https://shentuzhigang.blog.csdn.net/article/details/104413918
+        URL testUrl = UriAndPathTest.class.getClassLoader().getResource("static/url/a b.txt").toURI().toURL();
+        String fileName = testUrl.getFile();
+        File file = new File(fileName);
+        System.out.println("解码前"+file);
+        System.out.println("文件是否存在:"+file.exists());
+        String encodeFileName = URLDecoder.decode(fileName, StandardCharsets.UTF_8);
+        System.out.println("解码后"+encodeFileName);
+        file = new File(encodeFileName);
+        System.out.println("文件是否存在:"+file.exists());
     }
 
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, URISyntaxException {
         e();
     }
 }

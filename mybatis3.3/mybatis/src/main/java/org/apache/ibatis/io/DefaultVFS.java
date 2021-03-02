@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -217,13 +218,13 @@ public class DefaultVFS extends VFS {
     StringBuilder jarUrl = new StringBuilder(url.toExternalForm());
     // 3、找.jar后缀的index
     int index = jarUrl.lastIndexOf(".jar");
-    // 3.1 如果找不到".jar"抛出异常
     if (index >= 0) {
-      // 3.2 将.jar之后的字符串删除  eq:  /test.jar/person ---> /test.jar
+      // 3.1 将.jar之后的字符串删除  eq:  /test.jar/person ---> /test.jar
       jarUrl.setLength(index + 4);
       log.debug("Extracted JAR URL: " + jarUrl);
     }else {
       log.debug("Not a JAR: " + jarUrl);
+      // 3.2 如果找不到".jar" 直接返回null
       return null;
     }
 
@@ -236,14 +237,14 @@ public class DefaultVFS extends VFS {
       }else {
         // 4.2 检测出URl对应的资源文件不是jar包,则去检查文件系统中是否存在URL对应的资源文件。
         log.debug("Not a JAR: " + jarUrl);
-        // 4.3 用testUrl.getFile() 替换 jarUrl
+        // 4.3 用testUrl.getFile() 替换 jarUrl   此处注意：,getFile只取协议之后的字符串
         jarUrl.replace(0, jarUrl.length(), testUrl.getFile());
         File file = new File(jarUrl.toString());
-        // 4.4 假如文件不存在,则怀疑jarUrl.toString()中含有特殊字符
+        // 4.4 假如文件不存在,则怀疑jarUrl.toString()中含有特殊字符 (使用类加载器加载资源时，如果路径出现空格,会自动编码成%20)
         if (!file.exists()) {
           try {
-            // 4.5 使用UTF-8编码
-            file = new File(URLEncoder.encode(jarUrl.toString(), "UTF-8"));
+            // 4.5 使用UTF-8解码
+            file = new File(URLDecoder.decode(jarUrl.toString(), "UTF-8"));
           } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("Unsupported encoding?  UTF-8?  That's unpossible.");
           }
@@ -254,6 +255,7 @@ public class DefaultVFS extends VFS {
           // 4.7 获得资源文件的URL路径，再次进行检测是否是jar包
           testUrl = file.toURI().toURL();
           if (isJar(testUrl)) {
+            // 4.8 是jar包则返回URL
             return testUrl;
           }
         }

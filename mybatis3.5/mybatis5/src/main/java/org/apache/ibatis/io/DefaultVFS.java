@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.file.InvalidPathException;
 import java.util.ArrayList;
@@ -269,7 +270,7 @@ public class DefaultVFS extends VFS {
         // File name might be URL-encoded
         if (!file.exists()) {
           try {
-            file = new File(URLEncoder.encode(jarUrl.toString(), "UTF-8"));
+            file = new File(URLDecoder.decode(jarUrl.toString(), "UTF-8"));
           } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("Unsupported encoding?  UTF-8?  That's unpossible.");
           }
