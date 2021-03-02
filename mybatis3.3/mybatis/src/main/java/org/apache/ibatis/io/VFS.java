@@ -80,6 +80,7 @@ public abstract class VFS {
     log.debug("Using VFS adapter " + vfs.getClass().getName());
     // 4、将当前实例赋值给类属性
     VFS.instance = vfs;
+    // 5、返回
     return VFS.instance;
   }
 

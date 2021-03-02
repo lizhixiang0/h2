@@ -17,6 +17,11 @@ import java.nio.file.Paths;
  *                  1、通常URL和URI的区别："https://www.cnblogs.com/hust-ghtao/p/4724885.html
  *                      只要能唯一标识资源的就是URI，在URI的基础上给出其资源的访问方式的就是URL
  *
+ *                      URL的组成部分：
+ *                      https://www.sohu.com/a/362190015_120253884
+ *                      URI是个啥？
+ *                      https://thinkbucket.cn/docs/http/3.http-basic/uri/
+ *
  *                  2、测试Java中url 、uri 以及Path 的区别
  *
  *                          比较ok:"https://blog.csdn.net/abcwywht/article/details/53691632?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromBaidu-2.control&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromBaidu-2.control
@@ -120,12 +125,24 @@ public class UriAndPathTest {
 
     }
 
+    public static void e() throws IOException {
+        URL url = new URL("https://imgm.gmw.cn/attachement/jpg/site215/20201119/4364645368520067749.jpg");
+
+        System.out.println("toExternalForm():"+url.toExternalForm());
+        System.out.println("toString():"+url.toString());
+
+        System.out.println("getFile():"+url.getFile());
+        System.out.println("递归 getFile():"+new URL(url.getFile()).getFile());
 
 
 
+        URLEncoder.encode(url.toString(), "UTF-8");
+    }
 
-        public static void main(String[] args) throws URISyntaxException, IOException {
-        b();
+
+
+    public static void main(String[] args) throws IOException {
+        e();
     }
 }
 

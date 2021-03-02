@@ -43,7 +43,9 @@ import org.apache.ibatis.logging.LogFactory;
 public class DefaultVFS extends VFS {
   private static final Log log = LogFactory.getLog(ResolverUtil.class);
 
-  /** The magic header that indicates a JAR (ZIP) file. */
+  /**
+   * 所有的jar文件 前四个字节都是 0x50 0x4b 0x03 0x04
+   */
   private static final byte[] JAR_MAGIC = { 'P', 'K', 3, 4 };
 
   @Override
@@ -57,7 +59,7 @@ public class DefaultVFS extends VFS {
     try {
       List<String> resources = new ArrayList<>();
 
-      // 首先，搞到包含所需资源的JAR文件的URL,文件被找到，我们将列出JAR中读取到的子资源。
+      // 1、首先，搞到JAR文件(包含所需资源)的URL,文件被找到，我们将列出JAR中读取到的子资源。
       URL jarUrl = findJarForResource(url);
       if (jarUrl != null) {
         is = jarUrl.openStream();
@@ -199,56 +201,57 @@ public class DefaultVFS extends VFS {
    */
   protected URL findJarForResource(URL url) {
     log.debug("Find JAR URL: " + url);
-    // 1、如果URL的文件部分本身就是一个URL，那么该URL可能指向JAR
     try {
-      // 2、死循环 ,就是while(true)
+      // 1、如果URL的文件部分本身也是一个URL，那就通过死循环 ,就是while(true) ,递归出最核心的URL
       for (;;) {
         url = new URL(url.getFile());
         log.debug("Inner URL: " + url);
       }
     } catch (MalformedURLException e) {
-      // 必定会在某个点上发生异常，这作为循环的中断
-      // 此时url已经被处理过了
+      // 必定会在某个点上发生(java.net.MalformedURLException: no protocol)，这作为循环的中断
+      // 此时url已经是最核心的URL了，当然如果URL的文件部分本身不是一个URL，那URl还是最初的那个
       // @blog https://vimsky.com/examples/usage/url-getfile-method-in-java-with-examples.html
     }
 
-    // 3、toExternalForm() 构造此 URL 的字符串表示形式
+    // 2、toExternalForm() 构造此 URL 的字符串表示形式,相当于toString
     StringBuilder jarUrl = new StringBuilder(url.toExternalForm());
-    // 4、找.jar后缀的index
+    // 3、找.jar后缀的index
     int index = jarUrl.lastIndexOf(".jar");
+    // 3.1 如果找不到".jar"抛出异常
     if (index >= 0) {
-      // 5、用于在将字符序列替换为新字符序列时设置字符序列的长度 ,作用：/test.jar/person ---> /test.jar
+      // 3.2 将.jar之后的字符串删除  eq:  /test.jar/person ---> /test.jar
       jarUrl.setLength(index + 4);
       log.debug("Extracted JAR URL: " + jarUrl);
-    }
-    else {
+    }else {
       log.debug("Not a JAR: " + jarUrl);
       return null;
     }
 
-    // Try to open and test it
     try {
       URL testUrl = new URL(jarUrl.toString());
+      // 4、通过魔法数,验证资源是否是jar包
       if (isJar(testUrl)) {
+        // 4.1 是jar包则返回资源URL
         return testUrl;
-      }
-      else {
-        // WebLogic fix: check if the URL's file exists in the filesystem.
+      }else {
+        // 4.2 检测出URl对应的资源文件不是jar包,则去检查文件系统中是否存在URL对应的资源文件。
         log.debug("Not a JAR: " + jarUrl);
+        // 4.3 用testUrl.getFile() 替换 jarUrl
         jarUrl.replace(0, jarUrl.length(), testUrl.getFile());
         File file = new File(jarUrl.toString());
-
-        // File name might be URL-encoded
+        // 4.4 假如文件不存在,则怀疑jarUrl.toString()中含有特殊字符
         if (!file.exists()) {
           try {
+            // 4.5 使用UTF-8编码
             file = new File(URLEncoder.encode(jarUrl.toString(), "UTF-8"));
           } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("Unsupported encoding?  UTF-8?  That's unpossible.");
           }
         }
-
+        // 4.6 查看编码后文件是否存在
         if (file.exists()) {
           log.debug("Trying real file: " + file.getAbsolutePath());
+          // 4.7 获得资源文件的URL路径，再次进行检测是否是jar包
           testUrl = file.toURI().toURL();
           if (isJar(testUrl)) {
             return testUrl;
@@ -264,9 +267,7 @@ public class DefaultVFS extends VFS {
   }
 
   /**
-   * Converts a Java package name to a path that can be looked up with a call to
-   * {@link ClassLoader#getResources(String)}.
-   *
+   * 将Java包名转换为可以查找的路径
    * @param packageName The Java package name to convert to a path
    */
   protected String getPackagePath(String packageName) {
@@ -274,7 +275,7 @@ public class DefaultVFS extends VFS {
   }
 
   /**
-   * Returns true if the resource located at the given URL is a JAR file.
+   * 如果位于给定URL的资源是JAR文件，则返回true。委托给isJar(URL url, byte[] buffer)方法
    *
    * @param url The URL of the resource to test.
    */
@@ -283,34 +284,18 @@ public class DefaultVFS extends VFS {
   }
 
   /**
-   * Returns true if the resource located at the given URL is a JAR file.
+   * 所有的jar文件 前四个字节都是 0x50 0x4b 0x03 0x04
    *
-   * @param url The URL of the resource to test.
-   * @param buffer A buffer into which the first few bytes of the resource are read. The buffer
-   *            must be at least the size of {@link #JAR_MAGIC}. (The same buffer may be reused
-   *            for multiple calls as an optimization.)
    */
   protected boolean isJar(URL url, byte[] buffer) {
-    InputStream is = null;
-    try {
-      is = url.openStream();
+    try (InputStream is = url.openStream()) {
       is.read(buffer, 0, JAR_MAGIC.length);
+      // 判断读出来的前四个字节是否等于JAR_MAGIC
       if (Arrays.equals(buffer, JAR_MAGIC)) {
         log.debug("Found JAR: " + url);
         return true;
       }
-    } catch (Exception e) {
-      // Failure to read the stream means this is not a JAR
-    } finally {
-      if (is != null) {
-        try {
-          is.close();
-        } catch (Exception e) {
-          // Ignore
-        }
-      }
-    }
-
+    } catch (Exception ignored) {}
     return false;
   }
 }

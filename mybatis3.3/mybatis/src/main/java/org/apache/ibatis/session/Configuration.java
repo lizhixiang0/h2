@@ -262,12 +262,12 @@ public class Configuration {
     return MetaObject.forObject(object, objectFactory, objectWrapperFactory);
   }
   /**
-   * 23、映射注册机,用于注册,获取和判断是否Mapper接口已经被注册的功能
+   * 23、映射注册机 ,将所有的mapper接口添加到内存中
    */
   protected MapperRegistry mapperRegistry = new MapperRegistry(this);
-  //  23.1 添加某个包下的所有符合superType的子类或者子接口
+  //  23.1 注册某个包下的superType的所有子类或者子接口
   public void addMappers(String packageName, Class<?> superType) {mapperRegistry.addMappers(packageName, superType);}
-  //  23.2 ??
+  //  23.2 注册某个包下的所有类或者接口
   public void addMappers(String packageName) { mapperRegistry.addMappers(packageName);}
   // 23.3 添加Mapper接口到knownMappers集合中
   public <T> void addMapper(Class<T> type) {
