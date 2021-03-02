@@ -136,10 +136,13 @@ public class UriAndPathTest {
         // System.out.println("递归 getFile():"+new URL(url.getFile()).getFile());
         // 使用类加载器加载资源时，如果路径出现空格,会自动编码成%20
         //https://shentuzhigang.blog.csdn.net/article/details/104413918
-        URL testUrl = UriAndPathTest.class.getClassLoader().getResource("static/url/a b.txt").toURI().toURL();
-        String fileName = testUrl.getFile();
+        URI testURI = UriAndPathTest.class.getClassLoader().getResource("static/url/a b.txt").toURI();
+        URL testURL = testURI.toURL();
+        System.out.println("\r\n"+"testURI"+testURI.getPath());
+        System.out.println("\r\n"+"testURL"+testURL);
+        String fileName = testURL.getFile();
         File file = new File(fileName);
-        System.out.println("解码前"+file);
+        System.out.println("\r\n"+"解码前"+file);
         System.out.println("文件是否存在:"+file.exists());
         String encodeFileName = URLDecoder.decode(fileName, StandardCharsets.UTF_8);
         System.out.println("解码后"+encodeFileName);
