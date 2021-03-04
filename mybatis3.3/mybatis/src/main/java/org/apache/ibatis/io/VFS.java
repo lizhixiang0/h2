@@ -170,7 +170,7 @@ public abstract class VFS {
 
   /**
    * 递归得列出给定的url下所有文件的资源路径 ,子类实现
-   * @param url 标识要列出的资源的URL（文件或者文件目录）。 eq:file:/D:/JetBrains/workspace/h2/mybatis3.3/mybatis-test/target/classes/com/mybatis/lizx/model
+   * @param url 标识要列出的资源的URL（或者是文件或者是文件目录）。 eq:file:/D:/JetBrains/workspace/h2/mybatis3.3/mybatis-test/target/classes/com/mybatis/lizx/model
    * @param forPath 由URL标识的资源的路径。通常，这是传递给{@link #getResources(String)}以获取资源URL的值。eq: com/mybatis/lizx/model
    */
   protected abstract List<String> list(URL url, String forPath) throws IOException;

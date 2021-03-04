@@ -27,7 +27,8 @@ import org.apache.ibatis.logging.LogFactory;
 
 /**
  * 调用Jboss6的VFS API
- * 这个暂时不学,么得多大用
+ * jdk自身提供的资源导航，需要判定文件的类型，操作比较繁琐。在VFS中我们将所有的类型抽象为一个类型-VirtualFile
+ * 简而言之就是调用外部API来处理资源
  * @author Ben Gunter
  */
 public class JBoss6VFS extends VFS {
@@ -35,7 +36,6 @@ public class JBoss6VFS extends VFS {
 
   /**
    * 一个类，模拟JBoss的 VirtualFile类的一个很小的子集
-   * jdk自身提供的资源导航，需要判定文件的类型，操作比较繁琐。在VFS中我们将所有的类型抽象为一个类型-VirtualFile
    */
   static class VirtualFile {
     static Class<?> VirtualFile;
@@ -163,21 +163,24 @@ public class JBoss6VFS extends VFS {
   @Override
   public List<String> list(URL url, String path) throws IOException {
     VirtualFile directory;
+    // 1、根据url取得虚拟文件目录,拿不到直接返回空集合
     directory = VFS.getChild(url);
     if (directory == null) {
       return Collections.emptyList();
     }
-
+    // 2、处理下path路径
     if (!path.endsWith("/")) {
       path += "/";
     }
-
+    // 3、获得虚拟目录的子虚拟文件
     List<VirtualFile> children = directory.getChildren();
+    // 4、创建集合容器
     List<String> names = new ArrayList<>(children.size());
+    // 5、遍历获得子文件相对目录的的路径名
     for (VirtualFile vf : children) {
       names.add(path + vf.getPathNameRelativeTo(directory));
     }
-
+    // 6、返回集合
     return names;
   }
 }
