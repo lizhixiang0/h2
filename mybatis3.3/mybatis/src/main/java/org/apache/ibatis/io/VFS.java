@@ -170,10 +170,8 @@ public abstract class VFS {
 
   /**
    * 递归得列出给定的url下所有文件的资源路径 ,子类实现
-   * @param url The URL that identifies the resource to list.
-   * @param forPath The path to the resource that is identified by the URL. Generally, this is the value passed to {@link #getResources(String)} to get the resource URL.
-   * @return A list containing the names of the child resources.
-   * @throws IOException If I/O errors occur
+   * @param url 标识要列出的资源的URL。 eq:file:/D:/JetBrains/workspace/h2/mybatis3.3/mybatis-test/target/classes/com/mybatis/lizx/model
+   * @param forPath 由URL标识的资源的路径。通常，这是传递给{@link #getResources(String)}以获取资源URL的值。eq: com/mybatis/lizx/model
    */
   protected abstract List<String> list(URL url, String forPath) throws IOException;
 

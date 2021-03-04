@@ -39,8 +39,8 @@ public class CollectHash {
      * @throws IOException
      */
     public static void aa() throws IOException {
-        Path src  = Path.of("C:\\Users\\admin\\PycharmProjects\\pythonProject\\mal");
-        Path dest  = Path.of("C:\\Users\\admin\\PycharmProjects\\pythonProject\\mal1");
+        Path src  = Path.of("C:\\Users\\admin\\PycharmProjects\\pythonProject\\sha1");
+        Path dest  = Path.of("C:\\Users\\admin\\PycharmProjects\\pythonProject\\sha2");
         Stream<String> stream = Files.readAllLines(src).stream();
         stream.distinct().forEach( i-> {
             try {

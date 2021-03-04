@@ -59,61 +59,59 @@ public class DefaultVFS extends VFS {
     InputStream is = null;
     try {
       List<String> resources = new ArrayList<>();
-
-      // 1、首先，搞到JAR文件(包含所需资源)的URL,文件被找到，我们将列出JAR中读取到的子资源。
+      // 1、首先，搞到JAR文件(包含所需资源)的URL
       URL jarUrl = findJarForResource(url);
       if (jarUrl != null) {
+        // 这个注意下，jar包文件是不能直接通过File这种文件来读取的，得通过流，我写在这里的原因是，很多时候写代码时需要用到资源文件，此时不能直接使用File,
+        // 生产环境打成jar包之后通过new File()是找不到的！得通过流，类似this.clazz.getResourceAsStream
         is = jarUrl.openStream();
         log.debug("Listing " + url);
-        //用JDK自带的JarInputStream来读取jar包
+        // 1.1 文件被找到，我们将,用JDK自带的JarInputStream来读取jar包,列出JAR中读取到的子资源。
         resources = listResources(new JarInputStream(is), path);
-      }
-      else {
-        List<String> children = new ArrayList<String>();
+      }else {
+        // 存储查出的子资源url
+        List<String> children = new ArrayList<>();
         try {
+          // 2、一些url可能会给出一个JAR流，但是其字符串内就是么得".jar"的字样，针对这种我们直接通过魔法数判断
           if (isJar(url)) {
-            // Some versions of JBoss VFS might give a JAR stream even if the resource
-            // referenced by the URL isn't actually a JAR
+            // 2.1 判断是jar包,打开字节流
             is = url.openStream();
+            // 2.1.1 也是用JDK自带的JarInputStream来读取jar包
             JarInputStream jarInput = new JarInputStream(is);
             log.debug("Listing " + url);
             for (JarEntry entry; (entry = jarInput.getNextJarEntry()) != null;) {
               log.debug("Jar entry: " + entry.getName());
+              // 2.1.2 把查出来的资源路径添加进children集合
               children.add(entry.getName());
             }
+            // 2.1.3 关闭流
             jarInput.close();
-          }
-          else {
-            /*
-             * Some servlet containers allow reading from directory resources like a
-             * text file, listing the child resources one per line. However, there is no
-             * way to differentiate between directory and file resources just by reading
-             * them. To work around that, as each line is read, try to look it up via
-             * the class loader as a child of the current resource. If any line fails
-             * then we assume the current resource is not a directory.
-             */
+          }else {
+            // 2.2 判断不是jar包,打开字节流
+            //有些servlet容器允许从目录资源(如文本文件，每行列出一个子资源),但是我们么得办法去判断是不是
+            //所以使用reader.readLine()去一行行读取，每读一行就是要类加载去加载对应的资源，只要报错了，就说明不是
             is = url.openStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-            List<String> lines = new ArrayList<String>();
+            List<String> lines = new ArrayList<>();
             for (String line; (line = reader.readLine()) != null;) {
               log.debug("Reader entry: " + line);
               lines.add(line);
               if (getResources(path + "/" + line).isEmpty()) {
+                // 2.2.1 只要有一行读不出来内容，就清空lines,然后跳出循环
                 lines.clear();
                 break;
               }
             }
-
+            // 2.2.2 如果lines不为空，说明确实如我们所料，该项目是通过文本文件之类的东西逐行列出资源文件
             if (!lines.isEmpty()) {
               log.debug("Listing " + url);
+              // 2.2.3 将lines中内容归并到children
               children.addAll(lines);
             }
           }
         } catch (FileNotFoundException e) {
           /*
-           * For file URLs the openStream() call might fail, depending on the servlet
-           * container, because directories can't be opened for reading. If that happens,
-           * then list the directory directly instead.
+           对于文件url, openStream()等调用可能会失败，可能是因为无法打开目录进行读取。如果出现这种情况,直接列出目录即可。
            */
           if ("file".equals(url.getProtocol())) {
             File file = new File(url.getFile());
@@ -122,36 +120,31 @@ public class DefaultVFS extends VFS {
               log.debug("Listing " + url);
               children = Arrays.asList(file.list());
             }
-          }
-          else {
-            // No idea where the exception came from so rethrow it
-            throw e;
-          }
+          }else {throw e;}
         }
 
-        // The URL prefix to use when recursively listing child resources
+        // 3、递归列出子资源时要使用的URL前缀
         String prefix = url.toExternalForm();
         if (!prefix.endsWith("/")) {
           prefix = prefix + "/";
         }
 
-        // Iterate over immediate children, adding files and recursing into directories
+        // 4、遍历直接子节点，添加文件
         for (String child : children) {
           String resourcePath = path + "/" + child;
           resources.add(resourcePath);
           URL childUrl = new URL(prefix + child);
+          // 4.1递归子节点
           resources.addAll(list(childUrl, resourcePath));
         }
       }
-
+      //5、返回资源文件路径集合
       return resources;
     } finally {
       if (is != null) {
         try {
           is.close();
-        } catch (Exception e) {
-          // Ignore
-        }
+        } catch (Exception ignored) {}
       }
     }
   }
@@ -175,7 +168,7 @@ public class DefaultVFS extends VFS {
     }
 
     // Iterate over the entries and collect those that begin with the requested path
-    List<String> resources = new ArrayList<String>();
+    List<String> resources = new ArrayList<>();
     for (JarEntry entry; (entry = jar.getNextJarEntry()) != null;) {
       if (!entry.isDirectory()) {
         // Add leading slash if it's missing
