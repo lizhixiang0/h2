@@ -88,7 +88,7 @@ public class DefaultVFS extends VFS {
             jarInput.close();
           }else {
             // 2.2 判断不是jar包,打开字节流
-            //有些servlet容器允许从目录资源(如文本文件，每行列出一个子资源),但是我们么得办法去判断是不是
+            //有些servlet容器允许从文件夹(文件夹本质上也是文本文件，它逐行列出子资源的文本名),但是我们么得办法去判断是不是
             //所以使用reader.readLine()去一行行读取，每读一行就是要类加载去加载对应的资源，只要报错了，就说明不是
             is = url.openStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
