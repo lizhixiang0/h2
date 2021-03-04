@@ -269,15 +269,15 @@ public class Configuration {
   public void addMappers(String packageName, Class<?> superType) {mapperRegistry.addMappers(packageName, superType);}
   //  23.2 注册某个包下的所有类或者接口
   public void addMappers(String packageName) { mapperRegistry.addMappers(packageName);}
-  // 23.3 添加Mapper接口到knownMappers集合中
+  //  23.3 添加Mapper接口到knownMappers集合中
   public <T> void addMapper(Class<T> type) {
     mapperRegistry.addMapper(type);
   }
-  // 23.4 获取knownMappers集合中所有已经注册的Mapper接口
+  //  23.4 获取knownMappers集合中所有已经注册的Mapper接口
   public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
     return mapperRegistry.getMapper(type, sqlSession);
   }
-  // 23.5 判断缓存集合中是否存在Mapper接口
+  //  23.5 判断缓存集合中是否存在Mapper接口
   public boolean hasMapper(Class<?> type) {
     return mapperRegistry.hasMapper(type);
   }
