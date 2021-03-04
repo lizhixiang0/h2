@@ -87,9 +87,9 @@ public class DefaultVFS extends VFS {
             // 2.1.3 关闭流
             jarInput.close();
           }else {
-            // 2.2 判断不是jar包,打开字节流
+            // 2.2 判断不是jar包,有可能给的是文件目录
             //有些servlet容器允许从文件夹(文件夹本质上也是文本文件，它逐行列出子资源的文本名),但是我们么得办法去判断是不是
-            //所以使用reader.readLine()去一行行读取，每读一行就是要类加载去加载对应的资源，只要报错了，就说明不是
+            //所以打开字节流,使用reader.readLine()去一行行读取，每读一行就是要类加载去加载对应的资源，只要报错了，就说明不是
             is = url.openStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
             List<String> lines = new ArrayList<>();
@@ -150,6 +150,7 @@ public class DefaultVFS extends VFS {
   }
 
   /**
+   * 从给定的jar流中整理出所有的子文件名
    * List the names of the entries in the given {@link JarInputStream} that begin with the
    * specified {@code path}. Entries will match with or without a leading slash.
    *
