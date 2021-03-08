@@ -65,9 +65,11 @@ public class UpdateStream {
      * 5、min()  返回Optional(最小值)
      * 6、findFirst() 一般与filter()联合使用,返回Optional(第一个匹配的)
      * 7、findAny()   一般与filter()还有parallel()联合使用 ,返回Optional(只要有匹配的，随便返回那个元素)
+     *
      * 8、anyMatch()  一般与parallel()联合使用， 只要有匹配一个就返回true
      * 9、allMatch()  一般与parallel()联合使用,  都匹配返回true
      * 10、noneMatch() 一般与parallel()联合使用,  都不匹配返回true
+     *
      */
     public static void b(){
         OptionalInt optionalInt = IntStream.of(1,2,3,4,2,2).parallel().filter(i->i==2).findAny();
@@ -84,6 +86,7 @@ public class UpdateStream {
     }
 
     /**
+     * 中间操作
      * 1、filter    筛选满足条件的所有元素
      * 2、limit(n)  只要前n个元素
      * 3、skip(n)   丢弃前n个元素
@@ -111,6 +114,7 @@ public class UpdateStream {
     }
 
     /**
+     * 中间操作
      * jdk9
      * 1、takeWhile()    依次获取满足条件的元素，直到不满足条件为止结束获取
      * 2、dropWhile()    依次删除满足条件的元素，直到不满足条件为止结束删除
@@ -123,6 +127,7 @@ public class UpdateStream {
 
     /**
      * 收集经过流处理后的数据
+     *  stream.collect(Collectors.toList())
      */
     public static void collect(){
         Stream<Integer> stream = Stream.of(5,6,4,1,2,3);
@@ -147,7 +152,9 @@ public class UpdateStream {
     }
 
     /**
+     * 中间操作
      * 将流中元素收集到映射表中，也是使用收集器，但是这个比较特殊，所以单独拿出来
+     *  stream.collect(Collectors.toMap)
      */
     public static void map(){
         @Data
@@ -216,9 +223,54 @@ public class UpdateStream {
 
     }
 
+    /**
+     * 约简操作
+     * reduce(BinaryOperator<T> accumulator);
+     * accumulator是用于流中计算的机制,俗称累积器函数
+     *
+     */
+    public static void  reduce(){
+        //https://blog.csdn.net/shenhaiyushitiaoyu/article/details/84142618
+        List<Integer> list = new ArrayList<>(){
+            // {} 就是代码块,构造对象时自动执行
+            {
+                add(1);
+                add(2);
+                add(3);
+            }
+        };
+        // 1、reduce((x, y) -> x + y)的作用是可以将流中所有元素累加起来,可以写成Integer::sum
+        Optional<Integer> reduce = list.stream().reduce((x, y) -> x + y);
+        System.out.println(reduce.get());
+
+        // 2、第二种写法，给定一个起点值0,这样返回值就不用使用optional包起来
+        Integer integer = list.stream().reduce(0, (x, y) -> x + y);
+        System.out.println(integer);
+
+        List<String> list1 = new ArrayList<>(){
+            // {} 就是代码块,构造对象时自动执行
+            {
+                add("abc");
+                add("abcd");
+                add("abce");
+            }
+        };
+        // 计算流中字符串元素的总长度，特殊在流中是string类型,而而累积结果是int类型，实际生产中我们是直接使用map将映射成整数再去求出结果，下面主要是为了演示reduce()
+        // 第一个参数：起点值
+        // 第二个参数：累积器函数，计算所有元素的长度累加
+        // 第三个参数：组合器函数，在并行操作时会得到多个total值,这个函数用来累加这些total,可以写成Integer::sum
+        Integer count = list1.stream().reduce(
+                0,
+                (total, word) -> total + word.length(),
+                (total1, total2) -> total1 + total2
+        );
+        System.out.println(count);
+
+
+    }
+
     public static void main(String[] args) {
-        Stream<Integer> stream = Stream.of(1,2,3,4);
-        stream.peek(System.out::println).collect(Collectors.toList());
+       reduce();
     }
 
 }

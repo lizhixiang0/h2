@@ -24,12 +24,9 @@ import org.apache.ibatis.reflection.ExceptionUtil;
 import org.apache.ibatis.session.SqlSession;
 
 /**
+ * 映射器代理，使用的jdk代理
  * @author Clinton Begin
  * @author Eduardo Macarron
- */
-/**
- * 映射器代理，代理模式
- *
  */
 public class MapperProxy<T> implements InvocationHandler, Serializable {
 

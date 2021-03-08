@@ -23,15 +23,18 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.ibatis.session.SqlSession;
 
 /**
+ * 映射器代理工厂,生产映射代理
  * @author Lasse Voss
  */
-/**
- * 映射器代理工厂
- */
 public class MapperProxyFactory<T> {
-
+  /**
+   * 原接口类
+   */
   private final Class<T> mapperInterface;
-  private Map<Method, MapperMethod> methodCache = new ConcurrentHashMap<Method, MapperMethod>();
+  /**
+   * 做缓存用的
+   */
+  private Map<Method, MapperMethod> methodCache = new ConcurrentHashMap<>();
 
   public MapperProxyFactory(Class<T> mapperInterface) {
     this.mapperInterface = mapperInterface;
@@ -45,15 +48,23 @@ public class MapperProxyFactory<T> {
     return methodCache;
   }
 
+  /**
+   * 核心方法 
+   * @param sqlSession
+   * @return
+   */
+  public T newInstance(SqlSession sqlSession) {
+    final MapperProxy<T> mapperProxy = new MapperProxy<T>(sqlSession, mapperInterface, methodCache);
+    return newInstance(mapperProxy);
+  }
+
+
   @SuppressWarnings("unchecked")
   protected T newInstance(MapperProxy<T> mapperProxy) {
     //用JDK自带的动态代理生成映射器
     return (T) Proxy.newProxyInstance(mapperInterface.getClassLoader(), new Class[] { mapperInterface }, mapperProxy);
   }
 
-  public T newInstance(SqlSession sqlSession) {
-    final MapperProxy<T> mapperProxy = new MapperProxy<T>(sqlSession, mapperInterface, methodCache);
-    return newInstance(mapperProxy);
-  }
+
 
 }
