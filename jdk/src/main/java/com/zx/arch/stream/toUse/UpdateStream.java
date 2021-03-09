@@ -265,8 +265,6 @@ public class UpdateStream {
                 (total1, total2) -> total1 + total2
         );
         System.out.println(count);
-
-
     }
 
     public static void main(String[] args) {

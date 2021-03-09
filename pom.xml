@@ -16,10 +16,7 @@
         <module>mybatis3.3</module>
         <module>algorithm</module>
         <module>jdk1.8</module>
-<<<<<<< Updated upstream
         <module>mybatis3.5</module>
-=======
->>>>>>> Stashed changes
     </modules>
 
     <parent>
