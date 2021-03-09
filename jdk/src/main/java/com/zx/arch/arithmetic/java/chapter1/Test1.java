@@ -20,7 +20,7 @@ public class Test1 {
         if (str != null && str.length() != 0) {
             fun(str.toCharArray(), 0, list);
             // 最后再去重一次
-            list  = new ArrayList<String>(new HashSet<>(list));
+            list  = new ArrayList<>(new HashSet<>(list));
         }
         return list;
     }

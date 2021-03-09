@@ -1,7 +1,8 @@
-package com.zx.arch.arithmetic.java.chapter1;
+package com.zx.arch.arithmetic.java;
 
 import com.google.common.collect.Maps;
 import com.zx.arch.arithmetic.four.Chapter01;
+import com.zx.arch.arithmetic.java.chapter1.Test1;
 
 import java.util.HashMap;
 
