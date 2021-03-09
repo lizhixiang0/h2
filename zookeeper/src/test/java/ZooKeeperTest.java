@@ -15,9 +15,9 @@ public class ZooKeeperTest {
     @Before
     public void init() throws Exception {
         // 访问的IP:PORT，必须是多个，逗号隔开
-        String connectString = "localhost:2182,127.0.0.1:2183,127.0.0.1:2184";
+        String connectString = "localhost:2182,localhost:2183,localhost:2184";
         // 会话时间
-        int sessionTimeout = 1000;
+        int sessionTimeout = 10000;
         // 第三个参数是监听器 Watcher ,里面定义收到事件通知后执行的函数
         zkClient = new ZooKeeper(connectString, sessionTimeout, new Watcher() {
             @Override

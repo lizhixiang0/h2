@@ -1,14 +1,16 @@
 import org.apache.zookeeper.ZooKeeper;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 /**
  * @author lizx
  * @since 1.0.0
  **/
 public class DistributeClient {
     private final static String PARENT_NODE = "/servers";
+
+    private ArrayList<String> servers;
 
     private ZooKeeper zkClient = null;
 
@@ -34,23 +36,28 @@ public class DistributeClient {
     public void getServerList() throws Exception {
         // 1 获取服务器子节点信息，并且对父节点进行监听
         List<String> children = zkClient.getChildren(PARENT_NODE, true);
-        // 2 存储服务器信息列表
-        ArrayList<String> servers = new ArrayList<>();
-        // 3 遍历所有节点，获取节点中的主机名称信息
+        // 2、创建一个新的集合，存放当前还健在的服务
+        servers = new ArrayList<>();
+        // 3 遍历所有节点，获取节点中的主机名称信息放到集合中
         for (String child : children) {
             byte[] data = zkClient.getData(PARENT_NODE + "/" + child, false, null);
             servers.add(new String(data));
         }
-        // 4 打印服务器列表信息
-        System.out.println(servers);
     }
 
     /**
-     * 业务功能
+     * 业务功能,从servers集合中获取健在的服务器
      */
-    public void business() throws Exception {
-        System.out.println("client is working ...");
-        Thread.sleep(Long.MAX_VALUE);
+    public void business() throws InterruptedException {
+        while(true){
+            Thread.sleep(2000);
+            if(!servers.isEmpty()){
+                System.out.println(String.format("%s is working ...", servers.get(0)));
+            }else {
+                System.out.println("down ...");
+                break;
+            }
+        }
     }
 
     public static void main(String[] args) throws Exception {
