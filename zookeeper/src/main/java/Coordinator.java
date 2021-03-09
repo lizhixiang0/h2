@@ -7,7 +7,7 @@ import java.util.List;
  * @author lizx
  * @since 1.0.0
  **/
-public class DistributeClient {
+public class Coordinator {
     private final static String PARENT_NODE = "/servers";
 
     private ArrayList<String> servers;
@@ -61,7 +61,7 @@ public class DistributeClient {
     }
 
     public static void main(String[] args) throws Exception {
-        DistributeClient client = new DistributeClient();
+        Coordinator client = new Coordinator();
         // 1 获取 zk 连接
         client.getConnect();
         // 2 获取 servers 的子节点信息，从中获取服务器信息列表

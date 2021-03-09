@@ -6,7 +6,7 @@ import java.io.IOException;
  * @author lizx
  * @since 1.0.0
  **/
-public class DistributeServer {
+public class Engine {
 
     private final static String PARENT_NODE = "/servers";
 
@@ -22,7 +22,7 @@ public class DistributeServer {
     }
 
     /**
-     * 注册服务器
+     * 注册引擎
      */
     public void registerServer(String hostname) throws Exception {
         // 创建一个完全开放的临时有序节点 ,注意PARENT_NODE得提前创建,必须在父节点存在的时候 ，才能创建子节点。
@@ -41,7 +41,7 @@ public class DistributeServer {
     }
 
     public static void main(String[] args) throws Exception {
-        DistributeServer server = new DistributeServer();
+        Engine server = new Engine();
         // 1 获取 zk 连接
         server.getConnect();
         // 2 服务一上线就利用 zk 注册当前服务器信息
