@@ -7,6 +7,9 @@ import java.io.IOException;
  * @since 1.0.0
  **/
 public class DistributeServer {
+
+    private final static String PARENT_NODE = "/servers";
+
     private ZooKeeper zkClient = null;
 
     /**
@@ -15,20 +18,14 @@ public class DistributeServer {
     public void getConnect() throws IOException {
         String connectString = "127.0.0.1:2182,127.0.0.1:2183,127.0.0.1:2184";
         int sessionTimeout = 2000;
-        zkClient = new ZooKeeper(connectString, sessionTimeout, new Watcher() {
-            @Override
-            public void process(WatchedEvent event) {
-            }
-        });
+        zkClient = new ZooKeeper(connectString, sessionTimeout, event -> {});
     }
 
     /**
      * 注册服务器
      */
-    public void registServer(String hostname) throws Exception {
-        String parentNode = "/servers";
-        String create = zkClient.create(parentNode + "/server", hostname.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE,
-                CreateMode.EPHEMERAL_SEQUENTIAL);
+    public void registerServer(String hostname) throws Exception {
+        String create = zkClient.create(PARENT_NODE + "/server", hostname.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.EPHEMERAL_SEQUENTIAL);
         System.out.println(hostname + " is online " + create);
     }
 
@@ -41,11 +38,11 @@ public class DistributeServer {
     }
 
     public static void main(String[] args) throws Exception {
-        // 1 获取 zk 连接
         DistributeServer server = new DistributeServer();
+        // 1 获取 zk 连接
         server.getConnect();
         // 2 利用 zk 连接注册服务器信息
-        server.registServer(args[0]);
+        server.registerServer(args[0]);
         // 3 启动业务功能
         server.business(args[0]);
     }
