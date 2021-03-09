@@ -17,6 +17,7 @@
         <module>algorithm</module>
         <module>jdk1.8</module>
         <module>mybatis3.5</module>
+        <module>zookeeper</module>
     </modules>
 
     <parent>
