@@ -1,6 +1,8 @@
 package com.zx.arch.io;
 
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -39,10 +41,10 @@ public class CollectHash {
      * @throws IOException
      */
     public static void aa() throws IOException {
-        Path src  = Path.of("C:\\Users\\admin\\PycharmProjects\\pythonProject\\sha256_collects");
-        Path dest  = Path.of("C:\\Users\\admin\\PycharmProjects\\pythonProject\\sha2");
+        Path src  = Path.of("C:\\Users\\admin\\PycharmProjects\\pythonProject\\mal");
+        Path dest  = Path.of("C:\\Users\\admin\\PycharmProjects\\pythonProject\\mal1");
         Stream<String> stream = Files.readAllLines(src).stream();
-        stream.distinct().forEach( i-> {
+        stream.filter(StringUtils::isNotBlank).distinct().forEach(i-> {
             try {
                 Files.writeString(dest,i.concat("\r\n"), StandardOpenOption.CREATE,StandardOpenOption.APPEND);
             } catch (IOException e) {

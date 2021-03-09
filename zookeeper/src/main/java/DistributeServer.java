@@ -41,9 +41,9 @@ public class DistributeServer {
         DistributeServer server = new DistributeServer();
         // 1 获取 zk 连接
         server.getConnect();
-        // 2 利用 zk 连接注册服务器信息
+        // 2 服务一上线就利用 zk 连接注册服务器信息
         server.registerServer(args[0]);
-        // 3 启动业务功能
+        // 3 注册完就去搞业务功能，不用再管了
         server.business(args[0]);
     }
 }
