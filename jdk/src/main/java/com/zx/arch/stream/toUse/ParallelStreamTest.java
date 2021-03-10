@@ -8,7 +8,7 @@ package com.zx.arch.stream.toUse;
  **/
 public class ParallelStreamTest {
     public static void main(String[] args) {
-        String s  = "https://blog.csdn.net/qq_38974634/article/details/81347604";
+        String s  = "https://blog.csdn.net/weixin_44655599/article/details/111636732";
     }
 
 }
