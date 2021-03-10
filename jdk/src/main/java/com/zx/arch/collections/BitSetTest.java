@@ -43,12 +43,11 @@ public class BitSetTest {
     public static void c(){
         System.out.println(1L << 1234);
         System.out.println(1L << 18);
-        System.out.println(1234%32);
         System.out.println(1234%64);
     }
 
     public static void main(String[] args) {
-        c();
+        a();
     }
 
 

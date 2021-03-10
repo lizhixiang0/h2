@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.zx.arch.stream.toAnalysis.StreamTest;
 import com.zx.arch.stream.toUse.BaseStreamTest;
 import com.zx.arch.stream.toUse.CreateStream;
+import com.zx.arch.stream.toUse.ParallelStreamTest;
 import com.zx.arch.stream.toUse.UpdateStream;
 
 import java.util.HashMap;
@@ -34,9 +35,10 @@ public interface Leader {
      * study log
      */
     default void setBasicLogs() {
-        To_Use_Stream_logs.put("基本类型流", BaseStreamTest.class);
         To_Use_Stream_logs.put("生成stream的各类方法", CreateStream.class);
         To_Use_Stream_logs.put("操作stream的各类方法", UpdateStream.class);
+        To_Use_Stream_logs.put("生成基本类型流", BaseStreamTest.class);
+        To_Use_Stream_logs.put("并行流操作", ParallelStreamTest.class);
         To_Analysis_Stream_logs.put("提供者Supplier介绍", StreamTest.class);
 
     }

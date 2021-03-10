@@ -98,7 +98,8 @@ public class UpdateStream {
         // 1、筛选
         // filter里面的谓词参数与元素类型有关,比如如果是int基本类型可以直接用== ,如果是引用类型则使用equals() ,如果没注明使用IntStream，那Stream默认存储的都是对象
         Stream stream = Stream.of(5,6,4,1,2,3);
-        stream.filter(i-> i.equals(2)).forEach(System.out::print);System.out.println("\r\n");
+        stream.filter(i-> i.equals(2)).forEach(System.out::print);
+        System.out.println("\r\n");
 
         // 6、排序
         // Integer实现了Comparable,所以stream可以直接使用sorted进行排序
