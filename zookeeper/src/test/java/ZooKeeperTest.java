@@ -8,6 +8,7 @@ import java.util.List;
 /**
  * @author lizx
  * @since 1.0.0
+ * @description zookeeper原装的api
  **/
 public class ZooKeeperTest {
     private ZooKeeper zkClient = null;
@@ -57,7 +58,6 @@ public class ZooKeeperTest {
         for (String child : children) {
             System.out.println(child);
         }
-
         // 延时阻塞
         Thread.sleep(Long.MAX_VALUE);
     }
