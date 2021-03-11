@@ -15,6 +15,8 @@
  */
 package org.apache.ibatis.binding;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -30,14 +32,20 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 /**
- * 映射器方法
+ * 映射方法包装类
  * @author Clinton Begin
  * @author Eduardo Macarron
  * @author Lasse Voss
  */
 public class MapperMethod {
-
+  /**
+   * SQL命令，静态内部类、 封装了SQL类型 `insert` `update` `delete` `select`
+   */
   private final SqlCommand command;
+
+  /**
+   * 方法签名，静态内部类，封装了方法的参数信息、返回类型等信息
+   */
   private final MethodSignature method;
 
   public MapperMethod(Class<?> mapperInterface, Method method, Configuration config) {
@@ -184,50 +192,67 @@ public class MapperMethod {
 
   }
 
-  //SQL命令，静态内部类
+  /**
+   * SQL命令，静态内部类
+   */
+  @Setter
+  @Getter
   public static class SqlCommand {
-
+    /**
+     * 暂时不晓得
+     */
     private final String name;
+    /**
+     * 枚举类、sql语句类型
+     */
     private final SqlCommandType type;
 
     public SqlCommand(Configuration configuration, Class<?> mapperInterface, Method method) {
+      // 1、语句名 = 接口名+方法名
       String statementName = mapperInterface.getName() + "." + method.getName();
+      // 2、定义映射语句引用
       MappedStatement ms = null;
+      // 3、判断配置类中是否有该映射语句
       if (configuration.hasStatement(statementName)) {
+        // 3.1、有则直接获取
         ms = configuration.getMappedStatement(statementName);
-      } else if (!mapperInterface.equals(method.getDeclaringClass().getName())) { // issue #35
-        //如果不是这个mapper接口的方法，再去查父类
+      }
+      // 4、没有则判断这个方法的声明类是不是当前接口，可能是父类接口声明的
+      else if (!mapperInterface.equals(method.getDeclaringClass().getName())) {
+        // 4.1 获取方法的声明类名和方法名，构造新的语句名
         String parentStatementName = method.getDeclaringClass().getName() + "." + method.getName();
+        // 4.2 判断配置类中是否有该映射语句
         if (configuration.hasStatement(parentStatementName)) {
+          // 4.3 有则直接获取
           ms = configuration.getMappedStatement(parentStatementName);
         }
       }
       if (ms == null) {
+        // 5、如果始终找不到映射语句则抛出异常
         throw new BindingException("Invalid bound statement (not found): " + statementName);
       }
+      // 6、找到了映射语句，则初始化name 和 type
       name = ms.getId();
       type = ms.getSqlCommandType();
       if (type == SqlCommandType.UNKNOWN) {
         throw new BindingException("Unknown execution method for: " + name);
       }
     }
-
-    public String getName() {
-      return name;
-    }
-
-    public SqlCommandType getType() {
-      return type;
-    }
   }
 
-  //方法签名，静态内部类
+  /**
+   * 方法签名，静态内部类
+   */
   public static class MethodSignature {
-
+    // 判断返回类型是不是数组或集合
     private final boolean returnsMany;
+    // 判断返回类型是不是Map
     private final boolean returnsMap;
+    // 判断类型是不是void
     private final boolean returnsVoid;
+    // 返回类型
     private final Class<?> returnType;
+    // 如果method是否有MapKey注解,则说明返回值是Map类型
     private final String mapKey;
     private final Integer resultHandlerIndex;
     private final Integer rowBoundsIndex;
@@ -332,13 +357,16 @@ public class MapperMethod {
 
     private String getMapKey(Method method) {
       String mapKey = null;
+      // 1、判断返回值是否是map类型，不是则返回null
       if (Map.class.isAssignableFrom(method.getReturnType())) {
-        //如果返回类型是map类型的，查看该method是否有MapKey注解。如果有这个注解，将这个注解的值作为map的key
+        // 1.1 如果是查看该method是否有MapKey注解。没有返回null
         final MapKey mapKeyAnnotation = method.getAnnotation(MapKey.class);
         if (mapKeyAnnotation != null) {
+          // 1.2 如果有这个注解，将这个注解的值作为mapKey
           mapKey = mapKeyAnnotation.value();
         }
       }
+
       return mapKey;
     }
 

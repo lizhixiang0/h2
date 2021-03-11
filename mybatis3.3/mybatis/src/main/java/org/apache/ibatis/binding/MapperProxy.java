@@ -41,8 +41,10 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
     this.methodCache = methodCache;
   }
 
+  /**
+   * 代理以后，所有Mapper的方法调用时，都会先调用这个invoke方法，
+   */
   @Override
-  // 代理以后，所有Mapper的方法调用时，都会先调用这个invoke方法，
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
     if (Object.class.equals(method.getDeclaringClass())) {
@@ -55,7 +57,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
     }
     // 2、 如果不是Object中通用的方法,调用mapperMethod.execute(),这里会先从缓存中找MapperMethod
     final MapperMethod mapperMethod = cachedMapperMethod(method);
-    // 2.1 执行sql
+    // 2.1 执行sql语句 ,本质上还是调用 method.invoke(target,args) ,只不过这里用MapperMethod包装了下,我们需要对核心接口方法进行代理的内容就在这个包装类里
     return mapperMethod.execute(sqlSession, args);
   }
 
@@ -63,8 +65,9 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
     // 1、根据Method从缓存中获取对应的MapperMethod
     MapperMethod mapperMethod = methodCache.get(method);
     if (mapperMethod == null) {
-      // 2、获取不到则new一个，并存放到缓存中供下一次调用
+      // 2、获取不到则new一个，new 的时候传递 原接口类、正在调用Method方法、从sqlSession中获取的Configuration信息
       mapperMethod = new MapperMethod(mapperInterface, method, sqlSession.getConfiguration());
+      // 2.1、存放到缓存中供下一次调用
       methodCache.put(method, mapperMethod);
     }
     // 3、返回 MapperMethod

@@ -29,11 +29,8 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 
 /**
- * @author Clinton Begin
- */
-/**
  * 映射的语句
- *
+ * @author Clinton Begin
  */
 public final class MappedStatement {
 
