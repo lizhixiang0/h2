@@ -14,7 +14,8 @@ import java.util.Optional;
 /**
  * @author lizx
  * @since 1.0.0
- * @description 封装了zookeeper原装的api ,且解决一部分问题,稳定性比原装的好太多了
+ * @description 封装 了zookeeper原装的api ,且解决一部分问题,稳定性比原装的好太多了
+ * @blog "https://blog.csdn.net/haoyuyang/article/details/53469269
  **/
 public class CuratorFrameworkTest {
 
@@ -24,7 +25,7 @@ public class CuratorFrameworkTest {
     /**
      * root根节点是一直存在的，如果不存到root里,自己另启炉灶那就必须得先创建根节点
      */
-    private static final String PATH = "/root/demoZK/test";
+    private static final String PATH = "/root/demoZK/test0000000000";
 
     @Before
     public void init() {
@@ -33,14 +34,24 @@ public class CuratorFrameworkTest {
         int sessionTimeoutMs = 20000;
         // 连接超时时间
         int connectionTimeoutMs = 5000;
-        client = CuratorFrameworkFactory.newClient(connectString, sessionTimeoutMs, connectionTimeoutMs, retryPolicy);
+        client = CuratorFrameworkFactory.builder()
+                .connectString(connectString)
+                .sessionTimeoutMs(sessionTimeoutMs)
+                .connectionTimeoutMs(connectionTimeoutMs)
+                .retryPolicy(retryPolicy)
+                // 定义工作域,相当于定义一个根节点
+                .namespace("ddd")
+                .build();
         client.start();
     }
 
     // 创建子节点
+    // 注意,
     @Test
     public void create() throws Exception {
         String s = client.create()
+                // 不可以跨路径创建子节点,如果必须，调用这个递归创建父子节点
+                .creatingParentsIfNeeded()
                 // 持久、有序
                 .withMode(CreateMode.PERSISTENT_SEQUENTIAL)
                 .withACL(ZooDefs.Ids.OPEN_ACL_UNSAFE)
@@ -56,7 +67,7 @@ public class CuratorFrameworkTest {
         System.out.println(new String(bytes));
         // 2、包含状态查询
         Stat stat = new Stat();
-        stat.setVersion(1);
+        stat.setVersion(-1);
         byte[] bytes1 = client.getData().storingStatIn(stat).forPath(PATH);
         System.out.println(new String(bytes1));
     }

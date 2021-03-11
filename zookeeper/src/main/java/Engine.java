@@ -25,7 +25,7 @@ public class Engine {
      * 注册引擎
      */
     public void registerServer(String hostname) throws Exception {
-        // 创建一个完全开放的临时有序节点 ,注意PARENT_NODE得提前创建,必须在父节点存在的时候 ，才能创建子节点。
+        // 创建一个完全开放的临时有序节点 ,注意PARENT_NODE得提前创建,必须在父节点存在的时候 ，才能创建子节点。或者递归创建可以避开这个。
         String create = zkClient.create(PARENT_NODE + "/server", hostname.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.EPHEMERAL_SEQUENTIAL);
         System.out.println(hostname + " is online " + create);
     }

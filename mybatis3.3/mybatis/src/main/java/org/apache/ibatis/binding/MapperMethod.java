@@ -30,13 +30,10 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 /**
+ * 映射器方法
  * @author Clinton Begin
  * @author Eduardo Macarron
  * @author Lasse Voss
- */
-/**
- * 映射器方法
- *
  */
 public class MapperMethod {
 

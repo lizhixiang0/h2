@@ -20,12 +20,16 @@ import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.ibatis.session.SqlSession;
 
 /**
  * 映射器代理工厂,生产映射代理
  * @author Lasse Voss
  */
+@Getter
+@Setter
 public class MapperProxyFactory<T> {
   /**
    * 原接口类
@@ -40,20 +44,13 @@ public class MapperProxyFactory<T> {
     this.mapperInterface = mapperInterface;
   }
 
-  public Class<T> getMapperInterface() {
-    return mapperInterface;
-  }
-
-  public Map<Method, MapperMethod> getMethodCache() {
-    return methodCache;
-  }
-
   /**
    * 核心方法 
    * @param sqlSession
    * @return
    */
   public T newInstance(SqlSession sqlSession) {
+    // 1、生成代理角色
     final MapperProxy<T> mapperProxy = new MapperProxy<T>(sqlSession, mapperInterface, methodCache);
     return newInstance(mapperProxy);
   }
@@ -61,7 +58,7 @@ public class MapperProxyFactory<T> {
 
   @SuppressWarnings("unchecked")
   protected T newInstance(MapperProxy<T> mapperProxy) {
-    //用JDK自带的动态代理生成映射器
+    //2、创建代理对象,映射器
     return (T) Proxy.newProxyInstance(mapperInterface.getClassLoader(), new Class[] { mapperInterface }, mapperProxy);
   }
 
