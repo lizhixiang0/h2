@@ -25,7 +25,7 @@ public enum LocalCacheScope {
    */
   SESSION,
   /**
-   * 若设置值为 statement 本地会话仅用在语句执行上，对相同 SqlSession 的不同调用将不会共享数据
+   * 若设置值为 statement ，相同 SqlSession 的不同调用将不会共享数据
    */
   STATEMENT
 }

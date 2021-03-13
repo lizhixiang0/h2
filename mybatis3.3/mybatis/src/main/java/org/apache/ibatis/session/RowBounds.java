@@ -15,25 +15,41 @@
  */
 package org.apache.ibatis.session;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
+ * 作用2个: 分页和 list 查询时控制最多返回数
  * @author Clinton Begin
+ * @description limit和offset用法
+ * @note   mysql里分页一般用limit来实现
+           1. select* from article LIMIT 1,3
+           2. select * from article LIMIT 3 OFFSET 1
+           上面两种写法都表示取2,3,4三条条数据
+
+          select* from article LIMIT 1,3 就是跳过1条数据,从第2条数据开始取，取3条数据，也就是取2,3,4三条数据
+          select * from article LIMIT 3 OFFSET 1 表示跳过1条数据,从第2条数据开始取，取3条数据，也就是取2,3,4三条数据
+          select* from article LIMIT 3  表示直接取前三条数据
  */
-/**
- * 分页用，记录限制
- *
- */
+@Getter
+@Setter
 public class RowBounds {
+
+  /**
+   * 偏移量 ,相当于mysql中的offset
+   */
+  private int offset;
+  /**
+   * 界限, 相当于mysql中的limit
+   */
+  private int limit;
 
   public static final int NO_ROW_OFFSET = 0;
   public static final int NO_ROW_LIMIT = Integer.MAX_VALUE;
   public static final RowBounds DEFAULT = new RowBounds();
 
-  //offset,limit就等于一般分页的start,limit,
-  private int offset;
-  private int limit;
-
-  //默认是一页Integer.MAX_VALUE条
   public RowBounds() {
+    //默认是取第一条到第Integer.MAX_VALUE条的所有数据
     this.offset = NO_ROW_OFFSET;
     this.limit = NO_ROW_LIMIT;
   }
@@ -41,14 +57,6 @@ public class RowBounds {
   public RowBounds(int offset, int limit) {
     this.offset = offset;
     this.limit = limit;
-  }
-
-  public int getOffset() {
-    return offset;
-  }
-
-  public int getLimit() {
-    return limit;
   }
 
 }

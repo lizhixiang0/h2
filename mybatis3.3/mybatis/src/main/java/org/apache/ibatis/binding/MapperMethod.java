@@ -32,7 +32,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 /**
- * 映射方法包装类
+ * Dao层方法的代理方法，调用Dao层的方法都相当于在调用本类的execute方法
  * @author Clinton Begin
  * @author Eduardo Macarron
  * @author Lasse Voss
@@ -53,7 +53,9 @@ public class MapperMethod {
     this.method = new MethodSignature(config, method);
   }
 
-  //执行
+  /**
+   * 进行增删改查，它会根据条件去匹配方法
+   */
   public Object execute(SqlSession sqlSession, Object[] args) {
     Object result;
     //可以看到执行时就是4种情况，insert|update|delete|select，分别调用SqlSession的4大类方法
@@ -86,8 +88,7 @@ public class MapperMethod {
       throw new BindingException("Unknown execution method for: " + command.getName());
     }
     if (result == null && method.getReturnType().isPrimitive() && !method.returnsVoid()) {
-      throw new BindingException("Mapper method '" + command.getName()
-          + " attempted to return null from a method with a primitive return type (" + method.getReturnType() + ").");
+      throw new BindingException("Mapper method '" + command.getName()+ " attempted to return null from a method with a primitive return type (" + method.getReturnType() + ").");
     }
     return result;
   }
@@ -177,42 +178,28 @@ public class MapperMethod {
     return result;
   }
 
-  //参数map，静态内部类,更严格的get方法，如果没有相应的key，报错
-  public static class ParamMap<V> extends HashMap<String, V> {
-
-    private static final long serialVersionUID = -2212268410512043556L;
-
-    @Override
-    public V get(Object key) {
-      if (!super.containsKey(key)) {
-        throw new BindingException("Parameter '" + key + "' not found. Available parameters are " + keySet());
-      }
-      return super.get(key);
-    }
-
-  }
-
   /**
-   * SQL命令，静态内部类
+   * 静态内部类，判断当前方法在Configuration有没有对应的MappedStatement，然后获取MappedStatement的id和SqlCommandType
    */
   @Setter
   @Getter
   public static class SqlCommand {
     /**
-     * 暂时不晓得
+     * 当前方法的全限定名
+     * eq:  com.mybatis.lizx.dao.PersonDao.getById
      */
     private final String name;
     /**
-     * 枚举类、sql语句类型
+     * 当前方法对应的sql语句类型
      */
     private final SqlCommandType type;
 
     public SqlCommand(Configuration configuration, Class<?> mapperInterface, Method method) {
-      // 1、语句名 = 接口名+方法名
+      // 1、语句名 = 接口名+方法名,eq: com.mybatis.lizx.dao.PersonDao.getById
       String statementName = mapperInterface.getName() + "." + method.getName();
-      // 2、定义映射语句引用
+      // 2、定义映射sql语句引用，这玩意就表示sql语句
       MappedStatement ms = null;
-      // 3、判断配置类中是否有该映射语句
+      // 3、判断配置类中是否有该映射sql语句
       if (configuration.hasStatement(statementName)) {
         // 3.1、有则直接获取
         ms = configuration.getMappedStatement(statementName);
@@ -221,7 +208,7 @@ public class MapperMethod {
       else if (!mapperInterface.equals(method.getDeclaringClass().getName())) {
         // 4.1 获取方法的声明类名和方法名，构造新的语句名
         String parentStatementName = method.getDeclaringClass().getName() + "." + method.getName();
-        // 4.2 判断配置类中是否有该映射语句
+        // 4.2 判断配置类中是否有该映射sql语句
         if (configuration.hasStatement(parentStatementName)) {
           // 4.3 有则直接获取
           ms = configuration.getMappedStatement(parentStatementName);
@@ -231,9 +218,10 @@ public class MapperMethod {
         // 5、如果始终找不到映射语句则抛出异常
         throw new BindingException("Invalid bound statement (not found): " + statementName);
       }
-      // 6、找到了映射语句，则初始化name 和 type
+      // 6、找到了映射sql语句，则初始化name 和 type
       name = ms.getId();
       type = ms.getSqlCommandType();
+      // 7、如果该映射sql语句的类型是unknown则抛出异常
       if (type == SqlCommandType.UNKNOWN) {
         throw new BindingException("Unknown execution method for: " + name);
       }
@@ -241,7 +229,7 @@ public class MapperMethod {
   }
 
   /**
-   * 方法签名，静态内部类
+   * 静态内部类，解析当前方法
    */
   public static class MethodSignature {
     // 判断返回类型是不是数组或集合
@@ -250,14 +238,19 @@ public class MapperMethod {
     private final boolean returnsMap;
     // 判断类型是不是void
     private final boolean returnsVoid;
-    // 返回类型
+    // 方法的返回类型
     private final Class<?> returnType;
-    // 如果method是否有MapKey注解,则说明返回值是Map类型
+    // 如果method上有@MapKey注解,表示给注解的value,有这个值说明返回值是Map类型
     private final String mapKey;
-    private final Integer resultHandlerIndex;
-    private final Integer rowBoundsIndex;
-    private final SortedMap<Integer, String> params;
+    // 判断方法中存在参数前是否加了@Param
     private final boolean hasNamedParameters;
+    // 方法中如果有RowBounds类型的参数，表示该参数位置
+    private final Integer resultHandlerIndex;
+    // 方法中如果有ResultHandler类型的参数,表示该参数位置
+    private final Integer rowBoundsIndex;
+    // 获得当前方法的参数列表,存储形式是<参数在参数列表中的位置,参数代号>,不包括RowBounds和ResultHandler,
+    private final SortedMap<Integer, String> params;
+
 
     public MethodSignature(Configuration configuration, Method method) {
       this.returnType = method.getReturnType();
@@ -266,29 +259,33 @@ public class MapperMethod {
       this.mapKey = getMapKey(method);
       this.returnsMap = (this.mapKey != null);
       this.hasNamedParameters = hasNamedParams(method);
-      //以下重复循环2遍调用getUniqueParamIndex，是不是降低效率了
-      //记下RowBounds是第几个参数
+      // 记下RowBounds是第几个参数
       this.rowBoundsIndex = getUniqueParamIndex(method, RowBounds.class);
-      //记下ResultHandler是第几个参数
+      // 记下ResultHandler是第几个参数
       this.resultHandlerIndex = getUniqueParamIndex(method, ResultHandler.class);
+      // 获得当前方法的参数列表,不包括RowBounds和ResultHandler,unmodifiableSortedMap()方法用于返回指定有序映射的不可修改视图。
       this.params = Collections.unmodifiableSortedMap(getParams(method, this.hasNamedParameters));
     }
 
+    /**
+     * 将方法参数转换为Sql命令参数
+     */
     public Object convertArgsToSqlCommandParam(Object[] args) {
+      // 1、获得当前方法的参数数量
       final int paramCount = params.size();
       if (args == null || paramCount == 0) {
-        //如果没参数
+        // 1.1 没参数没直接返回null
         return null;
+        // 1.2 如果只有一个参数且方法中不存在@Param注解，直接返回参数值,这里直接返回args[0]不好吗?
       } else if (!hasNamedParameters && paramCount == 1) {
-        //如果只有一个参数
-        return args[params.keySet().iterator().next().intValue()];
+        return args[params.keySet().iterator().next()];
       } else {
-        //否则，返回一个ParamMap，修改参数名，参数名就是其位置
-        final Map<String, Object> param = new ParamMap<Object>();
+        //1.3 否则，返回一个ParamMap，修改参数名，参数名就是其位置
+        final Map<String, Object> param = new ParamMap<>();
         int i = 0;
         for (Map.Entry<Integer, String> entry : params.entrySet()) {
           //1.先加一个#{0},#{1},#{2}...参数
-          param.put(entry.getValue(), args[entry.getKey().intValue()]);
+          param.put(entry.getValue(), args[entry.getKey()]);
           // issue #71, add param names as param1, param2...but ensure backward compatibility
           final String genericParamName = "param" + String.valueOf(i + 1);
           if (!param.containsKey(genericParamName)) {
@@ -340,6 +337,11 @@ public class MapperMethod {
       return returnsVoid;
     }
 
+    /**
+     * 获得特殊类型参数的位置
+     * 特殊参数：RowBounds.class、ResultHandler.class
+     * 真的没几个人会直接在Dao层接口方法里传这个参数。。。
+     */
     private Integer getUniqueParamIndex(Method method, Class<?> paramType) {
       Integer index = null;
       final Class<?>[] argTypes = method.getParameterTypes();
@@ -355,6 +357,13 @@ public class MapperMethod {
       return index;
     }
 
+    /**
+     * eq:
+     *     '@MapKey("id")
+     *     '@ResultMap("BaseResultMap")
+     *     '@Select("select * from user where hotel_address = #{address};")
+     *     Map<Long, User> getUserByAddress(@Param("address") String address);
+     */
     private String getMapKey(Method method) {
       String mapKey = null;
       // 1、判断返回值是否是map类型，不是则返回null
@@ -370,18 +379,47 @@ public class MapperMethod {
       return mapKey;
     }
 
-    //得到所有参数
+    /**
+     * 判断方法参数上有没有加@Param注解,加了返回true
+     * "@Param"是作为Dao层的注解，作用是用于传递参数，从而可以与SQL中的的字段名相对应，一般在2=<参数数<=5时使用最佳.
+     * eq:
+     *     ScanEngineDetail getScanEngineDetailByIdentifier(@Param("identifier") String identifier);
+     */
+    private boolean hasNamedParams(Method method) {
+      boolean hasNamedParams = false;
+      // getParameterAnnotations()得到的结果是一个二维数组，因为一个参数前可以添加多个注解
+      final Object[][] paramAnnos = method.getParameterAnnotations();
+      for (Object[] paramAnno : paramAnnos) {
+        for (Object aParamAnno : paramAnno) {
+          if (aParamAnno instanceof Param) {
+            hasNamedParams = true;
+            break;
+          }
+        }
+      }
+      return hasNamedParams;
+    }
+
+    /**
+     * 获得所有参数,需要的是<参数位置,参数名代号>,所以选择<k,v>的存储结构
+     * 再加上得有序，最终选择了TreeMap
+     * TreeMap 默认按照keys的自然排序排列,对Integer来说,其自然排序就是数字的升序;对String来说,其自然排序就是按照字母表排序
+     * 其实LinkedHashMap也可以实现有序,但是这里没用。
+     */
     private SortedMap<Integer, String> getParams(Method method, boolean hasNamedParameters) {
-      //用一个TreeMap,这样就保证还是按参数的先后顺序
-      final SortedMap<Integer, String> params = new TreeMap<Integer, String>();
+      // 1、创建TreeMap
+      final SortedMap<Integer, String> params = new TreeMap<>();
+      // 2、获得方法的所有参数
       final Class<?>[] argTypes = method.getParameterTypes();
+      // 3、遍历
       for (int i = 0; i < argTypes.length; i++) {
-        //是否不是RowBounds/ResultHandler类型的参数
+        // 3.1、只有该参数既不是RowBounds也不是ResultHandler才进行处理（这两种参数是单独拿出来的）
         if (!RowBounds.class.isAssignableFrom(argTypes[i]) && !ResultHandler.class.isAssignableFrom(argTypes[i])) {
-          //参数名字默认为0,1,2，这就是为什么xml里面可以用#{1}这样的写法来表示参数了
+          // 3.1.1 参数名字默认是按顺序用0,1,2来指代，所以xml里面可以用#{1}这样的写法来表示参数，这边很巧妙,直接用TreeMap.size()来实现+1
           String paramName = String.valueOf(params.size());
+          // 3.1.2 如果该方法存在参数加了@Parm注解,那就看看是不是该参数,如果是就用@Parm的value表示参数名
           if (hasNamedParameters) {
-            //还可以用注解@Param来重命名参数
+            //3.1.2.1 从注解中获取value来表示参数名,如果不是该参数加了@Parm，那还是返回原来的paramName
             paramName = getParamNameFromAnnotation(method, i, paramName);
           }
           params.put(i, paramName);
@@ -390,6 +428,11 @@ public class MapperMethod {
       return params;
     }
 
+    /**
+     * @param method 当前方法
+     * @param i 当前参数在方法参数列表中的位置
+     * @param paramName  如果是当前参数前加的@Param，那就取出其value赋值给paramName返回，不是就直接返回
+     */
     private String getParamNameFromAnnotation(Method method, int i, String paramName) {
       final Object[] paramAnnos = method.getParameterAnnotations()[i];
       for (Object paramAnno : paramAnnos) {
@@ -399,22 +442,26 @@ public class MapperMethod {
       }
       return paramName;
     }
+  }
 
-    private boolean hasNamedParams(Method method) {
-      boolean hasNamedParams = false;
-      final Object[][] paramAnnos = method.getParameterAnnotations();
-      for (Object[] paramAnno : paramAnnos) {
-        for (Object aParamAnno : paramAnno) {
-          if (aParamAnno instanceof Param) {
-            //查找@Param注解,一般不会用注解吧，可以忽略
-            hasNamedParams = true;
-            break;
-          }
-        }
+  /**
+   * 静态内部类,HashMap 支持key=null
+   * 更严格的get方法，如果没有相应的key,抛出异常
+   */
+  public static class ParamMap<String,V> extends HashMap<String, V> {
+    private static final long serialVersionUID = -1L;
+    @Override
+    public V get(Object key) {
+      if (!super.containsKey(key)) {
+        throw new BindingException("Parameter '" + key + "' not found. Available parameters are " + keySet());
       }
-      return hasNamedParams;
+      return super.get(key);
     }
+  }
 
+  public static void main(String[] args) {
+    HashMap map = new HashMap();
+    System.out.println(map.get("sss"));
   }
 
 }

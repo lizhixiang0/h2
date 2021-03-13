@@ -301,11 +301,11 @@ public class Configuration {
   protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
 
   //映射的语句,存在Map里
-  protected final Map<String, MappedStatement> mappedStatements = new StrictMap<MappedStatement>("Mapped Statements collection");
+  protected final Map<String, MappedStatement> mappedStatements = new StrictMap<>("Mapped Statements collection");
   //缓存,存在Map里
-  protected final Map<String, Cache> caches = new StrictMap<Cache>("Caches collection");
+  protected final Map<String, Cache> caches = new StrictMap<>("Caches collection");
   //结果映射,存在Map里
-  protected final Map<String, ResultMap> resultMaps = new StrictMap<ResultMap>("Result Maps collection");
+  protected final Map<String, ResultMap> resultMaps = new StrictMap<>("Result Maps collection");
   protected final Map<String, ParameterMap> parameterMaps = new StrictMap<ParameterMap>("Parameter Maps collection");
   protected final Map<String, KeyGenerator> keyGenerators = new StrictMap<KeyGenerator>("Key Generators collection");
 

@@ -21,8 +21,7 @@ import java.util.function.Function;
  * 而JDK1.8中，HashMap采用数组+链表+红黑树实现，当链表长度超过阈值8时，将链表转换为红黑树，这样大大减少了查找时间。
  * 原本Map.Entry接口的实现类Entry改名为了Node。转化为红黑树时改用另一种实现TreeNode。
  */
-public class HashMap<K, V> extends AbstractMap<K, V>
-        implements Map<K, V>, Cloneable, Serializable {
+public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>, Cloneable, Serializable {
 
     private static final long serialVersionUID = 362498820763181265L;
 

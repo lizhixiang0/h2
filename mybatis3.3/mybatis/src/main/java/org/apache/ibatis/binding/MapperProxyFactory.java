@@ -45,12 +45,12 @@ public class MapperProxyFactory<T> {
   }
 
   /**
-   * 核心方法 
+   * 核心方法，创建代理类并返回
    * @param sqlSession
    * @return
    */
   public T newInstance(SqlSession sqlSession) {
-    // 1、生成代理角色
+    // 1、生成代理角色,这里面没有传递真实角色,因为代理类代理了接口的所有方法,他本身可以看做一个真实角色，这里我不是很懂，再了解
     final MapperProxy<T> mapperProxy = new MapperProxy<T>(sqlSession, mapperInterface, methodCache);
     return newInstance(mapperProxy);
   }
@@ -58,7 +58,7 @@ public class MapperProxyFactory<T> {
 
   @SuppressWarnings("unchecked")
   protected T newInstance(MapperProxy<T> mapperProxy) {
-    //2、传入接口类的类加载器，接口类，代理角色来创建代理对象
+    //2、创建代理对象，传入接口类的类加载器，接口类，代理角色
     return (T) Proxy.newProxyInstance(mapperInterface.getClassLoader(), new Class[] { mapperInterface }, mapperProxy);
   }
 

@@ -40,7 +40,7 @@ public class CuratorFrameworkTest {
                 .connectionTimeoutMs(connectionTimeoutMs)
                 .retryPolicy(retryPolicy)
                 // 定义工作域,相当于定义一个根节点
-                .namespace("ddd")
+                .namespace("fff")
                 .build();
         client.start();
     }

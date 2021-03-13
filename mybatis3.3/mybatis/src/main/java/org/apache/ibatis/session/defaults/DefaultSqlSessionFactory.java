@@ -32,11 +32,8 @@ import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.managed.ManagedTransactionFactory;
 
 /**
- * @author Clinton Begin
- */
-/**
  * 默认的SqlSessionFactory
- *
+ * @author Clinton Begin
  */
 public class DefaultSqlSessionFactory implements SqlSessionFactory {
 

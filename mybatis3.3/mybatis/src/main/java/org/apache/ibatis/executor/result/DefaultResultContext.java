@@ -18,11 +18,8 @@ package org.apache.ibatis.executor.result;
 import org.apache.ibatis.session.ResultContext;
 
 /**
- * @author Clinton Begin
- */
-/**
  * 默认结果上下文
- *
+ * @author Clinton Begin
  */
 public class DefaultResultContext implements ResultContext {
 
