@@ -58,9 +58,10 @@ public class MapperMethod {
    */
   public Object execute(SqlSession sqlSession, Object[] args) {
     Object result;
-    //可以看到执行时就是4种情况，insert|update|delete|select，分别调用SqlSession的4大类方法
     if (SqlCommandType.INSERT == command.getType()) {
+      // 1、获取参数值或者参数值集合
       Object param = method.convertArgsToSqlCommandParam(args);
+      // 2、
       result = rowCountResult(sqlSession.insert(command.getName(), param));
     } else if (SqlCommandType.UPDATE == command.getType()) {
       Object param = method.convertArgsToSqlCommandParam(args);
@@ -268,7 +269,8 @@ public class MapperMethod {
     }
 
     /**
-     * 将方法参数转换为Sql命令参数
+     * 将参数数组解析成想要的样子返回
+     * 这个是使用Object当作泛型，要么返回参数值，要么返回HashMap<参数代号,参数值>
      */
     public Object convertArgsToSqlCommandParam(Object[] args) {
       // 1、获得当前方法的参数数量
@@ -280,19 +282,16 @@ public class MapperMethod {
       } else if (!hasNamedParameters && paramCount == 1) {
         return args[params.keySet().iterator().next()];
       } else {
-        //1.3 否则，返回一个ParamMap，修改参数名，参数名就是其位置
+        // 1.3 如果不止一个参数或者方法中存在@Param注解，则返回new HashMap<参数代号,参数值>,比较特殊的使用了自定义的ParamMap来继承HashMap,改写了get方法
+        // 注意:ParamMap里面的参数代号储存了三种表示形式,一种是使用0,1等整数,另一种是使用"param1","param2" ,最后一种是@Param,那就直接是@Param的value
         final Map<String, Object> param = new ParamMap<>();
         int i = 0;
         for (Map.Entry<Integer, String> entry : params.entrySet()) {
-          //1.先加一个#{0},#{1},#{2}...参数
+          // 1.3.1 第一种、使用0,1等整数 和 第三种、使用@Param的value
           param.put(entry.getValue(), args[entry.getKey()]);
-          // issue #71, add param names as param1, param2...but ensure backward compatibility
-          final String genericParamName = "param" + String.valueOf(i + 1);
+          // 1.3.2 第二种,使用 param1、。。。
+          final String genericParamName = "param" + (i + 1);
           if (!param.containsKey(genericParamName)) {
-            //2.再加一个#{param1},#{param2}...参数
-            //你可以传递多个参数给一个映射器方法。如果你这样做了,
-            //默认情况下它们将会以它们在参数列表中的位置来命名,比如:#{param1},#{param2}等。
-            //如果你想改变参数的名称(只在多参数情况下) ,那么你可以在参数上使用@Param(“paramName”)注解。
             param.put(genericParamName, args[entry.getKey()]);
           }
           i++;
@@ -401,7 +400,7 @@ public class MapperMethod {
     }
 
     /**
-     * 获得所有参数,需要的是<参数位置,参数名代号>,所以选择<k,v>的存储结构
+     * 获得所有参数,需要的是<参数位置,参数代号>,所以选择<k,v>的存储结构
      * 再加上得有序，最终选择了TreeMap
      * TreeMap 默认按照keys的自然排序排列,对Integer来说,其自然排序就是数字的升序;对String来说,其自然排序就是按照字母表排序
      * 其实LinkedHashMap也可以实现有序,但是这里没用。
@@ -416,12 +415,14 @@ public class MapperMethod {
         // 3.1、只有该参数既不是RowBounds也不是ResultHandler才进行处理（这两种参数是单独拿出来的）
         if (!RowBounds.class.isAssignableFrom(argTypes[i]) && !ResultHandler.class.isAssignableFrom(argTypes[i])) {
           // 3.1.1 参数名字默认是按顺序用0,1,2来指代，所以xml里面可以用#{1}这样的写法来表示参数，这边很巧妙,直接用TreeMap.size()来实现+1
+          // 其实按我心里想的，直接String paramName = i 最省事
           String paramName = String.valueOf(params.size());
           // 3.1.2 如果该方法存在参数加了@Parm注解,那就看看是不是该参数,如果是就用@Parm的value表示参数名
           if (hasNamedParameters) {
             //3.1.2.1 从注解中获取value来表示参数名,如果不是该参数加了@Parm，那还是返回原来的paramName
             paramName = getParamNameFromAnnotation(method, i, paramName);
           }
+          // 如果没有@Param, key和value应该是相等的
           params.put(i, paramName);
         }
       }
@@ -445,8 +446,8 @@ public class MapperMethod {
   }
 
   /**
-   * 静态内部类,HashMap 支持key=null
-   * 更严格的get方法，如果没有相应的key,抛出异常
+   * 静态内部类
+   * HashMap的get方法，找不到就返回null,所以这里搞了个子类,重写了get方法，如果没有相应的key,抛出异常
    */
   public static class ParamMap<String,V> extends HashMap<String, V> {
     private static final long serialVersionUID = -1L;
@@ -458,10 +459,4 @@ public class MapperMethod {
       return super.get(key);
     }
   }
-
-  public static void main(String[] args) {
-    HashMap map = new HashMap();
-    System.out.println(map.get("sss"));
-  }
-
 }

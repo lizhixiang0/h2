@@ -37,11 +37,8 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 
 /**
+ * mybatis提供的默认SqlSession实现
  * @author Clinton Begin
- */
-/**
- * 默认SqlSession实现
- *
  */
 public class DefaultSqlSession implements SqlSession {
 
@@ -54,6 +51,12 @@ public class DefaultSqlSession implements SqlSession {
   private boolean autoCommit;
   private boolean dirty;
 
+  /**
+   * 初始化
+   * @param configuration
+   * @param executor
+   * @param autoCommit
+   */
   public DefaultSqlSession(Configuration configuration, Executor executor, boolean autoCommit) {
     this.configuration = configuration;
     this.executor = executor;
@@ -67,22 +70,23 @@ public class DefaultSqlSession implements SqlSession {
 
   @Override
   public <T> T selectOne(String statement) {
-    return this.<T>selectOne(statement, null);
+    return this.selectOne(statement, null);
   }
 
-  //核心selectOne
+  // I、核心selectOne
   @Override
   public <T> T selectOne(String statement, Object parameter) {
-    // Popular vote was to return null on 0 results and throw exception on too many.
-    //转而去调用selectList,很简单的，如果得到0条则返回null，得到1条则返回1条，得到多条报TooManyResultsException错
-    // 特别需要主要的是当没有查询到结果的时候就会返回null。因此一般建议在mapper中编写resultType的时候使用包装类型
-    //而不是基本类型，比如推荐使用Integer而不是int。这样就可以避免NPE
-    List<T> list = this.<T>selectList(statement, parameter);
+    // 1、转而去调用selectList
+    List<T> list = this.selectList(statement, parameter);
+    // 1.1、得到1条则返回1条
     if (list.size() == 1) {
       return list.get(0);
     } else if (list.size() > 1) {
+      // 1.2、 得到多条报TooManyResultsException错
       throw new TooManyResultsException("Expected one result (or null) to be returned by selectOne(), but found: " + list.size());
     } else {
+      // 1.3、 如果得到0条则返回null,当没有查询到结果的时候就会返回null。因此一般建议在mapper中编写resultType的时候使用包装类型而不是基本类型
+      // 比如推荐使用Integer而不是int。这样就可以避免NPE
       return null;
     }
   }
@@ -97,13 +101,12 @@ public class DefaultSqlSession implements SqlSession {
     return this.selectMap(statement, parameter, mapKey, RowBounds.DEFAULT);
   }
 
-  //核心selectMap
+  // II、核心selectMap
   @Override
   public <K, V> Map<K, V> selectMap(String statement, Object parameter, String mapKey, RowBounds rowBounds) {
-    //转而去调用selectList
+    // 1、转而去调用selectList
     final List<?> list = selectList(statement, parameter, rowBounds);
-    final DefaultMapResultHandler<K, V> mapResultHandler = new DefaultMapResultHandler<K, V>(mapKey,
-        configuration.getObjectFactory(), configuration.getObjectWrapperFactory());
+    final DefaultMapResultHandler<K, V> mapResultHandler = new DefaultMapResultHandler<>(mapKey,configuration.getObjectFactory(), configuration.getObjectWrapperFactory());
     final DefaultResultContext context = new DefaultResultContext();
     for (Object o : list) {
       //循环用DefaultMapResultHandler处理每条记录
@@ -124,7 +127,7 @@ public class DefaultSqlSession implements SqlSession {
     return this.selectList(statement, parameter, RowBounds.DEFAULT);
   }
 
-  //核心selectList
+  // III、核心selectList
   @Override
   public <E> List<E> selectList(String statement, Object parameter, RowBounds rowBounds) {
     try {
@@ -149,7 +152,7 @@ public class DefaultSqlSession implements SqlSession {
     select(statement, null, RowBounds.DEFAULT, handler);
   }
 
-  //核心select,带有ResultHandler，和selectList代码差不多的，区别就一个ResultHandler
+  // IV、核心select,带有ResultHandler，和selectList代码差不多的，区别就一个ResultHandler
   @Override
   public void select(String statement, Object parameter, RowBounds rowBounds, ResultHandler handler) {
     try {
@@ -178,7 +181,7 @@ public class DefaultSqlSession implements SqlSession {
     return update(statement, null);
   }
 
-  //核心update
+  // V、核心update
   @Override
   public int update(String statement, Object parameter) {
     try {
@@ -210,7 +213,7 @@ public class DefaultSqlSession implements SqlSession {
     commit(false);
   }
 
-  //核心commit
+  // VI、核心commit
   @Override
   public void commit(boolean force) {
     try {
@@ -230,7 +233,7 @@ public class DefaultSqlSession implements SqlSession {
     rollback(false);
   }
 
-  //核心rollback
+  // VII、核心rollback
   @Override
   public void rollback(boolean force) {
     try {
@@ -245,7 +248,7 @@ public class DefaultSqlSession implements SqlSession {
     }
   }
 
-  //核心flushStatements
+  // VIII、核心flushStatements
   @Override
   public List<BatchResult> flushStatements() {
     try {
@@ -258,7 +261,7 @@ public class DefaultSqlSession implements SqlSession {
     }
   }
 
-  //核心close
+  // Ⅸ、核心close
   @Override
   public void close() {
     try {
@@ -279,7 +282,7 @@ public class DefaultSqlSession implements SqlSession {
   @Override
   public <T> T getMapper(Class<T> type) {
     //最后会去调用MapperRegistry.getMapper
-    return configuration.<T>getMapper(type, this);
+    return configuration.getMapper(type, this);
   }
 
   @Override
@@ -291,7 +294,7 @@ public class DefaultSqlSession implements SqlSession {
     }
   }
 
-  //核心clearCache
+  // X、核心clearCache
   @Override
   public void clearCache() {
     //转而用执行器来clearLocalCache
@@ -307,7 +310,7 @@ public class DefaultSqlSession implements SqlSession {
   private Object wrapCollection(final Object object) {
     if (object instanceof Collection) {
       //参数若是Collection型，做collection标记
-      StrictMap<Object> map = new StrictMap<Object>();
+      StrictMap<Object> map = new StrictMap<>();
       map.put("collection", object);
       if (object instanceof List) {
         //参数若是List型，做list标记

@@ -50,7 +50,7 @@ public class MapperProxyFactory<T> {
    * @return
    */
   public T newInstance(SqlSession sqlSession) {
-    // 1、生成代理角色,这里面没有传递真实角色,因为代理类代理了接口的所有方法,他本身可以看做一个真实角色，这里我不是很懂，再了解
+    // 1、生成代理角色,这里面没有传递真实角色,因为Dao层接口没有实现类
     final MapperProxy<T> mapperProxy = new MapperProxy<T>(sqlSession, mapperInterface, methodCache);
     return newInstance(mapperProxy);
   }

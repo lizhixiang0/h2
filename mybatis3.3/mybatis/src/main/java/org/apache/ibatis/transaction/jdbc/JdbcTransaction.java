@@ -27,20 +27,13 @@ import org.apache.ibatis.transaction.Transaction;
 import org.apache.ibatis.transaction.TransactionException;
 
 /**
- * {@link Transaction} that makes use of the JDBC commit and rollback facilities directly.
- * It relies on the connection retrieved from the dataSource to manage the scope of the transaction.
- * Delays connection retrieval until getConnection() is called.
- * Ignores commit or rollback requests when autocommit is on.
+ * 使用JDBC的事务管理机制,就是利用java.sql.Connection对象完成对事务的管理
+ * 注意:
+ *    1、自动提交时忽略提交或回滚请求
+ *    2、mybatis自动为我们开始了事务，而且设置为不自动提交事务。即如果不提交(sqlSession.commit())，事务会自动回滚，无法对数据库中的数据进行增删改
  *
- * @see JdbcTransactionFactory
  */
-/**
- * @author Clinton Begin
- */
-/**
- * Jdbc事务。直接利用JDBC的commit,rollback。
- * 它依赖于从数据源得 到的连接来管理事务范围。
- */
+
 public class JdbcTransaction implements Transaction {
 
   private static final Log log = LogFactory.getLog(JdbcTransaction.class);

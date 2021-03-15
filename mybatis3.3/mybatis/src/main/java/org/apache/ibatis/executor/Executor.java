@@ -27,52 +27,105 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.transaction.Transaction;
 
 /**
- * @author Clinton Begin
- */
-/**
  * 执行器
- *
+ * @author Clinton Begin
  */
 public interface Executor {
 
-  //不需要ResultHandler
+  /**
+   * 表示需要ResultHandler
+   */
   ResultHandler NO_RESULT_HANDLER = null;
 
-  //更新
+  /**
+   *
+   * @param ms  映射的sql语句
+   * @param parameter  参数
+   */
   int update(MappedStatement ms, Object parameter) throws SQLException;
 
-  //查询，带分页，带缓存，BoundSql
+  /**
+   * 查询
+   * @param ms 映射的sql语句
+   * @param parameter 参数
+   * @param rowBounds 分页
+   * @param resultHandler 结果处理器
+   * @param cacheKey 缓存key
+   * @param boundSql  ？？？
+   */
   <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey cacheKey, BoundSql boundSql) throws SQLException;
 
-  //查询，带分页
+  /**
+   * 查询
+   * @param ms 映射的sql语句
+   * @param parameter 参数
+   * @param rowBounds 分页
+   * @param resultHandler 结果处理器
+   */
   <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler) throws SQLException;
 
-  //刷新批处理语句
+  /**
+   * 刷新批处理语句
+   */
   List<BatchResult> flushStatements() throws SQLException;
 
-  //提交和回滚，参数是是否要强制
+  /**
+   * 提交，参数表示是否要强制
+   */
   void commit(boolean required) throws SQLException;
 
+  /**
+   * 回滚，参数表示是否要强制
+   */
   void rollback(boolean required) throws SQLException;
 
-  //创建CacheKey
+  /**
+   * 创建CacheKey
+   * @param ms 映射的sql语句
+   * @param parameterObject 参数
+   * @param rowBounds  分页
+   * @param boundSql  ？？？
+   * @return
+   */
   CacheKey createCacheKey(MappedStatement ms, Object parameterObject, RowBounds rowBounds, BoundSql boundSql);
 
-  //判断是否缓存了
+  /**
+   * 判断是否缓存
+   * @param ms 映射的sql语句
+   * @param key 缓存key
+   * @return
+   */
   boolean isCached(MappedStatement ms, CacheKey key);
 
-  //清理Session缓存
+  /**
+   * 清理session缓存
+   */
   void clearLocalCache();
 
-  //延迟加载
+  /**
+   * 延迟加载
+   * @param ms   映射的sql语句
+   * @param resultObject  ??
+   * @param property  ??
+   * @param key  缓存key
+   * @param targetType ??
+   */
   void deferLoad(MappedStatement ms, MetaObject resultObject, String property, CacheKey key, Class<?> targetType);
 
+  /**
+   * 获取事务管理器
+   * @return
+   */
   Transaction getTransaction();
 
   void close(boolean forceRollback);
 
   boolean isClosed();
 
+  /**
+   * 设置执行器包装器
+   * @param executor
+   */
   void setExecutorWrapper(Executor executor);
 
 }

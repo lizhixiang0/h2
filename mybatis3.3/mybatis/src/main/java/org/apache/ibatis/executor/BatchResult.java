@@ -35,7 +35,7 @@ public class BatchResult {
     super();
     this.mappedStatement = mappedStatement;
     this.sql = sql;
-    this.parameterObjects = new ArrayList<Object>();
+    this.parameterObjects = new ArrayList<>();
   }
 
   public BatchResult(MappedStatement mappedStatement, String sql, Object parameterObject) {

@@ -1,5 +1,6 @@
 package com.zx.arch.arithmetic.java.chapter1;
 
+
 /**
  * @author lizx
  * @since 1.0.0
@@ -13,8 +14,16 @@ public class Collection<T> {
     // 2、集合当前的大小
     Long size;
 
+    public Collection() {
+        objects = (T[]) new Object[16];
+    }
+
+    public Collection(int capacity) {
+        objects = (T[]) new Object[capacity];
+    }
+
     public Boolean isEmpty(){
-        if (objects==null || objects.length<1){
+        if (objects==null || objects.length<1 || size<=0L){
             return Boolean.TRUE;
         }else {
             return Boolean.FALSE;
@@ -24,11 +33,13 @@ public class Collection<T> {
     public void makeEmpty(){
         if(objects!=null){
             objects=null;
+            size = 0L;
         }
     }
 
     public void insert(T t){
         if(objects!=null&& objects[objects.length-1]!=null){
+
         }
     }
 

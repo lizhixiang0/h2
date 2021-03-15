@@ -43,14 +43,13 @@ import org.apache.ibatis.transaction.Transaction;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
+ * 执行器基类
  * @author Clinton Begin
  */
-/**
- * 执行器基类
- *
- */
 public abstract class BaseExecutor implements Executor {
-
+  /**
+   * 日志管理器
+   */
   private static final Log log = LogFactory.getLog(BaseExecutor.class);
 
   protected Transaction transaction;
