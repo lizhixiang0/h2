@@ -30,31 +30,7 @@ public class ParallelStreamTest {
      * @blog "https://www.jianshu.com/p/51c1d4f1bf84
      */
     public static void b(){
-        // 统计字符串流中不同长度的单词数量
-        ArrayList<String> list = new ArrayList<>(){
-            {
-                add("word1");
-                add("word22");
-                add("word333");
-                add("word4444");
-                add("word55555");
-                add("word666666");
-                add("word7777777");
-            }
-        };
-
-        int[] shortWords = new int[12];
-
-        list.parallelStream().forEach(s->{
-            if (s.length()<shortWords.length){
-                shortWords[s.length()]++;
-            }
-        });
-
-        System.out.println(Arrays.toString(shortWords));
-
-        List<Integer> listOfIntegers =
-                new ArrayList<>();
+        List<Integer> listOfIntegers = new ArrayList<>();
         for (int i = 0; i <100; i++) {
             listOfIntegers.add(i);
         }
@@ -62,10 +38,10 @@ public class ParallelStreamTest {
         listOfIntegers
                 .parallelStream()
                 .filter(i->i%2==0)
-                .forEach(i->parallelStorage.add(i));
+                .forEach(parallelStorage::add);
         // 对于parallelStorage元素数量不固定的原因就是多线程有可能同时读取到相同的数组下标n同时赋值，这样就会出现元素缺失的问题了
-        System.out.println(parallelStorage.stream().count());
-        parallelStorage.stream().forEachOrdered(e -> System.out.print(e + " "));
+        System.out.println((long) parallelStorage.size());
+        parallelStorage.forEach(e -> System.out.print(e + " "));
     }
 
     public static void main(String[] args) {
