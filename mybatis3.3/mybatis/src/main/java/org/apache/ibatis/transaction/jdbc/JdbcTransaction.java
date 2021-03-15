@@ -32,8 +32,8 @@ import org.apache.ibatis.transaction.TransactionException;
  *    1、自动提交时忽略提交或回滚请求
  *    2、mybatis自动为我们开始了事务，而且设置为不自动提交事务。即如果不提交(sqlSession.commit())，事务会自动回滚，无法对数据库中的数据进行增删改
  *
+ * @author admin
  */
-
 public class JdbcTransaction implements Transaction {
 
   private static final Log log = LogFactory.getLog(JdbcTransaction.class);
