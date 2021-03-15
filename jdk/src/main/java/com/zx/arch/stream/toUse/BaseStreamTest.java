@@ -40,8 +40,8 @@ public class BaseStreamTest {
         IntStream i3 = Stream.of("aa","bb","cc").mapToInt(String::length);
 
         // 方式五、java8新增2个default方法
-        // public default IntStream chars() 产生由当前字符串中的所有字符代码构成的流
         // public default IntStream codePoints() 产生由当前字符串中的所有Unicode码点构成的流
+        // public default IntStream chars() 产生由当前字符串中的所有字符代码构成的流
         // 分别转换为以char和codepoint为单位的java stream.注意转换后为int类型的unicode编码.
         String sentence  = "\uD835\uDD46 is the set of octonions.";
         IntStream i4 = sentence.codePoints();

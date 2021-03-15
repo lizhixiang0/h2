@@ -15,6 +15,8 @@ import java.util.concurrent.*;
  * @info  线程池中对异常的处理和平时不一样,要着重关注！！！ "https://blog.csdn.net/weixin_37968613/article/details/108407774
  * @note springboot项目中使用线程池:"https://www.jianshu.com/p/d1847ecd6b29
  *                                https://blog.csdn.net/weixin_38399962/article/details/82146480
+ *
+ * @note 创建线程池的方式：https://www.jianshu.com/p/e0501883ca7d
  **/
 public class ThreadPool {
 
