@@ -156,6 +156,8 @@ public class UpdateStream {
      * 中间操作
      * 将流中元素收集到映射表中，也是使用收集器，但是这个比较特殊，所以单独拿出来
      *  stream.collect(Collectors.toMap)
+     *
+     *  补充：这里可以和并行流一起使用parallel().collect(Collectors.toConcurrentMap())
      */
     public static void map(){
         @Data
