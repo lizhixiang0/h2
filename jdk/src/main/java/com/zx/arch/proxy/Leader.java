@@ -6,6 +6,7 @@ package com.zx.arch.proxy;
  * @description java的动态代理方式似乎有点多，所以这里做个记录
  * @blog "https://www.bilibili.com/video/BV1mD4y1d7rt?p=25
  * @blog "https://blog.csdn.net/lihenair/article/details/69948918
+ * @blog "https://www.zhihu.com/question/40777626
  **/
 public interface Leader {
 
