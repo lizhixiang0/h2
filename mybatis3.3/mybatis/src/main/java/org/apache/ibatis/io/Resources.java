@@ -117,6 +117,9 @@ public class Resources {
 
   /**
    * Returns a resource on the classpath as a Stream object
+   * Resources.getResourceAsStream()用法：
+   *   path不以"/"开头时，默认是从当前类所在的包下面获取资源
+   *   path以"/"开头时，则是从项目的classPath根下获取资源
    *
    * @param loader   The classloader used to fetch the resource
    * @param resource The resource to find

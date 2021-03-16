@@ -29,11 +29,8 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
- * @author Clinton Begin
- */
-/**
  * 构建器的基类，建造者模式
- *
+ * @author Clinton Begin
  */
 public abstract class BaseBuilder {
   //需要配置，类型别名注册，类型处理器注册3个东西
