@@ -29,7 +29,8 @@ public class CuratorFrameworkTest {
 
     @Before
     public void init() {
-        String connectString = "localhost:2182,localhost:2183,localhost:2184";
+        //String connectString = "localhost:2182,localhost:2183,localhost:2184";
+        String connectString = "localhost:2181";
         // 会话超时时间
         int sessionTimeoutMs = 20000;
         // 连接超时时间
@@ -40,7 +41,7 @@ public class CuratorFrameworkTest {
                 .connectionTimeoutMs(connectionTimeoutMs)
                 .retryPolicy(retryPolicy)
                 // 定义工作域,相当于定义一个根节点
-                .namespace("fff")
+                .namespace("engines")
                 .build();
         client.start();
     }
@@ -63,13 +64,14 @@ public class CuratorFrameworkTest {
     @Test
     public void getData() throws Exception {
         // 1、普通查询
-        byte[] bytes = client.getData().forPath(PATH);
+        byte[] bytes = client.getData().forPath("/provider");
+        System.out.println("sss");
         System.out.println(new String(bytes));
         // 2、包含状态查询
-        Stat stat = new Stat();
+        /*Stat stat = new Stat();
         stat.setVersion(-1);
         byte[] bytes1 = client.getData().storingStatIn(stat).forPath(PATH);
-        System.out.println(new String(bytes1));
+        System.out.println(new String(bytes1));*/
     }
 
     // 更新节点内容
@@ -97,7 +99,7 @@ public class CuratorFrameworkTest {
     // 获取子节点
     @Test
     public void getChildren() throws Exception {
-        List<String> children = client.getChildren().forPath("/root/demoZK");
+        List<String> children = client.getChildren().forPath("/provider");
         for (String child : children) {
             System.out.println(child);
         }

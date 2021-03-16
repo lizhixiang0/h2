@@ -58,10 +58,11 @@ public class MapperMethod {
    */
   public Object execute(SqlSession sqlSession, Object[] args) {
     Object result;
+    // a1、判断是不是insert类型
     if (SqlCommandType.INSERT == command.getType()) {
-      // 1、获取参数值或者参数值集合
+      // a2、获取参数值或者参数值集合
       Object param = method.convertArgsToSqlCommandParam(args);
-      // 2、
+      // a3、根据方法返回值对sql返回值进行相应处理
       result = rowCountResult(sqlSession.insert(command.getName(), param));
     } else if (SqlCommandType.UPDATE == command.getType()) {
       Object param = method.convertArgsToSqlCommandParam(args);
@@ -69,44 +70,52 @@ public class MapperMethod {
     } else if (SqlCommandType.DELETE == command.getType()) {
       Object param = method.convertArgsToSqlCommandParam(args);
       result = rowCountResult(sqlSession.delete(command.getName(), param));
+      // b1、判断是不是select类型，如果是，需要考虑方法是否传递了结果处理器
     } else if (SqlCommandType.SELECT == command.getType()) {
+      // b2、如果方法传递了结果处理器,但方法返回类型为void,返回null
       if (method.returnsVoid() && method.hasResultHandler()) {
-        //如果有结果处理器
+        // todo 这一步的目的是为啥？估计有什么特殊作用,在什么情况下。dao层的select方法返回值会特意写成void ？？？
         executeWithResultHandler(sqlSession, args);
         result = null;
+        // b3、如果方法返回类型是数组或集合
       } else if (method.returnsMany()) {
-        //如果结果有多条记录
         result = executeForMany(sqlSession, args);
+        // b4、如果方法返回类型是map
       } else if (method.returnsMap()) {
-        //如果结果是map
         result = executeForMap(sqlSession, args);
       } else {
-        //否则就是一条记录
+        // b5、这里包含两种情况，一是返回值为void,二是返回值为其他类型
         Object param = method.convertArgsToSqlCommandParam(args);
         result = sqlSession.selectOne(command.getName(), param);
       }
     } else {
+      // 找不到SqlCommandType的类型,则抛出异常
       throw new BindingException("Unknown execution method for: " + command.getName());
     }
+    // 假如方法返回值定义为基本类型,且非void ,则当result为null时会抛出异常，所以会通常我们Dao层不要用基本类型当返回值类型
     if (result == null && method.getReturnType().isPrimitive() && !method.returnsVoid()) {
       throw new BindingException("Mapper method '" + command.getName()+ " attempted to return null from a method with a primitive return type (" + method.getReturnType() + ").");
     }
     return result;
   }
 
-  //这个方法对返回值的类型进行了一些检查，使得更安全
+  /**
+   * 这个方法对返回值的类型进行了一些检查,然后对sql执行的返回值做相应的处理,
+   * 主要是将基本类型转化为包装类型。
+   */
   private Object rowCountResult(int rowCount) {
     final Object result;
+    // 1、方法返回值为void ,就不管rowCount了,直接返回null,
     if (method.returnsVoid()) {
       result = null;
     } else if (Integer.class.equals(method.getReturnType()) || Integer.TYPE.equals(method.getReturnType())) {
-      //如果返回值是大int或小int
+      // 2、如果返回值是大int或小int,则返回rowCount的Integer包装类型
       result = Integer.valueOf(rowCount);
     } else if (Long.class.equals(method.getReturnType()) || Long.TYPE.equals(method.getReturnType())) {
-      //如果返回值是大long或小long
+      //如果返回值是大long或小long,则返回rowCount的Long包装类型
       result = Long.valueOf(rowCount);
     } else if (Boolean.class.equals(method.getReturnType()) || Boolean.TYPE.equals(method.getReturnType())) {
-      //如果返回值是大boolean或小boolean
+      //如果返回值是大boolean或小boolean,则返回rowCount的Boolean包装类型
       result = Boolean.valueOf(rowCount > 0);
     } else {
       throw new BindingException("Mapper method '" + command.getName() + "' has an unsupported return type: " + method.getReturnType());
@@ -114,45 +123,65 @@ public class MapperMethod {
     return result;
   }
 
-  //结果处理器
+  /**
+   * 如果方法里参数列表有结果处理器,但返回值为void,则执行此方法
+   */
   private void executeWithResultHandler(SqlSession sqlSession, Object[] args) {
+    // 1、根据方法全限定名获得sql语句映射器
     MappedStatement ms = sqlSession.getConfiguration().getMappedStatement(command.getName());
+    // 2、如果sql语句映射器内部的返回值类型为void,则此处抛出异常
     if (void.class.equals(ms.getResultMaps().get(0).getType())) {
-      throw new BindingException("method " + command.getName()
-          + " needs either a @ResultMap annotation, a @ResultType annotation,"
-          + " or a resultType attribute in XML so a ResultHandler can be used as a parameter.");
+      // 2.1、仔细看异常内容,本方法需要一个@ResultMap注解，或者在xml中定义resultType参数，这样方法里传递ResultHandler才有意义
+      throw new BindingException("method " + command.getName()+ " needs either a @ResultMap annotation, a @ResultType annotation," + " or a resultType attribute in XML so a ResultHandler can be used as a parameter.");
     }
+    // 3、如果sql语句映射器内部的返回值类型不为void,则执行查询
     Object param = method.convertArgsToSqlCommandParam(args);
+    // 4、看看方法参数列表里有没有分页处理器
     if (method.hasRowBounds()) {
+      // 4.1、从参数中拿到RowBounds
       RowBounds rowBounds = method.extractRowBounds(args);
+      // 4.2、执行查询
       sqlSession.select(command.getName(), param, rowBounds, method.extractResultHandler(args));
     } else {
+      // 5、没有分页处理器则直接查询
       sqlSession.select(command.getName(), param, method.extractResultHandler(args));
     }
   }
 
-  //多条记录
+  /**
+   * 返回类型是数组或集合,执行查询
+   */
   private <E> Object executeForMany(SqlSession sqlSession, Object[] args) {
     List<E> result;
+    // 1、处理下参数
     Object param = method.convertArgsToSqlCommandParam(args);
-    //代入RowBounds
+    // 2、判断是否有分页处理器
     if (method.hasRowBounds()) {
+      // 2.1、有,则获取并执行查询
       RowBounds rowBounds = method.extractRowBounds(args);
-      result = sqlSession.<E>selectList(command.getName(), param, rowBounds);
+      result = sqlSession.selectList(command.getName(), param, rowBounds);
     } else {
-      result = sqlSession.<E>selectList(command.getName(), param);
+      // 2.2、没有分页处理器就直接查询
+      result = sqlSession.selectList(command.getName(), param);
     }
-    // issue #510 Collections & arrays support
+    // 3、查询后,处理result，一般result返回值为list
+    // 3.1、如果方法返回值不是result的父类或同类
     if (!method.getReturnType().isAssignableFrom(result.getClass())) {
+      // 3.1.1、如果返回值是数组,则需要将集合转化成数组
       if (method.getReturnType().isArray()) {
         return convertToArray(result);
       } else {
+        // 3.1.2、如果返回值是集合,但是是result的子类,或者压根么关系，那就需要强制转化成声明的集合
         return convertToDeclaredCollection(sqlSession.getConfiguration(), result);
       }
     }
+    // 3.2、方法返回值是result的父类或同类，则直接返回result
     return result;
   }
 
+  /**
+   * 将list集合转化成方法声明的返回值类型
+   */
   private <E> Object convertToDeclaredCollection(Configuration config, List<E> list) {
     Object collection = config.getObjectFactory().create(method.getReturnType());
     MetaObject metaObject = config.newMetaObject(collection);
@@ -161,15 +190,23 @@ public class MapperMethod {
   }
 
   @SuppressWarnings("unchecked")
+  /**
+   * 将集合转化成数组
+   */
   private <E> E[] convertToArray(List<E> list) {
     E[] array = (E[]) Array.newInstance(method.getReturnType().getComponentType(), list.size());
     array = list.toArray(array);
     return array;
   }
 
+  /**
+   * 方法返回类型是map,执行查询
+   */
   private <K, V> Map<K, V> executeForMap(SqlSession sqlSession, Object[] args) {
     Map<K, V> result;
+    // 1、处理下参数
     Object param = method.convertArgsToSqlCommandParam(args);
+    // 2、判断是否有分页处理器
     if (method.hasRowBounds()) {
       RowBounds rowBounds = method.extractRowBounds(args);
       result = sqlSession.<K, V>selectMap(command.getName(), param, method.getMapKey(), rowBounds);
@@ -237,7 +274,7 @@ public class MapperMethod {
     private final boolean returnsMany;
     // 判断返回类型是不是Map
     private final boolean returnsMap;
-    // 判断类型是不是void
+    // 判断返回类型是不是void
     private final boolean returnsVoid;
     // 方法的返回类型
     private final Class<?> returnType;
