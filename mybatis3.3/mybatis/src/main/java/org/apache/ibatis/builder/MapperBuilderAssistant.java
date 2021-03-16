@@ -50,11 +50,8 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
 /**
- * @author Clinton Begin
- */
-/**
  * 映射构建器助手，建造者模式,继承BaseBuilder
- *
+ * @author Clinton Begin
  */
 public class MapperBuilderAssistant extends BaseBuilder {
 

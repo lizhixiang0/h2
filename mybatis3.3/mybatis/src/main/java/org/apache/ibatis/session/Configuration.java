@@ -15,15 +15,8 @@
  */
 package org.apache.ibatis.session;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.binding.MapperRegistry;
@@ -138,8 +131,7 @@ public class Configuration {
   protected boolean aggressiveLazyLoading = true;
 
   /**
-   *  6、指定调用对象的哪些方法前触发一次数据加载
-   *  保证我们的目标方法被调用时延迟加载的对象已经从数据库中加载出来了
+   *  6、指定调用对象的哪些方法前触发一次数据加载,保证我们的目标方法被调用时延迟加载的对象已经从数据库中加载出来了
    * @blog "https://www.jb51.net/article/101885.htm
    */
   protected Set<String> lazyLoadTriggerMethods = new HashSet<>(Arrays.asList("equals", "clone", "hashCode", "toString"));
@@ -283,9 +275,13 @@ public class Configuration {
   }
 
   /**
-   * 24、代理工厂,Using internal Javassist instead of OGNL
+   * 24、代理工厂,用来创建具有延迟加载能力的对象
    */
   protected ProxyFactory proxyFactory = new JavassistProxyFactory();
+  //24.1 设置代理工程
+  public void setProxyFactory(ProxyFactory proxyFactory) {
+    this.proxyFactory = Optional.ofNullable(proxyFactory).orElse(new JavassistProxyFactory());
+  }
 
   /**
    * 配置类工厂,Used to create Configuration for loading deserialized unread properties.
@@ -360,14 +356,6 @@ public class Configuration {
 
   public boolean isResourceLoaded(String resource) {
     return loadedResources.contains(resource);
-  }
-
-
-  public void setProxyFactory(ProxyFactory proxyFactory) {
-    if (proxyFactory == null) {
-      proxyFactory = new JavassistProxyFactory();
-    }
-    this.proxyFactory = proxyFactory;
   }
 
   /**

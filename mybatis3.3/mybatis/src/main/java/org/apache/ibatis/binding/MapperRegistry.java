@@ -88,7 +88,7 @@ public class MapperRegistry {
       try {
         // 1.3 将mapper接口注册到konowMappers中 ,konowMappers是一个Map集合，用于存储接口和接口的代理类工厂
         knownMappers.put(type, new MapperProxyFactory<T>(type));
-        // 1.4 此处有引出一个类<MapperAnnotationBuilder>，该类的作用是解析注解配置sql的。
+        // 1.4 实例化MapperAnnotationBuilder类，该类的作用是解析注解配置sql的。先跳过，todo
         MapperAnnotationBuilder parser = new MapperAnnotationBuilder(config, type);
         parser.parse();
         // 1.5 注册成功，改变标识

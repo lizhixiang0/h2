@@ -40,15 +40,24 @@ import org.apache.ibatis.reflection.property.PropertyNamer;
 import org.apache.ibatis.session.Configuration;
 
 /**
- * @author Eduardo Macarron
- */
-/**
  * Javassist延迟加载代理工厂
+ *  1.创建一个代理对象然后将目标对象的值赋值给代理对象，这个代理对象可以实现其他的接口
+ *  2. JavassistProxyFactory实现ProxyFactory接口createProxy(创建代理对象的方法)
+ *
+ * @blog "https://blog.csdn.net/m0_37355951/article/details/98241123
+ *
+ * @author Eduardo Macarron
  */
 public class JavassistProxyFactory implements org.apache.ibatis.executor.loader.ProxyFactory {
 
   private static final Log log = LogFactory.getLog(JavassistProxyFactory.class);
+  /**
+   * finalize方法（垃圾回收）
+   */
   private static final String FINALIZE_METHOD = "finalize";
+  /**
+   * writeReplace(序列化写出方法）
+   */
   private static final String WRITE_REPLACE_METHOD = "writeReplace";
 
   public JavassistProxyFactory() {
@@ -59,7 +68,15 @@ public class JavassistProxyFactory implements org.apache.ibatis.executor.loader.
       throw new IllegalStateException("Cannot enable lazy loading because Javassist is not available. Add Javassist to your classpath.", e);
     }
   }
-
+  /**
+   * 创建代理
+   * @param target 目标对象
+   * @param lazyLoader 延迟加载Map集合（那些属性是需要延迟加载的）
+   * @param configuration 配置类
+   * @param objectFactory 对象工厂
+   * @param constructorArgTypes 构造函数类型[]
+   * @param constructorArgs  构造函数的值[]
+   */
   @Override
   public Object createProxy(Object target, ResultLoaderMap lazyLoader, Configuration configuration, ObjectFactory objectFactory, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
     return EnhancedResultObjectProxyImpl.createProxy(target, lazyLoader, configuration, objectFactory, constructorArgTypes, constructorArgs);
@@ -102,6 +119,9 @@ public class JavassistProxyFactory implements org.apache.ibatis.executor.loader.
     return enhanced;
   }
 
+  /**
+   * 静态内部类
+   */
   private static class EnhancedResultObjectProxyImpl implements MethodHandler {
 
     private Class<?> type;
@@ -168,6 +188,9 @@ public class JavassistProxyFactory implements org.apache.ibatis.executor.loader.
     }
   }
 
+  /**
+   * 静态内部类
+   */
   private static class EnhancedDeserializationProxyImpl extends AbstractEnhancedDeserializationProxy implements MethodHandler {
 
     private EnhancedDeserializationProxyImpl(Class<?> type, Map<String, ResultLoaderMap.LoadPair> unloadedProperties, ObjectFactory objectFactory,

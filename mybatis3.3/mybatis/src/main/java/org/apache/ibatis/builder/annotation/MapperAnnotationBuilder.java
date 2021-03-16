@@ -121,6 +121,7 @@ public class MapperAnnotationBuilder {
     String resource = type.getName().replace('.', '/') + ".java (best guess)";
 
     // 处理缓存，不知道这里在干啥？？
+    // 每个mapper注解构建器实例内部都构造了一个映射构造器助手
     this.assistant = new MapperBuilderAssistant(configuration, resource);
     this.configuration = configuration;
     this.type = type;
@@ -145,16 +146,15 @@ public class MapperAnnotationBuilder {
    * mybatis与spring的整合的自动扫描就调用到了这个方法
    */
   public void parse() {
-    // 以Class.toString()方法生成的字符串，作为Class对象的唯一标识的
-    // 如interface com.mybatis.lizx.dao.PersonDao
+    // 以Class.toString()方法生成的字符串，作为Class对象的唯一标识,如interface com.mybatis.lizx.dao.PersonDao
     String resource = type.toString();
-    // 如果当前Class对象已经解析过，则不在解析
+    // 如果当前Class对象已经解析过，则不再解析
     if (!configuration.isResourceLoaded(resource)) {
       // 加载并解析指定的xml配置文件
       loadXmlResource();
       // 把Class对应的唯一标识添加到已加载的资源列表中,以防止重复解析。
       configuration.addLoadedResource(resource);
-      // 设置当前namespace为接口Class的全限定名
+      // 设置当前namespace为接口Class的全限定名,即com.mybatis.lizx.dao.PersonDao
       assistant.setCurrentNamespace(type.getName());
       // 二级缓存的处理,parseCache()与parseCacheRef()都是设置二级缓存，分别处理注解@CacheNamespace与@CacheNamespaceRef。
       // 顾名思义，二级缓存与命名空间有关，其实是缓存sql查询结果，范围是同一命名空间

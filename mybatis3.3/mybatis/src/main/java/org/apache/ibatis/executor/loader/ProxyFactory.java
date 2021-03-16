@@ -22,10 +22,8 @@ import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.session.Configuration;
 
 /**
- * @author Eduardo Macarron
- */
-/**
  * 延迟加载代理工厂
+ * @author Eduardo Macarron
  */
 public interface ProxyFactory {
 
