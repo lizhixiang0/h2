@@ -12,7 +12,7 @@ import java.util.HashMap;
 /**
  * @author lizx
  * @since 1.0.0
- * @description 用以系统的学习stream流的用法
+ * @description 通过《java核心技术第十一版》学习stream流的用法
  * @blog  "https://ifeve.com/stream/
  **/
 public interface Leader {
@@ -35,12 +35,14 @@ public interface Leader {
      * study log
      */
     default void setBasicLogs() {
+        // 一、简单入门
         To_Use_Stream_logs.put("生成stream的各类方法", CreateStream.class);
         To_Use_Stream_logs.put("操作stream的各类方法", UpdateStream.class);
         To_Use_Stream_logs.put("生成基本类型流", BaseStreamTest.class);
         To_Use_Stream_logs.put("并行流操作", ParallelStreamTest.class);
-        To_Analysis_Stream_logs.put("提供者Supplier介绍", StreamTest.class);
 
+        // 二、核心分析
+        To_Analysis_Stream_logs.put("提供者Supplier介绍", StreamTest.class);
     }
 
 
