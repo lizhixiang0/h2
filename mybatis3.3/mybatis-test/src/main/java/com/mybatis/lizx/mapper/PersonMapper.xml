@@ -14,14 +14,11 @@
         INSERT INTO person (person_name, age, phone, email, address)
         VALUES(#{personName},#{age},#{phone ,jdbcType=VARCHAR},#{email},#{address})
     </insert>
-    <select id="getById" resultType="person" >
-        select p.person_name as name,p.age,p.phone,p.email,p.address from person p where p.id = #{id}
-    </select>
-
 
     <select id="selectPersonByRowBounds" resultType="com.mybatis.lizx.model.Person">
         select * from person
     </select>
+
     <select id="getPerson" resultType="java.util.HashMap">
         select p.person_name as name,p.age,p.phone,p.email,p.address from person p where p.id = #{id}
     </select>

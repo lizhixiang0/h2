@@ -48,7 +48,7 @@ public class TestFactory {
         /**
          * 第一次查询
          */
-        Person person = personDao.getById(null);
+        Person person = personDao.getById(13L);
 
         /**
          * 第二次查询

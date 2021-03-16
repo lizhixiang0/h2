@@ -1,6 +1,7 @@
 package com.mybatis.lizx.dao;
 
 import com.mybatis.lizx.model.Person;
+import org.apache.ibatis.annotations.Select;
 
 import java.time.Period;
 import java.util.HashMap;
@@ -19,6 +20,7 @@ public interface PersonDao {
      */
     int insert(Person p);
 
+    @Select("select p.person_name as name,p.age,p.phone,p.email,p.address from person p where p.id = #{id}")
     Person getById(Long id);
 
     HashMap<String, Object> getPerson(Long i);

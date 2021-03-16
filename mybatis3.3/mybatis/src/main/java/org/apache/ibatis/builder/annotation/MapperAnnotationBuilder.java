@@ -84,15 +84,13 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
 /**
- * @author Clinton Begin
- */
-/**
  * 注解方式构建mapper，一般不用，可以暂时忽略
+ * @author Clinton Begin
  */
 public class MapperAnnotationBuilder {
 
-  private final Set<Class<? extends Annotation>> sqlAnnotationTypes = new HashSet<Class<? extends Annotation>>();
-  private final Set<Class<? extends Annotation>> sqlProviderAnnotationTypes = new HashSet<Class<? extends Annotation>>();
+  private final Set<Class<? extends Annotation>> sqlAnnotationTypes = new HashSet<>();
+  private final Set<Class<? extends Annotation>> sqlProviderAnnotationTypes = new HashSet<>();
 
   private Configuration configuration;
   private MapperBuilderAssistant assistant;
