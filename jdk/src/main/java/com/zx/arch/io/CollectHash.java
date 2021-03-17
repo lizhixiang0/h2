@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -41,8 +42,10 @@ public class CollectHash {
      * @throws IOException
      */
     public static void aa() throws IOException {
-        Path src  = Path.of("C:\\Users\\admin\\PycharmProjects\\pythonProject\\mal");
-        Path dest  = Path.of("C:\\Users\\admin\\PycharmProjects\\pythonProject\\mal1");
+        Instant start = Instant.now();
+        Path src  = Path.of("C:\\Users\\admin\\PycharmProjects\\pythonProject\\sha1");
+        Path dest  = Path.of("C:\\Users\\admin\\PycharmProjects\\pythonProject\\sha2");
+        // 去重的时候使用并行流,速度快一倍！
         Stream<String> stream = Files.readAllLines(src).stream().parallel();
         stream.filter(StringUtils::isNotBlank).distinct().forEach(i-> {
             try {
@@ -51,12 +54,15 @@ public class CollectHash {
                 e.printStackTrace();
             }
         });
+        Instant end = Instant.now();
+        System.out.println((end.toEpochMilli()-start.toEpochMilli())/1000+"s");
     }
 
     /**
      * 提取sha1
      */
     public static void bb() throws IOException {
+        Instant start = Instant.now();
         Path src  = Path.of("D:\\JetBrains\\workspace\\h2\\jdk\\src\\main\\resources\\static\\use\\virus_total.yar");
         Path dest  = Path.of("D:\\JetBrains\\workspace\\h2\\jdk\\src\\main\\resources\\static\\use\\virus_total.sha");
         Files.readAllLines(src).stream().filter(i->i.contains("sha1")).map(i->i.replaceAll(" ","")).
@@ -67,8 +73,10 @@ public class CollectHash {
                 e.printStackTrace();
             }
         });
+        Instant end = Instant.now();
+        System.out.println(end.toEpochMilli()-start.toEpochMilli());
     }
-    public static void main(String[] args) throws IOException {
-       aa();
+    public static void main(String[] args) throws IOException, InterruptedException {
+        aa();
     }
 }
