@@ -25,6 +25,8 @@ public class LoadResourceByClass {
         ///D:/JetBrains/workspace/h2/jdk/target/classes/static/android.png
         ///D:/JetBrains/workspace/h2/jdk/target/classes/com/zx/arch/resource/
         ///D:/JetBrains/workspace/h2/jdk/target/classes/
+
+        // Paths.get(ClassTransformerTest.class.getResource("/").toURI())
     }
 
     public static void main(String[] args) {

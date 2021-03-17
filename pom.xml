@@ -11,7 +11,7 @@
         <module>mq</module>
         <module>common</module>
         <module>domain</module>
-        <!--<module>jdk</module>-->
+        <module>jdk</module>
         <module>ui-web</module>
         <module>mybatis3.3</module>
         <module>algorithm</module>
