@@ -34,6 +34,7 @@ import java.util.Map;
 import org.apache.ibatis.reflection.factory.ObjectFactory;
 
 /**
+ * 抽象串行状态保持器
  * @author Eduardo Macarron
  * @author Franta Mejta
  */

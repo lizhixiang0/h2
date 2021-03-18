@@ -365,6 +365,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
         //这里把每个列的值都赋到相应的字段里去了
     	foundValues = applyAutomaticMappings(rsw, resultMap, metaObject, null) || foundValues;
       }
+      // 这里会处理,如果需要懒加载的属性，会放在懒加载器里
       foundValues = applyPropertyMappings(rsw, resultMap, metaObject, lazyLoader, null) || foundValues;
       foundValues = lazyLoader.size() > 0 || foundValues;
       resultObject = foundValues ? resultObject : null;

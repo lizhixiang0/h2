@@ -52,18 +52,34 @@ public class CglibProxyFactory implements ProxyFactory {
 
   public CglibProxyFactory() {
     try {
-      //先检查是否有Cglib
+      // 加载Enhancer来检查是否有Cglib的包
       Resources.classForName("net.sf.cglib.proxy.Enhancer");
     } catch (Throwable e) {
       throw new IllegalStateException("Cannot enable lazy loading because CGLIB is not available. Add CGLIB to your classpath.", e);
     }
   }
 
+  /**
+   * 创建代理对象
+   * @param target 目标对象
+   * @param lazyLoader 延迟加载器
+   * @param configuration 配置类
+   * @param objectFactory 对象工厂
+   * @param constructorArgTypes 构造函数类型[]
+   * @param constructorArgs  构造函数的值[]
+   */
   @Override
   public Object createProxy(Object target, ResultLoaderMap lazyLoader, Configuration configuration, ObjectFactory objectFactory, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
     return EnhancedResultObjectProxyImpl.createProxy(target, lazyLoader, configuration, objectFactory, constructorArgTypes, constructorArgs);
   }
-
+  /**
+   * 创建一个反序列化代理
+   * @param target 目标
+   * @param unloadedProperties 未加载的属性
+   * @param objectFactory 对象工厂
+   * @param constructorArgTypes 构造函数类型数组
+   * @param constructorArgs 构造函数值
+   */
   public Object createDeserializationProxy(Object target, Map<String, ResultLoaderMap.LoadPair> unloadedProperties, ObjectFactory objectFactory, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
     return EnhancedDeserializationProxyImpl.createProxy(target, unloadedProperties, objectFactory, constructorArgTypes, constructorArgs);
   }
@@ -73,41 +89,75 @@ public class CglibProxyFactory implements ProxyFactory {
       // Not Implemented
   }
 
+  /**
+   * 创建代理对象
+   * Enhancer 认为这个就是自定义类的工厂，比如这个类需要实现什么接口
+   * @param type 目标类型
+   * @param callback 结果对象代理实现类，当中有invoke回调方法
+   * @param constructorArgTypes 构造函数类型数组
+   * @param constructorArgs 构造函数对应字段的值数组
+   * @return
+   */
   static Object crateProxy(Class<?> type, Callback callback, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
-    //核心就是用cglib的Enhancer
+    // 1、创建cglib的增强类（这玩意就像一个对象工厂，配置代理对象需要的一些参数来生成代理对象）
 	Enhancer enhancer = new Enhancer();
-    enhancer.setCallback(callback);
+	// 2、设置父类,就是真实角色
     enhancer.setSuperclass(type);
+    // 3、设置代理角色（设置回调方法，调用任何方法都会先调用代理角色的intercept方法）
+    enhancer.setCallback(callback);
     try {
+      // 4、判断原始对象有没有声明writeReplace方法
       type.getDeclaredMethod(WRITE_REPLACE_METHOD);
-      // ObjectOutputStream will call writeReplace of objects returned by writeReplace
       log.debug(WRITE_REPLACE_METHOD + " method was found on bean " + type + ", make sure it returns this");
     } catch (NoSuchMethodException e) {
+      // 4.1 、原始对象没声明writeReplace方法，则给代理对象增加一个WriteReplaceInterface接口
       enhancer.setInterfaces(new Class[]{WriteReplaceInterface.class});
-    } catch (SecurityException e) {
-      // nothing to do here
+    } catch (SecurityException ignored) {
     }
+    // 5、声明一个代理对象,Enhancer配置好了,下面开始创建代理对象了，无非就是分有参构造和无参构造
     Object enhanced = null;
     if (constructorArgTypes.isEmpty()) {
+      // 5.1 通过无参构造创建对象
       enhanced = enhancer.create();
     } else {
       Class<?>[] typesArray = constructorArgTypes.toArray(new Class[constructorArgTypes.size()]);
       Object[] valuesArray = constructorArgs.toArray(new Object[constructorArgs.size()]);
+      // 5.2 通过有参构造创建对象
       enhanced = enhancer.create(typesArray, valuesArray);
     }
+    // 6、返回代理对象，注意此时代理对象是有声明writeReplace方法的
     return enhanced;
   }
 
+  /**
+   * 静态内部类
+   * 代理角色,实现MethodInterceptor,重写intercept
+   */
   private static class EnhancedResultObjectProxyImpl implements MethodInterceptor {
-
+    // 真实对象的类
     private Class<?> type;
+    // 这是干啥？？
     private ResultLoaderMap lazyLoader;
+    // 如果aggressiveLazyLoading=true，只要触发到对象任何的方法，就会立即加载所有属性的加载
     private boolean aggressive;
+    // 指定调用对象的哪些方法前触发一次数据加载
     private Set<String> lazyLoadTriggerMethods;
+    // 对象工厂,善于创建对象
     private ObjectFactory objectFactory;
+    // 构造函数参数类型列表
     private List<Class<?>> constructorArgTypes;
+    // 构造函数参数值列表
     private List<Object> constructorArgs;
 
+    /**
+     * 代理角色创建
+     * @param type 目标class类型
+     * @param lazyLoader 延迟加载器
+     * @param configuration 配置信息
+     * @param objectFactory 对象工厂
+     * @param constructorArgTypes 构造函数类型数组
+     * @param constructorArgs 构造函数值数组
+     */
     private EnhancedResultObjectProxyImpl(Class<?> type, ResultLoaderMap lazyLoader, Configuration configuration, ObjectFactory objectFactory, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
       this.type = type;
       this.lazyLoader = lazyLoader;
@@ -118,52 +168,77 @@ public class CglibProxyFactory implements ProxyFactory {
       this.constructorArgs = constructorArgs;
     }
 
-    public static Object createProxy(Object target, ResultLoaderMap lazyLoader, Configuration configuration, ObjectFactory objectFactory, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
-      final Class<?> type = target.getClass();
-      EnhancedResultObjectProxyImpl callback = new EnhancedResultObjectProxyImpl(type, lazyLoader, configuration, objectFactory, constructorArgTypes, constructorArgs);
-      Object enhanced = crateProxy(type, callback, constructorArgTypes, constructorArgs);
-      PropertyCopier.copyBeanProperties(type, target, enhanced);
-      return enhanced;
-    }
-
-    //核心就是反调intercept
+    /**
+     * 最核心的拦截器方法,在调用真实对象的方法之前,都会先调用这个intercept方法
+     * @param enhanced 增强类,这玩意儿就是生成的增强类
+     * @param method 原始方法 ,这个方法么得用
+     * @param args 方法参数
+     * @param methodProxy 代理后的方法
+     */
     @Override
     public Object intercept(Object enhanced, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
+      // 1、获取方法名
       final String methodName = method.getName();
       try {
+        // 2、这里用了个线程锁,强制排队
         synchronized (lazyLoader) {
+          // 3、如果是执行writeReplace方法(序列化写出）
           if (WRITE_REPLACE_METHOD.equals(methodName)) {
+            // 3.1、创建原始类对象,分有参和无参
             Object original = null;
             if (constructorArgTypes.isEmpty()) {
               original = objectFactory.create(type);
             } else {
               original = objectFactory.create(type, constructorArgTypes, constructorArgs);
             }
+            // 将增强后的类属性赋值给原始对象
             PropertyCopier.copyBeanProperties(type, enhanced, original);
+            // 下面在搞什么？？？
             if (lazyLoader.size() > 0) {
               return new CglibSerialStateHolder(original, lazyLoader.getProperties(), objectFactory, constructorArgTypes, constructorArgs);
             } else {
               return original;
             }
           } else {
-        	//这里是关键，延迟加载就是调用ResultLoaderMap.loadAll()
+            //4、不是writeReplace方法,且延迟加载长度大于0
             if (lazyLoader.size() > 0 && !FINALIZE_METHOD.equals(methodName)) {
+              // 4.1、如果配置类里配置了积极加载或者该方法是指定必触发数据加载的方法
               if (aggressive || lazyLoadTriggerMethods.contains(methodName)) {
+                // 4.1.1、触发数据加载,加载所有属性
                 lazyLoader.loadAll();
+                // 4.2、如果是getter、setter、isBoolean,那有可能是访问指定属性
               } else if (PropertyNamer.isProperty(methodName)) {
-              	//或者调用ResultLoaderMap.load()
+              	// 4.3、getName , setName  ,去掉前缀
                 final String property = PropertyNamer.methodToProperty(methodName);
                 if (lazyLoader.hasLoader(property)) {
+                  // 4.4、加载指定属性
                   lazyLoader.load(property);
                 }
               }
             }
           }
         }
+        // 最后才调用真实对象的方法
         return methodProxy.invokeSuper(enhanced, args);
       } catch (Throwable t) {
         throw ExceptionUtil.unwrapThrowable(t);
       }
+    }
+
+    /**
+     * 不晓得作者为啥非得把这个静态方法放到 代理类里面，这样特别容易造成困扰，直接放到CglibProxyFactory明明也可以。
+     */
+    public static Object createProxy(Object target, ResultLoaderMap lazyLoader, Configuration configuration, ObjectFactory objectFactory, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
+      // 1、取得真实角色类型
+      final Class<?> type = target.getClass();
+      // 2、创建代理角色
+      EnhancedResultObjectProxyImpl callback = new EnhancedResultObjectProxyImpl(type, lazyLoader, configuration, objectFactory, constructorArgTypes, constructorArgs);
+      // 3、通过cglib的Enhancer来创建代理类,作者又把创建代理对象的方法写到了CglibProxyFactory里,不能理解他写这么乱干啥
+      Object enhanced = crateProxy(type, callback, constructorArgTypes, constructorArgs);
+      // 4、将target中的属性都赋值给代理类
+      PropertyCopier.copyBeanProperties(type, target, enhanced);
+      // 5、返回代理类
+      return enhanced;
     }
   }
 

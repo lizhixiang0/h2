@@ -23,6 +23,7 @@ import org.apache.ibatis.executor.loader.ResultLoaderMap;
 import org.apache.ibatis.reflection.factory.ObjectFactory;
 
 /**
+ * Cglib串行状态保持器
  * @author Eduardo Macarron
  */
 class CglibSerialStateHolder extends AbstractSerialStateHolder {
