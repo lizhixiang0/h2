@@ -47,34 +47,35 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
  * @author Clinton Begin
  */
 public abstract class BaseExecutor implements Executor {
-  /**
-   * 日志管理器
-   */
   private static final Log log = LogFactory.getLog(BaseExecutor.class);
 
   protected Transaction transaction;
-  protected Executor wrapper;
-
-  //延迟加载队列（线程安全）
   protected ConcurrentLinkedQueue<DeferredLoad> deferredLoads;
-  //本地缓存机制（Local Cache）防止循环引用（circular references）和加速重复嵌套查询(一级缓存)
-  //本地缓存
   protected PerpetualCache localCache;
-  //本地输出参数缓存
   protected PerpetualCache localOutputParameterCache;
+  private boolean closed;
   protected Configuration configuration;
-
+  protected Executor wrapper;
   //查询堆栈
   protected int queryStack = 0;
-  private boolean closed;
 
+  /**
+   * 抽象类的构造函数用来属性初始化
+   */
   protected BaseExecutor(Configuration configuration, Transaction transaction) {
+    // 1、事务管理器
     this.transaction = transaction;
-    this.deferredLoads = new ConcurrentLinkedQueue<DeferredLoad>();
+    // 2、延迟加载队列（线程安全）
+    this.deferredLoads = new ConcurrentLinkedQueue<>();
+    // 3、本地缓存 ,据说能防止循环引用（circular references）和加速重复嵌套查询(一级缓存)
     this.localCache = new PerpetualCache("LocalCache");
+    // 4、本地输出参数缓存
     this.localOutputParameterCache = new PerpetualCache("LocalOutputParameterCache");
+    // 5、执行器是否关闭
     this.closed = false;
+    // 6、核心配置类
     this.configuration = configuration;
+    // 7、？
     this.wrapper = this;
   }
 

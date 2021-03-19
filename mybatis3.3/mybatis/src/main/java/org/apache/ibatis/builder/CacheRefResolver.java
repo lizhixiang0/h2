@@ -15,14 +15,9 @@
  */
 package org.apache.ibatis.builder;
 
-import org.apache.ibatis.cache.Cache;
-
-/**
- * @author Clinton Begin
- */
 /**
  * 缓存引用解析器
- *
+ * @author Clinton Begin
  */
 public class CacheRefResolver {
   private final MapperBuilderAssistant assistant;
@@ -33,8 +28,8 @@ public class CacheRefResolver {
     this.cacheRefNamespace = cacheRefNamespace;
   }
 
-  public Cache resolveCacheRef() {
+  public void resolveCacheRef() {
       //反调MapperBuilderAssistant解析
-    return assistant.useCacheRef(cacheRefNamespace);
+    assistant.useCacheRef(cacheRefNamespace);
   }
 }

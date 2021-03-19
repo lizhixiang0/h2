@@ -27,7 +27,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.transaction.Transaction;
 
 /**
- * 执行器
+ * 执行器 接口
  * @author Clinton Begin
  */
 public interface Executor {
@@ -70,16 +70,6 @@ public interface Executor {
   List<BatchResult> flushStatements() throws SQLException;
 
   /**
-   * 提交，参数表示是否要强制
-   */
-  void commit(boolean required) throws SQLException;
-
-  /**
-   * 回滚，参数表示是否要强制
-   */
-  void rollback(boolean required) throws SQLException;
-
-  /**
    * 创建CacheKey
    * @param ms 映射的sql语句
    * @param parameterObject 参数
@@ -117,6 +107,17 @@ public interface Executor {
    * @return
    */
   Transaction getTransaction();
+
+  /**
+   * 提交，参数表示是否要强制
+   */
+  void commit(boolean required) throws SQLException;
+
+  /**
+   * 回滚，参数表示是否要强制
+   */
+  void rollback(boolean required) throws SQLException;
+
 
   void close(boolean forceRollback);
 

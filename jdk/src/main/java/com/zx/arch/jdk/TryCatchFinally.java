@@ -30,7 +30,8 @@ public class TryCatchFinally {
     }
 
     /**
-     * doIt 里面的catch是抛出异常的,外面正常调用
+     * doIt 里面的catch会抛出异常的,外面正常调用
+     * 其实try catch finally 中catch ！！但是此时try 和 finally必须都写！
      */
     static void test1() {
             doIt();

@@ -23,19 +23,15 @@ import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.cache.CacheException;
 
 /**
+ *  * 最初级的cache实现，什么包装都没有   /pəˈpetʃuəl/  永恒的,这应该是种美好的祝愿吧。
+ *  * 没有缓存淘汰机制,容易内存溢出(除非手动调用clear),没有考虑线程安全问题,多线程环境下不安全
  * @author Clinton Begin
- */
-/**
- * 最初级的cache实现，什么包装都没有
- * 没有缓存淘汰机制,容易内存溢出(除非手动调用clear),没有考虑线程安全问题,多线程环境下不安全
- * 补充：HashMap 的线程安全问题//todo
- *
  */
 public class PerpetualCache implements Cache {
 
   private String id;
 
-  private Map<Object, Object> cache = new HashMap<Object, Object>();
+  private Map<Object, Object> cache = new HashMap<>();
 
   public PerpetualCache(String id) {
     this.id = id;

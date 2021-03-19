@@ -22,11 +22,8 @@ import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
 
 /**
- * @author Eduardo Macarron
- */
-/**
  * 结果映射解析器
- *
+ * @author Eduardo Macarron
  */
 public class ResultMapResolver {
   private final MapperBuilderAssistant assistant;

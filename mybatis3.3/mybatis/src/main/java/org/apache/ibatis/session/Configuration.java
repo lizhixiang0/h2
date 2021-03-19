@@ -284,42 +284,178 @@ public class Configuration {
   }
 
   /**
+   * 25、不完整的SQL语句
+   */
+  protected final Collection<XMLStatementBuilder> incompleteStatements = new LinkedList<>();
+  public Collection<XMLStatementBuilder> getIncompleteStatements() {return incompleteStatements;}
+  public void addIncompleteStatement(XMLStatementBuilder incompleteStatement) {incompleteStatements.add(incompleteStatement);}
+  // 25、完整sql映射语句容器
+  protected final Map<String, MappedStatement> mappedStatements = new StrictMap<>("Mapped Statements collection");
+  // 25.1、增加sql映射语句
+  public void addMappedStatement(MappedStatement ms) {
+    mappedStatements.put(ms.getId(), ms);
+  }
+  // 25.2、获取所有的sql映射语句标识
+  public Collection<String> getMappedStatementNames() {
+    buildAllStatements();
+    return mappedStatements.keySet();
+  }
+  // 25.3、获取所有的sql映射语句
+  public Collection<MappedStatement> getMappedStatements() {
+    buildAllStatements();
+    return mappedStatements.values();
+  }
+  // 25.4、判断是否存在某映射语句,判断之前会构建所有的
+  public boolean hasStatement(String statementName) {
+    return hasStatement(statementName, true);
+  }
+  // 25.5、若入参为true,则会构建所有的sql映射语句,再去判断是否存在某sql映射语句
+  public boolean hasStatement(String statementName, boolean validateIncompleteStatements) {
+    if (validateIncompleteStatements) {
+      buildAllStatements();
+    }
+    return mappedStatements.containsKey(statementName);
+  }
+
+  // 25.6、根据sql映射语句标识获得sql映射语句,获取之前会构建所有的
+  public MappedStatement getMappedStatement(String id) {
+    return this.getMappedStatement(id, true);
+  }
+  // 25.7、若入参为true,则会构建所有的sql映射语句,再去跟据sql映射语句标识获得sql映射语句
+  public MappedStatement getMappedStatement(String id, boolean validateIncompleteStatements) {
+    if (validateIncompleteStatements) {
+      buildAllStatements();
+    }
+    return mappedStatements.get(id);
+  }
+
+  /**
+   * 解析缓存中所有未处理的sql映射语句节点,建议在注册了所有映射接口处理器之后调用此方法,因为它提供快速验证。
+   * It is recommended to call this method once all the mappers are added as it provides fail-fast statement validation.
+   */
+  protected void buildAllStatements() {
+    if (!incompleteResultMaps.isEmpty()) {
+      synchronized (incompleteResultMaps) {
+        // This always throws a BuilderException.
+        incompleteResultMaps.iterator().next().resolve();
+      }
+    }
+    if (!incompleteCacheRefs.isEmpty()) {
+      synchronized (incompleteCacheRefs) {
+        // This always throws a BuilderException.
+        incompleteCacheRefs.iterator().next().resolveCacheRef();
+      }
+    }
+    if (!incompleteStatements.isEmpty()) {
+      synchronized (incompleteStatements) {
+        // This always throws a BuilderException.
+        incompleteStatements.iterator().next().parseStatementNode();
+      }
+    }
+    if (!incompleteMethods.isEmpty()) {
+      synchronized (incompleteMethods) {
+        // This always throws a BuilderException.
+        incompleteMethods.iterator().next().resolve();
+      }
+    }
+  }
+
+  /**
    * 配置类工厂,Used to create Configuration for loading deserialized unread properties.
    * @see <a href='https://code.google.com/p/mybatis/issues/detail?id=300'>Issue 300</a> (google code)
    */
   protected Class<?> configurationFactory;
 
   protected final InterceptorChain interceptorChain = new InterceptorChain();
-  //类型处理器注册机
-  protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry();
-  //类型别名注册机
-  protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
-  protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
+  public void addInterceptor(Interceptor interceptor) {interceptorChain.addInterceptor(interceptor);}
+  public List<Interceptor> getInterceptors() {return interceptorChain.getInterceptors();}
 
-  //映射的语句,存在Map里
-  protected final Map<String, MappedStatement> mappedStatements = new StrictMap<>("Mapped Statements collection");
   //缓存,存在Map里
   protected final Map<String, Cache> caches = new StrictMap<>("Caches collection");
+  public void addCache(Cache cache) {caches.put(cache.getId(), cache);}
+  public Collection<String> getCacheNames() {return caches.keySet();}
+  public Collection<Cache> getCaches() {return caches.values();}
+  public Cache getCache(String id) {return caches.get(id);}
+  public boolean hasCache(String id) {return caches.containsKey(id);}
+
+
   //结果映射,存在Map里
   protected final Map<String, ResultMap> resultMaps = new StrictMap<>("Result Maps collection");
-  protected final Map<String, ParameterMap> parameterMaps = new StrictMap<ParameterMap>("Parameter Maps collection");
-  protected final Map<String, KeyGenerator> keyGenerators = new StrictMap<KeyGenerator>("Key Generators collection");
+  public Collection<String> getResultMapNames() {return resultMaps.keySet();}
+  public Collection<ResultMap> getResultMaps() {return resultMaps.values();}
+  public ResultMap getResultMap(String id) {return resultMaps.get(id);}
+  public boolean hasResultMap(String id) {return resultMaps.containsKey(id);}
+  public void addResultMap(ResultMap rm) {
+    resultMaps.put(rm.getId(), rm);
+    checkLocallyForDiscriminatedNestedResultMaps(rm);
+    checkGloballyForDiscriminatedNestedResultMaps(rm);
+  }
 
-  protected final Set<String> loadedResources = new HashSet<String>();
-  protected final Map<String, XNode> sqlFragments = new StrictMap<XNode>("XML fragments parsed from previous mappers");
+  protected final Map<String, ParameterMap> parameterMaps = new StrictMap<>("Parameter Maps collection");
+  public void addParameterMap(ParameterMap pm) {parameterMaps.put(pm.getId(), pm); }
+  public Collection<String> getParameterMapNames() {return parameterMaps.keySet();}
+  public Collection<ParameterMap> getParameterMaps() {return parameterMaps.values();}
+  public ParameterMap getParameterMap(String id) {return parameterMaps.get(id); }
+  public boolean hasParameterMap(String id) {return parameterMaps.containsKey(id); }
 
-  //不完整的SQL语句
-  protected final Collection<XMLStatementBuilder> incompleteStatements = new LinkedList<XMLStatementBuilder>();
-  protected final Collection<CacheRefResolver> incompleteCacheRefs = new LinkedList<CacheRefResolver>();
-  protected final Collection<ResultMapResolver> incompleteResultMaps = new LinkedList<ResultMapResolver>();
-  protected final Collection<MethodResolver> incompleteMethods = new LinkedList<MethodResolver>();
+  protected final Map<String, KeyGenerator> keyGenerators = new StrictMap<>("Key Generators collection");
+  public void addKeyGenerator(String id, KeyGenerator keyGenerator) {keyGenerators.put(id, keyGenerator);}
+  public Collection<String> getKeyGeneratorNames() {return keyGenerators.keySet();}
+  public Collection<KeyGenerator> getKeyGenerators() { return keyGenerators.values();}
+  public KeyGenerator getKeyGenerator(String id) {return keyGenerators.get(id); }
+  public boolean hasKeyGenerator(String id) {return keyGenerators.containsKey(id); }
+
+  protected final Set<String> loadedResources = new HashSet<>();
+  public void addLoadedResource(String resource) {loadedResources.add(resource);}
+  public boolean isResourceLoaded(String resource) {
+    return loadedResources.contains(resource);
+  }
+
+  protected final Map<String, XNode> sqlFragments = new StrictMap<>("XML fragments parsed from previous mappers");
+  public Map<String, XNode> getSqlFragments() {return sqlFragments; }
+
+  protected final Collection<CacheRefResolver> incompleteCacheRefs = new LinkedList<>();
+  public Collection<CacheRefResolver> getIncompleteCacheRefs() {
+    return incompleteCacheRefs;
+  }
+  public void addIncompleteCacheRef(CacheRefResolver incompleteCacheRef) {incompleteCacheRefs.add(incompleteCacheRef); }
+
+
+  protected final Collection<ResultMapResolver> incompleteResultMaps = new LinkedList<>();
+  public Collection<ResultMapResolver> getIncompleteResultMaps() {return incompleteResultMaps;}
+  public void addIncompleteResultMap(ResultMapResolver resultMapResolver) {incompleteResultMaps.add(resultMapResolver); }
+
+  protected final Collection<MethodResolver> incompleteMethods = new LinkedList<>();
+  public void addIncompleteMethod(MethodResolver builder) {
+    incompleteMethods.add(builder);
+  }
+  public Collection<MethodResolver> getIncompleteMethods() {
+    return incompleteMethods;
+  }
 
   /**
+   * 保存cache-ref关系的集合。键是引用绑定到另一个名称空间的缓存的名称空间，值是实际缓存绑定到的名称空间。
    * A map holds cache-ref relationship. The key is the namespace that
    * references a cache bound to another namespace and the value is the
    * namespace which the actual cache is bound to.
    */
-  protected final Map<String, String> cacheRefMap = new HashMap<String, String>();
+  protected final Map<String, String> cacheRefMap = new HashMap<>();
+  public void addCacheRef(String namespace, String referencedNamespace) {cacheRefMap.put(namespace, referencedNamespace); }
+
+
+  //类型处理器注册机
+  protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry();
+  //类型别名注册机
+  protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
+
+  protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
+  public LanguageDriver getDefaultScriptingLanuageInstance() {return languageRegistry.getDefaultDriver();}
+  public void setDefaultScriptingLanguage(Class<?> driver) {
+    if (driver == null) {
+      driver = XMLLanguageDriver.class;
+    }
+    getLanguageRegistry().setDefaultDriverClass(driver);
+  }
 
   public Configuration() {
     //注册更多的类型别名，至于为何不直接在TypeAliasRegistry里注册，还需进一步研究
@@ -348,32 +484,6 @@ public class Configuration {
 
     languageRegistry.setDefaultDriverClass(XMLLanguageDriver.class);
     languageRegistry.register(RawLanguageDriver.class);
-  }
-
-  public void addLoadedResource(String resource) {
-    loadedResources.add(resource);
-  }
-
-  public boolean isResourceLoaded(String resource) {
-    return loadedResources.contains(resource);
-  }
-
-  /**
-   * @since 3.2.2
-   */
-  public List<Interceptor> getInterceptors() {
-    return interceptorChain.getInterceptors();
-  }
-
-  public void setDefaultScriptingLanguage(Class<?> driver) {
-    if (driver == null) {
-      driver = XMLLanguageDriver.class;
-    }
-    getLanguageRegistry().setDefaultDriverClass(driver);
-  }
-
-  public LanguageDriver getDefaultScriptingLanuageInstance() {
-    return languageRegistry.getDefaultDriver();
   }
 
   //创建参数处理器
@@ -431,202 +541,6 @@ public class Configuration {
     return executor;
   }
 
-  public void addKeyGenerator(String id, KeyGenerator keyGenerator) {
-    keyGenerators.put(id, keyGenerator);
-  }
-
-  public Collection<String> getKeyGeneratorNames() {
-    return keyGenerators.keySet();
-  }
-
-  public Collection<KeyGenerator> getKeyGenerators() {
-    return keyGenerators.values();
-  }
-
-  public KeyGenerator getKeyGenerator(String id) {
-    return keyGenerators.get(id);
-  }
-
-  public boolean hasKeyGenerator(String id) {
-    return keyGenerators.containsKey(id);
-  }
-
-  public void addCache(Cache cache) {
-    caches.put(cache.getId(), cache);
-  }
-
-  public Collection<String> getCacheNames() {
-    return caches.keySet();
-  }
-
-  public Collection<Cache> getCaches() {
-    return caches.values();
-  }
-
-  public Cache getCache(String id) {
-    return caches.get(id);
-  }
-
-  public boolean hasCache(String id) {
-    return caches.containsKey(id);
-  }
-
-  public void addResultMap(ResultMap rm) {
-    resultMaps.put(rm.getId(), rm);
-    checkLocallyForDiscriminatedNestedResultMaps(rm);
-    checkGloballyForDiscriminatedNestedResultMaps(rm);
-  }
-
-  public Collection<String> getResultMapNames() {
-    return resultMaps.keySet();
-  }
-
-  public Collection<ResultMap> getResultMaps() {
-    return resultMaps.values();
-  }
-
-  public ResultMap getResultMap(String id) {
-    return resultMaps.get(id);
-  }
-
-  public boolean hasResultMap(String id) {
-    return resultMaps.containsKey(id);
-  }
-
-  public void addParameterMap(ParameterMap pm) {
-    parameterMaps.put(pm.getId(), pm);
-  }
-
-  public Collection<String> getParameterMapNames() {
-    return parameterMaps.keySet();
-  }
-
-  public Collection<ParameterMap> getParameterMaps() {
-    return parameterMaps.values();
-  }
-
-  public ParameterMap getParameterMap(String id) {
-    return parameterMaps.get(id);
-  }
-
-  public boolean hasParameterMap(String id) {
-    return parameterMaps.containsKey(id);
-  }
-
-  public void addMappedStatement(MappedStatement ms) {
-    mappedStatements.put(ms.getId(), ms);
-  }
-
-  public Collection<String> getMappedStatementNames() {
-    buildAllStatements();
-    return mappedStatements.keySet();
-  }
-
-  public Collection<MappedStatement> getMappedStatements() {
-    buildAllStatements();
-    return mappedStatements.values();
-  }
-
-  public Collection<XMLStatementBuilder> getIncompleteStatements() {
-    return incompleteStatements;
-  }
-
-  public void addIncompleteStatement(XMLStatementBuilder incompleteStatement) {
-    incompleteStatements.add(incompleteStatement);
-  }
-
-  public Collection<CacheRefResolver> getIncompleteCacheRefs() {
-    return incompleteCacheRefs;
-  }
-
-  public void addIncompleteCacheRef(CacheRefResolver incompleteCacheRef) {
-    incompleteCacheRefs.add(incompleteCacheRef);
-  }
-
-  public Collection<ResultMapResolver> getIncompleteResultMaps() {
-    return incompleteResultMaps;
-  }
-
-  public void addIncompleteResultMap(ResultMapResolver resultMapResolver) {
-    incompleteResultMaps.add(resultMapResolver);
-  }
-
-  public void addIncompleteMethod(MethodResolver builder) {
-    incompleteMethods.add(builder);
-  }
-
-  public Collection<MethodResolver> getIncompleteMethods() {
-    return incompleteMethods;
-  }
-
-  //由DefaultSqlSession.selectList调用过来
-  public MappedStatement getMappedStatement(String id) {
-    return this.getMappedStatement(id, true);
-  }
-
-  public MappedStatement getMappedStatement(String id, boolean validateIncompleteStatements) {
-    //先构建所有语句，再返回语句
-    if (validateIncompleteStatements) {
-      buildAllStatements();
-    }
-    return mappedStatements.get(id);
-  }
-
-  public Map<String, XNode> getSqlFragments() {
-    return sqlFragments;
-  }
-
-  public void addInterceptor(Interceptor interceptor) {
-    interceptorChain.addInterceptor(interceptor);
-  }
-
-  public boolean hasStatement(String statementName) {
-    return hasStatement(statementName, true);
-  }
-
-  public boolean hasStatement(String statementName, boolean validateIncompleteStatements) {
-    if (validateIncompleteStatements) {
-      buildAllStatements();
-    }
-    return mappedStatements.containsKey(statementName);
-  }
-
-  public void addCacheRef(String namespace, String referencedNamespace) {
-    cacheRefMap.put(namespace, referencedNamespace);
-  }
-
-  /**
-   * Parses all the unprocessed statement nodes in the cache. It is recommended
-   * to call this method once all the mappers are added as it provides fail-fast
-   * statement validation.
-   */
-  protected void buildAllStatements() {
-    if (!incompleteResultMaps.isEmpty()) {
-      synchronized (incompleteResultMaps) {
-        // This always throws a BuilderException.
-        incompleteResultMaps.iterator().next().resolve();
-      }
-    }
-    if (!incompleteCacheRefs.isEmpty()) {
-      synchronized (incompleteCacheRefs) {
-        // This always throws a BuilderException.
-        incompleteCacheRefs.iterator().next().resolveCacheRef();
-      }
-    }
-    if (!incompleteStatements.isEmpty()) {
-      synchronized (incompleteStatements) {
-        // This always throws a BuilderException.
-        incompleteStatements.iterator().next().parseStatementNode();
-      }
-    }
-    if (!incompleteMethods.isEmpty()) {
-      synchronized (incompleteMethods) {
-        // This always throws a BuilderException.
-        incompleteMethods.iterator().next().resolve();
-      }
-    }
-  }
-
   /**
    * Extracts namespace from fully qualified statement id.
    *
@@ -672,79 +586,85 @@ public class Configuration {
     }
   }
 
-  //静态内部类,严格的Map，不允许多次覆盖key所对应的value
+  /**
+   * 静态内部类 ,更为严格的Map,不允许多次覆盖key所对应的value
+   * @param <V>
+   */
   protected static class StrictMap<V> extends HashMap<String, V> {
 
     private static final long serialVersionUID = -4950446264854982944L;
+    // 1、额外定义了个属性,相当于给容器取了个名字
     private String name;
 
+    // 2、构造函数1
     public StrictMap(String name, int initialCapacity, float loadFactor) {
       super(initialCapacity, loadFactor);
       this.name = name;
     }
-
+    // 3、构造函数2
     public StrictMap(String name, int initialCapacity) {
       super(initialCapacity);
       this.name = name;
     }
-
+    // 4、构造函数3
     public StrictMap(String name) {
       super();
       this.name = name;
     }
-
+    // 5、构造函数4
     public StrictMap(String name, Map<String, ? extends V> m) {
+      // 用指定Map构造新的HashMap
       super(m);
       this.name = name;
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
     public V put(String key, V value) {
+      // 1、如果已经存在此key了,直接报错。（原来是如果key已经存在，那就替换key对应的value）
       if (containsKey(key)) {
-        //如果已经存在此key了，直接报错
         throw new IllegalArgumentException(name + " already contains value for " + key);
       }
+      // 2、如果key中存在".",则进行缩略处理：com.zx.arch -> arch
       if (key.contains(".")) {
-        //如果有.符号，取得短名称，大致用意就是包名不同，类名相同，提供模糊查询的功能
         final String shortKey = getShortName(key);
         if (super.get(shortKey) == null) {
-          //如果没有这个缩略，则放一个缩略
+          // 2.1、之前没有直接put
           super.put(shortKey, value);
         } else {
-          //如果已经有此缩略，表示模糊，放一个Ambiguity型的
+          // 2.2、之前有了,将value包装成模糊类,此时调用的父类的put,不会报异常，而是替换之前的
           super.put(shortKey, (V) new Ambiguity(shortKey));
         }
       }
-      //再放一个全名
+      //3、再放一个全名的
       return super.put(key, value);
-      //可以看到，如果有包名，会放2个key到这个map，一个缩略，一个全名
+      //4、可以看到，如果有包名，会放2个key到这个map，一个缩略，一个全名
     }
 
     @Override
     public V get(Object key) {
       V value = super.get(key);
-      //如果找不到相应的key，直接报错
+      //如果找不到，直接报错 （原先找不到返回null）
       if (value == null) {
         throw new IllegalArgumentException(name + " does not contain value for " + key);
       }
-      //如果是模糊型的，也报错，提示用户
-      //原来这个模糊型就是为了提示用户啊
+      //如果是模糊型的，也报错，提示用户用全名来get
       if (value instanceof Ambiguity) {
-        throw new IllegalArgumentException(((Ambiguity) value).getSubject() + " is ambiguous in " + name
-            + " (try using the full name including the namespace, or rename one of the entries)");
+        throw new IllegalArgumentException(((Ambiguity) value).getSubject() + " is ambiguous in " + name+ " (try using the full name including the namespace, or rename one of the entries)");
       }
       return value;
     }
 
-    //取得短名称，也就是取得最后那个句号的后面那部分
+    /**
+     * com.zx.arch -> arch
+     * 大致用意就是包名不同，类名相同，提供模糊查询的功能
+     */
     private String getShortName(String key) {
       final String[] keyparts = key.split("\\.");
       return keyparts[keyparts.length - 1];
     }
 
-    //模糊，居然放在Map里面的一个静态内部类，
+    //一个静态内部类，用来给value加壳
     protected static class Ambiguity {
-      //提供一个主题
       private String subject;
 
       public Ambiguity(String subject) {

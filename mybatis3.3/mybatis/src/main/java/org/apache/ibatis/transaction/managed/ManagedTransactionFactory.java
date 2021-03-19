@@ -25,29 +25,24 @@ import org.apache.ibatis.transaction.Transaction;
 import org.apache.ibatis.transaction.TransactionFactory;
 
 /**
- * Creates {@link ManagedTransaction} instances.
- *
- * @see ManagedTransaction
- */
-/**
- * @author Clinton Begin
- */
-/**
  * 托管事务工厂
  * 默认 情况下它会关闭连接。
  * 然而一些容器并不希望这样, 因此如果你需要从连接中停止 它,将 closeConnection 属性设置为 false。
+ * @author Clinton Begin
  */
 public class ManagedTransactionFactory implements TransactionFactory {
-
+  /**
+   * 是否关闭数据库,暂时不晓得这玩意儿咋用的
+   */
   private boolean closeConnection = true;
 
   @Override
   public void setProperties(Properties props) {
-		//设置closeConnection属性
     if (props != null) {
+      //如果在properties文件配置了closeConnection,这里就能起作用了,默认是true,所以如果要配置肯定是配置成false
       String closeConnectionProperty = props.getProperty("closeConnection");
       if (closeConnectionProperty != null) {
-        closeConnection = Boolean.valueOf(closeConnectionProperty);
+        closeConnection = Boolean.parseBoolean(closeConnectionProperty);
       }
     }
   }
@@ -59,9 +54,6 @@ public class ManagedTransactionFactory implements TransactionFactory {
 
   @Override
   public Transaction newTransaction(DataSource ds, TransactionIsolationLevel level, boolean autoCommit) {
-    // Silently ignores autocommit and isolation level, as managed transactions are entirely
-    // controlled by an external manager.  It's silently ignored so that
-    // code remains portable between managed and unmanaged configurations.
     return new ManagedTransaction(ds, level, closeConnection);
   }
 }
