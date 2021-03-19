@@ -33,7 +33,7 @@ import org.apache.ibatis.transaction.Transaction;
 public interface Executor {
 
   /**
-   * 表示需要ResultHandler
+   * 表示不需要ResultHandler
    */
   ResultHandler NO_RESULT_HANDLER = null;
 

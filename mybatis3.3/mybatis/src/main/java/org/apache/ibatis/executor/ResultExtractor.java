@@ -23,10 +23,8 @@ import java.lang.reflect.Array;
 import java.util.List;
 
 /**
+ * 结果提取器
  * @author Andrew Gustafson
- */
-/**
- * 结果抽取器
  */
 public class ResultExtractor {
   private final Configuration configuration;

@@ -18,23 +18,20 @@ package org.apache.ibatis.exceptions;
 import org.apache.ibatis.executor.ErrorContext;
 
 /**
- * @author Clinton Begin
- */
-/**
- *
  * 异常工厂
+ * @author Clinton Begin
  */
 public class ExceptionFactory {
 
-  private ExceptionFactory() {
-    // Prevent Instantiation
-  }
+  private ExceptionFactory() {}
 
-  //把普通异常包装成mybatis自己的PersistenceException
+  /**
+   * 把普通异常包装成mybatis自己的PersistenceException
+   */
   public static RuntimeException wrapException(String message, Exception e) {
-    //查找错误上下文，得到错误原因，传给PersistenceException
-    //每个线程都会有一个ErrorContext，所以可以得到，  .message(message).cause是典型的构建器模式
-    return new PersistenceException(ErrorContext.instance().message(message).cause(e).toString(), e);
+    // 这边使用ErrorContext结合建造者模式,一步步构建错误信息，比单纯的传递一个message要那么一点。
+    message  = ErrorContext.instance().message(message).cause(e).toString();
+    return new PersistenceException(message, e);
   }
 
 }

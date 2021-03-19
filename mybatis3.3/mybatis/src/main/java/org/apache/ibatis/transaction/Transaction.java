@@ -19,8 +19,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * 事务、处理连接生命周期，包括:它的创建、准备、提交/回滚和关闭.
- * 在 MyBatis 中有两种事务管理器类型(也就是 type=”[JDBC|MANAGED]”):
+ * 事务管理接口
+ * 处理数据库连接的生命周期,包括它的创建、准备、提交、回滚、关闭。在 MyBatis 中有两种事务管理器类型(也就是 type=”[JDBC|MANAGED]”):
  *
  * @author Clinton Begin
  */

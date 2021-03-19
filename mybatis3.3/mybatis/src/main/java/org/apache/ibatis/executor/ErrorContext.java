@@ -16,6 +16,7 @@
 package org.apache.ibatis.executor;
 
 /**
+ * ErrorContext 将异常信息构建成易于发现异常的格式
  * @author Clinton Begin
  * @blog "https://www.jianshu.com/p/901e37d05853
  */
@@ -27,6 +28,8 @@ public class ErrorContext {
   private static final String LINE_SEPARATOR = System.lineSeparator();
   /**
    * 使用ThreadLocal,每个线程都创建的是自己的ErrorContext副本
+   * withInitial方法里面传递的参数是一个Supplier,只有LOCAL.get()时才会new出这个对象,当然如果存在就不会new.
+   *
    * 补充说明：这个ThreadLocal看起来挺玄幻,其实就是为每一个线程维护了一个ThreadLocalMap
    * 优点：
    *    1、使用ThreadLocal的优点是无论程序运行到任何地方，只要还是当前线程,都可以拿到ErrorContext,避免多次传递
@@ -38,7 +41,9 @@ public class ErrorContext {
    */
 
   private static final ThreadLocal<ErrorContext> LOCAL = ThreadLocal.withInitial(ErrorContext::new);
-
+  /**
+   * 当我们想把当前线程的ErrorContext存起来，就new一个新的ErrorContext,然后把旧的存到这个新的属性stored
+   */
   private ErrorContext stored;
   private String resource;
   private String activity;
@@ -50,8 +55,7 @@ public class ErrorContext {
   /**
    * 无参构造器私有化======》单例模式
    */
-  private ErrorContext() {
-  }
+  private ErrorContext() {}
 
   /**
    * 老版：
@@ -70,9 +74,10 @@ public class ErrorContext {
   }
 
   /**
-   * store()和recall()成对使用, stored 变量充当一个中介,store()方法将当前 ErrorContext 保存下来，调用 recall() 方法再将该 ErrorContext 实例传递给 LOCAL
-   * 据说这个方法是为了防止信息污染？？？
-   * 网友猜测：这个成对方法只在processBefore()方法前后被调用过,processBefore()方法执行先于主体数据库执行，如果不进行这个成组操作，之后的主体操作出现的异常信息可能被前者所污染，导致排错困难
+   * store()和recall()成对使用,
+   * stored 变量充当一个中介,store()方法将当前 ErrorContext 保存下来，调用 recall() 方法再将该 ErrorContext 实例传递给 LOCAL
+   * 可以防止信息污染。
+   * 这对方法只在processBefore()方法前后被调用过,processBefore()方法执行先于主体数据库执行，如果不进行这个成组操作，之后的主体操作出现的异常信息可能被前者所污染，导致排错困难
    * @return
    */
   public ErrorContext store() {
@@ -95,8 +100,10 @@ public class ErrorContext {
   }
 
   /**
-   * @return 重置变量，为变量赋 null 值，以便 gc 的执行，并清空 LOCAL;
-   * 补充: 必须手动清空ThreadLocalMap来防止内存泄漏
+   * 每次调用这玩意儿必须手动调用一下reset方法,通产是在catch里使用ErrorContext,然后在finally里使用reset ！！！保证每次使用ErrorContext她都像个小姑娘一样干干净净
+   * @return 重置变量
+   * @note 为变量赋 null 值，以便 gc 的执行，必须手动清空ThreadLocalMap来防止内存泄漏
+   *
    */
   public ErrorContext reset() {
     resource = null;
@@ -112,7 +119,7 @@ public class ErrorContext {
   /**
    *
    * @param resource 存储异常存在于哪个资源文件中
-   * @return 建造者模式返回 this
+   * @return 建造者模式返回 this,链式调用。。。
    */
   public ErrorContext resource(String resource) {
     this.resource = resource;

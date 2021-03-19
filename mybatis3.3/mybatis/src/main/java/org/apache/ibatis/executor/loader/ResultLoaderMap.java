@@ -55,14 +55,14 @@ public class ResultLoaderMap {
    * 把要延迟加载的属性记到loaderMap里
    * @param property 属性
    * @param metaResultObject 结果元对象
-   * @param resultLoader 结果延迟加载器
+   * @param resultLoader 延迟加载器
    */
   public void addLoader(String property, MetaObject metaResultObject, ResultLoader resultLoader) {
     String upperFirst = getUppercaseFirstProperty(property);
     if (!upperFirst.equalsIgnoreCase(property) && loaderMap.containsKey(upperFirst)) {
       throw new ExecutorException("Nested lazy loaded result property '" + property +"' for query id '" + resultLoader.mappedStatement.getId() +" already exists in the result map. The leftmost property of all lazy loaded properties must be unique within a result map.");
     }
-    // 存入容器
+    // 存入loaderMap集合,key是upperFirst,value是LoadPair
     loaderMap.put(upperFirst, new LoadPair(property, metaResultObject, resultLoader));
   }
 
@@ -79,9 +79,7 @@ public class ResultLoaderMap {
   }
 
   /**
-   * 调用getter来取真实值时，可以先判断这个属性是否是延迟加载属性，是才尝试去加载
-   * @param property
-   * @return
+   * 判断某属性是否是延迟加载属性
    */
   public boolean hasLoader(String property) {
     return loaderMap.containsKey(property.toUpperCase(Locale.ENGLISH));
@@ -112,13 +110,18 @@ public class ResultLoaderMap {
   }
 
   /**
-   * 静态内部类,用来表示尚未加载的属性
+   * 静态内部类,用来包装延迟加载的属性
    */
   public static class LoadPair implements Serializable {
 
     private static final long serialVersionUID = 20130412;
 
     private transient Log log;
+
+    /**
+     * 延迟加载的属性名
+     */
+    private String property;
 
     /**
      * 返回数据库连接的工厂方法的名称
@@ -129,11 +132,11 @@ public class ResultLoaderMap {
      */
     private final transient Object serializationCheck = new Object();
     /**
-     * 设置加载属性的元对象。
+     * 执行sql后生成的元对象,其中某些属性是延迟加载的
      */
     private transient MetaObject metaResultObject;
     /**
-     * 加载未读属性的结果加载器。
+     * 加载未读属性的结果加载器。这玩意儿负责与数据库连接，执行sql语句，完成延迟属性的加载
      */
     private transient ResultLoader resultLoader;
 
@@ -141,10 +144,7 @@ public class ResultLoaderMap {
      * 工厂类，通过它我们获得数据库连接。
      */
     private Class<?> configurationFactory;
-    /**
-     * 未读属性的名称。
-     */
-    private String property;
+
     /**
      * SQL语句的ID
      */

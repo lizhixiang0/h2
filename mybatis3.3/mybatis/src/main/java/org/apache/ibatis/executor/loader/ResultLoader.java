@@ -35,7 +35,7 @@ import org.apache.ibatis.transaction.Transaction;
 import org.apache.ibatis.transaction.TransactionFactory;
 
 /**
- * 结果延迟加载器
+ * 延迟属性加载器
  * @author Clinton Begin
  */
 public class ResultLoader {
@@ -55,24 +55,37 @@ public class ResultLoader {
   protected Object resultObject;
 
   public ResultLoader(Configuration config, Executor executor, MappedStatement mappedStatement, Object parameterObject, Class<?> targetType, CacheKey cacheKey, BoundSql boundSql) {
+    // 全局配置类
     this.configuration = config;
+    // 执行器
     this.executor = executor;
+    // sql
     this.mappedStatement = mappedStatement;
+    // sql参数
     this.parameterObject = parameterObject;
+    // 目标类型
     this.targetType = targetType;
+    // 从全局配置类里拿对象构建工厂
     this.objectFactory = configuration.getObjectFactory();
+    // 缓存key
     this.cacheKey = cacheKey;
+    // ???
     this.boundSql = boundSql;
+    // 结果提取器
     this.resultExtractor = new ResultExtractor(configuration, objectFactory);
+    // 线程标记值
     this.creatorThreadId = Thread.currentThread().getId();
   }
 
-  //加载结果
+  /**
+   * 加载结果
+   */
   public Object loadResult() throws SQLException {
-	//1.selectList
+	// 1.执行selectList 得到list集合
     List<Object> list = selectList();
-    //2.ResultExtractor.extractObjectFromList
+    // 2.使用结果提取器.将list集合提取成目标类型
     resultObject = resultExtractor.extractObjectFromList(list, targetType);
+    // 3、返回目标结果
     return resultObject;
   }
 
