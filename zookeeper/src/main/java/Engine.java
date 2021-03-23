@@ -8,7 +8,7 @@ import java.io.IOException;
  **/
 public class Engine {
 
-    private final static String PARENT_NODE = "/servers";
+    private final static String PARENT_NODE = "/engines";
 
     private ZooKeeper zkClient = null;
 
@@ -16,7 +16,7 @@ public class Engine {
      * 创建到 zk 的客户端连接
      */
     public void getConnect() throws IOException {
-        String connectString = "localhost:2182,localhost:2183,localhost:2184";
+        String connectString = "localhost:2181";
         int sessionTimeout = 10000;
         zkClient = new ZooKeeper(connectString, sessionTimeout, event -> {});
     }

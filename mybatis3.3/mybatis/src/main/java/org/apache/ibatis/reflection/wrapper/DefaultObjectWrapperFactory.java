@@ -19,7 +19,7 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.ReflectionException;
 
 /**
- * 默认的对象包装器工厂啥都不做
+ * 默认的对象包装器工厂啥都不做,这玩意儿估计是给用户扩展的
  * @author Clinton Begin
  */
 public class DefaultObjectWrapperFactory implements ObjectWrapperFactory {

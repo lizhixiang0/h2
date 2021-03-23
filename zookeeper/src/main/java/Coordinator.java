@@ -8,7 +8,7 @@ import java.util.List;
  * @since 1.0.0
  **/
 public class Coordinator {
-    private final static String PARENT_NODE = "/servers";
+    private final static String PARENT_NODE = "/engines";
 
     private ArrayList<String> servers;
 
@@ -18,7 +18,7 @@ public class Coordinator {
      * 创建到 zkClient 的客户端连接
      */
     public void getConnect() throws IOException {
-        String connectString = "127.0.0.1:2182,127.0.0.1:2183,127.0.0.1:2184";
+        String connectString = "127.0.0.1:2181";
         int sessionTimeout = 2000;
         zkClient = new ZooKeeper(connectString, sessionTimeout, event -> {
             // 再次启动监听

@@ -18,7 +18,7 @@ package org.apache.ibatis.executor.result;
 import org.apache.ibatis.session.ResultContext;
 
 /**
- * 默认结果上下文
+ * 默认结果上下文(未处理前的扫描结果)
  * @author Clinton Begin
  */
 public class DefaultResultContext implements ResultContext {
@@ -27,10 +27,27 @@ public class DefaultResultContext implements ResultContext {
   private int resultCount;
   private boolean stopped;
 
+  /**
+   * 唯一构造方法
+   */
   public DefaultResultContext() {
     resultObject = null;
     resultCount = 0;
     stopped = false;
+  }
+
+  /**
+   * 每次调用nextResultObject这个方法，设置resultObject,并且内部count自增1
+   * @param resultObject 查询结果
+   */
+  public void nextResultObject(Object resultObject) {
+    resultCount++;
+    this.resultObject = resultObject;
+  }
+
+  @Override
+  public void stop() {
+    this.stopped = true;
   }
 
   @Override
@@ -46,17 +63,6 @@ public class DefaultResultContext implements ResultContext {
   @Override
   public boolean isStopped() {
     return stopped;
-  }
-
-  //应该是每次调用nextResultObject这个方法，这样内部count就加1
-  public void nextResultObject(Object resultObject) {
-    resultCount++;
-    this.resultObject = resultObject;
-  }
-
-  @Override
-  public void stop() {
-    this.stopped = true;
   }
 
 }

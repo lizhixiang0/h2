@@ -32,12 +32,9 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
+ * 默认参数处理器
  * @author Clinton Begin
  * @author Eduardo Macarron
- */
-/**
- * 默认参数处理器
- *
  */
 public class DefaultParameterHandler implements ParameterHandler {
 

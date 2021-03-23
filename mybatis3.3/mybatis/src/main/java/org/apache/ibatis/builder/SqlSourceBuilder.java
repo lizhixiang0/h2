@@ -29,11 +29,8 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
 
 /**
+ * SqlSource构建器,核心方法就是parse方法,构建StaticSqlSource对象
  * @author Clinton Begin
- */
-/**
- * SQL源码构建器
- *
  */
 public class SqlSourceBuilder extends BaseBuilder {
 
@@ -43,19 +40,29 @@ public class SqlSourceBuilder extends BaseBuilder {
     super(configuration);
   }
 
+  /**
+   * 核心方法: 构建SqlSource对象
+   * @param originalSql 原始sql
+   * @param parameterType 参数类型
+   * @param additionalParameters 额外的参数
+   * @return StaticSqlSource
+   */
   public SqlSource parse(String originalSql, Class<?> parameterType, Map<String, Object> additionalParameters) {
+    // 生成映射记号处理器对象,定义记号的处理逻辑
     ParameterMappingTokenHandler handler = new ParameterMappingTokenHandler(configuration, parameterType, additionalParameters);
-    //替换#{}中间的部分,如何替换，逻辑在ParameterMappingTokenHandler
+    // 替换#{}中间的部分
     GenericTokenParser parser = new GenericTokenParser("#{", "}", handler);
     String sql = parser.parse(originalSql);
     //返回静态SQL源码
     return new StaticSqlSource(configuration, sql, handler.getParameterMappings());
   }
 
-  //参数映射记号处理器，静态内部类
+  /**
+   * 静态内部类 ,参数映射记号处理器
+   */
   private static class ParameterMappingTokenHandler extends BaseBuilder implements TokenHandler {
 
-    private List<ParameterMapping> parameterMappings = new ArrayList<ParameterMapping>();
+    private List<ParameterMapping> parameterMappings = new ArrayList<>();
     private Class<?> parameterType;
     private MetaObject metaParameters;
 

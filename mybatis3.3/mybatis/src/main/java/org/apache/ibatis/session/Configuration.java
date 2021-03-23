@@ -442,12 +442,9 @@ public class Configuration {
   protected final Map<String, String> cacheRefMap = new HashMap<>();
   public void addCacheRef(String namespace, String referencedNamespace) {cacheRefMap.put(namespace, referencedNamespace); }
 
-
-  //类型处理器注册机
-  protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry();
-  //类型别名注册机
-  protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
-
+  /**
+   * 语言驱动,不同的数据库方言不一样
+   */
   protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
   public LanguageDriver getDefaultScriptingLanuageInstance() {return languageRegistry.getDefaultDriver();}
   public void setDefaultScriptingLanguage(Class<?> driver) {
@@ -457,8 +454,13 @@ public class Configuration {
     getLanguageRegistry().setDefaultDriverClass(driver);
   }
 
+  //类型别名注册机
+  protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
+  //类型处理器注册机
+  protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry();
+
   public Configuration() {
-    //注册更多的类型别名，至于为何不直接在TypeAliasRegistry里注册，还需进一步研究
+    //注册更多的类型别名,这一波注册的是Mybatis里需要的类型
     typeAliasRegistry.registerAlias("JDBC", JdbcTransactionFactory.class);
     typeAliasRegistry.registerAlias("MANAGED", ManagedTransactionFactory.class);
     typeAliasRegistry.registerAlias("JNDI", JndiDataSourceFactory.class);

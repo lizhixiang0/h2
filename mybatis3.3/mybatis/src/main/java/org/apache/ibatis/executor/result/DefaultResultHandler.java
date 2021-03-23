@@ -28,22 +28,33 @@ import org.apache.ibatis.session.ResultHandler;
  */
 public class DefaultResultHandler implements ResultHandler {
 
-  //内部实现是存了一个List
+  /**
+   * 内部维护了一个集合容器,实例化时初始化
+   */
   private final List<Object> list;
 
+  /**
+   * 构造方法 1
+   */
   public DefaultResultHandler() {
+    // 创建对象的时候初始化了个ArrayList集合容器
     list = new ArrayList<>();
   }
 
-  //但不一定是ArrayList,也可以通过ObjectFactory来产生特定的List
+  /**
+   * 构造方法 2
+   */
   @SuppressWarnings("unchecked")
   public DefaultResultHandler(ObjectFactory objectFactory) {
+    // 或者由对象工厂来创建集合容器,默认的对象工厂还是创建的ArrayList
     list = objectFactory.create(List.class);
   }
 
+  /**
+   * 核心方法  ，//啥都没干,就是把结果从ResultContext拿出来然后add进handler的容器里去
+   */
   @Override
   public void handleResult(ResultContext context) {
-    //处理很简单，就是把记录加入List
     list.add(context.getResultObject());
   }
 

@@ -21,7 +21,7 @@ import java.sql.Statement;
 import java.util.List;
 
 /**
- * 结果集处理器
+ * 结果集处理器  这个和结果处理器的区别是啥？？
  * @author Clinton Begin
  */
 public interface ResultSetHandler {

@@ -27,6 +27,7 @@ public interface ResultHandler {
 
   /**
    * 处理结果
+   * 为什么会传递一个ResultContext？
    */
   void handleResult(ResultContext context);
 

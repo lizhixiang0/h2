@@ -23,31 +23,34 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
 
 /**
- * An actual SQL String got form an {@link SqlSource} after having processed any dynamic content.
- * The SQL may have SQL placeholders "?" and an list (ordered) of an parameter mappings
- * with the additional information for each parameter (at least the property name of the input object to read
- * the value from).
- * </br>
- * Can also have additional parameters that are created by the dynamic language (for loops, bind...).
- */
-/**
- * @author Clinton Begin
- */
-/**
- * 绑定的SQL,是从SqlSource而来，将动态内容都处理完成得到的SQL语句字符串，其中包括?,还有绑定的参数
- *
+ * BoundSql像一个中转站,里面存储了mybatis在执行crud时的中间数据,没做什么处理
+ * 其中包含sql语句(该sql语句中可能包含 ? 这样的占位符), 以及一组parameter mapping(ParameterMapping类的实例)
+ * @author admin
  */
 public class BoundSql {
-
+  /**
+   * 进行 #{} 和 ${} 替换完毕之后的结果sql,每个 #{}替换完之后就是一个 "?"
+   */
   private String sql;
+  /**
+   * 这里的parameterMappings列表参数里的item个数, 以及每个item的属性名称等等, 都是和上面的sql中的 ? 完全一一对应的.
+   */
   private List<ParameterMapping> parameterMappings;
+  /**
+   * 用户传入的数据
+   */
   private Object parameterObject;
+  // ?
   private Map<String, Object> additionalParameters;
+  // ?
   private MetaObject metaParameters;
 
   public BoundSql(Configuration configuration, String sql, List<ParameterMapping> parameterMappings, Object parameterObject) {
+    // 1、到达这里的sql,是已经进行 #{} 和 ${} 替换之后的sql,(注意是替换成了？)
     this.sql = sql;
+    // 2、这里的parameterMappings列表参数里的item个数, 以及每个item的属性名称等等, 都是和上面的sql中的 ? 完全一一对应的.
     this.parameterMappings = parameterMappings;
+    // 3、用户传入的数据
     this.parameterObject = parameterObject;
     this.additionalParameters = new HashMap<>();
     this.metaParameters = configuration.newMetaObject(additionalParameters);

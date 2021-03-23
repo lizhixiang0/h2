@@ -32,6 +32,8 @@ public class TestFactory {
     /*mybatis事务认识"https://www.cnblogs.com/timfruit/p/11508873.html*/
     /*spring-mybatis : http://mybatis.org/spring/zh/getting-started.html*/
 
+
+    /*这个人博客写的不错！https://blog.csdn.net/lqzkcx3/article/details/78370497*/
     @Test
     public void test() throws IOException {
 

@@ -4,11 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mybatis.lizx.dao.PersonDao">
     <!--开启二级缓存第二步:配置二级缓存-->
-    <cache
-            eviction="FIFO"
-            flushInterval="6000"
-            size="512"
-            readOnly="false"/>
+    <cache eviction="FIFO" flushInterval="6000" size="512" readOnly="false"/>
 
     <insert id="insert" parameterType="person" keyProperty="id">
         INSERT INTO person (person_name, age, phone, email, address)
@@ -20,9 +16,11 @@
     </select>
 
     <select id="getPerson" resultType="java.util.HashMap">
-        select p.person_name as name,p.age,p.phone,p.email,p.address from person p where p.id = #{id}
+        select
+            p.person_name as name,p.age,p.phone,p.email,p.address
+        from person p
+        where p.id = #{id}
     </select>
-
 
 </mapper>
 

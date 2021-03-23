@@ -70,7 +70,7 @@ public class SimpleExecutor extends BaseExecutor {
       //准备语句
       stmt = prepareStatement(handler, ms.getStatementLog());
       //StatementHandler.query
-      return handler.<E>query(stmt, resultHandler);
+      return handler.query(stmt, resultHandler);
     } finally {
       closeStatement(stmt);
     }
