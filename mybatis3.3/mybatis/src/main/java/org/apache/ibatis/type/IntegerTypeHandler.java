@@ -21,36 +21,28 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
+ * Integer类型处理器，比较简单，主要就是调用的 ps.setInt、rs.getInt
  * @author Clinton Begin
- */
-/**
- * Integer类型处理器
- * 调用PreparedStatement.setInt, ResultSet.getInt, CallableStatement.getInt
- *
  */
 public class IntegerTypeHandler extends BaseTypeHandler<Integer> {
 
   @Override
-  public void setNonNullParameter(PreparedStatement ps, int i, Integer parameter, JdbcType jdbcType)
-      throws SQLException {
+  public void setNonNullParameter(PreparedStatement ps, int i, Integer parameter, JdbcType jdbcType)throws SQLException {
     ps.setInt(i, parameter);
   }
 
   @Override
-  public Integer getNullableResult(ResultSet rs, String columnName)
-      throws SQLException {
+  public Integer getNullableResult(ResultSet rs, String columnName)throws SQLException {
     return rs.getInt(columnName);
   }
 
   @Override
-  public Integer getNullableResult(ResultSet rs, int columnIndex)
-      throws SQLException {
+  public Integer getNullableResult(ResultSet rs, int columnIndex)throws SQLException {
     return rs.getInt(columnIndex);
   }
 
   @Override
-  public Integer getNullableResult(CallableStatement cs, int columnIndex)
-      throws SQLException {
+  public Integer getNullableResult(CallableStatement cs, int columnIndex)throws SQLException {
     return cs.getInt(columnIndex);
   }
 }

@@ -21,19 +21,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * 给类取别名
+ *  2种方式：
+ *       (1)xml方式
+ *            <typeAlias alias="Author" type="domain.blog.Author"/>
+ *       (2)annotation方式
+ *            "@Alias("author")
+ *            public class Author {
+ *               ...
+ *            }
  * @author Clinton Begin
- */
-/**
- * 别名
- * 2种方式可以注册别名
- *     1)xml方式
- * <typeAlias alias="Author" type="domain.blog.Author"/>
- *     2)annotation方式
- * @Alias("author")
- * public class Author {
- *   ...
- * }
- *
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

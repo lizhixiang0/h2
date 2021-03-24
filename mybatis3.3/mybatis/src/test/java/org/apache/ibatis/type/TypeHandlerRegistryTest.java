@@ -52,24 +52,28 @@ public class TypeHandlerRegistryTest {
   public void shouldRegisterAndRetrieveComplexTypeHandler() {
     TypeHandler<List<URI>> fakeHandler = new TypeHandler<List<URI>>() {
 
-    public void setParameter( PreparedStatement ps, int i, List<URI> parameter, JdbcType jdbcType )
+    @Override
+    public void setParameter(PreparedStatement ps, int i, List<URI> parameter, JdbcType jdbcType )
       throws SQLException {
       // do nothing, fake method
     }
 
-    public List<URI> getResult( CallableStatement cs, int columnIndex )
-      throws SQLException {
-      // do nothing, fake method
-      return null;
-    }
-
-    public List<URI> getResult( ResultSet rs, int columnIndex )
+    @Override
+    public List<URI> getResult(CallableStatement cs, int columnIndex )
       throws SQLException {
       // do nothing, fake method
       return null;
     }
 
-    public List<URI> getResult( ResultSet rs, String columnName )
+    @Override
+    public List<URI> getResult(ResultSet rs, int columnIndex )
+      throws SQLException {
+      // do nothing, fake method
+      return null;
+    }
+
+    @Override
+    public List<URI> getResult(ResultSet rs, String columnName )
       throws SQLException {
       // do nothing, fake method
       return null;

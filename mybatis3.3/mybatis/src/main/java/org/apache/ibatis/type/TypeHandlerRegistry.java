@@ -31,20 +31,33 @@ import java.util.Set;
 import org.apache.ibatis.io.ResolverUtil;
 
 /**
- * 类型处理器注册机
+ * 类型处理器注册表,注册了类型转换时需要用到的各种处理器以及与Java类型和Jdbc类型的映射关系。
  * @author Clinton Begin
  */
 public final class TypeHandlerRegistry {
 
-  //枚举型map
+  /**
+   * 记录JdbcType和TypeHandler之间的对应关系，其中JdbcType是一个枚举类型，它定义对应的JDBC类型
+   * 该集合主要用于从结果集读取数据时，将数据从Jdbc类型转换成Java类型
+   */
   private final Map<JdbcType, TypeHandler<?>> JDBC_TYPE_HANDLER_MAP = new EnumMap<>(JdbcType.class);
+
+  /**
+   * 记录了Java类型向指定的JdbcType转换时，需要使用的TypeHandler对象。例如：Java类型中的String可能
+   * 转换成数据库的char、varchar等多种类型，所以存在一对多的关系，所以值要用Map来存储
+   */
   private final Map<Type, Map<JdbcType, TypeHandler<?>>> TYPE_HANDLER_MAP = new HashMap<>();
+  /**
+   * 未知类型对象的TypeHandler
+   */
   private final TypeHandler<Object> UNKNOWN_TYPE_HANDLER = new UnknownTypeHandler(this);
+  /**
+   * 记录了全部TypeHandler的类型以及该类型相应的TypeHandler对象
+   */
   private final Map<Class<?>, TypeHandler<?>> ALL_TYPE_HANDLERS_MAP = new HashMap<>();
 
   public TypeHandlerRegistry() {
     //构造函数里注册系统内置的类型处理器
-	  //以下是为多个类型注册到同一个handler
     register(Boolean.class, new BooleanTypeHandler());
     register(boolean.class, new BooleanTypeHandler());
     register(JdbcType.BOOLEAN, new BooleanTypeHandler());
@@ -260,25 +273,22 @@ public final class TypeHandlerRegistry {
   }
 
   private void register(Type javaType, JdbcType jdbcType, TypeHandler<?> handler) {
+    //1、若传入的 Java 类型非空，需要考虑到该Java类型已经注册了跟某个 JdbcType 映射处理时用到的处理器，
+    //所以先尝试从 TYPE_HANDLER_MAP 集合中找到对应的映射map，若为空表示是第一次注册与该 Java 类型处理相关的处理器，则先创建map，再添加到 TYPE_HANDLER_MAP` 集合中。
     if (javaType != null) {
-      Map<JdbcType, TypeHandler<?>> map = TYPE_HANDLER_MAP.get(javaType);
-      if (map == null) {
-        map = new HashMap<JdbcType, TypeHandler<?>>();
-        TYPE_HANDLER_MAP.put(javaType, map);
-      }
+      Map<JdbcType, TypeHandler<?>> map = TYPE_HANDLER_MAP.computeIfAbsent(javaType, k -> new HashMap<>());
       map.put(jdbcType, handler);
     }
+    // 2、若传入的 Java 类型为空，则只注册 handler 到 ALL_TYPE_HANDLERS_MAP 集合中。
     ALL_TYPE_HANDLERS_MAP.put(handler.getClass(), handler);
   }
 
-  //
-  // REGISTER CLASS
-  //
-
-  // Only handler type
-
+  /**
+   * 注册类
+   */
   public void register(Class<?> typeHandlerClass) {
     boolean mappedTypeFound = false;
+    // 1、获得 @MappedTypes 注解
     MappedTypes mappedTypes = typeHandlerClass.getAnnotation(MappedTypes.class);
     if (mappedTypes != null) {
       for (Class<?> javaTypeClass : mappedTypes.value()) {
@@ -286,6 +296,7 @@ public final class TypeHandlerRegistry {
         mappedTypeFound = true;
       }
     }
+    // 2、未使用 @MappedTypes 注解，直接使用
     if (!mappedTypeFound) {
       register(getInstance(null, typeHandlerClass));
     }
@@ -303,21 +314,27 @@ public final class TypeHandlerRegistry {
     register(javaTypeClass, jdbcType, getInstance(javaTypeClass, typeHandlerClass));
   }
 
-  // Construct a handler (used also from Builders)
 
+  /**
+   * 根据传入的类型处理器类型和待处理的Java类型，创建类型处理器实例对象
+   * @param javaTypeClass 待处理的Java类型
+   * @param typeHandlerClass 类型处理器类型
+   * @return 类型处理器实例对象
+   */
   @SuppressWarnings("unchecked")
   public <T> TypeHandler<T> getInstance(Class<?> javaTypeClass, Class<?> typeHandlerClass) {
+    // 1、如果传入的Java类型非空，则使用处理器类型的含参构造器创建处理器
     if (javaTypeClass != null) {
       try {
         Constructor<?> c = typeHandlerClass.getConstructor(Class.class);
         return (TypeHandler<T>) c.newInstance(javaTypeClass);
       } catch (NoSuchMethodException ignored) {
-        // ignored
       } catch (Exception e) {
         throw new TypeException("Failed invoking constructor for handler " + typeHandlerClass, e);
       }
     }
     try {
+      // 2、如果传入的Java类型为空，则使用处理器类型的默认构造器创建处理器
       Constructor<?> c = typeHandlerClass.getConstructor();
       return (TypeHandler<T>) c.newInstance();
     } catch (Exception e) {
@@ -325,21 +342,22 @@ public final class TypeHandlerRegistry {
     }
   }
 
-  // scan
-
+  /**
+   * 通过包名，批量注册类型处理器，当在 mybatis-config.xml 通过包扫描的方式注册处理器时就会调用本方法处理
+   * @param packageName 包名
+   */
   public void register(String packageName) {
-    ResolverUtil<Class<?>> resolverUtil = new ResolverUtil<Class<?>>();
+    ResolverUtil<Class<?>> resolverUtil = new ResolverUtil<>();
     resolverUtil.find(new ResolverUtil.IsA(TypeHandler.class), packageName);
     Set<Class<? extends Class<?>>> handlerSet = resolverUtil.getClasses();
     for (Class<?> type : handlerSet) {
-      //Ignore inner classes and interfaces (including package-info.java) and abstract classes
+      // 过滤掉内部类、接口以及抽象类，调用 #register(Class<?> typeHandlerClass) 注册
       if (!type.isAnonymousClass() && !type.isInterface() && !Modifier.isAbstract(type.getModifiers())) {
         register(type);
       }
     }
   }
 
-  // get information
 
   /**
    * @since 3.2.2

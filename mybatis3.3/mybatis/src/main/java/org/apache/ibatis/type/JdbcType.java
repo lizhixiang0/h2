@@ -21,14 +21,11 @@ import java.util.Map;
 
 /**
  * JDBC类型枚举,包装一下java.sql.Types
- * 具体用法以后补充
  * @author Clinton Begin
  */
 
 public enum JdbcType {
-  /*
-   * This is added to enable basic support for the ARRAY data type - but a custom type handler is still required
-   */
+
   ARRAY(Types.ARRAY),
   BIT(Types.BIT),
   TINYINT(Types.TINYINT),
