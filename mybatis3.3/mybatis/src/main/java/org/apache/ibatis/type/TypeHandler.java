@@ -24,6 +24,7 @@ import java.sql.SQLException;
  * 类型处理器
  * @author Clinton Begin
  * @note "https://zhuanlan.zhihu.com/p/245448322
+ * @note "https://www.jianshu.com/p/6172c7f6e27e
  */
 public interface TypeHandler<T> {
 
