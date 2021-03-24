@@ -25,7 +25,7 @@ import org.apache.ibatis.transaction.Transaction;
 import org.apache.ibatis.transaction.TransactionFactory;
 
 /**
- * Jdbc事务工厂
+ * Jdbc事务工厂 创建事务管理器
  * @author Clinton Begin
  */
 public class JdbcTransactionFactory implements TransactionFactory {
