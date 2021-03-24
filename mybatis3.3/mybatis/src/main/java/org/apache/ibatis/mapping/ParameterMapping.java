@@ -23,11 +23,8 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
- * @author Clinton Begin
- */
-/**
  * 参数映射
- *
+ * @author Clinton Begin
  */
 public class ParameterMapping {
 

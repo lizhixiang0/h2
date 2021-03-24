@@ -20,8 +20,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.apache.ibatis.mapping.ParameterMode;
 import org.apache.ibatis.mapping.ResultSetType;
 import org.apache.ibatis.session.Configuration;
@@ -35,6 +33,7 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
  * @author Clinton Begin
  */
 public abstract class BaseBuilder {
+
   // 核心配置类
   protected final Configuration configuration;
   // 类型别名注册器
@@ -44,7 +43,7 @@ public abstract class BaseBuilder {
 
   /**
    * 构造方法
-   * @param configuration
+   * @param configuration configuration
    */
   public BaseBuilder(Configuration configuration) {
     this.configuration = configuration;
@@ -52,6 +51,11 @@ public abstract class BaseBuilder {
     this.typeHandlerRegistry = this.configuration.getTypeHandlerRegistry();
   }
 
+  /**
+   * 将给定的正则表达式编译成Pattern模式
+   * @param regex 正则
+   * @param defaultValue 默认正则
+   */
   protected Pattern parseExpression(String regex, String defaultValue) {
     return Pattern.compile(regex == null ? defaultValue : regex);
   }

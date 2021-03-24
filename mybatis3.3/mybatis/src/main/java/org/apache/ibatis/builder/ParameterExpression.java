@@ -30,11 +30,8 @@ import java.util.HashMap;
  * </pre>
  */
 /**
- * @author Frank D. Martinez [mnesarco]
- */
-/**
  * 参数表达式,继承自HashMap，可以参考ParameterExpressionTest
- *
+ * @author Frank D. Martinez [mnesarco]
  */
 public class ParameterExpression extends HashMap<String, String> {
 
