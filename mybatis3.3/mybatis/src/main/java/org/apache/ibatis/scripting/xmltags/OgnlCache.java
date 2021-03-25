@@ -16,24 +16,27 @@
 
 package org.apache.ibatis.scripting.xmltags;
 
+
+import ognl.ClassResolver;
+import ognl.Ognl;
+import ognl.OgnlException;
+import org.apache.ibatis.builder.BuilderException;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import ognl.Ognl;
-import ognl.OgnlException;
-
-import org.apache.ibatis.builder.BuilderException;
-
 /**
- * Ognl缓存器
- *
- * @link "http://code.google.com/p/mybatis/issues/detail?id=342
+ * Ognl解析器
  * @author Eduardo Macarron
  */
 public final class OgnlCache {
+  /**
+   * 自定义ognl类解析器,不写成多态形式居然找不到,靠...
+   */
+  private static final ClassResolver CLASS_RESOLVER = new OgnlClassResolver();
 
   /**
-   * 因为ognl性能不好，所以加了一个缓存,同样的东西解析过一次就缓存到ConcurrentHashMap<>里
+   * 缓存器、因为ognl性能不好，所以加了一个缓存,同样的东西解析过一次就缓存到ConcurrentHashMap<>里
    */
   private static final Map<String, Object> expressionCache = new ConcurrentHashMap<>();
 
@@ -48,11 +51,10 @@ public final class OgnlCache {
    * @param root 被解析的对象
    * @return 解析结果
    */
-  @SuppressWarnings("")
   public static Object getValue(String expression, Object root) {
     try {
       // 1、创建并返回一个新的标准命名上下文，用于计算OGNL表达式。
-      Map<Object, OgnlClassResolver> context = Ognl.createDefaultContext(root, new OgnlClassResolver());
+      Map context = Ognl.createDefaultContext(root, CLASS_RESOLVER);
       // 2、解析给定的OGNL表达式并返回表达式的树形表示形式
       Object tree = parseExpression(expression);
       // 3、计算给定的OGNL表达式树，从给定的根对象中提取一个值
@@ -74,7 +76,7 @@ public final class OgnlCache {
       // 3、放到缓存里去
       expressionCache.put(expression, node);
     }
-    // 4、返回解析出的结果
+    // 4、返回
     return node;
   }
 

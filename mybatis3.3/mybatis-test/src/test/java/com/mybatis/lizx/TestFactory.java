@@ -110,4 +110,20 @@ public class TestFactory {
 
 
     }
+
+    static {
+        System.out.println("sss");
+    }
+
+}
+
+class te{
+    public static void main(String[] args) throws ClassNotFoundException {
+        Resources.classForName("com.mybatis.lizx.TestFactory");
+        // new TestFactory();
+        System.gc();
+        ClassLoader.getSystemClassLoader().loadClass("com.mybatis.lizx.TestFactory");
+        Class<?> aClass = Class.forName("com.mybatis.lizx.TestFactory");
+        //System.out.println(aClass);
+    }
 }

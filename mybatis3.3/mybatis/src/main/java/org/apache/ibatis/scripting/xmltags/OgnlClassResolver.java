@@ -24,34 +24,36 @@ import ognl.ClassResolver;
 import org.apache.ibatis.io.Resources;
 
 /**
- * Custom ognl {@code ClassResolver} which behaves same like ognl's
- * {@code DefaultClassResolver}. But uses the {@code Resources}
- * utility class to find the target class instead of {@code Class#forName(String)}.
- *
- * @see https://github.com/mybatis/mybatis-3/issues/161
- *
+ * 自定义ognl类解析器，其行为与ognl的DefaultClassResolver相同。但是使用Resources实用程序类来查找目标类，而不是Class.forName(String)
+ * 这里使用Resources.classForName去加载类不是为了不执行类中的static,而是为了保证一定能把类加载进虚拟机
  * @author Daniel Guggi
- *
+ * @link "https://blog.csdn.net/Nineteenyy/article/details/88671289
  */
 public class OgnlClassResolver implements ClassResolver {
-
-  private Map<String, Class<?>> classes = new HashMap<String, Class<?>>(101);
+  /**
+   * 创建一个容器,不知初始化为啥是101
+   */
+  private Map<String, Class<?>> classes = new HashMap<>(101);
 
   @Override
   public Class classForName(String className, Map context) throws ClassNotFoundException {
-    Class<?> result = null;
+    Class<?> result;
+    // 1、先从容器中找
     if ((result = classes.get(className)) == null) {
       try {
+        // 2、找不到使用资源加载器，加载类
         result = Resources.classForName(className);
       } catch (ClassNotFoundException e1) {
+        // 2.1、抛异常了,假如类名没有'.',那就拼接成java.lang.className继续找
         if (className.indexOf('.') == -1) {
           result = Resources.classForName("java.lang." + className);
           classes.put("java.lang." + className, result);
         }
       }
+      // 3、塞入容器
       classes.put(className, result);
     }
+    // 4、返回clazz
     return result;
   }
-
 }
