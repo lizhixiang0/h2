@@ -25,37 +25,56 @@ import ognl.OgnlException;
 import org.apache.ibatis.builder.BuilderException;
 
 /**
- * Caches OGNL parsed expressions.
+ * Ognl缓存器
  *
- * @see http://code.google.com/p/mybatis/issues/detail?id=342
- * OGNL缓存,根据以上链接，大致是说ognl有性能问题，所以加了一个缓存
- *
+ * @link "http://code.google.com/p/mybatis/issues/detail?id=342
  * @author Eduardo Macarron
  */
 public final class OgnlCache {
 
-  private static final Map<String, Object> expressionCache = new ConcurrentHashMap<String, Object>();
+  /**
+   * 因为ognl性能不好，所以加了一个缓存,同样的东西解析过一次就缓存到ConcurrentHashMap<>里
+   */
+  private static final Map<String, Object> expressionCache = new ConcurrentHashMap<>();
 
-  private OgnlCache() {
-    // Prevent Instantiation of Static Class
-  }
+  /**
+   * Prevent Instantiation of Static Class
+   */
+  private OgnlCache() {}
 
+  /**
+   * 这个方法供外部调用
+   * @param expression 表达式
+   * @param root 被解析的对象
+   * @return 解析结果
+   */
+  @SuppressWarnings("")
   public static Object getValue(String expression, Object root) {
     try {
+      // 1、创建并返回一个新的标准命名上下文，用于计算OGNL表达式。
       Map<Object, OgnlClassResolver> context = Ognl.createDefaultContext(root, new OgnlClassResolver());
-      return Ognl.getValue(parseExpression(expression), context, root);
+      // 2、解析给定的OGNL表达式并返回表达式的树形表示形式
+      Object tree = parseExpression(expression);
+      // 3、计算给定的OGNL表达式树，从给定的根对象中提取一个值
+      return Ognl.getValue(tree, context, root);
     } catch (OgnlException e) {
       throw new BuilderException("Error evaluating expression '" + expression + "'. Cause: " + e, e);
     }
   }
 
+  /**
+   *  解析给定的OGNL表达式
+   */
   private static Object parseExpression(String expression) throws OgnlException {
+    // 1、先从缓存中拿
     Object node = expressionCache.get(expression);
     if (node == null) {
-      //大致意思就是OgnlParser.topLevelExpression很慢，所以加个缓存，放到ConcurrentHashMap里面
+      // 2、拿不到,利用Ognl解析给定的OGNL表达式并返回表达式的树形表示形式
       node = Ognl.parseExpression(expression);
+      // 3、放到缓存里去
       expressionCache.put(expression, node);
     }
+    // 4、返回解析出的结果
     return node;
   }
 

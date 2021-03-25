@@ -22,11 +22,9 @@ import org.apache.ibatis.parsing.TokenHandler;
 import org.apache.ibatis.session.Configuration;
 
 /**
- * @author Clinton Begin
- */
-/**
  * foreach SQL节点
- *TODO
+ * @author Clinton Begin
+ * @note "https://blog.csdn.net/hjh908778/article/details/79034395/
  */
 public class ForEachSqlNode implements SqlNode {
   public static final String ITEM_PREFIX = "__frch_";

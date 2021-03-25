@@ -27,11 +27,8 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
 
 /**
- * @author Clinton Begin
- */
-/**
  * 动态上下文
- *
+ * @author Clinton Begin
  */
 public class DynamicContext {
 

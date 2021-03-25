@@ -16,12 +16,14 @@
 package org.apache.ibatis.scripting.xmltags;
 
 /**
+ * SqlNode接口是动态SQL功能的底层支撑
  * @author Clinton Begin
  */
-/**
- * SQL节点（choose|foreach|if|）
- *
- */
 public interface SqlNode {
+  /**
+   * 定义不同节点的底层逻辑   "choose、forEach、if、set、where"
+   * @param context DynamicContext
+   * @return true || false
+   */
   boolean apply(DynamicContext context);
 }

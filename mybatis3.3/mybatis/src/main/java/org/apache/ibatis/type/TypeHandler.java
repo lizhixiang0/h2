@@ -25,6 +25,7 @@ import java.sql.SQLException;
  * @author Clinton Begin
  * @note "https://zhuanlan.zhihu.com/p/245448322
  * @note "https://www.jianshu.com/p/6172c7f6e27e
+ * @note "https://blog.csdn.net/u012702547/article/details/54572679
  */
 public interface TypeHandler<T> {
 

@@ -18,15 +18,26 @@ package org.apache.ibatis.mapping;
 import java.sql.ResultSet;
 
 /**
+ * 结果集类型,
+ * ResultSet,表示数据库结果集的数据表 通常是通过执行查询数据库的语句生成的。
+ *
  * @author Clinton Begin
  */
-/**
- *
- * 结果集类型
- */
 public enum ResultSetType {
+  /**
+   * The constant indicating the type for a ResultSet object whose cursor may move only forward.
+   * 结果集的游标只能向下滚动。
+   */
   FORWARD_ONLY(ResultSet.TYPE_FORWARD_ONLY),
+  /**
+   * The constant indicating the type for a ResultSet object  that is scrollable but generally not sensitive to changes to the data that underlies the ResultSet.
+   * 结果集的游标可以上下移动，当数据库变化时，当前结果集不变。
+   */
   SCROLL_INSENSITIVE(ResultSet.TYPE_SCROLL_INSENSITIVE),
+  /**
+   * The constant indicating the type for a ResultSet object that is scrollable and generally sensitive to changes to the data that underlies the ResultSet.
+   * 返回可滚动的结果集，当数据库变化时，当前结果集同步改变。
+   */
   SCROLL_SENSITIVE(ResultSet.TYPE_SCROLL_SENSITIVE);
 
   private int value;

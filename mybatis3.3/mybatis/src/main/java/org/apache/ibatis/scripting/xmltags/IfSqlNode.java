@@ -16,11 +16,8 @@
 package org.apache.ibatis.scripting.xmltags;
 
 /**
- * @author Clinton Begin
- */
-/**
  * if SQL节点
- *
+ * @author Clinton Begin
  */
 public class IfSqlNode implements SqlNode {
   private ExpressionEvaluator evaluator;
@@ -30,6 +27,7 @@ public class IfSqlNode implements SqlNode {
   public IfSqlNode(SqlNode contents, String test) {
     this.test = test;
     this.contents = contents;
+    // 为什么这个ExpressionEvaluator不写成工具类？
     this.evaluator = new ExpressionEvaluator();
   }
 

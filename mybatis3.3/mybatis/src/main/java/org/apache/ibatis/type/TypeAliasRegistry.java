@@ -111,7 +111,7 @@ public class TypeAliasRegistry {
 
   /**
    * 解析别名返回具体类型 ，比如传递 int ,会返回 Integer.class
-   * @param string 可以传递别名,也可以传递全限定名
+   * @param string 可以传递别名 (int ),也可以传递全限定名(java.lang.int)
    * @return clazz
    */
   @SuppressWarnings("unchecked")
@@ -164,11 +164,11 @@ public class TypeAliasRegistry {
   }
 
   /**
-   * 注册类型
+   * 注册类型 这个不提供别名，方法内部使用getSimpleName()获得类名作为别名
    * @param type 某类
    */
   public void registerAlias(Class<?> type) {
-    // 1、获得类名 TypeAliasRegistry.class.getSimpleName() ---> TypeAliasRegistry
+    // 1、获得类名作为别名 TypeAliasRegistry.class.getSimpleName() ---> TypeAliasRegistry
     String alias = type.getSimpleName();
 	// 2、获得Alias注解 ,没有返回null
     Alias aliasAnnotation = type.getAnnotation(Alias.class);
@@ -202,7 +202,7 @@ public class TypeAliasRegistry {
   }
 
   /**
-   * 注册类型 , 这个更牛逼一点,自己提供别名和全限定名
+   * 注册类型 , 这个更牛逼一点,直接提供全限定名
    * @param alias 别名
    * @param value 某类的全限定名
    */

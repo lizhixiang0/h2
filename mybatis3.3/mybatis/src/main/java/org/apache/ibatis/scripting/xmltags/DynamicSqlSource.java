@@ -23,7 +23,7 @@ import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.session.Configuration;
 
 /**
- * 动态SQL源码
+ * 动态SQL源
  * @author Clinton Begin
  */
 public class DynamicSqlSource implements SqlSource {
@@ -36,7 +36,11 @@ public class DynamicSqlSource implements SqlSource {
     this.rootSqlNode = rootSqlNode;
   }
 
-  //得到绑定的SQL
+  /**
+   * 得到绑定的SQL
+   * @param parameterObject 参数对象
+   * @return BoundSql
+   */
   @Override
   public BoundSql getBoundSql(Object parameterObject) {
     //生成一个动态上下文

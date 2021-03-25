@@ -33,7 +33,7 @@ public class BoundSql {
    */
   private String sql;
   /**
-   * 这里的parameterMappings列表参数里的item个数, 以及每个item的属性名称等等, 都是和上面的sql中的 ? 完全一一对应的.
+   * 参数映射
    */
   private List<ParameterMapping> parameterMappings;
   /**
@@ -48,7 +48,7 @@ public class BoundSql {
   public BoundSql(Configuration configuration, String sql, List<ParameterMapping> parameterMappings, Object parameterObject) {
     // 1、到达这里的sql,是已经进行 #{} 和 ${} 替换之后的sql,(注意是替换成了？)
     this.sql = sql;
-    // 2、这里的parameterMappings列表参数里的item个数, 以及每个item的属性名称等等, 都是和上面的sql中的 ? 完全一一对应的.
+    // 2、参数映射的个数, 位置都是和上面的sql中的 ? 一一对应的.
     this.parameterMappings = parameterMappings;
     // 3、用户传入的数据
     this.parameterObject = parameterObject;

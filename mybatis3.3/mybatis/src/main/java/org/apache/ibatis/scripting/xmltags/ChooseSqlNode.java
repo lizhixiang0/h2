@@ -18,11 +18,25 @@ package org.apache.ibatis.scripting.xmltags;
 import java.util.List;
 
 /**
- * @author Clinton Begin
- */
-/**
- * choose SQL节点
+ * choose SQL节点,choose (when,otherwise) ,
+ *         相当于java 语言中的 switch,
+ *         当 when 中有条件满足的时候，就会跳出 choose，即所有的 when 和 otherwise 条件中，只有一个会输出，
+ *         当所有的我很条件都不满足的时候就输出 otherwise 中的内容
+ * 例子：
+ *         select * from t_blog where 1 = 1
+ *         <choose>
+ *             <when test="title != null">
+ *                 and title = #{title}
+ *             </when>
+ *             <when test="content != null">
+ *                 and content = #{content}
+ *             </when>
+ *             <otherwise>
+ *                 and owner = "owner1"
+ *             </otherwise>
+ *         </choose>
  *
+ * @author Clinton Begin
  */
 public class ChooseSqlNode implements SqlNode {
   private SqlNode defaultSqlNode;
@@ -32,6 +46,7 @@ public class ChooseSqlNode implements SqlNode {
     this.ifSqlNodes = ifSqlNodes;
     this.defaultSqlNode = defaultSqlNode;
   }
+
 
   @Override
   public boolean apply(DynamicContext context) {

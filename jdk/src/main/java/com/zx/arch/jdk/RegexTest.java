@@ -1,6 +1,8 @@
 package com.zx.arch.jdk;
 
 import java.util.EmptyStackException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author lizx
@@ -9,6 +11,10 @@ import java.util.EmptyStackException;
  * @blog "https://blog.csdn.net/hui820258300/article/details/103778885
  **/
 public class RegexTest {
+
+    // 正则应该这么用，预先编译好
+    private static final Pattern PATTERN= Pattern.compile("[\u4E00-\u9FA5|\\！|\\，|\\。|\\（|\\）|\\《|\\》|\\“|\\”|\\？|\\：|\\；|\\【|\\】]");
+
 
     /**
      * 下面这个去检查就很慢
@@ -31,7 +37,17 @@ public class RegexTest {
         System.out.println(a.matches(email));
     }
 
+    /**
+     * 使用Pattern.compile预编译
+     */
+    public static void c(){
+        Matcher m  = PATTERN.matcher("我是中文");
+        System.out.println(m.find());
+    }
+
+
+
     public static void main(String[] args) {
-        a();
+       c();
     }
 }

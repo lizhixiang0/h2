@@ -17,44 +17,91 @@ package org.apache.ibatis.mapping;
 
 import java.sql.ResultSet;
 
+import lombok.Getter;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
- * 参数映射
+ * 参数映射,这个"参数"是指传入SQL语句的参数
+ * 1、对于大多数简单的使用场景，你都不需要使用复杂的参数，比如：
+ *    <select id="selectUsers" resultType="User">
+ *      select id, username, password
+ *      from users
+ *      where id = #{id}
+ *    </select>
+ *
+ * 2、但是,参数也可以指定一个特殊的数据类型,例如：
+ *    #{age,javaType=int,jdbcType=NUMERIC,typeHandler=MyTypeHandler}
+ * 3、对于数值类型，还可以设置 numericScale 指定小数点后保留的位数。例如：
+ *    #{height,javaType=double,jdbcType=NUMERIC,numericScale=2}
+ *
+ * 4、还有mode 属性允许指定 IN，OUT 或 INOUT 参数。如果参数的 mode 为 OUT 或 INOUT，将会修改参数对象的属性值，以便作为输出参数返回。
+ *    如果 mode 为 OUT（或 INOUT），而且 jdbcType 为 CURSOR（也就是 Oracle 的 REFCURSOR），
+ *    必须指定一个 resultMap 引用来将结果集 ResultMap 映射到参数的类型上
+ *    #{department, mode=OUT, jdbcType=CURSOR, javaType=ResultSet, resultMap=departmentResultMap}
+ *
  * @author Clinton Begin
+ * @note "http://www.mybatis.cn/archives/890.html
  */
+@Getter
 public class ParameterMapping {
 
   private Configuration configuration;
 
-  //例子：#{property,javaType=int,jdbcType=NUMERIC}
-
-  //property
+  /**
+   * 属性
+   */
   private String property;
-  //mode
+  /**
+   * 参数模式
+   */
   private ParameterMode mode;
-  //javaType=int
+  /**
+   * 参数的java类型
+   */
   private Class<?> javaType = Object.class;
-  //jdbcType=NUMERIC
+  /**
+   * 参数的jdbc类型
+   */
   private JdbcType jdbcType;
-  //numericScale
-  private Integer numericScale;
-  private TypeHandler<?> typeHandler;
-  private String resultMapId;
-  //jdbcType=NUMERIC
+  /**
+   * 参数的jdbc类型名
+   */
   private String jdbcTypeName;
+  /**
+   * 参数的小数点后几位
+   */
+  private Integer numericScale;
+  /**
+   * 参数类型处理器
+   */
+  private TypeHandler<?> typeHandler;
+  /**
+   * 指定的resultMap引用
+   */
+  private String resultMapId;
+  /**
+   * 表达式？？
+   */
   private String expression;
 
   private ParameterMapping() {
   }
 
-  //静态内部类，建造者模式
+  /**
+   * 静态内部类，建造者模式
+   */
   public static class Builder {
     private ParameterMapping parameterMapping = new ParameterMapping();
 
+    /**
+     * 第一个构造器
+     * @param configuration 核心配置类
+     * @param property  属性
+     * @param typeHandler  类型处理器
+     */
     public Builder(Configuration configuration, String property, TypeHandler<?> typeHandler) {
       parameterMapping.configuration = configuration;
       parameterMapping.property = property;
@@ -62,6 +109,12 @@ public class ParameterMapping {
       parameterMapping.mode = ParameterMode.IN;
     }
 
+    /**
+     * 第二个构造器
+     * @param configuration 核心配置类
+     * @param property 属性
+     * @param javaType java类型
+     */
     public Builder(Configuration configuration, String property, Class<?> javaType) {
       parameterMapping.configuration = configuration;
       parameterMapping.property = property;
@@ -109,30 +162,18 @@ public class ParameterMapping {
       return this;
     }
 
+    /**
+     * 返回ParameterMapping前进行一波处理
+     * @return parameterMapping
+     */
     public ParameterMapping build() {
       resolveTypeHandler();
       validate();
       return parameterMapping;
     }
 
-    private void validate() {
-      if (ResultSet.class.equals(parameterMapping.javaType)) {
-        if (parameterMapping.resultMapId == null) {
-          throw new IllegalStateException("Missing resultmap in property '"
-              + parameterMapping.property + "'.  "
-              + "Parameters of type java.sql.ResultSet require a resultmap.");
-        }
-      } else {
-        if (parameterMapping.typeHandler == null) {
-          throw new IllegalStateException("Type handler was null on parameter mapping for property '"
-              + parameterMapping.property + "'.  "
-              + "It was either not specified and/or could not be found for the javaType / jdbcType combination specified.");
-        }
-      }
-    }
-
     private void resolveTypeHandler() {
-        //如果没有指定特殊的typeHandler，则根据javaType，jdbcType来查表确定一个默认的typeHandler
+      //如果没有指定特殊的typeHandler,则根据javaType、jdbcType 来查注册表确定一个默认的typeHandler
       if (parameterMapping.typeHandler == null && parameterMapping.javaType != null) {
         Configuration configuration = parameterMapping.configuration;
         TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
@@ -140,74 +181,18 @@ public class ParameterMapping {
       }
     }
 
+    private void validate() {
+      // 1、如果javaType是ResultSet,那必须配置resultMap
+      if (ResultSet.class.equals(parameterMapping.javaType)) {
+        if (parameterMapping.resultMapId == null) {
+          throw new IllegalStateException("Missing resultmap in property '"+ parameterMapping.property + "'.  "+ "Parameters of type java.sql.ResultSet require a resultmap.");
+        }
+      } else {
+        // 2、如果javaType不是ResultSet,那必须配置typeHandler
+        if (parameterMapping.typeHandler == null) {
+          throw new IllegalStateException("Type handler was null on parameter mapping for property '"+ parameterMapping.property + "'.  "+ "It was either not specified and/or could not be found for the javaType / jdbcType combination specified.");
+        }
+      }
+    }
   }
-
-  public String getProperty() {
-    return property;
-  }
-
-  /**
-   * Used for handling output of callable statements
-   * @return
-   */
-  public ParameterMode getMode() {
-    return mode;
-  }
-
-  /**
-   * Used for handling output of callable statements
-   * @return
-   */
-  public Class<?> getJavaType() {
-    return javaType;
-  }
-
-  /**
-   * Used in the UnknownTypeHandler in case there is no handler for the property type
-   * @return
-   */
-  public JdbcType getJdbcType() {
-    return jdbcType;
-  }
-
-  /**
-   * Used for handling output of callable statements
-   * @return
-   */
-  public Integer getNumericScale() {
-    return numericScale;
-  }
-
-  /**
-   * Used when setting parameters to the PreparedStatement
-   * @return
-   */
-  public TypeHandler<?> getTypeHandler() {
-    return typeHandler;
-  }
-
-  /**
-   * Used for handling output of callable statements
-   * @return
-   */
-  public String getResultMapId() {
-    return resultMapId;
-  }
-
-  /**
-   * Used for handling output of callable statements
-   * @return
-   */
-  public String getJdbcTypeName() {
-    return jdbcTypeName;
-  }
-
-  /**
-   * Not used
-   * @return
-   */
-  public String getExpression() {
-    return expression;
-  }
-
 }

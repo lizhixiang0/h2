@@ -19,8 +19,16 @@
         select
             p.person_name as name,p.age,p.phone,p.email,p.address
         from person p
-        where p.id = #{id}
+        <where>
+        /*这个版本是必须使用value来表示参数*/
+            <if test="value!=0">
+                p.id = #{id}
+            </if>
+        </where>
+
     </select>
+
+
 
 </mapper>
 

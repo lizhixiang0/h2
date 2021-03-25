@@ -39,5 +39,9 @@ public enum SqlCommandType {
   /**
    * 查询语句
    */
-  SELECT;
+  SELECT,
+  /**
+   * 刷新
+   */
+  FLUSH;
 }
