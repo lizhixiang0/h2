@@ -23,11 +23,8 @@ import org.apache.ibatis.scripting.ScriptingException;
 import org.apache.ibatis.type.SimpleTypeRegistry;
 
 /**
- * @author Clinton Begin
- */
-/**
  * 文本SQL节点（CDATA|TEXT）
- *
+ * @author Clinton Begin
  */
 public class TextSqlNode implements SqlNode {
   private String text;

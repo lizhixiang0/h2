@@ -28,11 +28,11 @@ import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
 public final class SystemMetaObject {
 
   /**
-   * 默认对象工厂
+   * 默认对象工厂,提供生产对象的功能
    */
   public static final ObjectFactory DEFAULT_OBJECT_FACTORY = new DefaultObjectFactory();
   /**
-   * 默认对象包装工厂
+   * 默认对象包装工厂,默认不提供包装功能
    */
   public static final ObjectWrapperFactory DEFAULT_OBJECT_WRAPPER_FACTORY = new DefaultObjectWrapperFactory();
 

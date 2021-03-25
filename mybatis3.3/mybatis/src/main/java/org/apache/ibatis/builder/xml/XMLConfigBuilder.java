@@ -43,7 +43,7 @@ import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.type.JdbcType;
 
 /**
- * XML配置构建器，建造者模式,继承BaseBuilder
+ * XML配置构建器
  * @author Clinton Begin
  */
 public class XMLConfigBuilder extends BaseBuilder {
@@ -79,7 +79,7 @@ public class XMLConfigBuilder extends BaseBuilder {
     this(new XPathParser(inputStream, true, props, new XMLMapperEntityResolver()), environment, props);
   }
 
-  //上面6个构造函数最后都合流到这个函数，传入XPathParser
+  //上面6个构造函数最后都合流到这个函数，传递XPathParser
   private XMLConfigBuilder(XPathParser parser, String environment, Properties props) {
     //首先调用父类初始化Configuration
     super(new Configuration());

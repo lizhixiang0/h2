@@ -30,10 +30,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * @author Clinton Begin
- */
-/**
  * XML脚本构建器
+ * @author Clinton Begin
  */
 public class XMLScriptBuilder extends BaseBuilder {
 
@@ -91,7 +89,7 @@ public class XMLScriptBuilder extends BaseBuilder {
   }
 
   NodeHandler nodeHandlers(String nodeName) {
-    Map<String, NodeHandler> map = new HashMap<String, NodeHandler>();
+    Map<String, NodeHandler> map = new HashMap<>();
     map.put("trim", new TrimHandler());
     map.put("where", new WhereHandler());
     map.put("set", new SetHandler());

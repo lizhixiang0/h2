@@ -19,18 +19,20 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 /**
+ * 数据源工厂、有三种内建的数据源类型 UNPOOLED POOLED JNDI
  * @author Clinton Begin
- */
-/**
- * 数据源工厂
- * 有三种内建的数据源类型 UNPOOLED POOLED JNDI
  */
 public interface DataSourceFactory {
 
-  //设置属性,被XMLConfigBuilder所调用
+  /**
+   * 设置 DataSource 的相关属性，一般在初始化完成后进行设置
+   * @param props props
+   */
   void setProperties(Properties props);
 
-  //生产数据源,直接得到javax.sql.DataSource
+  /**
+   * 获得数据源
+   */
   DataSource getDataSource();
 
 }

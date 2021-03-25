@@ -25,25 +25,37 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 
 /**
+ * 非池化的数据源工厂
  * @author Clinton Begin
  */
-/**
- * 没有池化的数据源工厂
- */
 public class UnpooledDataSourceFactory implements DataSourceFactory {
-
+  /**
+   * 数据库驱动前缀
+   */
   private static final String DRIVER_PROPERTY_PREFIX = "driver.";
   private static final int DRIVER_PROPERTY_PREFIX_LENGTH = DRIVER_PROPERTY_PREFIX.length();
 
+  /**
+   * 对应的数据源，即 非池化的数据源
+   */
   protected DataSource dataSource;
 
+  /**
+   * 初始化工厂时就实例化了一个非池化的数据源
+   */
   public UnpooledDataSourceFactory() {
     this.dataSource = new UnpooledDataSource();
   }
 
+  /**
+   * 对数据源进行配置
+   * @param properties 各类属性,数据以<k,v>形式存储
+   */
   @Override
   public void setProperties(Properties properties) {
+    // 1、创建一个HashTable
     Properties driverProperties = new Properties();
+    // 2、创建解析数据源对象,生成MetaObject
     MetaObject metaDataSource = SystemMetaObject.forObject(dataSource);
     for (Object key : properties.keySet()) {
       String propertyName = (String) key;
@@ -66,12 +78,13 @@ public class UnpooledDataSourceFactory implements DataSourceFactory {
     }
   }
 
-  @Override
-  public DataSource getDataSource() {
-    return dataSource;
-  }
-
-  //根据setter的类型,将配置文件中的值强转成相应的类型
+  /**
+   * 根据setter的类型,将配置文件中的值强转成相应的类型
+   * @param metaDataSource
+   * @param propertyName
+   * @param value
+   * @return
+   */
   private Object convertValue(MetaObject metaDataSource, String propertyName, String value) {
     Object convertedValue = value;
     Class<?> targetType = metaDataSource.getSetterType(propertyName);
@@ -83,6 +96,11 @@ public class UnpooledDataSourceFactory implements DataSourceFactory {
       convertedValue = Boolean.valueOf(value);
     }
     return convertedValue;
+  }
+
+  @Override
+  public DataSource getDataSource() {
+    return dataSource;
   }
 
 }

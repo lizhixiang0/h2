@@ -32,11 +32,9 @@ import javax.sql.DataSource;
 import org.apache.ibatis.io.Resources;
 
 /**
+ * 没有池化的数据源
  * @author Clinton Begin
  * @author Eduardo Macarron
- */
-/**
- * 没有池化的数据源
  */
 public class UnpooledDataSource implements DataSource {
 

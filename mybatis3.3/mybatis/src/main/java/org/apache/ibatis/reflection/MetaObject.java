@@ -66,8 +66,7 @@ public class MetaObject {
         //如果对象本身已经是ObjectWrapper型，则直接赋给objectWrapper
       this.objectWrapper = (ObjectWrapper) object;
     } else if (objectWrapperFactory.hasWrapperFor(object)) {
-      //若objectWrapperFactory能够为该原始对象创建对应的ObjectWrapper对象，则优先使用objectWrapperFactory
-      // 但DefaultObjectWrapperFactory.hasWrapperFor()始终返回false，用户可以自定义ObjectWrapperFactory实现进行扩展。
+      //若objectWrapperFactory能够为该原始对象创建对应的ObjectWrapper对象，则优先使用objectWrapperFactory,但DefaultObjectWrapperFactory.hasWrapperFor()始终返回false  (用户可以自定义ObjectWrapperFactory实现进行扩展)
       this.objectWrapper = objectWrapperFactory.getWrapperFor(this, object);
     } else if (object instanceof Map) {
         //如果是Map型，返回MapWrapper

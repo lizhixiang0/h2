@@ -18,11 +18,8 @@ package org.apache.ibatis.scripting.xmltags;
 import java.util.List;
 
 /**
- * @author Clinton Begin
- */
-/**
  * 混合SQL节点
- *
+ * @author Clinton Begin
  */
 public class MixedSqlNode implements SqlNode {
   //组合模式，拥有一个SqlNode的List
