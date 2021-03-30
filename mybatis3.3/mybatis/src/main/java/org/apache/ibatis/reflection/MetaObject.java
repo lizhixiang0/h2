@@ -29,7 +29,7 @@ import org.apache.ibatis.reflection.wrapper.ObjectWrapper;
 import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
 
 /**
- *  MetaObject ,主要是调用包装器中的方法
+ *  MetaObject ,主要是调用包装器中的方法，操纵MetaObject就相当于操作源对象
  *  支持对普通JavaBean、Collection类、Map类三种类型对象的操作
  *  可以参考MetaObjectTest来跟踪调试，基本上用到了reflection包下所有的类
  * @author Clinton Begin

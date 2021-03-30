@@ -23,6 +23,22 @@ import org.apache.ibatis.session.Configuration;
 
 /**
  * foreach SQL节点
+ *
+ * eq:
+ *    dao层：
+ *        void updateScanTasks(List<String> updates);
+ *
+ *    mapping:
+ *        <update id="updateScanTasks">
+ *            UPDATE se_task se
+ *            SET se.`status` = 'P'
+ *            WHERE se.`status`='I'
+ *            AND se.updated_by NOT IN
+ *            <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+ *                #{item}
+ *            </foreach>
+ *         </update>
+ *
  * @author Clinton Begin
  * @note "https://blog.csdn.net/hjh908778/article/details/79034395/
  */

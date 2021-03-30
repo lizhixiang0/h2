@@ -44,6 +44,7 @@ public class UnpooledDataSourceFactory implements DataSourceFactory {
    * 初始化工厂时就实例化了一个非池化的数据源
    */
   public UnpooledDataSourceFactory() {
+    // 注意：池化工厂使用的是无参构造
     this.dataSource = new UnpooledDataSource();
   }
 
@@ -57,15 +58,16 @@ public class UnpooledDataSourceFactory implements DataSourceFactory {
     Properties driverProperties = new Properties();
     // 2、创建解析数据源对象,生成MetaObject
     MetaObject metaDataSource = SystemMetaObject.forObject(dataSource);
+    // 3、循环遍历properties,将适合的放到driverProperties里
     for (Object key : properties.keySet()) {
+      // 3.1、拿到属性名
       String propertyName = (String) key;
-      //作为可选项,你可以传递数据库驱动的属性。要这样做,属性的前缀是以“driver.”开 头的,例如
-      //driver.encoding=UTF8
+      // 3.2、如果属性名是以"driver."开头的,去掉前缀后直接塞到driverProperties里,例如：driver.encoding=UTF8
       if (propertyName.startsWith(DRIVER_PROPERTY_PREFIX)) {
         String value = properties.getProperty(propertyName);
         driverProperties.setProperty(propertyName.substring(DRIVER_PROPERTY_PREFIX_LENGTH), value);
+        // 3.3、如果属性名是不以"driver."开头,则判断dataSource中是否有该属性,有的话转化下value类型也塞到driverProperties里
       } else if (metaDataSource.hasSetter(propertyName)) {
-    	  //如果UnpooledDataSource有相应的setter函数，则设置它
         String value = (String) properties.get(propertyName);
         Object convertedValue = convertValue(metaDataSource, propertyName, value);
         metaDataSource.setValue(propertyName, convertedValue);
@@ -73,6 +75,7 @@ public class UnpooledDataSourceFactory implements DataSourceFactory {
         throw new DataSourceException("Unknown DataSource property: " + propertyName);
       }
     }
+    // 4、如果driverProperties不为空,set进dataSource
     if (driverProperties.size() > 0) {
       metaDataSource.setValue("driverProperties", driverProperties);
     }
@@ -80,14 +83,16 @@ public class UnpooledDataSourceFactory implements DataSourceFactory {
 
   /**
    * 根据setter的类型,将配置文件中的值强转成相应的类型
-   * @param metaDataSource
-   * @param propertyName
-   * @param value
+   * @param metaDataSource 元类
+   * @param propertyName 属性名
+   * @param value 属性值
    * @return
    */
   private Object convertValue(MetaObject metaDataSource, String propertyName, String value) {
     Object convertedValue = value;
+    // 1、找到dataSource中相应属性的类型
     Class<?> targetType = metaDataSource.getSetterType(propertyName);
+    // 2、转换
     if (targetType == Integer.class || targetType == int.class) {
       convertedValue = Integer.valueOf(value);
     } else if (targetType == Long.class || targetType == long.class) {
@@ -95,6 +100,7 @@ public class UnpooledDataSourceFactory implements DataSourceFactory {
     } else if (targetType == Boolean.class || targetType == boolean.class) {
       convertedValue = Boolean.valueOf(value);
     }
+    // 3、返回
     return convertedValue;
   }
 

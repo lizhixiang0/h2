@@ -20,7 +20,9 @@ public class JdbcTest {
         String url = "jdbc:mysql://localhost:3306/db_mybatis?serverTimezone=GMT%2B8" ;
         String username = "root" ;
         String password = "root" ;
+        DriverManager.setLoginTimeout(10);
         Connection connection = DriverManager.getConnection(url , username , password ) ;
+
         // 刚获得的连接都是没关闭的
         assert !connection.isClosed();
         // 关闭连接

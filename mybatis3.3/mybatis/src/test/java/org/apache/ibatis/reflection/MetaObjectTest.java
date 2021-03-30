@@ -42,6 +42,7 @@ public class MetaObjectTest {
     MetaObject meta = SystemMetaObject.forObject(rich);
     meta.setValue("richField", "foo");
     assertEquals("foo", meta.getValue("richField"));
+    assertEquals("foo", rich.getRichField());
   }
 
   @Test

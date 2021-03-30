@@ -33,8 +33,8 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
 /**
+ * 池化数据源
  * This is a simple, synchronous, thread-safe database connection pool.
- *
  * @author Clinton Begin
  */
 /**
