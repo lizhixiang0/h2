@@ -30,9 +30,10 @@ import org.apache.ibatis.reflection.SystemMetaObject;
  */
 public class UnpooledDataSourceFactory implements DataSourceFactory {
   /**
-   * 数据库驱动前缀
+   * 数据库驱动前缀,这个前缀不会传到数据库里，主要是写配置文件是可以和其他属性进行区分
    */
   private static final String DRIVER_PROPERTY_PREFIX = "driver.";
+
   private static final int DRIVER_PROPERTY_PREFIX_LENGTH = DRIVER_PROPERTY_PREFIX.length();
 
   /**
