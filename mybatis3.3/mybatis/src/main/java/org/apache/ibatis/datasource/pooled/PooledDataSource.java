@@ -64,7 +64,7 @@ public class PooledDataSource implements DataSource {
    */
   protected int poolTimeToWait = 20000;
   /**
-   * 发送到数据的侦测查询,用来验证连接是否能ping通。默认是"NO PING QUERY SET",可以自己设置，必须用一个合法的SQL语句（最好是很快速的）比如SELECT 'x' FROM DUAL
+   * 发送到数据的侦测查询,用来验证连接是否能ping通。默认是"NO PING QUERY SET",必须自己用一个合法的SQL语句（最好是很快速的）比如SELECT 'x' FROM DUAL
    */
   protected String poolPingQuery = "NO PING QUERY SET";
   /**
