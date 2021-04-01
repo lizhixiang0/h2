@@ -366,6 +366,9 @@ public class Configuration {
    */
   protected Class<?> configurationFactory;
 
+  /**
+   * 拦截器链
+   */
   protected final InterceptorChain interceptorChain = new InterceptorChain();
   public void addInterceptor(Interceptor interceptor) {interceptorChain.addInterceptor(interceptor);}
   public List<Interceptor> getInterceptors() {return interceptorChain.getInterceptors();}
@@ -411,6 +414,9 @@ public class Configuration {
     return loadedResources.contains(resource);
   }
 
+  /**
+   * 从以前的映射器解析的XML片段
+   */
   protected final Map<String, XNode> sqlFragments = new StrictMap<>("XML fragments parsed from previous mappers");
   public Map<String, XNode> getSqlFragments() {return sqlFragments; }
 
@@ -473,8 +479,10 @@ public class Configuration {
     typeAliasRegistry.registerAlias("LRU", LruCache.class);
     typeAliasRegistry.registerAlias("SOFT", SoftCache.class);
     typeAliasRegistry.registerAlias("WEAK", WeakCache.class);
-    //
+
+    // 厂商数据库Id提供者
     typeAliasRegistry.registerAlias("DB_VENDOR", VendorDatabaseIdProvider.class);
+    //
     typeAliasRegistry.registerAlias("XML", XMLLanguageDriver.class);
     typeAliasRegistry.registerAlias("RAW", RawLanguageDriver.class);
     // 注册各种日志

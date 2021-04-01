@@ -23,6 +23,8 @@ public class JdbcTest {
         DriverManager.setLoginTimeout(10);
         Connection connection = DriverManager.getConnection(url , username , password ) ;
 
+
+        System.out.println(connection.getMetaData().getDatabaseProductName());
         // b、创建Statement （sql）
         Statement statement = connection.createStatement();
         // c、传递参数

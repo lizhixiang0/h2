@@ -224,23 +224,27 @@ public class XMLConfigBuilder extends BaseBuilder {
 
   /**
    * 3.插件
-   * MyBatis 允许在某一点拦截已映射语句执行的调用。默认情况下,MyBatis 允许使用插件来拦截方法调用
-   * <plugins>
-   *   <plugin interceptor="org.mybatis.example.ExamplePlugin">
-   *     <property name="someProperty" value="100"/>
-   *   </plugin>
-   * </plugins>
+   *      MyBatis 允许使用插件来拦截方法调用
+   *     <plugins>
+   *        <plugin interceptor="org.mybatis.example.ExamplePlugin">
+   *          <property name="someProperty" value="100"/>
+   *        </plugin>
+   *     </plugins>
    * @param parent 表示plugins节点
-   * @throws Exception
    */
   private void pluginElement(XNode parent) throws Exception {
     if (parent != null) {
+      // 循环遍历所有拦截器
       for (XNode child : parent.getChildren()) {
+        // 1、获得拦截器的全限定名
         String interceptor = child.getStringAttribute("interceptor");
+        // 2、获得拦截器的属性配置
         Properties properties = child.getChildrenAsProperties();
+        // 3、拦截器实例化
         Interceptor interceptorInstance = (Interceptor) resolveClass(interceptor).newInstance();
+        // 4、配置属性
         interceptorInstance.setProperties(properties);
-        //调用InterceptorChain.addInterceptor
+        // 5、把他加到InterceptorChain
         configuration.addInterceptor(interceptorInstance);
       }
     }
@@ -251,23 +255,27 @@ public class XMLConfigBuilder extends BaseBuilder {
    * <objectFactory type="org.mybatis.example.ExampleObjectFactory">
    *   <property name="someProperty" value="100"/>
    * </objectFactory>
-   * @param context
-   * @throws Exception
+   @param context 表示objectFactory节点
    */
   private void objectFactoryElement(XNode context) throws Exception {
     if (context != null) {
+      // 1、获得全限定名
       String type = context.getStringAttribute("type");
+      // 2、获得对象工厂的所有配置
       Properties properties = context.getChildrenAsProperties();
+      // 3、实例化
       ObjectFactory factory = (ObjectFactory) resolveClass(type).newInstance();
+      // 4、设置属性
       factory.setProperties(properties);
+      // 5、将对象工厂设置到配置文件中
       configuration.setObjectFactory(factory);
     }
   }
 
   /**
    * 5.对象包装工厂
-   * @param context
-   * @throws Exception
+   * <objectWrapperFactory type="org.mybatis.example.MapWrapperFactory"/>
+   * @param context 表示objectWrapperFactory节点
    */
   private void objectWrapperFactoryElement(XNode context) throws Exception {
     if (context != null) {
@@ -278,8 +286,7 @@ public class XMLConfigBuilder extends BaseBuilder {
   }
 
   /**
-   *   //6.设置
-   *   这些是极其重要的调整, 它们会修改 MyBatis 在运行时的行为方式
+   * 6.设置
    * <settings>
    *   <setting name="cacheEnabled" value="true"/>
    *   <setting name="lazyLoadingEnabled" value="true"/>
@@ -295,14 +302,13 @@ public class XMLConfigBuilder extends BaseBuilder {
    *   <setting name="jdbcTypeForNull" value="OTHER"/>
    *   <setting name="lazyLoadTriggerMethods" value="equals,clone,hashCode,toString"/>
    * </settings>
-   * @param context
-   * @throws Exception
+   * @param context settings节点
    */
   private void settingsElement(XNode context) throws Exception {
     if (context != null) {
+      // 1、拿到所有配置 <name,value>
       Properties props = context.getChildrenAsProperties();
-      // Check that all settings are known to the configuration class
-      //检查下是否在Configuration类里都有相应的setter方法（没有拼写错误）
+      // 2、先检查下是否在Configuration类里都有相应的setter方法（防止拼写错误）
       MetaClass metaConfig = MetaClass.forClass(Configuration.class);
       for (Object key : props.keySet()) {
         if (!metaConfig.hasSetter(String.valueOf(key))) {
@@ -310,12 +316,12 @@ public class XMLConfigBuilder extends BaseBuilder {
         }
       }
 
-      //下面非常简单，一个个设置属性
+      // 3、一个个设置属性,如果没有配置,提供了默认值
+
       //如何自动映射列到字段/ 属性
       configuration.setAutoMappingBehavior(AutoMappingBehavior.valueOf(props.getProperty("autoMappingBehavior", "PARTIAL")));
       //缓存
       configuration.setCacheEnabled(booleanValueOf(props.getProperty("cacheEnabled"), true));
-      //proxyFactory (CGLIB | JAVASSIST)
       //延迟加载的核心技术就是用代理模式，CGLIB/JAVASSIST两者选一
       configuration.setProxyFactory((ProxyFactory) createInstance(props.getProperty("proxyFactory")));
       //延迟加载
@@ -360,6 +366,7 @@ public class XMLConfigBuilder extends BaseBuilder {
   /**
    * 7.环境
    * 	<environments default="development">
+   *
    * 	  <environment id="development">
    * 	    <transactionManager type="JDBC">
    * 	      <property name="..." value="..."/>
@@ -371,27 +378,42 @@ public class XMLConfigBuilder extends BaseBuilder {
    * 	      <property name="password" value="${password}"/>
    * 	    </dataSource>
    * 	  </environment>
+   *
+   * 	  <environment id="production">
+   *     	  <transactionManager type="JDBC">
+   *     	    <property name="..." value="..."/>
+   *     	  </transactionManager>
+   *     	  <dataSource type="POOLED">
+   *            <property name="driver" value="${driver}"/>
+   *     	    <property name="url" value="${url}"/>
+   *     	    <property name="username" value="${username}"/>
+   *     	    <property name="password" value="${password}"/>
+   *     	  </dataSource>
+   *      </environment>
+   *
    * 	</environments>
-   * @param context
-   * @throws Exception
+   * @param context  environments节点
    */
   private void environmentsElement(XNode context) throws Exception {
     if (context != null) {
+      // 1、如果没有指定环境，就到environments体内找默认环境
       if (environment == null) {
         environment = context.getStringAttribute("default");
       }
+      // 2、遍历子节点
       for (XNode child : context.getChildren()) {
+        // a、取出id的值
         String id = child.getStringAttribute("id");
-		//循环比较id是否就是指定的environment
+		// b、判断是不是指定环境
         if (isSpecifiedEnvironment(id)) {
-          //7.1事务管理器
+          // c、获得事务工厂
           TransactionFactory txFactory = transactionManagerElement(child.evalNode("transactionManager"));
-          //7.2数据源
+          // d、获得数据源
           DataSourceFactory dsFactory = dataSourceElement(child.evalNode("dataSource"));
           DataSource dataSource = dsFactory.getDataSource();
-          Environment.Builder environmentBuilder = new Environment.Builder(id)
-              .transactionFactory(txFactory)
-              .dataSource(dataSource);
+          // e、构建Environment
+          Environment.Builder environmentBuilder = new Environment.Builder(id).transactionFactory(txFactory).dataSource(dataSource);
+          // 3、设置环境
           configuration.setEnvironment(environmentBuilder.build());
         }
       }
@@ -400,70 +422,30 @@ public class XMLConfigBuilder extends BaseBuilder {
 
   /**
    * 7.1 比较id和environment是否相等
-   * @param id
-   * @return
+   * @param id 环境的唯一标识
    */
   private boolean isSpecifiedEnvironment(String id) {
     if (environment == null) {
       throw new BuilderException("No environment specified.");
     } else if (id == null) {
       throw new BuilderException("Environment requires an id attribute.");
-    } else if (environment.equals(id)) {
-      return true;
-    }
-    return false;
-  }
-
-  /**
-   * 8.databaseIdProvider
-   * 	可以根据不同数据库执行不同的SQL，sql要加databaseId属性
-   * 	这个功能感觉不是很实用，真要多数据库支持，那SQL工作量将会成倍增长，用mybatis以后一般就绑死在一个数据库上了。但也是一个不得已的方法吧
-   *   可以参考org.apache.ibatis.submitted.multidb包里的测试用例
-   * 	<databaseIdProvider type="VENDOR">
-   * 	  <property name="SQL Server" value="sqlserver"/>
-   * 	  <property name="DB2" value="db2"/>
-   * 	  <property name="Oracle" value="oracle" />
-   * 	</databaseIdProvider>
-   * @param context
-   * @throws Exception
-   */
-  private void databaseIdProviderElement(XNode context) throws Exception {
-    DatabaseIdProvider databaseIdProvider = null;
-    if (context != null) {
-      String type = context.getStringAttribute("type");
-      // awful patch to keep backward compatibility
-      //与老版本兼容
-      if ("VENDOR".equals(type)) {
-          type = "DB_VENDOR";
-      }
-      Properties properties = context.getChildrenAsProperties();
-      //"DB_VENDOR"-->VendorDatabaseIdProvider
-      databaseIdProvider = (DatabaseIdProvider) resolveClass(type).newInstance();
-      databaseIdProvider.setProperties(properties);
-    }
-    Environment environment = configuration.getEnvironment();
-    if (environment != null && databaseIdProvider != null) {
-      //得到当前的databaseId，可以调用DatabaseMetaData.getDatabaseProductName()得到诸如"Oracle (DataDirect)"的字符串，
-      //然后和预定义的property比较,得出目前究竟用的是什么数据库
-      String databaseId = databaseIdProvider.getDatabaseId(environment.getDataSource());
-      configuration.setDatabaseId(databaseId);
+    } else {
+      return environment.equals(id);
     }
   }
 
   /**
-   * 7.1事务管理器
+   * 7.1 事务管理器,没有就抛异常
    * <transactionManager type="JDBC">
    *   <property name="..." value="..."/>
    * </transactionManager>
-   * @param context
-   * @return
-   * @throws Exception
+   * @param context transactionManager节点
    */
   private TransactionFactory transactionManagerElement(XNode context) throws Exception {
     if (context != null) {
       String type = context.getStringAttribute("type");
       Properties props = context.getChildrenAsProperties();
-		//根据type="JDBC"解析返回适当的TransactionFactory
+      //根据type="JDBC"解析返回适当的TransactionFactory
       TransactionFactory factory = (TransactionFactory) resolveClass(type).newInstance();
       factory.setProperties(props);
       return factory;
@@ -472,22 +454,19 @@ public class XMLConfigBuilder extends BaseBuilder {
   }
 
   /**
-   * 	//7.2数据源
+   * 7.2 数据源,没有就抛出异常
    * <dataSource type="POOLED">
    *   <property name="driver" value="${driver}"/>
    *   <property name="url" value="${url}"/>
    *   <property name="username" value="${username}"/>
    *   <property name="password" value="${password}"/>
    * </dataSource>
-   * @param context
-   * @return
-   * @throws Exception
+   * @param context dataSource节点
    */
   private DataSourceFactory dataSourceElement(XNode context) throws Exception {
     if (context != null) {
       String type = context.getStringAttribute("type");
       Properties props = context.getChildrenAsProperties();
-		//根据type="POOLED"解析返回适当的DataSourceFactory
       DataSourceFactory factory = (DataSourceFactory) resolveClass(type).newInstance();
       factory.setProperties(props);
       return factory;
@@ -496,34 +475,62 @@ public class XMLConfigBuilder extends BaseBuilder {
   }
 
   /**
-   * 	//9.类型处理器
-   * 	<typeHandlers>
-   * 	  <typeHandler handler="org.mybatis.example.ExampleTypeHandler"/>
-   * 	</typeHandlers>
+   * 8.databaseIdProvider,可以根据不同数据库执行不同的SQL，sql要加databaseId属性
+   *    vendor (自动售货机)
+   * 	<databaseIdProvider type="DB_VENDOR">
+   * 	  <property name="SQLServer" value="sqlServer"/>
+   * 	  <property name="DB2" value="db2"/>
+   * 	  <property name="Oracle" value="oracle" />
+   * 	  <property name="Mysql" value="mysql" />
+   * 	</databaseIdProvider>
+   * @param context databaseIdProvider节点
+   */
+  private void databaseIdProviderElement(XNode context) throws Exception {
+    DatabaseIdProvider databaseIdProvider = null;
+    if (context != null) {
+      String type = context.getStringAttribute("type");
+      Properties properties = context.getChildrenAsProperties();
+      //"DB_VENDOR"-->VendorDatabaseIdProvider
+      databaseIdProvider = (DatabaseIdProvider) resolveClass(type).newInstance();
+      databaseIdProvider.setProperties(properties);
+    }
+    Environment environment = configuration.getEnvironment();
+    if (environment != null && databaseIdProvider != null) {
+      //使用数据源获取数据库产品名然后和预定义的property比较,如果匹配上就设置到configuration里
+      String databaseId = databaseIdProvider.getDatabaseId(environment.getDataSource());
+      configuration.setDatabaseId(databaseId);
+    }
+  }
+
+
+
+  /**
+   * 9.类型处理器
+   *     <typeHandlers>
+   *         <typeHandler javaType="String" jdbcType="VARCHAR" handler="org.mybatis.example.ExampleTypeHandler"/>
+   *     </typeHandlers>
    * or
    * 	<typeHandlers>
    * 	  <package name="org.mybatis.example"/>
    * 	</typeHandlers>
-   * @param parent
-   * @throws Exception
+   * @param parent  <typeHandlers>节点
    */
-  private void typeHandlerElement(XNode parent) throws Exception {
+  private void typeHandlerElement(XNode parent) {
     if (parent != null) {
       for (XNode child : parent.getChildren()) {
-        //如果是package
+        // 1、如果是package
         if ("package".equals(child.getName())) {
           String typeHandlerPackage = child.getStringAttribute("name");
-          //（一）调用TypeHandlerRegistry.register，去包下找所有类
+          // 1.1、去包下找所有类，然后注册到别名注册表
           typeHandlerRegistry.register(typeHandlerPackage);
         } else {
-          //如果是typeHandler
+          // 2、如果是typeHandler,找到需要的信息,也注册到别名注册表中
           String javaTypeName = child.getStringAttribute("javaType");
           String jdbcTypeName = child.getStringAttribute("jdbcType");
           String handlerTypeName = child.getStringAttribute("handler");
           Class<?> javaTypeClass = resolveClass(javaTypeName);
           JdbcType jdbcType = resolveJdbcType(jdbcTypeName);
           Class<?> typeHandlerClass = resolveClass(handlerTypeName);
-          //（二）调用TypeHandlerRegistry.register(以下是3种不同的参数形式)
           if (javaTypeClass != null) {
             if (jdbcType == null) {
               typeHandlerRegistry.register(javaTypeClass, typeHandlerClass);
@@ -539,40 +546,42 @@ public class XMLConfigBuilder extends BaseBuilder {
   }
 
   /**
-   * 10.映射器
-   * 	10.1使用类路径
-   * 	<mappers>
-   * 	  <mapper resource="org/mybatis/builder/AuthorMapper.xml"/>
-   * 	  <mapper resource="org/mybatis/builder/BlogMapper.xml"/>
-   * 	  <mapper resource="org/mybatis/builder/PostMapper.xml"/>
-   * 	</mappers>
+   * 10.解析Dao层和映射文件
    *
-   * 	10.2使用绝对url路径
-   * 	<mappers>
-   * 	  <mapper url="file:///var/mappers/AuthorMapper.xml"/>
-   * 	  <mapper url="file:///var/mappers/BlogMapper.xml"/>
-   * 	  <mapper url="file:///var/mappers/PostMapper.xml"/>
-   * 	</mappers>
+   *    第一类：dao层 (一般不配置，因为mappers文件里面有个namespace,记录了dao层类的全限定名)
+   *      a、通常我们是放到一个包里,然后自动扫描包下所有映射器
+   *      <mappers>
+   *        <package name="org.mybatis.builder"/>
+   *      </mappers>
    *
-   * 	10.3使用java类名
-   * 	<mappers>
-   * 	  <mapper class="org.mybatis.builder.AuthorMapper"/>
-   * 	  <mapper class="org.mybatis.builder.BlogMapper"/>
-   * 	  <mapper class="org.mybatis.builder.PostMapper"/>
-   * 	</mappers>
+   *      b、使用java类名
+   *      <mappers>
+   *    	    <mapper class="org.mybatis.builder.AuthorMapper"/>
+   *    	    <mapper class="org.mybatis.builder.BlogMapper"/>
+   *    	    <mapper class="org.mybatis.builder.PostMapper"/>
+   *      </mappers>
    *
-   * 	10.4自动扫描包下所有映射器
-   * 	<mappers>
-   * 	  <package name="org.mybatis.builder"/>
-   * 	</mappers>
-   * @param parent
-   * @throws Exception
+   *    第二类：mappers文件
+   * 	  c、使用相对路径,注意目录结构必须以斜杠分割,需要XMLMapperBuilder来解析
+   * 	  <mappers>
+   * 	    <mapper resource="org/mybatis/builder/AuthorMapper.xml"/>
+   * 	    <mapper resource="org/mybatis/builder/BlogMapper.xml"/>
+   * 	    <mapper resource="org/mybatis/builder/PostMapper.xml"/>
+   * 	  </mappers>
+   *
+   * 	  d、使用绝对url路径，需要XMLMapperBuilder来解析
+   * 	  <mappers>
+   * 	    <mapper url="file:///var/mappers/AuthorMapper.xml"/>
+   * 	    <mapper url="file:///var/mappers/BlogMapper.xml"/>
+   * 	    <mapper url="file:///var/mappers/PostMapper.xml"/>
+   * 	  </mappers>
+   * @param parent <mappers>节点
    */
   private void mapperElement(XNode parent) throws Exception {
     if (parent != null) {
       for (XNode child : parent.getChildren()) {
         if ("package".equals(child.getName())) {
-          //10.4自动扫描包下所有映射器
+          // 1、扫描包下所有接口,将所有接口都注册进映射接口表
           String mapperPackage = child.getStringAttribute("name");
           configuration.addMappers(mapperPackage);
         } else {
@@ -580,24 +589,22 @@ public class XMLConfigBuilder extends BaseBuilder {
           String url = child.getStringAttribute("url");
           String mapperClass = child.getStringAttribute("class");
           if (resource != null && url == null && mapperClass == null) {
-            //10.1使用类路径
+            // 2、使用相对路径解析xml
             ErrorContext.instance().resource(resource);
             InputStream inputStream = Resources.getResourceAsStream(resource);
-            //映射器比较复杂，调用XMLMapperBuilder
-            //注意在for循环里每个mapper都重新new一个XMLMapperBuilder，来解析
+            // 调用XMLMapperBuilder来解析
             XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, resource, configuration.getSqlFragments());
             mapperParser.parse();
           } else if (resource == null && url != null && mapperClass == null) {
-            //10.2使用绝对url路径
+            // 3、使用绝对路径解析xml
             ErrorContext.instance().resource(url);
             InputStream inputStream = Resources.getUrlAsStream(url);
-            //映射器比较复杂，调用XMLMapperBuilder
+            // 调用XMLMapperBuilder来解析
             XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, url, configuration.getSqlFragments());
             mapperParser.parse();
           } else if (resource == null && url == null && mapperClass != null) {
-            //10.3使用java类名
             Class<?> mapperInterface = Resources.classForName(mapperClass);
-            //直接把这个映射加入配置
+            // 4、使用全限定名，将类注册进映射接口表
             configuration.addMapper(mapperInterface);
           } else {
             throw new BuilderException("A mapper element may only specify a url, resource or class, but not more than one.");

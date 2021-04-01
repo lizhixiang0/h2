@@ -21,17 +21,18 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 /**
- * Should return an id to identify the type of this database.
- * That id can be used later on to build different queries for each database type
- * This mechanism enables supporting multiple vendors or versions
- * DB id 提供者
- *
+ * 返回一个id来标识数据库的类型。可以使用该id为每种数据库类型构建不同的查询,通过这种机制来支持兼容多版本数据库
  * @author Eduardo Macarron
  */
 public interface DatabaseIdProvider {
-
+  /**
+   * 设置属性
+   * @param p p
+   */
   void setProperties(Properties p);
 
-  //根据数据源来得到一个DB id
+  /**
+   * 应该返回一个id来标识这个数据库的类型。
+   */
   String getDatabaseId(DataSource dataSource) throws SQLException;
 }

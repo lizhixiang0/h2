@@ -28,18 +28,13 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
 /**
- * Vendor DatabaseId provider
- *
- * It returns database product name as a databaseId
- * If the user provides a properties it uses it to translate database product name
- * key="Microsoft SQL Server", value="ms" will return "ms"
- * It can return null, if no database product name or
- * a properties was specified and no translation was found
+ * 厂商数据库Id提供者
+ * 它以databaseId的形式返回数据库产品名
+ * 如果用户提供了一个属性，它将使用它来翻译数据库产品名
+ * 例如：<property name="Mysql" value="ms" />  will return "ms"
+ * 如果没有指定数据库产品名或属性，也没有找到翻译，则它可以返回null
  *
  * @author Eduardo Macarron
- */
-/**
- * 厂商数据库Id提供者
  */
 public class VendorDatabaseIdProvider implements DatabaseIdProvider {
 
@@ -53,7 +48,7 @@ public class VendorDatabaseIdProvider implements DatabaseIdProvider {
       throw new NullPointerException("dataSource cannot be null");
     }
     try {
-    	//根据dataSource得到数据库名字
+      //根据dataSource得到数据库名字,如果用户配置了缩写就返回，没配置就返回数据库的产品名
       return getDatabaseName(dataSource);
     } catch (Exception e) {
       log.error("Could not get a databaseId from dataSource", e);
@@ -67,36 +62,32 @@ public class VendorDatabaseIdProvider implements DatabaseIdProvider {
   }
 
   private String getDatabaseName(DataSource dataSource) throws SQLException {
-    //先得到productName
+    // 1、先通过connection得到数据库的产品名
     String productName = getDatabaseProductName(dataSource);
+    // 2、如果用户配置了<databaseIdProvider>,那就尝试去取缩写
     if (this.properties != null) {
-    	//如果设置了缩写properties，则一个个比较返回匹配的缩写
+    	// a、一个个比较,返回匹配上的的缩写
       for (Map.Entry<Object, Object> property : properties.entrySet()) {
         if (productName.contains((String) property.getKey())) {
           return (String) property.getValue();
         }
       }
-      // no match, return null
+      // b、如果匹配不上就返回null
       return null;
     }
+    // 如果用户没配置<databaseIdProvider>,就直接返回产品名
     return productName;
   }
 
+  /**
+   * 通过数据库连接获得数据提供商的产品名,像mysql的产品名就是MySQL
+   */
   private String getDatabaseProductName(DataSource dataSource) throws SQLException {
-    Connection con = null;
-    try {
-      con = dataSource.getConnection();
-      //核心就是DatabaseMetaData.getDatabaseProductName()得到数据库产品名字
+    try (Connection con = dataSource.getConnection()) {
+      // 1、通过Connection获得DatabaseMetaData
       DatabaseMetaData metaData = con.getMetaData();
+      // 2、执行getDatabaseProductName()方法
       return metaData.getDatabaseProductName();
-    } finally {
-      if (con != null) {
-        try {
-          con.close();
-        } catch (SQLException e) {
-          // ignored
-        }
-      }
     }
   }
 

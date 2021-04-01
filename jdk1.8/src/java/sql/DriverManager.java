@@ -161,7 +161,6 @@ public class DriverManager {
      *    setting the log writer
      *
      * @see SecurityManager#checkPermission
-     * @see #getLogWriter
      * @since 1.2
      */
     public static void setLogWriter(java.io.PrintWriter out) {
