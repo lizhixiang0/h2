@@ -57,7 +57,7 @@ public class XPathParser {
   /**
    * 1~4,validation默认为false ,不使用DTD文件验证XML是否合法
    *
-   * @param xml
+   * @param xml xml
    * @note 一些构造函数,全部调用commonConstructor以及createDocument
    *      可以学学这种方式！！将构造document对象和XPath对象分成了两步！
    *        第一步调用commonConstructor（validation,variables,entityResolver),传递一些配置参数，并构造Xpath对象
@@ -162,8 +162,8 @@ public class XPathParser {
   }
 
   /**
-   * 17.允许单独设置Properties
-   * @param variables
+   * 构造XPathParser时没初始化Properties,允许单独设置Properties
+   * @param variables Properties
    */
   public void setVariables(Properties variables) {
     this.variables = variables;
@@ -172,8 +172,8 @@ public class XPathParser {
 
   /**
    * 根据给定的表达式expression来获得xml文件里表达式对应的元素值
-   * @param expression
-   * @return
+   * @param expression expression
+   * @return value
    */
   public String evalString(String expression) {
     return evalString(document, expression);
@@ -183,7 +183,7 @@ public class XPathParser {
   /**
    * 先用xpath解析获得元素内容（value）, 然后再调用PropertyParser去处理内容
    *      <property name="driver" value="${driver}" />    <<<<=====================>>> driver=com.mysql.jdbc.Driver
-   * @param root
+   * @param root 路径
    * @param expression
    * @return
    */
@@ -281,6 +281,12 @@ public class XPathParser {
     }
   }
 
+  /**
+   * 将构造方法里的初始化内容提取出来，供所有的重载构造方法调用
+   * @param validation
+   * @param variables
+   * @param entityResolver
+   */
   private void commonConstructor(boolean validation, Properties variables, EntityResolver entityResolver) {
     this.validation = validation;
     this.entityResolver = entityResolver;

@@ -19,21 +19,26 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
+ * 方法执行器，调用其proceed()就可以执行对象的某方法
  * @author Clinton Begin
  */
-/**
- * 调用
- *
- */
 public class Invocation {
-
-  //调用的对象
+  /**
+   * 方法所在对象
+   */
   private Object target;
-  //调用的方法
+  /**
+   * 方法
+   */
   private Method method;
-  //参数
+  /**
+   * 方法参数
+   */
   private Object[] args;
 
+  /**
+   * 构造该调用器对象时,对象、方法、参数 就都初始化好了
+   */
   public Invocation(Object target, Method method, Object[] args) {
     this.target = target;
     this.method = method;
@@ -52,7 +57,10 @@ public class Invocation {
     return args;
   }
 
-  //继续做下去
+  /**
+   * 执行方法
+   * @return 返回执行结果
+   */
   public Object proceed() throws InvocationTargetException, IllegalAccessException {
     return method.invoke(target, args);
   }

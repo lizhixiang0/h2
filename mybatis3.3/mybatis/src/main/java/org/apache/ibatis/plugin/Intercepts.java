@@ -21,10 +21,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * 拦截注解,可以通过@Signature指定要拦截哪个对象的哪个方法以及方法的参数
+ * eq:
+ *    .@Intercepts({
+ *     .@Signature(
+ *          type = Executor.class,
+ *          method = "query",
+ *          args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class})
+ *      })
+ *
  * @author Clinton Begin
- */
-/**
- * 拦截
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

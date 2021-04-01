@@ -27,8 +27,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * @author Clinton Begin
  * 对org.w3c.dom.Node的包装
+ * @author Clinton Begin
  */
 public class XNode {
 
@@ -101,8 +101,8 @@ public class XNode {
   }
 
   /**
-   * 获取子元素节点的属性 ,默认取name 和 value
-   * @return
+   * 获取所有子元素节点的属性名和属性值
+   * @return Properties
    */
   public Properties getChildrenAsProperties() {
     Properties properties = new Properties();
@@ -121,7 +121,7 @@ public class XNode {
    * @return 子元素节点集合
    */
   public List<XNode> getChildren() {
-    List<XNode> children = new ArrayList<XNode>();
+    List<XNode> children = new ArrayList<>();
     NodeList nodeList = node.getChildNodes();
     if (nodeList != null) {
       for (int i = 0, n = nodeList.getLength(); i < n; i++) {
@@ -331,6 +331,12 @@ public class XNode {
     }
   }
 
+  /**
+   *
+   * 在当前节点体内（注意不是元素体下），根据属性名获取属性值，例如 <property name="username" value="dev_user"/>
+   * @param name username
+   * @return dev_user
+   */
   public String getStringAttribute(String name) {
     return getStringAttribute(name, null);
   }

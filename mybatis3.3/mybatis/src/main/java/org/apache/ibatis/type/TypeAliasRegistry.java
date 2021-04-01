@@ -164,7 +164,7 @@ public class TypeAliasRegistry {
   }
 
   /**
-   * 注册类型 这个不提供别名，方法内部使用getSimpleName()获得类名作为别名
+   * 注册类型 如果不提供别名也没有@Alias，方法内部使用getSimpleName()获得类名作为别名
    * @param type 某类
    */
   public void registerAlias(Class<?> type) {

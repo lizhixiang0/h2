@@ -144,37 +144,32 @@ public class XMLConfigBuilder extends BaseBuilder {
    *       <property name="username" value="dev_user"/>
    *       <property name="password" value="F2Fa3!33TYyg"/>
    *   </properties>
-   * @param context
-   * @throws Exception
+   * @param context 表示properties节点
    */
   private void propertiesElement(XNode context) throws Exception {
     if (context != null) {
-      //如果在这些地方,属性多于一个的话,MyBatis 按照如下的顺序加载它们:
-
-      //1.在 properties 元素体内指定的属性首先被读取。
-      //2.从类路径下资源或 properties 元素的 url 属性中加载的属性第二被读取,它会覆盖已经存在的完全一样的属性。
-      //3.作为方法参数传递的属性最后被读取, 它也会覆盖任一已经存在的完全一样的属性,这些属性可能是从 properties 元素体内和资源/url 属性中加载的。
-      //传入方式是调用构造函数时传入，public XMLConfigBuilder(Reader reader, String environment, Properties props)
-
-      //1.XNode.getChildrenAsProperties函数方便得到孩子所有Properties
+      //1.配置文件中 properties 元素体内指定的属性首先被读取。
       Properties defaults = context.getChildrenAsProperties();
-      //2.然后查找resource或者url,加入前面的Properties
+      //2.在properties 元素体内查找resource或者url,如果配置了还可以拿到一部分配置信息
       String resource = context.getStringAttribute("resource");
       String url = context.getStringAttribute("url");
       if (resource != null && url != null) {
         throw new BuilderException("The properties element cannot specify both a URL and a resource based property file reference.  Please specify one or the other.");
       }
+      // 3、把resource或者url（只能配置一个）拿到的配置信息归并到Properties中，会覆盖已经存在的完全一样的属性。
       if (resource != null) {
         defaults.putAll(Resources.getResourceAsProperties(resource));
       } else if (url != null) {
         defaults.putAll(Resources.getUrlAsProperties(url));
       }
-      //3.Variables也全部加入Properties
+      // 4.把构建XMLConfigBuilder时放入configuration的Variables也全部加入Properties
       Properties vars = configuration.getVariables();
       if (vars != null) {
         defaults.putAll(vars);
       }
+      // 5、XPathParser里备份一份用来进行其他的解析
       parser.setVariables(defaults);
+      // 6、最后再把所有的配置信息放到configuration里
       configuration.setVariables(defaults);
     }
   }
@@ -182,8 +177,8 @@ public class XMLConfigBuilder extends BaseBuilder {
   /**
    * 2.类型别名
    * <typeAliases>
-   *   <typeAlias alias="Author" type="domain.blog.Author"/>
-   *   <typeAlias alias="Blog" type="domain.blog.Blog"/>
+   *   <typeAlias type="domain.blog.Author"/>
+   *   <typeAlias type="domain.blog.Blog"/>
    *   <typeAlias alias="Comment" type="domain.blog.Comment"/>
    *   <typeAlias alias="Post" type="domain.blog.Post"/>
    *   <typeAlias alias="Section" type="domain.blog.Section"/>
@@ -194,28 +189,27 @@ public class XMLConfigBuilder extends BaseBuilder {
    * <typeAliases>
    *   <package name="domain.blog"/>
    * </typeAliases>
-   * @param parent
+   * @param parent 表示typeAliases节点
    */
   private void typeAliasesElement(XNode parent) {
     if (parent != null) {
       for (XNode child : parent.getChildren()) {
+        // 1、如果是package
         if ("package".equals(child.getName())) {
-          //如果是package
           String typeAliasPackage = child.getStringAttribute("name");
-          //（一）调用TypeAliasRegistry.registerAliases，去包下找所有类,然后注册别名(有@Alias注解则用，没有则取类的simpleName)
+          // 1.1、去包下找所有类,然后注册别名(有@Alias注解则用，没有则取类的simpleName)
           configuration.getTypeAliasRegistry().registerAliases(typeAliasPackage);
         } else {
-          //如果是typeAlias
+          // 2、如果是typeAlias,直接拿到别名和类型
           String alias = child.getStringAttribute("alias");
           String type = child.getStringAttribute("type");
           try {
             Class<?> clazz = Resources.classForName(type);
-            //根据Class名字来注册类型别名
-            //（二）调用TypeAliasRegistry.registerAlias
             if (alias == null) {
-              //alias可以省略
+              // 2.1、如果没配alias,那就直接取类的simpleName
               typeAliasRegistry.registerAlias(clazz);
             } else {
+              // 2.2、如果配了alias就用
               typeAliasRegistry.registerAlias(alias, clazz);
             }
           } catch (ClassNotFoundException e) {
@@ -230,13 +224,13 @@ public class XMLConfigBuilder extends BaseBuilder {
 
   /**
    * 3.插件
-   * MyBatis 允许你在某一点拦截已映射语句执行的调用。默认情况下,MyBatis 允许使用插件来拦截方法调用
+   * MyBatis 允许在某一点拦截已映射语句执行的调用。默认情况下,MyBatis 允许使用插件来拦截方法调用
    * <plugins>
    *   <plugin interceptor="org.mybatis.example.ExamplePlugin">
    *     <property name="someProperty" value="100"/>
    *   </plugin>
    * </plugins>
-   * @param parent
+   * @param parent 表示plugins节点
    * @throws Exception
    */
   private void pluginElement(XNode parent) throws Exception {
