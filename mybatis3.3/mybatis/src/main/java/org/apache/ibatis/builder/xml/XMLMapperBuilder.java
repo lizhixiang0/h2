@@ -48,8 +48,7 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
 /**
- * XML映射构建器，建造者模式,继承BaseBuilder
- * 在使用类路径或url路径绝对地址配置映射器时才会用到
+ * XML映射解析器，建造者模式,继承BaseBuilder
  * @author Clinton Begin
  */
 public class XMLMapperBuilder extends BaseBuilder {
