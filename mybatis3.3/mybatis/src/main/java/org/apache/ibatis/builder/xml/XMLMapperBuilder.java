@@ -354,7 +354,7 @@ public class XMLMapperBuilder extends BaseBuilder {
   /**
    * 4.2 解析resultMap节点
    * @param resultMapNode 单个resultMap节点
-   * @param additionalResultMappings  额外提供的空集合容器
+   * @param additionalResultMappings  额外提供的空集合容器,不知道干啥玩意
    */
   private ResultMap resultMapElement(XNode resultMapNode, List<ResultMapping> additionalResultMappings) throws Exception {
     // 1、定义全局异常跟踪
@@ -369,9 +369,12 @@ public class XMLMapperBuilder extends BaseBuilder {
     Boolean autoMapping = resultMapNode.getBooleanAttribute("autoMapping");
     Class<?> typeClass = resolveClass(type);
     Discriminator discriminator = null;
+    // 6、创建结果映射集合
     List<ResultMapping> resultMappings = new ArrayList<>(additionalResultMappings);
+    // 7、获得所有resultMap的所有子节点,遍历
     List<XNode> resultChildren = resultMapNode.getChildren();
     for (XNode resultChild : resultChildren) {
+      // a、
       if ("constructor".equals(resultChild.getName())) {
         //解析result map的constructor
         processConstructorElement(resultChild, typeClass, resultMappings);
