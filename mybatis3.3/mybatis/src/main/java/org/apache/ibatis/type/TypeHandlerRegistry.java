@@ -192,13 +192,13 @@ public final class TypeHandlerRegistry {
     // 2、如果jdbcHandlerMap不为null,尝试从该JDBC处理器集合中获取该jdbcType对应的TypeHandler
     if (jdbcHandlerMap != null) {
       handler = jdbcHandlerMap.get(jdbcType);
-      // 2.1、找不到TypeHandler,就传递null过去，再找一下(一般注册的时候不指定jdbcType,就为null)
+      // 2.1、找不到TypeHandler,就传递null过去，再找一下(一般注册的时候不指定jdbcType,就为null,所以通过null也可能找到)
       if (handler == null) {
         handler = jdbcHandlerMap.get(null);
       }
     }
     // 3、如果jdbcHandlerMap为null且该java类型不为null、且该java类型不是泛型类、且给java类型是枚举类
-    if (handler == null && type != null && type instanceof Class && Enum.class.isAssignableFrom((Class<?>) type)) {
+    if (handler == null && type instanceof Class && Enum.class.isAssignableFrom((Class<?>) type)) {
       // 3.1、构建一个枚举类处理器
       handler = new EnumTypeHandler((Class<?>) type);
     }

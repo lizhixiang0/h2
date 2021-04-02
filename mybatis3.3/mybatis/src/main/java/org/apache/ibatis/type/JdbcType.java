@@ -51,6 +51,9 @@ public enum JdbcType {
   BLOB(Types.BLOB),
   CLOB(Types.CLOB),
   BOOLEAN(Types.BOOLEAN),
+  /**
+   * 这是干啥的？
+   */
   CURSOR(-10),
   UNDEFINED(Integer.MIN_VALUE + 1000),
   /**

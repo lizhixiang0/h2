@@ -49,8 +49,8 @@ public class SoftCache implements Cache {
   public SoftCache(Cache delegate) {
     this.delegate = delegate;
     this.numberOfHardLinks = 256;
-    this.hardLinksToAvoidGarbageCollection = new LinkedList<Object>();
-    this.queueOfGarbageCollectedEntries = new ReferenceQueue<Object>();
+    this.hardLinksToAvoidGarbageCollection = new LinkedList<>();
+    this.queueOfGarbageCollectedEntries = new ReferenceQueue<>();
   }
 
   @Override

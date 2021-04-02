@@ -561,7 +561,7 @@ public class XMLConfigBuilder extends BaseBuilder {
    *    	    <mapper class="org.mybatis.builder.PostMapper"/>
    *      </mappers>
    *
-   *    第二类：mappers文件
+   *    第二类：mappers.xml文件
    * 	  c、使用相对路径,注意目录结构必须以斜杠分割,需要XMLMapperBuilder来解析
    * 	  <mappers>
    * 	    <mapper resource="org/mybatis/builder/AuthorMapper.xml"/>

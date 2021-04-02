@@ -367,13 +367,13 @@ public class Configuration {
   protected Class<?> configurationFactory;
 
   /**
-   * 拦截器链
+   * 拦截器责任链,plugin用的
    */
   protected final InterceptorChain interceptorChain = new InterceptorChain();
   public void addInterceptor(Interceptor interceptor) {interceptorChain.addInterceptor(interceptor);}
   public List<Interceptor> getInterceptors() {return interceptorChain.getInterceptors();}
 
-  //缓存,存在Map里
+  // caches缓存容器
   protected final Map<String, Cache> caches = new StrictMap<>("Caches collection");
   public void addCache(Cache cache) {caches.put(cache.getId(), cache);}
   public Collection<String> getCacheNames() {return caches.keySet();}
@@ -381,8 +381,19 @@ public class Configuration {
   public Cache getCache(String id) {return caches.get(id);}
   public boolean hasCache(String id) {return caches.containsKey(id);}
 
+  /**
+   * ParameterMap节点的映射容器
+   */
+  protected final Map<String, ParameterMap> parameterMaps = new StrictMap<>("Parameter Maps collection");
+  public void addParameterMap(ParameterMap pm) {parameterMaps.put(pm.getId(), pm); }
+  public Collection<String> getParameterMapNames() {return parameterMaps.keySet();}
+  public Collection<ParameterMap> getParameterMaps() {return parameterMaps.values();}
+  public ParameterMap getParameterMap(String id) {return parameterMaps.get(id); }
+  public boolean hasParameterMap(String id) {return parameterMaps.containsKey(id); }
 
-  //结果映射,存在Map里
+  /**
+   * 结果映射容器
+   */
   protected final Map<String, ResultMap> resultMaps = new StrictMap<>("Result Maps collection");
   public Collection<String> getResultMapNames() {return resultMaps.keySet();}
   public Collection<ResultMap> getResultMaps() {return resultMaps.values();}
@@ -394,13 +405,6 @@ public class Configuration {
     checkGloballyForDiscriminatedNestedResultMaps(rm);
   }
 
-  protected final Map<String, ParameterMap> parameterMaps = new StrictMap<>("Parameter Maps collection");
-  public void addParameterMap(ParameterMap pm) {parameterMaps.put(pm.getId(), pm); }
-  public Collection<String> getParameterMapNames() {return parameterMaps.keySet();}
-  public Collection<ParameterMap> getParameterMaps() {return parameterMaps.values();}
-  public ParameterMap getParameterMap(String id) {return parameterMaps.get(id); }
-  public boolean hasParameterMap(String id) {return parameterMaps.containsKey(id); }
-
   protected final Map<String, KeyGenerator> keyGenerators = new StrictMap<>("Key Generators collection");
   public void addKeyGenerator(String id, KeyGenerator keyGenerator) {keyGenerators.put(id, keyGenerator);}
   public Collection<String> getKeyGeneratorNames() {return keyGenerators.keySet();}
@@ -409,7 +413,15 @@ public class Configuration {
   public boolean hasKeyGenerator(String id) {return keyGenerators.containsKey(id); }
 
   protected final Set<String> loadedResources = new HashSet<>();
+
+  /**
+   * 每次加载资源,都在这里记录下，防止重复加载
+   */
   public void addLoadedResource(String resource) {loadedResources.add(resource);}
+
+  /**
+   * 根据资源的路径，判断资源有没有加载过
+   */
   public boolean isResourceLoaded(String resource) {
     return loadedResources.contains(resource);
   }
@@ -440,10 +452,7 @@ public class Configuration {
   }
 
   /**
-   * 保存cache-ref关系的集合。键是引用绑定到另一个名称空间的缓存的名称空间，值是实际缓存绑定到的名称空间。
-   * A map holds cache-ref relationship. The key is the namespace that
-   * references a cache bound to another namespace and the value is the
-   * namespace which the actual cache is bound to.
+   * 保存cache-ref关系的集合。键是需要引用其他名称空间的命名空间，值是实际缓存绑定到的名称空间。
    */
   protected final Map<String, String> cacheRefMap = new HashMap<>();
   public void addCacheRef(String namespace, String referencedNamespace) {cacheRefMap.put(namespace, referencedNamespace); }

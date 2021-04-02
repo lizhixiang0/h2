@@ -34,6 +34,7 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
  *
  * 2、但是,参数也可以指定一个特殊的数据类型,例如：
  *    #{age,javaType=int,jdbcType=NUMERIC,typeHandler=MyTypeHandler}
+ *
  * 3、对于数值类型，还可以设置 numericScale 指定小数点后保留的位数。例如：
  *    #{height,javaType=double,jdbcType=NUMERIC,numericScale=2}
  *
@@ -163,7 +164,7 @@ public class ParameterMapping {
     }
 
     /**
-     * 返回ParameterMapping前进行一波处理
+     * 核心build方法
      * @return parameterMapping
      */
     public ParameterMapping build() {
@@ -172,15 +173,21 @@ public class ParameterMapping {
       return parameterMapping;
     }
 
+    /**
+     * 防止没配置类型处理器,这里会根据javaType、jdbcType 来查注册表确定一个默认的typeHandler,有没有可能找不到？
+     */
     private void resolveTypeHandler() {
-      //如果没有指定特殊的typeHandler,则根据javaType、jdbcType 来查注册表确定一个默认的typeHandler
       if (parameterMapping.typeHandler == null && parameterMapping.javaType != null) {
         Configuration configuration = parameterMapping.configuration;
         TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
+        // 主要是根据java类型去类型处理器注册表中找对应的处理器
         parameterMapping.typeHandler = typeHandlerRegistry.getTypeHandler(parameterMapping.javaType, parameterMapping.jdbcType);
       }
     }
 
+    /**
+     * 最后检测
+     */
     private void validate() {
       // 1、如果javaType是ResultSet,那必须配置resultMap
       if (ResultSet.class.equals(parameterMapping.javaType)) {

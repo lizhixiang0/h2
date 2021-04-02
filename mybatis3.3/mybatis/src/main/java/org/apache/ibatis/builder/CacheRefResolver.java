@@ -20,7 +20,13 @@ package org.apache.ibatis.builder;
  * @author Clinton Begin
  */
 public class CacheRefResolver {
+  /**
+   * 映射助手
+   */
   private final MapperBuilderAssistant assistant;
+  /**
+   * 被引用的命名空间
+   */
   private final String cacheRefNamespace;
 
   public CacheRefResolver(MapperBuilderAssistant assistant, String cacheRefNamespace) {
@@ -28,8 +34,10 @@ public class CacheRefResolver {
     this.cacheRefNamespace = cacheRefNamespace;
   }
 
+  /**
+   * 解析缓存引用
+   */
   public void resolveCacheRef() {
-      //反调MapperBuilderAssistant解析
     assistant.useCacheRef(cacheRefNamespace);
   }
 }

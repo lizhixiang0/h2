@@ -21,11 +21,22 @@ import java.util.List;
 import org.apache.ibatis.session.Configuration;
 
 /**
+ *  就是将这个玩意儿,提取信息，最后构成ParameterMap,存到Configuration里去
+ *     <parameterMap id="ParameterMap" type="Student">
+ *             <parameter property="studentId" resultMap="ResultMap"/>
+ *             <parameter property="studentName" resultMap="ResultMap"/>
+ *             <parameter property="studentAge" resultMap="ResultMap"/>
+ *     </parameterMap>
  * @author Clinton Begin
  */
 public class ParameterMap {
-
+  /**
+   * namespace + parameterMap.id
+   */
   private String id;
+  /**
+   * parameterMap.type
+   */
   private Class<?> type;
   private List<ParameterMapping> parameterMappings;
 
@@ -35,7 +46,7 @@ public class ParameterMap {
   public static class Builder {
     private ParameterMap parameterMap = new ParameterMap();
 
-    public Builder(Configuration configuration, String id, Class<?> type, List<ParameterMapping> parameterMappings) {
+    public Builder(String id, Class<?> type, List<ParameterMapping> parameterMappings) {
       parameterMap.id = id;
       parameterMap.type = type;
       parameterMap.parameterMappings = parameterMappings;
@@ -46,7 +57,6 @@ public class ParameterMap {
     }
 
     public ParameterMap build() {
-      //lock down collections
       parameterMap.parameterMappings = Collections.unmodifiableList(parameterMap.parameterMappings);
       return parameterMap;
     }

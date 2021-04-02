@@ -23,8 +23,9 @@ import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.cache.CacheException;
 
 /**
- *  * 最初级的cache实现，什么包装都没有   /pəˈpetʃuəl/  永恒的,这应该是种美好的祝愿吧。
- *  * 没有缓存淘汰机制,容易内存溢出(除非手动调用clear),没有考虑线程安全问题,多线程环境下不安全
+ *  base cache  基础版cache,提供了缓存的唯一标识和容器
+ *  其他的装饰类都基于这个缓存
+ *  Perpetual   /pəˈpetʃuəl/  永恒的,这应该是种美好的祝愿吧。
  * @author Clinton Begin
  */
 public class PerpetualCache implements Cache {
@@ -74,9 +75,7 @@ public class PerpetualCache implements Cache {
 
   @Override
   public boolean equals(Object o) {
-    /**
-     * 只要id相等就认为两个cache相同
-     */
+    // 只要id相等就认为两个cache相同
     if (getId() == null) {
       throw new CacheException("Cache instances require an ID.");
     }

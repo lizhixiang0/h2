@@ -71,9 +71,7 @@ public class LruCache implements Cache {
       protected boolean removeEldestEntry(Map.Entry<Object, Object> eldest) {
         boolean tooBig = size() > size;
         if (tooBig) {
-          /**
-           * 抛出被删除的最老键值
-           */
+          // 抛出被删除的最老键值
           eldestKey = eldest.getKey();
         }
         return tooBig;

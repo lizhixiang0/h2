@@ -171,7 +171,11 @@ public class XNode {
 
 
   /**
-   * 取得当前元素全路径各级元素节点的标识符   resultMap[authorResult]_result[username]
+   * 生成当前节点的全路径标识符，先拿id，拿不到再拿value,再拿不到拿property
+   *
+   *   e.q.
+   *    resultMap[authorResult]_result[username]
+   *
    * 	<resultMap id="authorResult" type="Author">
    * 	  <id property="id" column="author_id"/>
    * 	  <result property="username" column="author_username"/>
@@ -341,6 +345,11 @@ public class XNode {
     return getStringAttribute(name, null);
   }
 
+  /**
+   * 根据属性名获取属性值,没有就用def
+   * @param name 属性名
+   * @param def 默认值
+   */
   public String getStringAttribute(String name, String def) {
     String value = attributes.getProperty(name);
     if (value == null) {

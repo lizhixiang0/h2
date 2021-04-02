@@ -48,7 +48,7 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
 /**
- * XML映射解析器，建造者模式,继承BaseBuilder
+ * XML映射解析器,一个mapper.xml对应一个
  * @author Clinton Begin
  */
 public class XMLMapperBuilder extends BaseBuilder {
@@ -56,7 +56,6 @@ public class XMLMapperBuilder extends BaseBuilder {
   private XPathParser parser;
   //映射器构建助手
   private MapperBuilderAssistant builderAssistant;
-  //用来存放sql片段的哈希表
   private Map<String, XNode> sqlFragments;
   private String resource;
 
@@ -82,23 +81,33 @@ public class XMLMapperBuilder extends BaseBuilder {
         configuration, resource, sqlFragments);
   }
 
+  /**
+   * 核心方法,其他方法都是对本方法的重载
+   * @param parser  mybatis自己使用的XPath解析器,用来解读mapper.xml文件
+   * @param configuration 核心配置类
+   * @param resource  映射文件的绝对或相对路径
+   * @param sqlFragments 存放sql片段的哈希表
+   */
   private XMLMapperBuilder(XPathParser parser, Configuration configuration, String resource, Map<String, XNode> sqlFragments) {
     super(configuration);
+    // 生成构造助手
     this.builderAssistant = new MapperBuilderAssistant(configuration, resource);
     this.parser = parser;
     this.sqlFragments = sqlFragments;
     this.resource = resource;
   }
 
-  //解析
+  /**
+   *  XMLConfigBuilder类里配置文件都解读完后,调用这个方法解析映射文件
+   */
   public void parse() {
-    //如果没有加载过再加载，防止重复加载
+    // 1、判断该xml有没有解析过
     if (!configuration.isResourceLoaded(resource)) {
-      //配置mapper
+      // 1.1 没有解析过,开始解析
       configurationElement(parser.evalNode("/mapper"));
-      //标记一下，已经加载过了
+      // 1.2 解析完记录下，下次就不解析了
       configuration.addLoadedResource(resource);
-      //绑定映射器到namespace
+      // 1.3、绑定映射器到namespace
       bindMapperForNamespace();
     }
 
@@ -112,17 +121,39 @@ public class XMLMapperBuilder extends BaseBuilder {
     return sqlFragments.get(refid);
   }
 
-	//配置mapper元素
-//	<mapper namespace="org.mybatis.example.BlogMapper">
-//	  <select id="selectBlog" parameterType="int" resultType="Blog">
-//	    select * from Blog where id = #{id}
-//	  </select>
-//	</mapper>
+  /**
+   * 解析mapper节点
+   *
+   * 	<mapper namespace="org.mybatis.example.BlogMapper">
+   *
+   * 	  <parameterMap id="ParameterMap" type="Student">
+   *          <parameter property="studentId" resultMap="ResultMap"/>
+   *          <parameter property="studentName" resultMap="ResultMap"/>
+   *          <parameter property="studentAge" resultMap="ResultMap"/>
+   *      </parameterMap>
+   *
+   *      <resultMap id="ResultMap" type="Student">
+   *          <id column="id" property="studentId"></id>
+   *          <result column="name" property="studentName"></result>
+   *          <result column="age" property="studentAge"></result>
+   *      </resultMap>
+   *
+   * 	  <cache-ref namespace="com.x.x.x.XXXMapper"/>
+   *
+   *      <cache eviction="FIFO" flushInterval="6000" size="512" readOnly="false"/>
+   *
+   * 	  <select id="selectBlog" parameterType="int" resultType="Blog">
+   * 	    select * from Blog where id = #{id}
+   * 	  </select>
+   *
+   * 	</mapper>
+   * @param context 表示mapper节点
+   */
   private void configurationElement(XNode context) {
     try {
       //1.配置namespace
       String namespace = context.getStringAttribute("namespace");
-      if (namespace.equals("")) {
+      if ("".equals(namespace)) {
         throw new BuilderException("Mapper's namespace cannot be empty");
       }
       builderAssistant.setCurrentNamespace(namespace);
@@ -130,7 +161,7 @@ public class XMLMapperBuilder extends BaseBuilder {
       cacheRefElement(context.evalNode("cache-ref"));
       //3.配置cache
       cacheElement(context.evalNode("cache"));
-      //4.配置parameterMap(已经废弃,老式风格的参数映射)
+      //4.配置parameterMap
       parameterMapElement(context.evalNodes("/mapper/parameterMap"));
       //5.配置resultMap(高级功能)
       resultMapElements(context.evalNodes("/mapper/resultMap"));
@@ -143,84 +174,19 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
   }
 
-  //7.配置select|insert|update|delete
-  private void buildStatementFromContext(List<XNode> list) {
-    //调用7.1构建语句
-    if (configuration.getDatabaseId() != null) {
-      buildStatementFromContext(list, configuration.getDatabaseId());
-    }
-    buildStatementFromContext(list, null);
-  }
-
-  //7.1构建语句
-  private void buildStatementFromContext(List<XNode> list, String requiredDatabaseId) {
-    for (XNode context : list) {
-      //构建所有语句,一个mapper下可以有很多select
-      //语句比较复杂，核心都在这里面，所以调用XMLStatementBuilder
-      final XMLStatementBuilder statementParser = new XMLStatementBuilder(configuration, builderAssistant, context, requiredDatabaseId);
-      try {
-          //核心XMLStatementBuilder.parseStatementNode
-        statementParser.parseStatementNode();
-      } catch (IncompleteElementException e) {
-          //如果出现SQL语句不完整，把它记下来，塞到configuration去
-        configuration.addIncompleteStatement(statementParser);
-      }
-    }
-  }
-
-  private void parsePendingResultMaps() {
-    Collection<ResultMapResolver> incompleteResultMaps = configuration.getIncompleteResultMaps();
-    synchronized (incompleteResultMaps) {
-      Iterator<ResultMapResolver> iter = incompleteResultMaps.iterator();
-      while (iter.hasNext()) {
-        try {
-          iter.next().resolve();
-          iter.remove();
-        } catch (IncompleteElementException e) {
-          // ResultMap is still missing a resource...
-        }
-      }
-    }
-  }
-
-  private void parsePendingChacheRefs() {
-    Collection<CacheRefResolver> incompleteCacheRefs = configuration.getIncompleteCacheRefs();
-    synchronized (incompleteCacheRefs) {
-      Iterator<CacheRefResolver> iter = incompleteCacheRefs.iterator();
-      while (iter.hasNext()) {
-        try {
-          iter.next().resolveCacheRef();
-          iter.remove();
-        } catch (IncompleteElementException e) {
-          // Cache ref is still missing a resource...
-        }
-      }
-    }
-  }
-
-  private void parsePendingStatements() {
-    Collection<XMLStatementBuilder> incompleteStatements = configuration.getIncompleteStatements();
-    synchronized (incompleteStatements) {
-      Iterator<XMLStatementBuilder> iter = incompleteStatements.iterator();
-      while (iter.hasNext()) {
-        try {
-          iter.next().parseStatementNode();
-          iter.remove();
-        } catch (IncompleteElementException e) {
-          // Statement is still missing a resource...
-        }
-      }
-    }
-  }
-
-  //2.配置cache-ref,在这样的 情况下你可以使用 cache-ref 元素来引用另外一个缓存。
-//<cache-ref namespace="com.someone.application.data.SomeMapper"/>
+  /**
+   * 1、为当前命名空间引用其他命名空间的缓存
+   * <cache-ref namespace="com.someone.application.data.SomeMapper"/>
+   * @param context cache-ref节点
+   */
   private void cacheRefElement(XNode context) {
     if (context != null) {
-      //增加cache-ref
+      // 1、把引用关系存储到configuration
       configuration.addCacheRef(builderAssistant.getCurrentNamespace(), context.getStringAttribute("namespace"));
+      // 2、生成缓存引用解析器
       CacheRefResolver cacheRefResolver = new CacheRefResolver(builderAssistant, context.getStringAttribute("namespace"));
       try {
+        // 3、开始解析,其实就是把引用过来的缓存赋值给了当前缓存
         cacheRefResolver.resolveCacheRef();
       } catch (IncompleteElementException e) {
         configuration.addIncompleteCacheRef(cacheRefResolver);
@@ -228,107 +194,182 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
   }
 
-  //3.配置cache
-//  <cache
-//  eviction="FIFO"
-//  flushInterval="60000"
-//  size="512"
-//  readOnly="true"/>
-  private void cacheElement(XNode context) throws Exception {
+  /**
+   * 2、为当前命名空间配置缓存
+   * <cache type="com.domain.something.MyCustomCache" eviction="FIFO" flushInterval="6000" size="512" readOnly="false">
+   *    <property name="cacheFile" value="/tmp/my-custom-cache.tmp"/>
+   * </cache>
+   * @param context cache节点
+   */
+  private void cacheElement(XNode context) {
     if (context != null) {
+      // 1、获取缓存类型,没有就返回PERPETUAL
       String type = context.getStringAttribute("type", "PERPETUAL");
+      // 根据type从别名注册表中获得具体的cache clazz  （所以这玩意儿可以自己实现,然后注册到别名注册表中）
       Class<? extends Cache> typeClass = typeAliasRegistry.resolveAlias(type);
+      // 2、获取淘汰策略,默认使用最少使用缓存淘汰算法 （LRU）
       String eviction = context.getStringAttribute("eviction", "LRU");
       Class<? extends Cache> evictionClass = typeAliasRegistry.resolveAlias(eviction);
+      // 3、获取冲刷间隔
       Long flushInterval = context.getLongAttribute("flushInterval");
+      // 4、获取缓存大小
       Integer size = context.getIntAttribute("size");
+      // 5、获得读写权限 （默认为可读写）
       boolean readWrite = !context.getBooleanAttribute("readOnly", false);
+      // 6、获得阻塞设置 （默认为false不使用）
       boolean blocking = context.getBooleanAttribute("blocking", false);
-      //读入额外的配置信息，易于第三方的缓存扩展,例:
-//    <cache type="com.domain.something.MyCustomCache">
-//      <property name="cacheFile" value="/tmp/my-custom-cache.tmp"/>
-//    </cache>
+      // 7、获得子节点的属性名及属性
       Properties props = context.getChildrenAsProperties();
-      //调用builderAssistant.useNewCache
+      // 8、使用助手创建缓存
       builderAssistant.useNewCache(typeClass, evictionClass, flushInterval, size, readWrite, blocking, props);
     }
   }
 
-  //4.配置parameterMap
-  //已经被废弃了!老式风格的参数映射。可以忽略
-  private void parameterMapElement(List<XNode> list) throws Exception {
+  /**
+   * 3.解析所有parameterMap节点  (开发中比较少见)
+   *   它可以用于指定实体类字段属性与数据库字段属性的映射关系，
+   *   这样一来当传入参数实体类中的字段名和数据库的字段名名称上没有对应也能查询出想要的结果，这就是parameterMap的作用。
+   *   并且可以和resultMap搭配使用。
+   *   <parameterMap id="ParameterMap" type="Student">
+   *         <parameter property="studentId" resultMap="ResultMap"/>
+   *         <parameter property="studentName" resultMap="ResultMap"/>
+   *         <parameter property="studentAge" resultMap="ResultMap"/>
+   *   </parameterMap>
+   *
+   *   <parameterMap  id="getInstProgressIdParaMap" type="java.util.HashMap">
+   *     <parameter property="p_callFlag" javaType="java.lang.String" jdbcType="VARCHAR" mode="IN"/>
+   *     <parameter property="P_accNbr" javaType="java.lang.String" jdbcType="VARCHAR" mode="IN"/>
+   *     <parameter property="P_Type" javaType="java.lang.String" jdbcType="VARCHAR" mode="IN"/>
+   *     <parameter property="P_areaId" javaType="java.lang.String" jdbcType="VARCHAR" mode="IN"/>
+   *     <parameter property="P_Id" javaType="java.lang.Integer" jdbcType="INTEGER" mode="OUT"/>
+   * </parameterMap>
+   * @param list  parameterMap节点  这个节点可能会出现多个,所以用list
+   */
+  private void parameterMapElement(List<XNode> list) {
+    // 1、遍历处理所有<parameterMap>
     for (XNode parameterMapNode : list) {
       String id = parameterMapNode.getStringAttribute("id");
       String type = parameterMapNode.getStringAttribute("type");
       Class<?> parameterClass = resolveClass(type);
+      // 获取parameterMap节点下所有的parameter节点
       List<XNode> parameterNodes = parameterMapNode.evalNodes("parameter");
-      List<ParameterMapping> parameterMappings = new ArrayList<ParameterMapping>();
+      // 创建参数映射集合
+      List<ParameterMapping> parameterMappings = new ArrayList<>();
+      // 2、遍历处理所有<parameter>,每一个<parameter>都能生成一个ParameterMapping
       for (XNode parameterNode : parameterNodes) {
+        // a、对象中该属性名
         String property = parameterNode.getStringAttribute("property");
+        // b、该属性的java类型
         String javaType = parameterNode.getStringAttribute("javaType");
+        // c、该属性的jdbc类型
         String jdbcType = parameterNode.getStringAttribute("jdbcType");
+        // d、该属性对应的resultMap ID
         String resultMap = parameterNode.getStringAttribute("resultMap");
+        // e、该属性的参数模式
         String mode = parameterNode.getStringAttribute("mode");
+        // f、该属性的类型处理器
         String typeHandler = parameterNode.getStringAttribute("typeHandler");
+        // g、该属性保留小数点后几位
         Integer numericScale = parameterNode.getIntAttribute("numericScale");
-        ParameterMode modeEnum = resolveParameterMode(mode);
-        Class<?> javaTypeClass = resolveClass(javaType);
-        JdbcType jdbcTypeEnum = resolveJdbcType(jdbcType);
+
+        ParameterMode modeEnum = super.resolveParameterMode(mode);
+        Class<?> javaTypeClass = super.resolveClass(javaType);
+        JdbcType jdbcTypeEnum = super.resolveJdbcType(jdbcType);
         @SuppressWarnings("unchecked")
         Class<? extends TypeHandler<?>> typeHandlerClass = (Class<? extends TypeHandler<?>>) resolveClass(typeHandler);
+        // h、构建ParameterMapping
         ParameterMapping parameterMapping = builderAssistant.buildParameterMapping(parameterClass, property, javaTypeClass, jdbcTypeEnum, resultMap, modeEnum, typeHandlerClass, numericScale);
+        // i、将parameterMapping添加进参数映射集合
         parameterMappings.add(parameterMapping);
       }
+      // 3、借助助理将该parameterMap存到configuration
       builderAssistant.addParameterMap(id, parameterClass, parameterMappings);
     }
   }
 
-  //5.配置resultMap,高级功能
+  /**
+   *  4、解析所有resultMap节点 ,将查询的结果映射到具体的对象中
+   *
+   *      <resultMap id="peopleResultMap" type="org.sang.bean.User">
+   *         <id property="id" column="id"/>
+   *         <result property="id" column="id"/>
+   *      </resultMap>
+   *
+   *      <resultMap id="userResultMap" type="org.sang.bean.User" extends = "peopleResultMap">
+   *
+   *         <id property="id" column="id"/>
+   *         <result property="id" column="id"/>
+   *
+   *         < a、constructor主要是用来配置构造方法，默认情况下mybatis会调用实体类的无参构造方法创建一个实体类,然后再给各个属性赋值>
+   *         <constructor>
+   *             <idArg column="" javaType=""/>
+   *             <arg column="" javaType=""/>
+   *         </constructor>
+   *
+   *         < b、association是mybatis支持级联的一部分,主要是用来解决一对一关系的，可以配置延迟加载>
+   *         <association property=""  column=""  select="" fetchType="eager"/>
+   *
+   *         < c、collection是用来解决一对多级联的,可以配置延迟加载>
+   *         <collection property="" column=""  select="" fetchType="eager"/>
+   *
+   *         < d、鉴别器级联、使用它我们可以在不同的条件下执行不同的查询为该属性匹配不同的实体类
+   *         <discriminator javaType="" column="">
+   *             <case value="" resultMap="1"></case>
+   *             <case value="" resultMap="2"></case>
+   *         </discriminator>
+   *
+   *     </resultMap>
+   *
+   *     <resultMap id="1" type="" extends="">
+   *         <collection property="" column="area" select=""/>
+   *     </resultMap>
+   *     <resultMap id="2" type="" extends="">
+   *         <collection property="" column="area" select=""/>
+   *     </resultMap>
+   *
+   *     resultMap中一共有六种不同的节点
+   *
+   * @param list resultMap节点 ,这个节点可能会出现多个,所以用list
+   * @link "https://blog.csdn.net/u012702547/article/details/54599132
+   * @link 官网介绍: https://mybatis.org/mybatis-3/zh/sqlmap-xml.html#Result_Maps
+   */
   private void resultMapElements(List<XNode> list) throws Exception {
-      //基本上就是循环把resultMap加入到Configuration里去,保持2份，一份缩略，一分全名
+    // 循环遍历list
     for (XNode resultMapNode : list) {
       try {
-          //循环调resultMapElement
         resultMapElement(resultMapNode);
-      } catch (IncompleteElementException e) {
-        // ignore, it will be retried
+      } catch (IncompleteElementException ignored) {
       }
     }
   }
 
-  //5.1 配置resultMap
-  private ResultMap resultMapElement(XNode resultMapNode) throws Exception {
-    return resultMapElement(resultMapNode, Collections.<ResultMapping> emptyList());
+  /**
+   * 4.1 解析resultMap节点
+   * @param resultMapNode 单个resultMap节点
+   */
+  private void resultMapElement(XNode resultMapNode) throws Exception {
+    resultMapElement(resultMapNode, Collections.emptyList());
   }
 
-  //5.1 配置resultMap
+  /**
+   * 4.2 解析resultMap节点
+   * @param resultMapNode 单个resultMap节点
+   * @param additionalResultMappings  额外提供的空集合容器
+   */
   private ResultMap resultMapElement(XNode resultMapNode, List<ResultMapping> additionalResultMappings) throws Exception {
-    //错误上下文
-//取得标示符   ("resultMap[userResultMap]")
-//    <resultMap id="userResultMap" type="User">
-//      <id property="id" column="user_id" />
-//      <result property="username" column="username"/>
-//      <result property="password" column="password"/>
-//    </resultMap>
+    // 1、定义全局异常跟踪
     ErrorContext.instance().activity("processing " + resultMapNode.getValueBasedIdentifier());
-    String id = resultMapNode.getStringAttribute("id",
-        resultMapNode.getValueBasedIdentifier());
-    //一般拿type就可以了，后面3个难道是兼容老的代码？
-    String type = resultMapNode.getStringAttribute("type",
-        resultMapNode.getStringAttribute("ofType",
-            resultMapNode.getStringAttribute("resultType",
-                resultMapNode.getStringAttribute("javaType"))));
-    //高级功能，还支持继承?
-//  <resultMap id="carResult" type="Car" extends="vehicleResult">
-//    <result property="doorCount" column="door_count" />
-//  </resultMap>
+    // 2、取得当前resultMap的ID标识,没有就用全路径标识符
+    String id = resultMapNode.getStringAttribute("id",resultMapNode.getValueBasedIdentifier());
+    // 3、取得类名或全限定名,没配置为null    (兼容老代码,type == ofType == resultType == javaType)
+    String type = resultMapNode.getStringAttribute("type",resultMapNode.getStringAttribute("ofType",resultMapNode.getStringAttribute("resultType",resultMapNode.getStringAttribute("javaType"))));
+    // 4、取得继承的ResultMap ID,没配置为null
     String extend = resultMapNode.getStringAttribute("extends");
-    //autoMapping
+    // 5、取得autoMapping,没配置为null
     Boolean autoMapping = resultMapNode.getBooleanAttribute("autoMapping");
     Class<?> typeClass = resolveClass(type);
     Discriminator discriminator = null;
-    List<ResultMapping> resultMappings = new ArrayList<ResultMapping>();
-    resultMappings.addAll(additionalResultMappings);
+    List<ResultMapping> resultMappings = new ArrayList<>(additionalResultMappings);
     List<XNode> resultChildren = resultMapNode.getChildren();
     for (XNode resultChild : resultChildren) {
       if ("constructor".equals(resultChild.getName())) {
@@ -338,7 +379,7 @@ public class XMLMapperBuilder extends BaseBuilder {
         //解析result map的discriminator
         discriminator = processDiscriminatorElement(resultChild, typeClass, resultMappings);
       } else {
-        List<ResultFlag> flags = new ArrayList<ResultFlag>();
+        List<ResultFlag> flags = new ArrayList<>();
         if ("id".equals(resultChild.getName())) {
           flags.add(ResultFlag.ID);
         }
@@ -356,14 +397,20 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
   }
 
-//解析result map的constructor
-//<constructor>
-//  <idArg column="blog_id" javaType="int"/>
-//</constructor>
+  /**
+   * 4.3、解析resultMap的constructor
+   *      <constructor>
+   *        <idArg column="blog_id" javaType="int"/>
+   *      </constructor>
+   * @param resultChild
+   * @param resultType
+   * @param resultMappings
+   * @throws Exception
+   */
   private void processConstructorElement(XNode resultChild, Class<?> resultType, List<ResultMapping> resultMappings) throws Exception {
     List<XNode> argChildren = resultChild.getChildren();
     for (XNode argChild : argChildren) {
-      List<ResultFlag> flags = new ArrayList<ResultFlag>();
+      List<ResultFlag> flags = new ArrayList<>();
       //结果标志加上ID和CONSTRUCTOR
       flags.add(ResultFlag.CONSTRUCTOR);
       if ("idArg".equals(argChild.getName())) {
@@ -502,6 +549,76 @@ public class XMLMapperBuilder extends BaseBuilder {
           // look at MapperAnnotationBuilder#loadXmlResource
           configuration.addLoadedResource("namespace:" + namespace);
           configuration.addMapper(boundType);
+        }
+      }
+    }
+  }
+
+  //7.配置select|insert|update|delete
+  private void buildStatementFromContext(List<XNode> list) {
+    //调用7.1构建语句
+    if (configuration.getDatabaseId() != null) {
+      buildStatementFromContext(list, configuration.getDatabaseId());
+    }
+    buildStatementFromContext(list, null);
+  }
+
+  //7.1构建语句
+  private void buildStatementFromContext(List<XNode> list, String requiredDatabaseId) {
+    for (XNode context : list) {
+      //构建所有语句,一个mapper下可以有很多select
+      //语句比较复杂，核心都在这里面，所以调用XMLStatementBuilder
+      final XMLStatementBuilder statementParser = new XMLStatementBuilder(configuration, builderAssistant, context, requiredDatabaseId);
+      try {
+        //核心XMLStatementBuilder.parseStatementNode
+        statementParser.parseStatementNode();
+      } catch (IncompleteElementException e) {
+        //如果出现SQL语句不完整，把它记下来，塞到configuration去
+        configuration.addIncompleteStatement(statementParser);
+      }
+    }
+  }
+
+  private void parsePendingResultMaps() {
+    Collection<ResultMapResolver> incompleteResultMaps = configuration.getIncompleteResultMaps();
+    synchronized (incompleteResultMaps) {
+      Iterator<ResultMapResolver> iter = incompleteResultMaps.iterator();
+      while (iter.hasNext()) {
+        try {
+          iter.next().resolve();
+          iter.remove();
+        } catch (IncompleteElementException e) {
+          // ResultMap is still missing a resource...
+        }
+      }
+    }
+  }
+
+  private void parsePendingChacheRefs() {
+    Collection<CacheRefResolver> incompleteCacheRefs = configuration.getIncompleteCacheRefs();
+    synchronized (incompleteCacheRefs) {
+      Iterator<CacheRefResolver> iter = incompleteCacheRefs.iterator();
+      while (iter.hasNext()) {
+        try {
+          iter.next().resolveCacheRef();
+          iter.remove();
+        } catch (IncompleteElementException e) {
+          // Cache ref is still missing a resource...
+        }
+      }
+    }
+  }
+
+  private void parsePendingStatements() {
+    Collection<XMLStatementBuilder> incompleteStatements = configuration.getIncompleteStatements();
+    synchronized (incompleteStatements) {
+      Iterator<XMLStatementBuilder> iter = incompleteStatements.iterator();
+      while (iter.hasNext()) {
+        try {
+          iter.next().parseStatementNode();
+          iter.remove();
+        } catch (IncompleteElementException e) {
+          // Statement is still missing a resource...
         }
       }
     }

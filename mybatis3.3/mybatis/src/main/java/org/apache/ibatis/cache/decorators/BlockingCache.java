@@ -11,11 +11,6 @@ import org.apache.ibatis.cache.CacheException;
 import org.apache.ibatis.cache.impl.PerpetualCache;
 
 /**
- * Simple blocking decorator
- *
- * Sipmle and inefficient version of EhCache's BlockingCache decorator.
- * It sets a lock over a cache key when the element is not found in cache.
- * This way, other threads will wait until this element is filled instead of hitting the database.
  * 让缓存拥有阻塞的功能，目的是为了防止缓存击穿。（当在缓存中找不到元素时，它设置对缓存键的锁定，这样，当前线程可以到数据库查询，而其他线程将一直等待，直到该缓存键放入了缓存值）
  * 这个装饰器并不能保证缓存操作的线程安全！！
  * 补充：

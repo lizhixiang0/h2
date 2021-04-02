@@ -34,13 +34,13 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 
 /**
+ * 缓存构建器
  * @author Clinton Begin
  */
-/**
- * 缓存构建器,建造者模式
- *
- */
 public class CacheBuilder {
+  /**
+   * Namespace,cache的唯一标识
+   */
   private String id;
   private Class<? extends Cache> implementation;
   private List<Class<? extends Cache>> decorators;
@@ -52,7 +52,7 @@ public class CacheBuilder {
 
   public CacheBuilder(String id) {
     this.id = id;
-    this.decorators = new ArrayList<Class<? extends Cache>>();
+    this.decorators = new ArrayList<>();
   }
 
   public CacheBuilder implementation(Class<? extends Cache> implementation) {
@@ -92,31 +92,39 @@ public class CacheBuilder {
     return this;
   }
 
+  /**
+   * 构建cache的核心build方法
+   * @return cache
+   */
   public Cache build() {
     setDefaultImplementations();
-    //先new一个base的cache(PerpetualCache)
+    // 1、创建缓存对象 （这里为啥不用对象工厂？）
     Cache cache = newBaseCacheInstance(implementation, id);
-    //设额外属性
+    // 2、设额外属性
     setCacheProperties(cache);
-    // issue #352, do not apply decorators to custom caches
+    // 3、判断是不是自定义缓存
     if (PerpetualCache.class.equals(cache.getClass())) {
+      // 4、不是自定义缓存,遍历添加装饰器
       for (Class<? extends Cache> decorator : decorators) {
-          //装饰者模式一个个包装cache
+        // a、套上过期缓存装饰器
         cache = newCacheDecoratorInstance(decorator, cache);
-        //又要来一遍设额外属性
+        // b、作为额外属性设置进cache
         setCacheProperties(cache);
       }
-      //最后附加上标准的装饰者
+      // c、再附加上标准的装饰者
       cache = setStandardDecorators(cache);
     } else if (!LoggingCache.class.isAssignableFrom(cache.getClass())) {
-        //如果是custom缓存，且不是日志，要加日志
+      // 5、给自定义缓存需套日志装饰器,与mybatis的cache日志统一
       cache = new LoggingCache(cache);
     }
     return cache;
   }
 
+  /**
+   * 判断基础cache和基础装饰cache是否为null ,设置默认值
+   * 我们看到默认的就是PerpetualCache和LruCache ！！！这两货一个提供了容器，一个提供了过期策略！！这两个功能对缓存来讲是基本的。
+   */
   private void setDefaultImplementations() {
-      //又是一重保险，如果为null则设默认值,和XMLMapperBuilder.cacheElement以及MapperBuilderAssistant.useNewCache逻辑重复了
     if (implementation == null) {
       implementation = PerpetualCache.class;
       if (decorators.isEmpty()) {
@@ -125,26 +133,31 @@ public class CacheBuilder {
     }
   }
 
-  //最后附加上标准的装饰者
+  /**
+   * 设置装饰器，丰富缓存策略
+   */
   private Cache setStandardDecorators(Cache cache) {
     try {
       MetaObject metaCache = SystemMetaObject.forObject(cache);
+      // 1、假如缓存有size属性,就设置
       if (size != null && metaCache.hasSetter("size")) {
         metaCache.setValue("size", size);
       }
+      // 2、假如配置了清理间隔时间,那就套上ScheduledCache装饰器
       if (clearInterval != null) {
-        //刷新缓存间隔,怎么刷新呢，用ScheduledCache来刷，还是装饰者模式，漂亮！
         cache = new ScheduledCache(cache);
         ((ScheduledCache) cache).setClearInterval(clearInterval);
       }
+      // 3、readWrite默认是false,代表使用者从缓存里取出的对象改变后能被其他使用感知到！（默认是false,因为通常我们改变后会重新插入）
       if (readWrite) {
-          //如果readOnly=false,可读写的缓存 会返回缓存对象的拷贝(通过序列化) 。这会慢一些,但是安全,因此默认是 false。
+          //如果readOnly=true,代表不可写,不同的使用者读出的内容始终是一样的！除非重新插入缓存！
         cache = new SerializedCache(cache);
       }
-      //日志缓存
+      // 4、日志缓存装饰器是必须的
       cache = new LoggingCache(cache);
-      //同步缓存, 3.2.6以后这个类已经没用了，考虑到Hazelcast, EhCache已经有锁机制了，所以这个锁就画蛇添足了。
+      // 5、同步缓存也是必须的
       cache = new SynchronizedCache(cache);
+      // 6、如果配置block=true ,则加上阻塞缓存装饰器，能防止缓存击穿
       if (blocking) {
         cache = new BlockingCache(cache);
       }
@@ -154,16 +167,23 @@ public class CacheBuilder {
     }
   }
 
+  /**
+   * 利用MetaObject给缓存设置额外的property属性 （一般只有自定义的cache可能会有）
+   */
   private void setCacheProperties(Cache cache) {
     if (properties != null) {
+      // 1、获取cache的元类
       MetaObject metaCache = SystemMetaObject.forObject(cache);
-      //用反射设置额外的property属性
+      // 2、遍历properties,给cache设置属性
       for (Map.Entry<Object, Object> entry : properties.entrySet()) {
         String name = (String) entry.getKey();
         String value = (String) entry.getValue();
+
+        // a、判断cache有没有该属性
         if (metaCache.hasSetter(name)) {
+          // b、如果有,获取该属性的类型
           Class<?> type = metaCache.getSetterType(name);
-          //下面就是各种基本类型的判断了，味同嚼蜡但是又不得不写
+          // c、下面就是各种基本类型或包装类型的判断，如果不是基本类型,直接抛异常
           if (String.class == type) {
             metaCache.setValue(name, value);
           } else if (int.class == type

@@ -50,16 +50,26 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
 /**
- * 映射构建器助手，建造者模式,继承BaseBuilder
+ * 映射构建器助手,一个XML映射解析器对应一个
  * @author Clinton Begin
  */
 public class MapperBuilderAssistant extends BaseBuilder {
-
-  //每个助手都有1个namespace,resource,cache
+  /**
+   * 命名空间（接口全限定名）
+   */
   private String currentNamespace;
+  /**
+   * 资源路径 （xml映射文件）
+   */
   private String resource;
+  /**
+   * 表示当前xml的缓存
+   */
   private Cache currentCache;
-  private boolean unresolvedCacheRef; // issue #676
+  /**
+   * CacheRef是否解析完
+   */
+  private boolean unresolvedCacheRef;
 
   public MapperBuilderAssistant(Configuration configuration, String resource) {
     super(configuration);
@@ -75,66 +85,59 @@ public class MapperBuilderAssistant extends BaseBuilder {
     if (currentNamespace == null) {
       throw new BuilderException("The mapper element requires a namespace attribute to be specified.");
     }
-
     if (this.currentNamespace != null && !this.currentNamespace.equals(currentNamespace)) {
-      throw new BuilderException("Wrong namespace. Expected '"
-          + this.currentNamespace + "' but found '" + currentNamespace + "'.");
+      throw new BuilderException("Wrong namespace. Expected '"+ this.currentNamespace + "' but found '" + currentNamespace + "'.");
     }
-
     this.currentNamespace = currentNamespace;
   }
 
-  //为id加上namespace前缀，如selectPerson-->org.a.b.selectPerson
-  public String applyCurrentNamespace(String base, boolean isReference) {
-    if (base == null) {
-      return null;
-    }
-    if (isReference) {
-      // is it qualified with any namespace yet?
-      if (base.contains(".")) {
-        return base;
-      }
-    } else {
-      // is it qualified with this namespace yet?
-      if (base.startsWith(currentNamespace + ".")) {
-        return base;
-      }
-      if (base.contains(".")) {
-        throw new BuilderException("Dots are not allowed in element names, please remove it from " + base);
-      }
-    }
-    return currentNamespace + "." + base;
-  }
 
-  public Cache useCacheRef(String namespace) {
+  /**
+   *
+   * @param namespace 被引用的命名空间
+   */
+  public void useCacheRef(String namespace) {
     if (namespace == null) {
       throw new BuilderException("cache-ref element requires a namespace attribute.");
     }
     try {
+      // 1、尚未解析
       unresolvedCacheRef = true;
+      // 2、根据namespace从configuration里获取缓存, (这里不就有个问题么，如果引用的命名空间缓存还未加载，这里就么得，所以必须先加载被引用的xml咯？)
       Cache cache = configuration.getCache(namespace);
       if (cache == null) {
         throw new IncompleteElementException("No cache for namespace '" + namespace + "' could be found.");
       }
+      // 3、将引用过来的缓存赋值给当前缓存
       currentCache = cache;
+      // 4、解析结束
       unresolvedCacheRef = false;
-      return cache;
     } catch (IllegalArgumentException e) {
       throw new IncompleteElementException("No cache for namespace '" + namespace + "' could be found.", e);
     }
   }
 
-  public Cache useNewCache(Class<? extends Cache> typeClass,
-      Class<? extends Cache> evictionClass,
-      Long flushInterval,
-      Integer size,
-      boolean readWrite,
-      boolean blocking,
-      Properties props) {
-      //这里面又判断了一下是否为null就用默认值，有点和XMLMapperBuilder.cacheElement逻辑重复了
+  /**
+   * 创建缓存
+   * @param typeClass       缓存类型
+   * @param evictionClass   淘汰策略
+   * @param flushInterval   冲刷间隔
+   * @param size            缓存大小
+   * @param readWrite       读写权限
+   * @param blocking        是否阻塞
+   * @param props           额外属性
+   */
+  public void useNewCache(Class<? extends Cache> typeClass,
+                          Class<? extends Cache> evictionClass,
+                          Long flushInterval,
+                          Integer size,
+                          boolean readWrite,
+                          boolean blocking,
+                          Properties props) {
+    // 1、判断typeClass和evictionClass 是否为null,为null就用默认值
     typeClass = valueOrDefault(typeClass, PerpetualCache.class);
     evictionClass = valueOrDefault(evictionClass, LruCache.class);
-    //调用CacheBuilder构建cache,id=currentNamespace
+    // 2、调用CacheBuilder构建cache,id=currentNamespace
     Cache cache = new CacheBuilder(currentNamespace)
         .implementation(typeClass)
         .addDecorator(evictionClass)
@@ -144,21 +147,53 @@ public class MapperBuilderAssistant extends BaseBuilder {
         .blocking(blocking)
         .properties(props)
         .build();
-    //加入缓存
+    // 3、加入configuration中的缓存集中营
     configuration.addCache(cache);
-    //当前的缓存
+    // 4、设置为当前的缓存   （这么说Cache和Cache-ref是互斥的？？）
     currentCache = cache;
-    return cache;
   }
 
-  public ParameterMap addParameterMap(String id, Class<?> parameterClass, List<ParameterMapping> parameterMappings) {
-    id = applyCurrentNamespace(id, false);
-    ParameterMap.Builder parameterMapBuilder = new ParameterMap.Builder(configuration, id, parameterClass, parameterMappings);
-    ParameterMap parameterMap = parameterMapBuilder.build();
-    configuration.addParameterMap(parameterMap);
-    return parameterMap;
+  /**
+   * 给某些节点的ID加上namespace前缀
+   * e.q. 如rowResult-->com.pax.com.rowResult
+   * @param base 一般是各种节点的ID
+   * @param isReference 是否允许base中有圆点
+   */
+  public String applyCurrentNamespace(String base, boolean isReference) {
+    if (base == null) {
+      return null;
+    }
+    if (isReference) {
+      if (base.contains(".")) {
+        // 1、允许有圆点,那有的话直接返回
+        return base;
+      }
+    } else {
+      if (base.startsWith(currentNamespace + ".")) {
+        // 2、不允许有圆点,但是以命名空间.开头也直接返回,否则直接报错
+        return base;
+      }
+      if (base.contains(".")) {
+        throw new BuilderException("Dots are not allowed in element names, please remove it from " + base);
+      }
+    }
+    // 3、没有圆点就加上currentNamespace.返回
+    return currentNamespace + "." + base;
   }
 
+
+  /**
+   * 构建ParameterMapping
+   * @param parameterType 属性所在类 || 元素所在容器类型
+   * @param property      属性名
+   * @param javaType      属性java类型
+   * @param jdbcType      属性jdbc类型
+   * @param resultMap     属性的resultMap  ？？？
+   * @param parameterMode 属性的parameterMode ？？？
+   * @param typeHandler   属性的类型处理器
+   * @param numericScale  属性的小数点保留几位
+   * @return ParameterMapping
+   */
   public ParameterMapping buildParameterMapping(
       Class<?> parameterType,
       String property,
@@ -168,12 +203,13 @@ public class MapperBuilderAssistant extends BaseBuilder {
       ParameterMode parameterMode,
       Class<? extends TypeHandler<?>> typeHandler,
       Integer numericScale) {
+    // 1、给resultMap加上名称空间作为前缀
     resultMap = applyCurrentNamespace(resultMap, true);
-
-    // Class parameterType = parameterMapBuilder.type();
+    // 2、有时候不写明java类型,所以得给定一个java类型
     Class<?> javaTypeClass = resolveParameterJavaType(parameterType, property, javaType, jdbcType);
+    // 3、获取类型处理器,如果没配置类型处理器,那这里会返回null,但是后面build时会构造一个默认的类型处理器
     TypeHandler<?> typeHandlerInstance = resolveTypeHandler(javaTypeClass, typeHandler);
-
+    // 4、构建ParameterMapping
     ParameterMapping.Builder builder = new ParameterMapping.Builder(configuration, property, javaTypeClass);
     builder.jdbcType(jdbcType);
     builder.resultMapId(resultMap);
@@ -182,6 +218,20 @@ public class MapperBuilderAssistant extends BaseBuilder {
     builder.typeHandler(typeHandlerInstance);
     return builder.build();
   }
+
+  /**
+   * 将parameterMap存到configuration
+   * @param id   parameterMap 的 ID
+   * @param parameterClass  parameterMap对应的clazz,这个clazz可能是个对象类,也可能是个容器类
+   * @param parameterMappings  parameterMap 的所有 parameter
+   */
+  public void addParameterMap(String id, Class<?> parameterClass, List<ParameterMapping> parameterMappings) {
+    id = applyCurrentNamespace(id, false);
+    ParameterMap.Builder parameterMapBuilder = new ParameterMap.Builder(id, parameterClass, parameterMappings);
+    ParameterMap parameterMap = parameterMapBuilder.build();
+    configuration.addParameterMap(parameterMap);
+  }
+
 
   //增加ResultMap
   public ResultMap addResultMap(
@@ -349,8 +399,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
     } else if (parameterTypeClass != null) {
       List<ParameterMapping> parameterMappings = new ArrayList<ParameterMapping>();
       ParameterMap.Builder inlineParameterMapBuilder = new ParameterMap.Builder(
-          configuration,
-          statementBuilder.id() + "-Inline",
+              statementBuilder.id() + "-Inline",
           parameterTypeClass,
           parameterMappings);
       statementBuilder.parameterMap(inlineParameterMapBuilder.build());
@@ -489,18 +538,30 @@ public class MapperBuilderAssistant extends BaseBuilder {
     return javaType;
   }
 
+  /**
+   * 解析参数类型
+   * @param resultType  属性所在类 || 元素所在容器
+   * @param property 属性名
+   * @param javaType 属性类型
+   * @param jdbcType 属性对应的jdbc类型
+   * @return
+   */
   private Class<?> resolveParameterJavaType(Class<?> resultType, String property, Class<?> javaType, JdbcType jdbcType) {
     if (javaType == null) {
       if (JdbcType.CURSOR.equals(jdbcType)) {
+        // 1、假如jdbcType是CURSOR,则javaType置为ResultSet类型
         javaType = java.sql.ResultSet.class;
       } else if (Map.class.isAssignableFrom(resultType)) {
+        // 2、如果resultType是Map类型,这种定位不了具体类型，则javaType置为Object类型,
         javaType = Object.class;
       } else {
+        // 3、假如jdbcType不是CURSOR、且resultType不是Map类型,则尝试利用MetaClass来根据属性名获取类型
         MetaClass metaResultType = MetaClass.forClass(resultType);
         javaType = metaResultType.getGetterType(property);
       }
     }
     if (javaType == null) {
+      // 4、假如用户傻逼了,把属性名写错了,则javaType置为Object类型
       javaType = Object.class;
     }
     return javaType;

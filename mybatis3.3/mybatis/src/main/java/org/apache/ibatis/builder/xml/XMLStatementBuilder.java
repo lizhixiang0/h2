@@ -34,11 +34,8 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 
 /**
+ * XML语句构建器
  * @author Clinton Begin
- */
-/**
- * XML语句构建器，建造者模式,继承BaseBuilder
- *
  */
 public class XMLStatementBuilder extends BaseBuilder {
 
