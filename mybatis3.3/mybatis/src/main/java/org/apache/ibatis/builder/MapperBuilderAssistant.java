@@ -453,7 +453,23 @@ public class MapperBuilderAssistant extends BaseBuilder {
     statementBuilder.timeout(timeout);
   }
 
-  //构建result map
+  /**
+   * 构建result map
+   * @param resultType  当前resultMap的type类型
+   * @param property JavaBean中的属性名
+   * @param column 数据库中的列名
+   * @param javaType ..如果是个集合？
+   * @param jdbcType ..
+   * @param nestedSelect 内嵌的查询语句
+   * @param nestedResultMap 内嵌的结果映射
+   * @param notNullColumn .. 某个属性不为null 才构建子对象
+   * @param columnPrefix .. 映射同名属性的情况下,用这个作为前缀
+   * @param typeHandler .. 类型处理器
+   * @param flags ..  结果标志集合  ？？？
+   * @param resultSet ..  多结果集设置
+   * @param foreignColumn ..多结果集下，两个结果集之间的关联键
+   * @param lazy ..  是否支持懒加载
+   */
   public ResultMapping buildResultMapping(
       Class<?> resultType,
       String property,
