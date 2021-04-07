@@ -353,9 +353,9 @@ public class XMLMapperBuilder extends BaseBuilder {
   }
 
   /**
-   * 4.2 解析resultMap节点
+   * 4.2 解析resultMap节点，返回ResultMap
    * @param resultMapNode 单个resultMap节点
-   * @param additionalResultMappings  额外提供的空集合容器,不知道干啥玩意
+   * @param additionalResultMappings  额外提供的ResultMapping集合容器,递归调用使用的
    */
   private ResultMap resultMapElement(XNode resultMapNode, List<ResultMapping> additionalResultMappings) throws Exception {
     // 1、定义全局异常跟踪
@@ -446,34 +446,71 @@ public class XMLMapperBuilder extends BaseBuilder {
 
   /**
    * 4.3.2、解析resultMap的Discriminator节点
-   * <discriminator javaType="int" column="draft">
-   *   <case value="1" resultType="DraftPost"/>
+   * <discriminator javaType="int" column="draft" jdbcType="" typeHandler="">
+   *   <case value="1" resultMap="DraftPost"/>
    * </discriminator>
    * @param context 当前discriminator节点
    * @param resultType 当前resultMap的type类型
    * @param resultMappings 结果映射集合
    */
   private Discriminator processDiscriminatorElement(XNode context, Class<?> resultType, List<ResultMapping> resultMappings) throws Exception {
+    // 1、获得列名
     String column = context.getStringAttribute("column");
+    // 2、获得java类的全限定名或别名
     String javaType = context.getStringAttribute("javaType");
+    // 3、获得jdbc类型
     String jdbcType = context.getStringAttribute("jdbcType");
+    // 4、获得类型处理器
     String typeHandler = context.getStringAttribute("typeHandler");
+    // 5、解析java类型获得clazz类
     Class<?> javaTypeClass = resolveClass(javaType);
+    // 6、解析获得类型处理器
     @SuppressWarnings("unchecked")
     Class<? extends TypeHandler<?>> typeHandlerClass = (Class<? extends TypeHandler<?>>) resolveClass(typeHandler);
+    // 7、解析获得jdbc类型
     JdbcType jdbcTypeEnum = resolveJdbcType(jdbcType);
+    // 8、创建辨别器容器
     Map<String, String> discriminatorMap = new HashMap<>();
+    // 9、遍历子节点
     for (XNode caseChild : context.getChildren()) {
+      // a、获取value值
       String value = caseChild.getStringAttribute("value");
+      // b、获取resultMap的别名或唯一标识
       String resultMap = caseChild.getStringAttribute("resultMap", processNestedResultMappings(caseChild, resultMappings));
+      // c、存入map
       discriminatorMap.put(value, resultMap);
     }
+    // 10、构建辨别器
     return builderAssistant.buildDiscriminator(resultType, column, javaTypeClass, jdbcTypeEnum, typeHandlerClass, discriminatorMap);
+  }
+
+  /**
+   * 4.4处理嵌套的result map
+   *        <association property="author" resultMap="authorResult" />
+   *
+   *        <case value="1" resultMap="DraftPost"/>
+   *
+   *        <collection property="posts" ofType="Post" resultMap="blogPostResult" columnPrefix="post_"/>
+   *
+   * @param context  含有resultMap属性的子节点
+   * @param resultMappings   当前resultMap节点的总结果映射集合
+   */
+  private String processNestedResultMappings(XNode context, List<ResultMapping> resultMappings) throws Exception {
+    // 如果是association或collection或case节点,则进行处理
+    if ("association".equals(context.getName()) || "collection".equals(context.getName())|| "case".equals(context.getName())) {
+      if (context.getStringAttribute("select") == null) {
+        // 且必须不是嵌套查询才进行处理,则递归调用4.2 resultMapElement
+        ResultMap resultMap = resultMapElement(context, resultMappings);
+        // 返回resultMap的标识符
+        return resultMap.getId();
+      }
+    }
+    return null;
   }
 
 
   /**
-   * 4.4 从当前节点体内取的配置的信息,构建resultMap
+   * 4.5 从当前节点体内取的配置的信息,构建resultMap
    *
    * @param context  当前节点,其父节点可能是resultMap节点也可能是constructor节点
    * @param resultType  当前resultMap的type类型
@@ -511,32 +548,6 @@ public class XMLMapperBuilder extends BaseBuilder {
     JdbcType jdbcTypeEnum = resolveJdbcType(jdbcType);
     // 13、使用builderAssistant生成ResultMapping
     return builderAssistant.buildResultMapping(resultType, property, column, javaTypeClass, jdbcTypeEnum, nestedSelect, nestedResultMap, notNullColumn, columnPrefix, typeHandlerClass, flags, resultSet, foreignColumn, lazy);
-  }
-
-  /**
-   * 4.5处理嵌套的result map
-   * @param context
-   * @param resultMappings
-   * @return
-   * @throws Exception
-   */
-  private String processNestedResultMappings(XNode context, List<ResultMapping> resultMappings) throws Exception {
-	  //处理association|collection|case
-    if ("association".equals(context.getName())
-        || "collection".equals(context.getName())
-        || "case".equals(context.getName())) {
-
-//    	<resultMap id="blogResult" type="Blog">
-//    	  <association property="author" column="author_id" javaType="Author" select="selectAuthor"/>
-//    	</resultMap>
-//如果不是嵌套查询
-      if (context.getStringAttribute("select") == null) {
-    	//则递归调用5.1 resultMapElement
-        ResultMap resultMap = resultMapElement(context, resultMappings);
-        return resultMap.getId();
-      }
-    }
-    return null;
   }
 
 

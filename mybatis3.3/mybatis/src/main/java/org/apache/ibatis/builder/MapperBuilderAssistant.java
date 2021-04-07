@@ -233,22 +233,23 @@ public class MapperBuilderAssistant extends BaseBuilder {
   }
 
 
-  //增加ResultMap
-  public ResultMap addResultMap(
-      String id,
-      Class<?> type,
-      String extend,
-      Discriminator discriminator,
-      List<ResultMapping> resultMappings,
-      Boolean autoMapping) {
+  /**
+   * 增加ResultMap
+   * @param id 当前ResultMap的唯一标识
+   * @param type 当前ResultMap对应的java类型
+   * @param extend 当前ResultMap继承的ResultMap
+   * @param discriminator 当前ResultMap的辨别器
+   * @param resultMappings 当前ResultMap下的所有结果映射
+   * @param autoMapping 是否自动映射
+   */
+  public ResultMap addResultMap(String id, Class<?> type, String extend, Discriminator discriminator, List<ResultMapping> resultMappings, Boolean autoMapping) {
     id = applyCurrentNamespace(id, false);
     extend = applyCurrentNamespace(extend, true);
-
     //建造者模式
     ResultMap.Builder resultMapBuilder = new ResultMap.Builder(configuration, id, type, resultMappings, autoMapping);
     if (extend != null) {
       if (!configuration.hasResultMap(extend)) {
-        throw new IncompleteElementException("Could not find a parent resultmap with id '" + extend + "'");
+        throw new IncompleteElementException("Could not find a parent resultMap with id '" + extend + "'");
       }
       ResultMap resultMap = configuration.getResultMap(extend);
       List<ResultMapping> extendedResultMappings = new ArrayList<ResultMapping>(resultMap.getResultMappings());
@@ -277,6 +278,16 @@ public class MapperBuilderAssistant extends BaseBuilder {
     return resultMap;
   }
 
+  /**
+   * 创建辨别器
+   * @param resultType
+   * @param column
+   * @param javaType
+   * @param jdbcType
+   * @param typeHandler
+   * @param discriminatorMap
+   * @return
+   */
   public Discriminator buildDiscriminator(
       Class<?> resultType,
       String column,
@@ -485,21 +496,23 @@ public class MapperBuilderAssistant extends BaseBuilder {
       String resultSet,
       String foreignColumn,
       boolean lazy) {
+    // 1、解析属性类型,默认为Object.class
     Class<?> javaTypeClass = resolveResultJavaType(resultType, property, javaType);
+    // 2、获取类型处理器
     TypeHandler<?> typeHandlerInstance = resolveTypeHandler(javaTypeClass, typeHandler);
-    //解析复合的列名,一般用不到，返回的是空
+    // 3、解析复合的列名
     List<ResultMapping> composites = parseCompositeColumnName(column);
     if (composites.size() > 0) {
       column = null;
     }
-    //构建result map
+    // 4、构建result map
     ResultMapping.Builder builder = new ResultMapping.Builder(configuration, property, column, javaTypeClass);
     builder.jdbcType(jdbcType);
     builder.nestedQueryId(applyCurrentNamespace(nestedSelect, true));
     builder.nestedResultMapId(applyCurrentNamespace(nestedResultMap, true));
     builder.resultSet(resultSet);
     builder.typeHandler(typeHandlerInstance);
-    builder.flags(flags == null ? new ArrayList<ResultFlag>() : flags);
+    builder.flags(flags == null ? new ArrayList<>() : flags);
     builder.composites(composites);
     builder.notNullColumns(parseMultipleColumnNames(notNullColumn));
     builder.columnPrefix(columnPrefix);
@@ -524,33 +537,51 @@ public class MapperBuilderAssistant extends BaseBuilder {
     return columns;
   }
 
-  //解析复合列名，即列名由多个组成，可以先忽略
+  /**
+   * 解析复合列名，即列名由多个组成
+   * 在使用复合主键的时候，可以使用 column="{prop1=col1,prop2=col2}" 这样的语法来指定多个传递给嵌套 Select 查询语句的列名
+   * @param columnName {prop1=col1,prop2=col2}
+   */
   private List<ResultMapping> parseCompositeColumnName(String columnName) {
-    List<ResultMapping> composites = new ArrayList<ResultMapping>();
+    // 1、创建ResultMapping集合
+    List<ResultMapping> composites = new ArrayList<>();
+    // 2、判断columnName存在且存在"="或","
     if (columnName != null && (columnName.indexOf('=') > -1 || columnName.indexOf(',') > -1)) {
+      // a、创建字符串标记器类，以"{}=,"为分隔符,解析columnName
       StringTokenizer parser = new StringTokenizer(columnName, "{}=, ", false);
+      // b、使用死循环,一次读两个,正好对应属性名和列名
       while (parser.hasMoreTokens()) {
         String property = parser.nextToken();
         String column = parser.nextToken();
+        // c、构建ResultMapping并添加进composites
         ResultMapping.Builder complexBuilder = new ResultMapping.Builder(configuration, property, column, configuration.getTypeHandlerRegistry().getUnknownTypeHandler());
         composites.add(complexBuilder.build());
       }
     }
+    // 3、返回ResultMapping集合
     return composites;
   }
 
+  /**
+   * 找到属性对应的类型,找不到就为Object.class
+   * @param resultType  目标类
+   * @param property   某属性
+   * @param javaType   该属性对应的类型
+   */
   private Class<?> resolveResultJavaType(Class<?> resultType, String property, Class<?> javaType) {
+    // 1、如果该属性类型为null ,但存在属性名，就借助元对象去找属性类型
     if (javaType == null && property != null) {
       try {
         MetaClass metaResultType = MetaClass.forClass(resultType);
         javaType = metaResultType.getSetterType(property);
-      } catch (Exception e) {
-        //ignore, following null check statement will deal with the situation
+      } catch (Exception ignored) {
       }
     }
+    // 2、如果该属性类型为null ,且其元对象中也没找到该属性类型，则设置为Object.class
     if (javaType == null) {
       javaType = Object.class;
     }
+    // 3、返回
     return javaType;
   }
 

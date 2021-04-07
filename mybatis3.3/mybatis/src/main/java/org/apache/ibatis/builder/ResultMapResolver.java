@@ -22,16 +22,37 @@ import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
 
 /**
- * 结果映射解析器
+ * 结果映射解析器,包装了一下MapperBuilderAssistant的addResultMap方法
  * @author Eduardo Macarron
  */
 public class ResultMapResolver {
+  /**
+   * 当前xml映射文件对应的构建助手
+   */
   private final MapperBuilderAssistant assistant;
+  /**
+   * 当前ResultMap的唯一标识
+   */
   private String id;
+  /**
+   * 当前ResultMap对应的java类型
+   */
   private Class<?> type;
+  /**
+   * 当前ResultMap继承的ResultMap
+   */
   private String extend;
+  /**
+   * 当前ResultMap的辨别器
+   */
   private Discriminator discriminator;
+  /**
+   * 当前ResultMap下的所有结果映射
+   */
   private List<ResultMapping> resultMappings;
+  /**
+   * 是否自动映射
+   */
   private Boolean autoMapping;
 
   public ResultMapResolver(MapperBuilderAssistant assistant, String id, Class<?> type, String extend, Discriminator discriminator, List<ResultMapping> resultMappings, Boolean autoMapping) {
@@ -44,8 +65,12 @@ public class ResultMapResolver {
     this.autoMapping = autoMapping;
   }
 
+  /**
+   * 解析,生成ResultMap
+   * @return ResultMap
+   */
   public ResultMap resolve() {
-      //解析又去调用MapperBuilderAssistant.addResultMap
+    // 调用MapperBuilderAssistant.addResultMap
     return assistant.addResultMap(this.id, this.type, this.extend, this.discriminator, this.resultMappings, this.autoMapping);
   }
 

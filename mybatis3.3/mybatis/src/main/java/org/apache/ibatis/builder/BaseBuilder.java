@@ -206,15 +206,20 @@ public abstract class BaseBuilder {
     return resolveTypeHandler(javaType, typeHandlerType);
   }
 
+  /**
+   * 根据javaType和typeHandlerType获取类型处理器
+   * @param javaType  java类型
+   * @param typeHandlerType    类型处理器
+   */
   protected TypeHandler<?> resolveTypeHandler(Class<?> javaType, Class<? extends TypeHandler<?>> typeHandlerType) {
-    // 1、必须提供类型处理器别名,不然直接返回null
+    // 1、没提供类型处理器直接返回null
     if (typeHandlerType == null) {
       return null;
     }
-    // 2、去typeHandlerRegistry查询对应的TypeHandler
+    // 2、提供了就到typeHandlerRegistry查询对应的TypeHandler
     TypeHandler<?> handler = typeHandlerRegistry.getMappingTypeHandler(typeHandlerType);
     if (handler == null) {
-      //3、如果没有在Registry找到，调用typeHandlerRegistry.getInstance来new一个TypeHandler
+      //3、如果没找到，调用typeHandlerRegistry.getInstance来new一个TypeHandler
       handler = typeHandlerRegistry.getInstance(javaType, typeHandlerType);
     }
     // 4、返回
