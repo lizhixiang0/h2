@@ -243,18 +243,24 @@ public class MapperBuilderAssistant extends BaseBuilder {
    * @param autoMapping 是否自动映射
    */
   public ResultMap addResultMap(String id, Class<?> type, String extend, Discriminator discriminator, List<ResultMapping> resultMappings, Boolean autoMapping) {
+    // 1、给id 和 extend 加上命名空间前缀
     id = applyCurrentNamespace(id, false);
     extend = applyCurrentNamespace(extend, true);
-    //建造者模式
+    // 2、创建ResultMap建造者
     ResultMap.Builder resultMapBuilder = new ResultMap.Builder(configuration, id, type, resultMappings, autoMapping);
+    // 3、验证extend是否存在
     if (extend != null) {
+      // a、如果configuration中没有该父类ResultMap，抛出异常
       if (!configuration.hasResultMap(extend)) {
         throw new IncompleteElementException("Could not find a parent resultMap with id '" + extend + "'");
       }
+      // b、从configuration中获取该父类ResultMap
       ResultMap resultMap = configuration.getResultMap(extend);
-      List<ResultMapping> extendedResultMappings = new ArrayList<ResultMapping>(resultMap.getResultMappings());
+      // c、获得该ResultMap的所有ResultMapping
+      List<ResultMapping> extendedResultMappings = new ArrayList<>(resultMap.getResultMappings());
+      // d、把父类中子类已经存在的ResultMapping删掉
       extendedResultMappings.removeAll(resultMappings);
-      // Remove parent constructor if this resultMap declares a constructor.
+      // e、如果子类声明了构造函数resultMapping，则删除父类resultMap的构造函数resultMapping。
       boolean declaresConstructor = false;
       for (ResultMapping resultMapping : resultMappings) {
         if (resultMapping.getFlags().contains(ResultFlag.CONSTRUCTOR)) {
@@ -263,64 +269,75 @@ public class MapperBuilderAssistant extends BaseBuilder {
         }
       }
       if (declaresConstructor) {
-        Iterator<ResultMapping> extendedResultMappingsIter = extendedResultMappings.iterator();
-        while (extendedResultMappingsIter.hasNext()) {
-          if (extendedResultMappingsIter.next().getFlags().contains(ResultFlag.CONSTRUCTOR)) {
-            extendedResultMappingsIter.remove();
-          }
-        }
+        extendedResultMappings.removeIf(resultMapping -> resultMapping.getFlags().contains(ResultFlag.CONSTRUCTOR));
       }
+      // f、将父类留下来的resultMapping都添加到resultMappings中
       resultMappings.addAll(extendedResultMappings);
     }
+    // 4、配置鉴别器
     resultMapBuilder.discriminator(discriminator);
+    // 5、执行build
     ResultMap resultMap = resultMapBuilder.build();
+    // 6、注册到configuration
     configuration.addResultMap(resultMap);
+    // 7、返回
     return resultMap;
   }
 
   /**
    * 创建辨别器
-   * @param resultType
-   * @param column
-   * @param javaType
-   * @param jdbcType
-   * @param typeHandler
-   * @param discriminatorMap
-   * @return
+   *    <discriminator javaType="int" column="draft" jdbcType="" typeHandler="">
+   *        <case value="1" resultMap="DraftPost"/>
+   *        <case value="2" resultMap="Post"/>
+   *    </discriminator>
+   * @param resultType    当前resultMap的type类型
+   * @param column  当前辨别器对应的列名
+   * @param javaType    当前辨别器的列名对应的java类型
+   * @param jdbcType  当前辨别器的列名对应的jdbcType类型
+   * @param typeHandler 类型处理器
+   * @param discriminatorMap   <value,resultMap>容器
+   * @return 鉴别器
    */
-  public Discriminator buildDiscriminator(
-      Class<?> resultType,
-      String column,
-      Class<?> javaType,
-      JdbcType jdbcType,
-      Class<? extends TypeHandler<?>> typeHandler,
-      Map<String, String> discriminatorMap) {
-    ResultMapping resultMapping = buildResultMapping(
-        resultType,
-        null,
-        column,
-        javaType,
-        jdbcType,
-        null,
-        null,
-        null,
-        null,
-        typeHandler,
-        new ArrayList<ResultFlag>(),
-        null,
-        null,
-        false);
-    Map<String, String> namespaceDiscriminatorMap = new HashMap<String, String>();
+  public Discriminator buildDiscriminator(Class<?> resultType, String column, Class<?> javaType, JdbcType jdbcType, Class<? extends TypeHandler<?>> typeHandler, Map<String, String> discriminatorMap) {
+    // 1、生成ResultMapping
+    ResultMapping resultMapping = buildResultMapping(resultType, null, column, javaType, jdbcType, null, null, null, null, typeHandler, new ArrayList<>(), null, null, false);
+    // 2、给discriminatorMap里的resultMap加上命名空间前缀
+    Map<String, String> namespaceDiscriminatorMap = new HashMap<>();
     for (Map.Entry<String, String> e : discriminatorMap.entrySet()) {
       String resultMap = e.getValue();
       resultMap = applyCurrentNamespace(resultMap, true);
       namespaceDiscriminatorMap.put(e.getKey(), resultMap);
     }
+    // 3、生成discriminatorBuilder构建器
     Discriminator.Builder discriminatorBuilder = new Discriminator.Builder(configuration, resultMapping, namespaceDiscriminatorMap);
+    // 4、构建Discriminator并返回
     return discriminatorBuilder.build();
   }
 
-  //增加映射语句
+  /**
+   * 构建映射语句,并将其添加到configuration
+   * @param id
+   * @param sqlSource
+   * @param statementType
+   * @param sqlCommandType
+   * @param fetchSize
+   * @param timeout
+   * @param parameterMap
+   * @param parameterType
+   * @param resultMap
+   * @param resultType
+   * @param resultSetType
+   * @param flushCache
+   * @param useCache
+   * @param resultOrdered
+   * @param keyGenerator
+   * @param keyProperty
+   * @param keyColumn
+   * @param databaseId
+   * @param lang
+   * @param resultSets
+   * @return
+   */
   public MappedStatement addMappedStatement(
       String id,
       SqlSource sqlSource,
@@ -465,7 +482,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
   }
 
   /**
-   * 构建result map
+   * 构建ResultMapping
    * @param resultType  当前resultMap的type类型
    * @param property JavaBean中的属性名
    * @param column 数据库中的列名
@@ -500,12 +517,13 @@ public class MapperBuilderAssistant extends BaseBuilder {
     Class<?> javaTypeClass = resolveResultJavaType(resultType, property, javaType);
     // 2、获取类型处理器
     TypeHandler<?> typeHandlerInstance = resolveTypeHandler(javaTypeClass, typeHandler);
-    // 3、解析复合的列名
+    // 3、解析复合列名,类似 column="{prop1=col1,prop2=col2}"
     List<ResultMapping> composites = parseCompositeColumnName(column);
     if (composites.size() > 0) {
+      // 如果是复合列名,则column设置为null
       column = null;
     }
-    // 4、构建result map
+    // 4、构建ResultMapping
     ResultMapping.Builder builder = new ResultMapping.Builder(configuration, property, column, javaTypeClass);
     builder.jdbcType(jdbcType);
     builder.nestedQueryId(applyCurrentNamespace(nestedSelect, true));
@@ -519,22 +537,6 @@ public class MapperBuilderAssistant extends BaseBuilder {
     builder.foreignColumn(foreignColumn);
     builder.lazy(lazy);
     return builder.build();
-  }
-
-  private Set<String> parseMultipleColumnNames(String columnName) {
-    Set<String> columns = new HashSet<String>();
-    if (columnName != null) {
-      if (columnName.indexOf(',') > -1) {
-        StringTokenizer parser = new StringTokenizer(columnName, "{}, ", false);
-        while (parser.hasMoreTokens()) {
-          String column = parser.nextToken();
-          columns.add(column);
-        }
-      } else {
-        columns.add(columnName);
-      }
-    }
-    return columns;
   }
 
   /**
@@ -560,6 +562,26 @@ public class MapperBuilderAssistant extends BaseBuilder {
     }
     // 3、返回ResultMapping集合
     return composites;
+  }
+
+  /**
+   * 解析复合列名，即列名由多个组成
+   * @param columnName {prop1,prop2}
+   */
+  private Set<String> parseMultipleColumnNames(String columnName) {
+    Set<String> columns = new HashSet<>();
+    if (columnName != null) {
+      if (columnName.indexOf(',') > -1) {
+        StringTokenizer parser = new StringTokenizer(columnName, "{}, ", false);
+        while (parser.hasMoreTokens()) {
+          String column = parser.nextToken();
+          columns.add(column);
+        }
+      } else {
+        columns.add(columnName);
+      }
+    }
+    return columns;
   }
 
   /**
@@ -633,16 +655,20 @@ public class MapperBuilderAssistant extends BaseBuilder {
         nestedResultMap, notNullColumn, columnPrefix, typeHandler, flags, null, null, configuration.isLazyLoadingEnabled());
   }
 
-  //取得语言驱动
+  /**
+   * 取得语言驱动
+   * @param langClass 驱动类
+   * @return LanguageDriver
+   */
   public LanguageDriver getLanguageDriver(Class<?> langClass) {
     if (langClass != null) {
-        //注册语言驱动
+      //1、注册语言驱动
       configuration.getLanguageRegistry().register(langClass);
     } else {
-        //如果为null，则取得默认驱动（mybatis3.2以前大家一直用的方法）
+      //2、如果为null，则取得默认驱动（mybatis3.2以前大家一直用的方法）
       langClass = configuration.getLanguageRegistry().getDefaultDriverClass();
     }
-    //再去调configuration
+    // 2、再去调configuration
     return configuration.getLanguageRegistry().getDriver(langClass);
   }
 

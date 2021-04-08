@@ -20,5 +20,16 @@ package org.apache.ibatis.mapping;
  * @author Clinton Begin
  */
 public enum StatementType {
-  STATEMENT, PREPARED, CALLABLE
+  /**
+   * 普通语句
+   */
+  STATEMENT,
+  /**
+   * 预处理语句
+   */
+  PREPARED,
+  /**
+   * 存储过程
+   */
+  CALLABLE
 }

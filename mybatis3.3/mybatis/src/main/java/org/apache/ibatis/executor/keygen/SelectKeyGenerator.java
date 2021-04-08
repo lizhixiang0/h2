@@ -27,6 +27,7 @@ import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.RowBounds;
 
 /**
+ * 键值生成器
  * @author Clinton Begin
  * @author Jeff Butler
  */

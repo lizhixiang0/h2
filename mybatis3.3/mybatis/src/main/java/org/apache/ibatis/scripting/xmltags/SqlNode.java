@@ -21,7 +21,7 @@ package org.apache.ibatis.scripting.xmltags;
  */
 public interface SqlNode {
   /**
-   * 定义不同节点的底层逻辑   "choose、forEach、if、set、where"
+   * 定义不同节点的处理逻辑   "choose、forEach、if、set、where"
    * @param context DynamicContext
    * @return true || false
    */

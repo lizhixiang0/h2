@@ -31,11 +31,8 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
- * @author Clinton Begin
- */
-/**
  * JDBC3键值生成器,核心是使用JDBC3的Statement.getGeneratedKeys
- *
+ * @author Clinton Begin
  */
 public class Jdbc3KeyGenerator implements KeyGenerator {
 
@@ -46,7 +43,7 @@ public class Jdbc3KeyGenerator implements KeyGenerator {
 
   @Override
   public void processAfter(Executor executor, MappedStatement ms, Statement stmt, Object parameter) {
-    List<Object> parameters = new ArrayList<Object>();
+    List<Object> parameters = new ArrayList<>();
     parameters.add(parameter);
     processBatch(ms, stmt, parameters);
   }

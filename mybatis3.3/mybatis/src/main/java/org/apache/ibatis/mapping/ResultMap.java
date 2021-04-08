@@ -25,36 +25,64 @@ import java.util.Set;
 import org.apache.ibatis.session.Configuration;
 
 /**
+ *  结果集合,可以理解为ResultMap节点解析后得到的类
+ *  MyBatis 中最重要最强大的元素
  * @author Clinton Begin
- */
-/**
- * 结果映射
- * MyBatis 中最重要最强大的元素
  */
 public class ResultMap {
   private String id;
   private Class<?> type;
+  /**
+   * 外面构建好传递进来的
+   */
   private List<ResultMapping> resultMappings;
+
   private List<ResultMapping> idResultMappings;
   private List<ResultMapping> constructorResultMappings;
   private List<ResultMapping> propertyResultMappings;
+  /**
+   * 映射的列名集合
+   */
   private Set<String> mappedColumns;
   private Discriminator discriminator;
   private boolean hasNestedResultMaps;
   private boolean hasNestedQueries;
   private Boolean autoMapping;
 
+  /**
+   * 构造私有化,配合建造者
+   */
   private ResultMap() {
   }
 
-  //静态内部类，建造者模式
+  /**
+   * 静态内部类，建造者模式
+   */
   public static class Builder {
+    /**
+     * 内部维护了一个resultMap
+     */
     private ResultMap resultMap = new ResultMap();
 
+    /**
+     * 重载的构造方法1
+     * @param configuration 核心配置类
+     * @param id resultMap的唯一标识
+     * @param type resultMap对应的java类
+     * @param resultMappings resultMap节点下的所有resultMapping
+     */
     public Builder(Configuration configuration, String id, Class<?> type, List<ResultMapping> resultMappings) {
       this(configuration, id, type, resultMappings, null);
     }
 
+    /**
+     * 重载的构造方法2
+     * @param configuration 核心配置类
+     * @param id resultMap的唯一标识
+     * @param type  resultMap对应的java类
+     * @param resultMappings resultMap节点下的所有resultMapping
+     * @param autoMapping  是否自动映射
+     */
     public Builder(Configuration configuration, String id, Class<?> type, List<ResultMapping> resultMappings, Boolean autoMapping) {
       resultMap.id = id;
       resultMap.type = type;
@@ -71,21 +99,32 @@ public class ResultMap {
       return resultMap.type;
     }
 
+    /**
+     * 核心方法,构建ResultMap
+     */
     public ResultMap build() {
+      // 1、如果resultMap的唯一标识为null ,直接报错
       if (resultMap.id == null) {
         throw new IllegalArgumentException("ResultMaps must have an id");
       }
-      resultMap.mappedColumns = new HashSet<String>();
-      resultMap.idResultMappings = new ArrayList<ResultMapping>();
-      resultMap.constructorResultMappings = new ArrayList<ResultMapping>();
-      resultMap.propertyResultMappings = new ArrayList<ResultMapping>();
+      // 2、初始化resultMap的四个容器对象
+      resultMap.mappedColumns = new HashSet<>();
+      resultMap.idResultMappings = new ArrayList<>();
+      resultMap.constructorResultMappings = new ArrayList<>();
+      resultMap.propertyResultMappings = new ArrayList<>();
+      // 3、循环遍历ResultMapping,将信息分装到不同的容器中去
       for (ResultMapping resultMapping : resultMap.resultMappings) {
+        // a、只要有一条resultMapping内嵌查询语句，就设置该ResultMapping内嵌了查询语句
         resultMap.hasNestedQueries = resultMap.hasNestedQueries || resultMapping.getNestedQueryId() != null;
+        // b、只要有一条resultMapping内嵌ResultMap，设置该ResultMapping是否内嵌了ResultMap
         resultMap.hasNestedResultMaps = resultMap.hasNestedResultMaps || (resultMapping.getNestedResultMapId() != null && resultMapping.getResultSet() == null);
+        // c、获得列名,将映射的列名存到映射列名集合容器
         final String column = resultMapping.getColumn();
         if (column != null) {
+          // c1、如果column不为null,则说明不是复合列名,那就直接转为大写后添加到mappedColumns
           resultMap.mappedColumns.add(column.toUpperCase(Locale.ENGLISH));
         } else if (resultMapping.isCompositeResult()) {
+          // c2、如果column为null ,则可能是复合列名,判断下,如果确实是,遍历其composites,然后将列名都添加到mappedColumns中
           for (ResultMapping compositeResultMapping : resultMapping.getComposites()) {
             final String compositeColumn = compositeResultMapping.getColumn();
             if (compositeColumn != null) {
@@ -93,24 +132,28 @@ public class ResultMap {
             }
           }
         }
+        // d、如果某个resultMapping存在CONSTRUCTOR,将其添加到构造器结果映射容器里,如果不存在，就将其添加到属性结果映射容器里
         if (resultMapping.getFlags().contains(ResultFlag.CONSTRUCTOR)) {
           resultMap.constructorResultMappings.add(resultMapping);
         } else {
           resultMap.propertyResultMappings.add(resultMapping);
         }
+        // e、如果某个resultMapping存在ID,将其将其添加到ID结果映射容器里
         if (resultMapping.getFlags().contains(ResultFlag.ID)) {
           resultMap.idResultMappings.add(resultMapping);
         }
       }
+      // 4、循环处理完resultMappings后，如果idResultMappings为空,就将所有resultMappings都添加进idResultMappings
       if (resultMap.idResultMappings.isEmpty()) {
         resultMap.idResultMappings.addAll(resultMap.resultMappings);
       }
-      // lock down collections
+      // 5、锁定所有集合,将其变为不可变集合对象
       resultMap.resultMappings = Collections.unmodifiableList(resultMap.resultMappings);
       resultMap.idResultMappings = Collections.unmodifiableList(resultMap.idResultMappings);
       resultMap.constructorResultMappings = Collections.unmodifiableList(resultMap.constructorResultMappings);
       resultMap.propertyResultMappings = Collections.unmodifiableList(resultMap.propertyResultMappings);
       resultMap.mappedColumns = Collections.unmodifiableSet(resultMap.mappedColumns);
+      // 6、处理完后,返回resultMap
       return resultMap;
     }
   }

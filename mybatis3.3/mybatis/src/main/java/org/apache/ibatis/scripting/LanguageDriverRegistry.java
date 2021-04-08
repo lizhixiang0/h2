@@ -19,16 +19,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Frank D. Martinez [mnesarco]
- */
-/**
  * 脚本语言注册器
- *
+ * @author Frank D. Martinez [mnesarco]
  */
 public class LanguageDriverRegistry {
 
-  //map
-  private final Map<Class<?>, LanguageDriver> LANGUAGE_DRIVER_MAP = new HashMap<Class<?>, LanguageDriver>();
+  private final Map<Class<?>, LanguageDriver> LANGUAGE_DRIVER_MAP = new HashMap<>();
 
   private Class<?> defaultDriverClass = null;
 
@@ -64,7 +60,10 @@ public class LanguageDriverRegistry {
     return defaultDriverClass;
   }
 
-  //Configuration()有调用，默认的为XMLLanguageDriver
+  /**
+   * Configuration的无参构造调用，默认的为XMLLanguageDriver
+   * @param defaultDriverClass  语言驱动
+   */
   public void setDefaultDriverClass(Class<?> defaultDriverClass) {
     register(defaultDriverClass);
     this.defaultDriverClass = defaultDriverClass;

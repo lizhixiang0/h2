@@ -22,8 +22,7 @@ import org.apache.ibatis.session.Configuration;
 
 /**
  * 鉴别器
- * 有时一个查询也许返回很多不同数据类型的结果集。
- * 鉴别器的表现很像 Java 语言中的 switch 语句。
+ * 有时一个查询也许返回很多不同数据类型的结果集。鉴别器的表现很像 Java 语言中的 switch 语句。
  * @author Clinton Begin
  */
 public class Discriminator {
@@ -31,7 +30,7 @@ public class Discriminator {
   private ResultMapping resultMapping;
   private Map<String, String> discriminatorMap;
 
-  Discriminator() {
+  private Discriminator() {
   }
 
   public static class Builder {
@@ -42,12 +41,19 @@ public class Discriminator {
       discriminator.discriminatorMap = discriminatorMap;
     }
 
+    /**
+     * 啥也没干，就是验证了下
+     */
     public Discriminator build() {
+      // 验证resultMapping不为null
       assert discriminator.resultMapping != null;
+      // 验证discriminatorMap不为null
       assert discriminator.discriminatorMap != null;
+      // 验证discriminatorMap不为空
       assert !discriminator.discriminatorMap.isEmpty();
-      //lock down map
+      // 将discriminatorMap锁定为不可变集合
       discriminator.discriminatorMap = Collections.unmodifiableMap(discriminator.discriminatorMap);
+      // 返回discriminator
       return discriminator;
     }
   }

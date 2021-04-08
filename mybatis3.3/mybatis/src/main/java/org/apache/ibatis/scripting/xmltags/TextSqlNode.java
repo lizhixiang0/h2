@@ -27,7 +27,13 @@ import org.apache.ibatis.type.SimpleTypeRegistry;
  * @author Clinton Begin
  */
 public class TextSqlNode implements SqlNode {
+  /**
+   * sql文本
+   */
   private String text;
+  /**
+   * 注入过滤器
+   */
   private Pattern injectionFilter;
 
   public TextSqlNode(String text) {
@@ -39,29 +45,25 @@ public class TextSqlNode implements SqlNode {
     this.injectionFilter = injectionFilter;
   }
 
-  //判断是否是动态sql
-  public boolean isDynamic() {
-    DynamicCheckerTokenParser checker = new DynamicCheckerTokenParser();
-    GenericTokenParser parser = createParser(checker);
-    parser.parse(text);
-    return checker.isDynamic();
-  }
 
   @Override
   public boolean apply(DynamicContext context) {
+    // 如果是TextSqlNode节点，需要使用绑定记号解析器处理下再拼接到context中去
     GenericTokenParser parser = createParser(new BindingTokenParser(context, injectionFilter));
     context.appendSql(parser.parse(text));
     return true;
   }
 
-  private GenericTokenParser createParser(TokenHandler handler) {
-    return new GenericTokenParser("${", "}", handler);
-  }
 
-  //绑定记号解析器
+  /**
+   * 绑定记号解析器
+   */
   private static class BindingTokenParser implements TokenHandler {
 
     private DynamicContext context;
+    /**
+     * 通常为null
+     */
     private Pattern injectionFilter;
 
     public BindingTokenParser(DynamicContext context, Pattern injectionFilter) {
@@ -92,14 +94,29 @@ public class TextSqlNode implements SqlNode {
     }
   }
 
-  //动态SQL检查器
+  /**
+   * 判断是否是动态sql
+   * 只要text中包含了'${}'就属于动态sql
+   */
+  public boolean isDynamic() {
+    DynamicCheckerTokenParser checker = new DynamicCheckerTokenParser();
+    GenericTokenParser parser = createParser(checker);
+    parser.parse(text);
+    return checker.isDynamic();
+  }
+
+  private GenericTokenParser createParser(TokenHandler handler) {
+    return new GenericTokenParser("${", "}", handler);
+  }
+
+  /**
+   * 动态SQL检查器
+   */
   private static class DynamicCheckerTokenParser implements TokenHandler {
 
     private boolean isDynamic;
 
-    public DynamicCheckerTokenParser() {
-      // Prevent Synthetic Access
-    }
+    public DynamicCheckerTokenParser() {}
 
     public boolean isDynamic() {
       return isDynamic;
@@ -107,7 +124,7 @@ public class TextSqlNode implements SqlNode {
 
     @Override
     public String handleToken(String content) {
-    	//灰常简单，设置isDynamic为true，即调用了这个类就必定是动态sql？？？
+      // 只要text中包含了'${}',GenericTokenParser就会调用handleToken,此时isDynamic会被设置成true
       this.isDynamic = true;
       return null;
     }

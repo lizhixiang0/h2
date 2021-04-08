@@ -43,7 +43,7 @@ public class ResultMapResolver {
    */
   private String extend;
   /**
-   * 当前ResultMap的辨别器
+   * 当前ResultMap内的辨别器
    */
   private Discriminator discriminator;
   /**
@@ -66,11 +66,10 @@ public class ResultMapResolver {
   }
 
   /**
-   * 解析,生成ResultMap
+   * 解析,调用MapperBuilderAssistant生成ResultMap,并将其注册到configuration中
    * @return ResultMap
    */
   public ResultMap resolve() {
-    // 调用MapperBuilderAssistant.addResultMap
     return assistant.addResultMap(this.id, this.type, this.extend, this.discriminator, this.resultMappings, this.autoMapping);
   }
 

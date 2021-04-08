@@ -18,11 +18,11 @@ package org.apache.ibatis.scripting.xmltags;
 import java.util.List;
 
 /**
- * 混合SQL节点
+ * 混合SQL节点,这个有点责任链的感觉
  * @author Clinton Begin
  */
 public class MixedSqlNode implements SqlNode {
-  //组合模式，拥有一个SqlNode的List
+
   private List<SqlNode> contents;
 
   public MixedSqlNode(List<SqlNode> contents) {

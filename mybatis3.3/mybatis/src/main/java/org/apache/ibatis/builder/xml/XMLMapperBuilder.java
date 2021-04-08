@@ -54,9 +54,15 @@ import org.apache.ibatis.type.TypeHandler;
 public class XMLMapperBuilder extends BaseBuilder {
 
   private XPathParser parser;
-  //映射器构建助手
+  /**
+   * 映射器构建助手
+   */
   private MapperBuilderAssistant builderAssistant;
+  /**
+   * 可重用的sql片段
+   */
   private Map<String, XNode> sqlFragments;
+
   private String resource;
 
   @Deprecated
@@ -226,8 +232,8 @@ public class XMLMapperBuilder extends BaseBuilder {
   }
 
   /**
-   * 3.解析所有parameterMap节点  (开发中比较少见)
-   *   它可以用于指定实体类字段属性与数据库字段属性的映射关系，
+   * 3.解析parameterMap节点  (开发中比较少见)
+   *   它可以用于指定实体类字段属性与数据库字段属性的映射关系，（现在一般在dao层使用@Param）
    *   这样一来当传入参数实体类中的字段名和数据库的字段名名称上没有对应也能查询出想要的结果，这就是parameterMap的作用。
    *   并且可以和resultMap搭配使用。
    *   <parameterMap id="ParameterMap" type="Student">
@@ -389,14 +395,14 @@ public class XMLMapperBuilder extends BaseBuilder {
           // c1、如果是ID节点，则结果标志集合 + ID
           flags.add(ResultFlag.ID);
         }
-        //c2、构建ResultMapping并放入集合
+        // c2、为当前子节点构建ResultMapping并放入集合
         resultMappings.add(buildResultMappingFromContext(resultChild, typeClass, flags));
       }
     }
     // 9、构建ResultMapResolver
     ResultMapResolver resultMapResolver = new ResultMapResolver(builderAssistant, id, typeClass, extend, discriminator, resultMappings, autoMapping);
     try {
-      // 10、解析,返回ResultMap
+      // 10、解析生成ResultMap并将其注册到configuration
       return resultMapResolver.resolve();
     } catch (IncompleteElementException  e) {
       configuration.addIncompleteResultMap(resultMapResolver);
@@ -428,7 +434,7 @@ public class XMLMapperBuilder extends BaseBuilder {
   private void processConstructorElement(XNode resultChild, Class<?> resultType, List<ResultMapping> resultMappings) throws Exception {
     // 1、获取所有子节点
     List<XNode> argChildren = resultChild.getChildren();
-    // 2、遍历所有子节点
+    // 2、遍历所有子节点,每个字节点生成一个resultMapping
     for (XNode argChild : argChildren) {
       // a、创建结果标志集合
       List<ResultFlag> flags = new ArrayList<>();
@@ -471,13 +477,13 @@ public class XMLMapperBuilder extends BaseBuilder {
     JdbcType jdbcTypeEnum = resolveJdbcType(jdbcType);
     // 8、创建辨别器容器
     Map<String, String> discriminatorMap = new HashMap<>();
-    // 9、遍历子节点
+    // 9、遍历子节点，将value和resultMap的对应关系存到容器里
     for (XNode caseChild : context.getChildren()) {
       // a、获取value值
       String value = caseChild.getStringAttribute("value");
       // b、获取resultMap的别名或唯一标识
       String resultMap = caseChild.getStringAttribute("resultMap", processNestedResultMappings(caseChild, resultMappings));
-      // c、存入map
+      // c、存入discriminatorMap
       discriminatorMap.put(value, resultMap);
     }
     // 10、构建辨别器
@@ -485,7 +491,7 @@ public class XMLMapperBuilder extends BaseBuilder {
   }
 
   /**
-   * 4.4处理嵌套的result map
+   * 4.4 处理嵌套的result map
    *        <association property="author" resultMap="authorResult" />
    *
    *        <case value="1" resultMap="DraftPost"/>
@@ -510,7 +516,7 @@ public class XMLMapperBuilder extends BaseBuilder {
 
 
   /**
-   * 4.5 从当前节点体内取的配置的信息,构建resultMap
+   * 4.5 从当前节点体内取的配置的信息,构建ResultMapping
    *
    * @param context  当前节点,其父节点可能是resultMap节点也可能是constructor节点
    * @param resultType  当前resultMap的type类型
@@ -528,7 +534,7 @@ public class XMLMapperBuilder extends BaseBuilder {
     String jdbcType = context.getStringAttribute("jdbcType");
     // 5、取select,内嵌的查询语句,从column属性指定的列检索数据,作为参数传递给此 select 语句,不推荐使用。
     String nestedSelect = context.getStringAttribute("select");
-    // 6、取resultMap,将嵌套的结果集映射到一个合适的对象树中,作为使用额外 select 语句的替代方案
+    // 6、取resultMap,将嵌套的结果集映射到一个合适的对象树中,作为使用额外 select 语句的替代方案 ,注意这里执行了processNestedResultMappings()
     String nestedResultMap = context.getStringAttribute("resultMap",processNestedResultMappings(context, Collections.emptyList()));
     // 7、取notNullColumn,默认是只要有一个属性不为空就创建子对象,可以指定只有当某个属性不为空才创建子对象
     String notNullColumn = context.getStringAttribute("notNullColumn");
@@ -550,72 +556,116 @@ public class XMLMapperBuilder extends BaseBuilder {
     return builderAssistant.buildResultMapping(resultType, property, column, javaTypeClass, jdbcTypeEnum, nestedSelect, nestedResultMap, notNullColumn, columnPrefix, typeHandlerClass, flags, resultSet, foreignColumn, lazy);
   }
 
-
-  //6 配置sql(定义可重用的 SQL 代码段)
+  /**
+   * 5、配置sql片段  （定义可重用的 SQL 代码段）
+   * 	<sql id="codeColumns" databaseId="" lang="">
+   * 		a.id AS "id",
+   * 		a.market_id AS "marketId",
+   * 		a.type AS "type",
+   * 		a.lang AS "lang",
+   * 		a.value AS "value",
+   * 		a.label AS "label",
+   * 		a.description AS "description",
+   * 		a.sort AS "sort",
+   * 		a.remarks AS "remarks"
+   * 	</sql>
+   *
+   * 	<sql id="marketId"  databaseId="" lang="">
+   * 		<choose>
+   * 			<when test="marketId != null">
+   * 				AND a.market_id = #{marketId}
+   * 			</when>
+   * 			<otherwise>
+   * 				AND a.market_id = -1
+   * 			</otherwise>
+   * 		</choose>
+   * 	</sql>
+   * @param list sql节点集合
+   */
   private void sqlElement(List<XNode> list) throws Exception {
+    // 查看configuration中是否配置了数据库ID,不同的数据库需要不同的方言
     if (configuration.getDatabaseId() != null) {
       sqlElement(list, configuration.getDatabaseId());
     }
+    // 还会再执行一次，不管configuration是否配置DatabaseId，都会解析
     sqlElement(list, null);
   }
 
-  //6.1 配置sql
-//<sql id="userColumns"> id,username,password </sql>
-  private void sqlElement(List<XNode> list, String requiredDatabaseId) throws Exception {
+  /**
+   * 配置sql
+   * @param list sql节点集合
+   * @param requiredDatabaseId   configuration中配置的数据库ID
+   */
+  private void sqlElement(List<XNode> list, String requiredDatabaseId) {
+    // 1、遍历所有sql节点
     for (XNode context : list) {
+      // a、获取databaseId属性
       String databaseId = context.getStringAttribute("databaseId");
+      // b、获取id属性
       String id = context.getStringAttribute("id");
+      // c、给id属性加上命名空间前缀
       id = builderAssistant.applyCurrentNamespace(id, false);
-      //比较简单，就是将sql片段放入hashmap,不过此时还没有解析sql片段
+      // d、将sql片段放入集合容器(此时还没有解析sql片段)
       if (databaseIdMatchesCurrent(id, databaseId, requiredDatabaseId)) {
+        // <id,sql片段>
         sqlFragments.put(id, context);
       }
     }
   }
 
+  /**
+   * sql片段中的数据库标识与configuration中配置的是否匹配
+   * @param id  sql片段的唯一标识
+   * @param databaseId 数据库标识
+   * @param requiredDatabaseId  configuration中配置的数据库ID
+   */
   private boolean databaseIdMatchesCurrent(String id, String databaseId, String requiredDatabaseId) {
     if (requiredDatabaseId != null) {
-      if (!requiredDatabaseId.equals(databaseId)) {
-        return false;
-      }
-    } else {
-      if (databaseId != null) {
-        return false;
-      }
-      // skip this fragment if there is a previous one with a not null databaseId
-      //如果有重名的id了
-      //<sql id="userColumns"> id,username,password </sql>
-      if (this.sqlFragments.containsKey(id)) {
-        XNode context = this.sqlFragments.get(id);
-        //如果之前那个重名的sql id有databaseId，则false，否则难道true？这样新的sql覆盖老的sql？？？
-        if (context.getStringAttribute("databaseId") != null) {
-          return false;
-        }
-      }
+      // 1、如果configuration中配置了数据库ID,则比较是否一致，一致则返回true,不一致返回false
+      return requiredDatabaseId.equals(databaseId);
     }
-    return true;
+    if (databaseId != null) {
+      // 2、如果configuration中没配置数据库ID,此时sql片段配置了，那直接返回false
+      return false;
+    }
+    if (!this.sqlFragments.containsKey(id)) {
+      // 3、如果configuration和当前sql片段都没配置数据库ID,且sqlFragments里之前也没出现过同名sql片段,则直接返回true
+      return true;
+    }
+    // 4、如果configuration和当前sql片段都没配置数据库ID，但是之前出现过同名sql,如果同名sql也没配置databaseId则返回true,如果同名sql配置了，则返回false (这个判断是多余的，因为不允许出现同名sql)
+    XNode context = this.sqlFragments.get(id);
+    return context.getStringAttribute("databaseId") == null;
   }
 
-  //7.配置select|insert|update|delete
+  /**
+   * 6.配置select|insert|update|delete
+   * @param list CRUD节点集合
+   */
   private void buildStatementFromContext(List<XNode> list) {
-    //调用7.1构建语句
     if (configuration.getDatabaseId() != null) {
+      // 1、如果configuration中配置了数据库ID,则取出
       buildStatementFromContext(list, configuration.getDatabaseId());
     }
+    // 2、然后还会再执行一次，不管configuration是否配置DatabaseId，都会配置
     buildStatementFromContext(list, null);
   }
 
-  //7.1构建语句
+
+  /**
+   * 6.1构建语句
+   * @param list CRUD节点集合
+   * @param requiredDatabaseId  configuration中配置的数据库ID
+   */
   private void buildStatementFromContext(List<XNode> list, String requiredDatabaseId) {
+    // 1、循环遍历所有crud语句
     for (XNode context : list) {
-      //构建所有语句,一个mapper下可以有很多select
-      //语句比较复杂，核心都在这里面，所以调用XMLStatementBuilder
+      // 2、调用XMLStatementBuilder
       final XMLStatementBuilder statementParser = new XMLStatementBuilder(configuration, builderAssistant, context, requiredDatabaseId);
       try {
-        //核心XMLStatementBuilder.parseStatementNode
+        // 3、核心parseStatementNode
         statementParser.parseStatementNode();
       } catch (IncompleteElementException e) {
-        //如果出现SQL语句不完整，把它记下来，塞到configuration去
+        // 4、如果出现SQL语句不完整，把它记下来，塞到configuration去
         configuration.addIncompleteStatement(statementParser);
       }
     }

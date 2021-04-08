@@ -41,7 +41,15 @@ public class GenericTokenParser {
   }
 
   /**
-   * 这里面是一个算法，就是在将某个字符串里所有的${attr}替换掉
+   * 这里面是一个算法，就是根据给定handle,将某个text字符串里的目标${attr}替换掉
+   * e.q.
+   *         put("first_name", "James");
+   *         put("initial", "T");
+   *         put("last_name", "Kirk");
+   *
+   *  sss${first_name} ${initial} ${last_name} reporting. 替换成 sssJames T Kirk reporting.
+   *
+   *
    * 要考虑到多种情况，比如
    *              ${id}}
    *              ${{id}
