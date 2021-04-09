@@ -63,9 +63,9 @@ public class XMLScriptBuilder extends BaseBuilder {
    * @return SqlSource
    */
   public SqlSource parseScriptNode() {
-    // 1、解析动态标记
+    // 1、解析动态标记,得到所有的SqlNode
     List<SqlNode> contents = parseDynamicTags(context);
-    // 2、将解析后的List<SqlNode>放到MixedSqlNode,这应该就是责任链模式,这个MixedSqlNode的apply方法会循环调用所有SqlNode的apply
+    // 2、将解析后的List<SqlNode>放到MixedSqlNode,这应该就是责任链模式,这个MixedSqlNode的apply方法会循环调用所有SqlNode的apply,最后拼接出sql语句
     MixedSqlNode rootSqlNode = new MixedSqlNode(contents);
     SqlSource sqlSource = null;
     // 3、创建sql源
@@ -324,7 +324,13 @@ public class XMLScriptBuilder extends BaseBuilder {
   }
 
   /**
-   * 绑定处理器
+   *bing绑定处理器,允许你在 OGNL 表达式以外创建一个变量，并将其绑定到当前的上下文
+   * <select id="selectBlogsLike" resultType="Blog">
+   *   <bind name="pattern" value="'%' + _parameter.getTitle() + '%'" />
+   *   SELECT *
+   *   FROM BLOG
+   *   WHERE title LIKE #{pattern}
+   * </select>
    */
   private static class BindHandler implements NodeHandler {
     public BindHandler() {}
@@ -342,6 +348,16 @@ public class XMLScriptBuilder extends BaseBuilder {
 
   /**
    * set处理器
+   * <update id="updateAuthorIfNecessary">
+   *   update Author
+   *     <set>
+   *       <if test="username != null">username=#{username},</if>
+   *       <if test="password != null">password=#{password},</if>
+   *       <if test="email != null">email=#{email},</if>
+   *       <if test="bio != null">bio=#{bio}</if>
+   *     </set>
+   *   where id=#{id}
+   * </update>
    */
   private class SetHandler implements NodeHandler {
     public SetHandler() {}
@@ -357,6 +373,15 @@ public class XMLScriptBuilder extends BaseBuilder {
 
   /**
    * forEach处理器
+   * <select id="selectPostIn" resultType="domain.blog.Post">
+   *   SELECT *
+   *   FROM POST P
+   *   WHERE ID in
+   *   <foreach item="item" index="index" collection="list"
+   *       open="(" separator="," close=")">
+   *         #{item}
+   *   </foreach>
+   * </select>
    */
   private class ForEachHandler implements NodeHandler {
     public ForEachHandler() {}
@@ -376,9 +401,6 @@ public class XMLScriptBuilder extends BaseBuilder {
     }
   }
 
-  /**
-   * otherwise处理器
-   */
   private class OtherwiseHandler implements NodeHandler {
     public OtherwiseHandler() {}
 
@@ -391,7 +413,23 @@ public class XMLScriptBuilder extends BaseBuilder {
   }
 
   /**
-   * choose处理器
+   * choose、when、otherwise处理器
+   *
+   * <select id="findActiveBlogLike"
+   *      resultType="Blog">
+   *   SELECT * FROM BLOG WHERE state = ‘ACTIVE’
+   *   <choose>
+   *     <when test="title != null">
+   *       AND title like #{title}
+   *     </when>
+   *     <when test="author != null and author.name != null">
+   *       AND author_name like #{author.name}
+   *     </when>
+   *     <otherwise>
+   *       AND featured = 1
+   *     </otherwise>
+   *   </choose>
+   * </select>
    */
   private class ChooseHandler implements NodeHandler {
     public ChooseHandler() {}
@@ -405,6 +443,8 @@ public class XMLScriptBuilder extends BaseBuilder {
       ChooseSqlNode chooseSqlNode = new ChooseSqlNode(whenSqlNodes, defaultSqlNode);
       targetContents.add(chooseSqlNode);
     }
+
+
 
     private void handleWhenOtherwiseNodes(XNode chooseSqlNode, List<SqlNode> ifSqlNodes, List<SqlNode> defaultSqlNodes) {
       List<XNode> children = chooseSqlNode.getChildren();

@@ -316,27 +316,27 @@ public class MapperBuilderAssistant extends BaseBuilder {
 
   /**
    * 构建映射语句,并将其添加到configuration
-   * @param id
-   * @param sqlSource
-   * @param statementType
-   * @param sqlCommandType
-   * @param fetchSize
-   * @param timeout
-   * @param parameterMap
-   * @param parameterType
-   * @param resultMap
-   * @param resultType
-   * @param resultSetType
-   * @param flushCache
-   * @param useCache
-   * @param resultOrdered
-   * @param keyGenerator
-   * @param keyProperty
-   * @param keyColumn
-   * @param databaseId
-   * @param lang
-   * @param resultSets
-   * @return
+   * @param id sql语句的id标识
+   * @param sqlSource sql源, 一般是DynamicSqlSource
+   * @param statementType 语句类型,默认为prepared预处理语句
+   * @param sqlCommandType  Sql类型
+   * @param fetchSize 限制批量返回的结果行数
+   * @param timeout  等待数据库返回请求结果的秒数,超时抛出异常
+   * @param parameterMap 引用外部 parameterMap,已废弃
+   * @param parameterType 参数类型
+   * @param resultMap 结果映射ID
+   * @param resultType 结果类型
+   * @param resultSetType 结果集类型，默认为unset
+   * @param flushCache 是否清空缓存,如果是查询语句默认不清空,其他增删改则默认清空
+   * @param useCache 是否缓存查询结果 ,默认为true
+   * @param resultOrdered 只针对查询语句,加了这个自动分组。具体还得以后再看
+   * @param keyGenerator 键值生成器,分两种情况。
+   * @param keyProperty 标记一个属性(通常就是标记id),MyBatis会通过getGeneratedKeys或者通过insert语句的selectKey子元素设置它的值
+   * @param keyColumn  标记一个属性(通常就是标记id),MyBatis会通过getGeneratedKeys或者通过insert语句的selectKey子元素设置它的值
+   * @param databaseId 数据库ID
+   * @param lang 语言驱动,默认为 XMLLanguageDriver
+   * @param resultSets 多结果集
+   * @return  MappedStatement
    */
   public MappedStatement addMappedStatement(
       String id,
@@ -360,16 +360,15 @@ public class MapperBuilderAssistant extends BaseBuilder {
       LanguageDriver lang,
       String resultSets) {
 
+    // 1、确保引进缓存对象
     if (unresolvedCacheRef) {
       throw new IncompleteElementException("Cache-ref not yet resolved");
     }
 
-    //为id加上namespace前缀
+    // 2、为id加上namespace前缀
     id = applyCurrentNamespace(id, false);
-    //是否是select语句
-    boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
 
-    //又是建造者模式
+    // 3、建造者模式
     MappedStatement.Builder statementBuilder = new MappedStatement.Builder(configuration, id, sqlSource, sqlCommandType);
     statementBuilder.resource(resource);
     statementBuilder.fetchSize(fetchSize);
@@ -381,13 +380,13 @@ public class MapperBuilderAssistant extends BaseBuilder {
     statementBuilder.lang(lang);
     statementBuilder.resultOrdered(resultOrdered);
     statementBuilder.resulSets(resultSets);
+    // a、设置超时时间,如果用户没设置就取configuration中的
     setStatementTimeout(timeout, statementBuilder);
-
-    //1.参数映射
+    // b、参数映射
     setStatementParameterMap(parameterMap, parameterType, statementBuilder);
-    //2.结果映射
+    // c、结果映射
     setStatementResultMap(resultMap, resultType, resultSetType, statementBuilder);
-    setStatementCache(isSelect, flushCache, useCache, currentCache, statementBuilder);
+    setStatementCache(sqlCommandType == SqlCommandType.SELECT, flushCache, useCache, currentCache, statementBuilder);
 
     MappedStatement statement = statementBuilder.build();
     //建造好调用configuration.addMappedStatement
@@ -399,18 +398,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
     return value == null ? defaultValue : value;
   }
 
-  private void setStatementCache(
-      boolean isSelect,
-      boolean flushCache,
-      boolean useCache,
-      Cache cache,
-      MappedStatement.Builder statementBuilder) {
-    flushCache = valueOrDefault(flushCache, !isSelect);
-    useCache = valueOrDefault(useCache, isSelect);
-    statementBuilder.flushCacheRequired(flushCache);
-    statementBuilder.useCache(useCache);
-    statementBuilder.cache(cache);
-  }
+
 
   private void setStatementParameterMap(
       String parameterMap,
@@ -432,6 +420,19 @@ public class MapperBuilderAssistant extends BaseBuilder {
           parameterMappings);
       statementBuilder.parameterMap(inlineParameterMapBuilder.build());
     }
+  }
+
+  private void setStatementCache(
+          boolean isSelect,
+          boolean flushCache,
+          boolean useCache,
+          Cache cache,
+          MappedStatement.Builder statementBuilder) {
+    flushCache = valueOrDefault(flushCache, !isSelect);
+    useCache = valueOrDefault(useCache, isSelect);
+    statementBuilder.flushCacheRequired(flushCache);
+    statementBuilder.useCache(useCache);
+    statementBuilder.cache(cache);
   }
 
   //2.result map

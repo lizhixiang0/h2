@@ -79,7 +79,6 @@ public class XMLStatementBuilder extends BaseBuilder {
     if (!databaseIdMatchesCurrent(id, databaseId, this.requiredDatabaseId)) {
       return;
     }
-
     // 4、fetchSize,尝试让驱动程序每次批量返回的结果行数等于这个设置值
     Integer fetchSize = context.getIntAttribute("fetchSize");
     // 5、timeout,在抛出异常之前，驱动程序等待数据库返回请求结果的秒数
@@ -121,35 +120,31 @@ public class XMLStatementBuilder extends BaseBuilder {
     processSelectKeyNodes(id, parameterTypeClass, langDriver);
     // 21、将sql解析SqlSource,此时已经将sql片段拼接进去了（一般是DynamicSqlSource)
     SqlSource sqlSource = langDriver.createSqlSource(configuration, context, parameterTypeClass);
-    //
+    // 22、获取结果集
     String resultSets = context.getStringAttribute("resultSets");
-    //(仅对 insert 有用) 标记一个属性, MyBatis 会通过 getGeneratedKeys 或者通过 insert 语句的 selectKey 子元素设置它的值
+    // 23、获取keyProperty, 标记一个属性,MyBatis会通过getGeneratedKeys或者通过insert语句的selectKey子元素设置它的值 (仅对 insert 有用)
     String keyProperty = context.getStringAttribute("keyProperty");
-    //(仅对 insert 有用) 标记一个属性, MyBatis 会通过 getGeneratedKeys 或者通过 insert 语句的 selectKey 子元素设置它的值
+    // 24、获取keyColumn, 标记一个属性, MyBatis 会通过getGeneratedKeys 或者通过 insert语句的selectKey 子元素设置它的值(仅对 insert 有用)
     String keyColumn = context.getStringAttribute("keyColumn");
+    // 25、获取键值生成器
     KeyGenerator keyGenerator;
-    String keyStatementId = id + SelectKeyGenerator.SELECT_KEY_SUFFIX;
-    keyStatementId = builderAssistant.applyCurrentNamespace(keyStatementId, true);
+    String keyStatementId  = builderAssistant.applyCurrentNamespace(id + SelectKeyGenerator.SELECT_KEY_SUFFIX, true);
     if (configuration.hasKeyGenerator(keyStatementId)) {
+      // 25.1、如果配置了<selectKey>,那这里获取的就是之前塞入的SelectKeyGenerator
       keyGenerator = configuration.getKeyGenerator(keyStatementId);
     } else {
-      keyGenerator = context.getBooleanAttribute("useGeneratedKeys",
-          configuration.isUseGeneratedKeys() && SqlCommandType.INSERT.equals(sqlCommandType))
-          ? new Jdbc3KeyGenerator() : new NoKeyGenerator();
+      // 25.2、如果没配置<selectKey>,那就获取useGeneratedKeys属性 (即使用户没配置,但如果configuration同意使用且是insert语句,就默认使用Jdbc3KeyGenerator)
+      keyGenerator = context.getBooleanAttribute("useGeneratedKeys",configuration.isUseGeneratedKeys() && SqlCommandType.INSERT.equals(sqlCommandType)) ? new Jdbc3KeyGenerator() : new NoKeyGenerator();
     }
-
-	//又去调助手类
-    builderAssistant.addMappedStatement(id, sqlSource, statementType, sqlCommandType,
-        fetchSize, timeout, parameterMap, parameterTypeClass, resultMap, resultTypeClass,
-        resultSetTypeEnum, flushCache, useCache, resultOrdered,
-        keyGenerator, keyProperty, keyColumn, databaseId, langDriver, resultSets);
+	// 26、最后,调助手类构建MappedStatement并将其添加进configuration
+    builderAssistant.addMappedStatement(id, sqlSource, statementType, sqlCommandType,fetchSize, timeout, parameterMap, parameterTypeClass, resultMap, resultTypeClass,resultSetTypeEnum, flushCache, useCache, resultOrdered, keyGenerator, keyProperty, keyColumn, databaseId, langDriver, resultSets);
   }
 
   /**
    * 20.1、解析<selectKey>
    *
-   * 1、对于不支持自动生成主键列的数据库和可能不支持自动生成主键的 JDBC 驱动，MyBatis 有另外一种方法来生成主键
-   * 2、可以获取insert后的主键ID
+   * 1、对于不支持自动生成主键列的数据库和可能不支持自动生成主键的 JDBC 驱动，MyBatis 有另外一种方法来生成主键 （生成主键后再insert）
+   * 2、insert再获取主键ID
    *
    * e.q.
    * <insert id="insertAuthor">
@@ -236,18 +231,15 @@ public class XMLStatementBuilder extends BaseBuilder {
     // 如果设置为 AFTER，那么先执行插入语句，然后是 selectKey 中的语句 - 这和 Oracle 数据库的行为相似
     boolean executeBefore = "BEFORE".equals(nodeToHandle.getStringAttribute("order", "AFTER"));
 
-    // 6、不使用键值生成器
+    // 6、使用了<selectKey>,就不需要使用键值生成器
     KeyGenerator keyGenerator = new NoKeyGenerator();
     // 7、创建SqlSource
     SqlSource sqlSource = langDriver.createSqlSource(configuration, nodeToHandle, parameterTypeClass);
-    SqlCommandType sqlCommandType = SqlCommandType.SELECT;
     // 8、构建映射语句,并将其添加到configuration
-    builderAssistant.addMappedStatement(id, sqlSource, statementType, sqlCommandType, null, null, null, parameterTypeClass, null, resultTypeClass, null, false, false, false, keyGenerator, keyProperty, keyColumn, databaseId, langDriver, null);
-    // 9、给id加上命名空间前缀
-    id = builderAssistant.applyCurrentNamespace(id, false);
-    // 10、根据id从configuration里拿到构建好的key映射语句
-    MappedStatement keyStatement = configuration.getMappedStatement(id, false);
-    // 11、将这条key映射语句包装下添加到configuration的KeyGenerator容器中
+    builderAssistant.addMappedStatement(id, sqlSource, statementType, SqlCommandType.SELECT, null, null, null, parameterTypeClass, null, resultTypeClass, null, false, false, false, keyGenerator, keyProperty, keyColumn, databaseId, langDriver, null);
+    // 9、根据id从configuration里拿到构建好的key映射语句
+    MappedStatement keyStatement = configuration.getMappedStatement(builderAssistant.applyCurrentNamespace(id, false), false);
+    // 10、将这条key映射语句包装下添加到configuration的KeyGenerator容器中
     configuration.addKeyGenerator(id, new SelectKeyGenerator(keyStatement, executeBefore));
   }
 

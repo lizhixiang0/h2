@@ -48,7 +48,7 @@ public class SqlSourceBuilder extends BaseBuilder {
    * @return StaticSqlSource
    */
   public SqlSource parse(String originalSql, Class<?> parameterType, Map<String, Object> additionalParameters) {
-    // 1、生成映射记号处理器对象,实现handleToken方法
+    // 1、创建一个映射记号处理器对象,实现handleToken方法
     ParameterMappingTokenHandler handler = new ParameterMappingTokenHandler(configuration, parameterType, additionalParameters);
     // 2、替换#{xx}为"?"
     GenericTokenParser parser = new GenericTokenParser("#{", "}", handler);
@@ -95,7 +95,7 @@ public class SqlSourceBuilder extends BaseBuilder {
 
     /**
      * 根据参数名构建参数映射
-     * @param content 参数名
+     * @param content 参数表达式  propertyName,javaType=int,jdbcType=NUMERIC
      * @return ParameterMapping
      */
     private ParameterMapping buildParameterMapping(String content) {
@@ -104,7 +104,7 @@ public class SqlSourceBuilder extends BaseBuilder {
       // 2、获得参数名
       String property = propertiesMap.get("property");
       Class<?> propertyType;
-      // 3、这里分支比较多，需要逐个理解
+      // 3、下面解析不下去了，下次来
       if (metaParameters.hasGetter(property)) {
         propertyType = metaParameters.getGetterType(property);
       } else if (typeHandlerRegistry.hasTypeHandler(parameterType)) {

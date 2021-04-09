@@ -48,7 +48,7 @@ public class TextSqlNode implements SqlNode {
 
   @Override
   public boolean apply(DynamicContext context) {
-    // 如果是TextSqlNode节点，需要使用绑定记号解析器处理下再拼接到context中去
+    // 如果是TextSqlNode节点，需要使用绑定记号解析器处理下text再拼接到context中去
     GenericTokenParser parser = createParser(new BindingTokenParser(context, injectionFilter));
     context.appendSql(parser.parse(text));
     return true;
@@ -56,7 +56,7 @@ public class TextSqlNode implements SqlNode {
 
 
   /**
-   * 绑定记号解析器
+   * 绑定记号解析器，这个会对包含${}的动态文本进行处理
    */
   private static class BindingTokenParser implements TokenHandler {
 
@@ -110,7 +110,7 @@ public class TextSqlNode implements SqlNode {
   }
 
   /**
-   * 动态SQL检查器
+   * 动态SQL检查器,判断有没有${}
    */
   private static class DynamicCheckerTokenParser implements TokenHandler {
 

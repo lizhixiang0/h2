@@ -206,7 +206,7 @@ public class Configuration {
 
   /**
    *  15、设置查询超时时间，不设置则无线等待  todo
-   *  如果是一些sql执行时间需要超过defaultStatementTimeout,可以通过Mapper文件单独的sql的timeout进行配置的。
+   *  如果是一些sql执行时间需要超过defaultStatementTimeout,可以在Mapper文件单独的sql的timeout进行配置的。
    */
   protected Integer defaultStatementTimeout;
 
