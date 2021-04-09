@@ -34,7 +34,7 @@ import org.apache.ibatis.type.JdbcType;
  */
 public class SqlSourceBuilder extends BaseBuilder {
 
-  private static final String parameterProperties = "javaType,jdbcType,mode,numericScale,resultMap,typeHandler,jdbcTypeName";
+  private static final String PARAMETER_PROPERTIES = "javaType,jdbcType,mode,numericScale,resultMap,typeHandler,jdbcTypeName";
 
   public SqlSourceBuilder(Configuration configuration) {
     super(configuration);
@@ -48,12 +48,12 @@ public class SqlSourceBuilder extends BaseBuilder {
    * @return StaticSqlSource
    */
   public SqlSource parse(String originalSql, Class<?> parameterType, Map<String, Object> additionalParameters) {
-    // 生成映射记号处理器对象,定义记号的处理逻辑
+    // 1、生成映射记号处理器对象,实现handleToken方法
     ParameterMappingTokenHandler handler = new ParameterMappingTokenHandler(configuration, parameterType, additionalParameters);
-    // 替换#{}中间的部分
+    // 2、替换#{xx}为"?"
     GenericTokenParser parser = new GenericTokenParser("#{", "}", handler);
     String sql = parser.parse(originalSql);
-    //返回静态SQL源码
+    // 3、返回静态SQL源码
     return new StaticSqlSource(configuration, sql, handler.getParameterMappings());
   }
 
@@ -61,14 +61,23 @@ public class SqlSourceBuilder extends BaseBuilder {
    * 静态内部类 ,参数映射记号处理器
    */
   private static class ParameterMappingTokenHandler extends BaseBuilder implements TokenHandler {
-
+    /**
+     * 参数映射容器
+     */
     private List<ParameterMapping> parameterMappings = new ArrayList<>();
+    /**
+     * 参数类型
+     */
     private Class<?> parameterType;
+    /**
+     * additionalParameters的元类
+     */
     private MetaObject metaParameters;
 
     public ParameterMappingTokenHandler(Configuration configuration, Class<?> parameterType, Map<String, Object> additionalParameters) {
       super(configuration);
       this.parameterType = parameterType;
+      // 构建additionalParameters的元类
       this.metaParameters = configuration.newMetaObject(additionalParameters);
     }
 
@@ -78,21 +87,25 @@ public class SqlSourceBuilder extends BaseBuilder {
 
     @Override
     public String handleToken(String content) {
-      //先构建参数映射
+      // 1、根据参数名构建参数映射,然后存入parameterMappings供后续使用
       parameterMappings.add(buildParameterMapping(content));
-      //如何替换很简单，永远是一个问号，但是参数的信息要记录在parameterMappings里面供后续使用
+      // 2、将参数名替换成？
       return "?";
     }
 
-    //构建参数映射
+    /**
+     * 根据参数名构建参数映射
+     * @param content 参数名
+     * @return ParameterMapping
+     */
     private ParameterMapping buildParameterMapping(String content) {
-        //#{favouriteSection,jdbcType=VARCHAR}
-        //先解析参数映射,就是转化成一个hashmap
+      // 1、解析参数映射,就是转化成一个HashMap
       Map<String, String> propertiesMap = parseParameterMapping(content);
+      // 2、获得参数名
       String property = propertiesMap.get("property");
       Class<?> propertyType;
-      //这里分支比较多，需要逐个理解
-      if (metaParameters.hasGetter(property)) { // issue #448 get type from additional params
+      // 3、这里分支比较多，需要逐个理解
+      if (metaParameters.hasGetter(property)) {
         propertyType = metaParameters.getGetterType(property);
       } else if (typeHandlerRegistry.hasTypeHandler(parameterType)) {
         propertyType = parameterType;
@@ -134,7 +147,7 @@ public class SqlSourceBuilder extends BaseBuilder {
         } else if ("expression".equals(name)) {
           throw new BuilderException("Expression based parameters are not supported yet");
         } else {
-          throw new BuilderException("An invalid property '" + name + "' was found in mapping #{" + content + "}.  Valid properties are " + parameterProperties);
+          throw new BuilderException("An invalid property '" + name + "' was found in mapping #{" + content + "}.  Valid properties are " + PARAMETER_PROPERTIES);
         }
       }
       //#{age,javaType=int,jdbcType=NUMERIC,typeHandler=MyTypeHandler}
@@ -144,6 +157,11 @@ public class SqlSourceBuilder extends BaseBuilder {
       return builder.build();
     }
 
+    /**
+     * 解析参数
+     * @param content favouriteSection,jdbcType=VARCHAR
+     * @return ParameterExpression
+     */
     private Map<String, String> parseParameterMapping(String content) {
       try {
         return new ParameterExpression(content);

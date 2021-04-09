@@ -26,13 +26,63 @@ import org.apache.ibatis.session.Configuration;
 
 /**
  * @author Clinton Begin
+ *
+ *    * 1、使用trim标签代替where的功能
+ *    * <select id="findActiveBlogLike" resultType="Blog">
+ *    *    select * from user
+ *    *　　<trim prefix="WHERE" prefixOverrides="AND |OR">
+ *    *　　　　<if test="name != null and name.length()>0">
+ *    *         AND name=#{name}
+ *    *       </if>
+ *    *　　　　<if test="gender != null and gender.length()>0">
+ *    *         AND gender=#{gender}
+ *    *       </if>
+ *    *　　</trim>
+ *    * </select>
+ *    * 注：假如说name和gender的值都不为null的话打印的SQL为：select * from user where name = 'xx' and gender = 'xx'，是不存在第一个and的
+ *    *    那么上面两个属性的意思是：
+ *    *                  prefix：WHERE前缀　　　
+ *    *                  prefixOverrides：裁剪掉第一个and或者是or　
+ *    *
+ *    *
+ *    * 2、使用trim标签代替set的功能
+ *    * <update>
+ *    *    update user
+ *    * 　　<trim prefix="set" suffixOverrides="," suffix=" where id = #{id} ">
+ *    *        <if test="name != null and name.length()>0">
+ *    *          name=#{name} ,
+ *    *        </if>
+ *    * 　　　　<if test="gender != null and gender.length()>0">
+ *    *          gender=#{gender} ,
+ *    *        </if>
+ *    * 　　</trim>
+ *    * </update>
+ *    * 注：假如说name和gender的值都不为null的话打印的SQL为：update user set name='xx' , gender='xx' where id='x'
+ *    *    那么上面三个属性的意思是：
+ *    *                          prefix：set前缀　　　
+ *    *                          suffix：后缀
+ *    *                          suffixOverrides：裁剪掉最后一个逗号（也可以是其他的标记，就像是上面前缀中的and一样）
  */
 public class TrimSqlNode implements SqlNode {
-
+  /**
+   * trim下的所有if文本
+   */
   private SqlNode contents;
+  /**
+   * 前缀,必定义的,通常会是 where 、set 、(
+   */
   private String prefix;
+  /**
+   * 后缀,不一定非要定义,通常会是 )、where id = #{id}
+   */
   private String suffix;
+  /**
+   * 被覆盖的最前缀,通常会写"and | or"
+   */
   private List<String> prefixesToOverride;
+  /**
+   * 被覆盖的最后缀,通常会写","
+   */
   private List<String> suffixesToOverride;
   private Configuration configuration;
 
@@ -60,7 +110,7 @@ public class TrimSqlNode implements SqlNode {
   private static List<String> parseOverrides(String overrides) {
     if (overrides != null) {
       final StringTokenizer parser = new StringTokenizer(overrides, "|", false);
-      final List<String> list = new ArrayList<String>(parser.countTokens());
+      final List<String> list = new ArrayList<>(parser.countTokens());
       while (parser.hasMoreTokens()) {
         list.add(parser.nextToken().toUpperCase(Locale.ENGLISH));
       }

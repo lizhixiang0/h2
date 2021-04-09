@@ -26,7 +26,7 @@ import org.apache.ibatis.scripting.xmltags.SqlNode;
 import org.apache.ibatis.session.Configuration;
 
 /**
- * 原始SQL源码,它比DynamicSqlSource快，因为映射是在启动期间计算
+ * 未加工的SQL源码,它比DynamicSqlSource快，因为映射是在启动期间计算
  *
  * @since 3.2.0
  * @author Eduardo Macarron
@@ -40,11 +40,20 @@ public class RawSqlSource implements SqlSource {
   }
 
   public RawSqlSource(Configuration configuration, String sql, Class<?> parameterType) {
+    // 1、创建sql源构建器
     SqlSourceBuilder sqlSourceParser = new SqlSourceBuilder(configuration);
+    // 2、获得参数类型,默认Object.class
     Class<?> clazz = parameterType == null ? Object.class : parameterType;
+    // 3、解析,生成了StaticSqlSource对象
     sqlSource = sqlSourceParser.parse(sql, clazz, new HashMap<>());
   }
 
+  /**
+   * 得到最原始的sql,比如 select * from user where name=#{name} and age = #{age}
+   * @param configuration  核心配置类
+   * @param rootSqlNode  MixedSqlNode
+   * @return 原始sql
+   */
   private static String getSql(Configuration configuration, SqlNode rootSqlNode) {
     DynamicContext context = new DynamicContext(configuration, null);
     rootSqlNode.apply(context);

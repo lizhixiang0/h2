@@ -65,8 +65,10 @@ public class XMLScriptBuilder extends BaseBuilder {
   public SqlSource parseScriptNode() {
     // 1、解析动态标记
     List<SqlNode> contents = parseDynamicTags(context);
+    // 2、将解析后的List<SqlNode>放到MixedSqlNode,这应该就是责任链模式,这个MixedSqlNode的apply方法会循环调用所有SqlNode的apply
     MixedSqlNode rootSqlNode = new MixedSqlNode(contents);
     SqlSource sqlSource = null;
+    // 3、创建sql源
     if (isDynamic) {
       sqlSource = new DynamicSqlSource(configuration, rootSqlNode);
     } else {
@@ -217,26 +219,72 @@ public class XMLScriptBuilder extends BaseBuilder {
       String test = nodeToHandle.getStringAttribute("test");
       // 4、构建IfSqlNode
       IfSqlNode ifSqlNode = new IfSqlNode(mixedSqlNode, test);
+      // 5、将构建好的IfSqlNode添加进targetContents
       targetContents.add(ifSqlNode);
     }
   }
 
   /**
-   * Trim处理器
-   * @link "https://blog.csdn.net/wt_better/article/details/80992014
+   * Trim处理器,可以完成where或者是set标记的功能
+   *
+   * 1、使用trim标签代替where的功能
+   * <select id="findActiveBlogLike" resultType="Blog">
+   *    select * from user
+   *　　<trim prefix="WHERE" prefixOverrides="AND |OR">
+   *　　　　<if test="name != null and name.length()>0">
+   *         AND name=#{name}
+   *       </if>
+   *　　　　<if test="gender != null and gender.length()>0">
+   *         AND gender=#{gender}
+   *       </if>
+   *　　</trim>
+   * </select>
+   * 注：假如说name和gender的值都不为null的话打印的SQL为：select * from user where name = 'xx' and gender = 'xx'，是不存在第一个and的
+   *    那么上面两个属性的意思是：
+   *                  prefix：WHERE前缀　　　
+   *                  prefixOverrides：裁剪掉第一个and或者是or　
+   *
+   *
+   * 2、使用trim标签代替set的功能
+   * <update>
+   *    update user
+   * 　　<trim prefix="set" suffixOverrides="," suffix=" where id = #{id} ">
+   *        <if test="name != null and name.length()>0">
+   *          name=#{name} ,
+   *        </if>
+   * 　　　　<if test="gender != null and gender.length()>0">
+   *          gender=#{gender} ,
+   *        </if>
+   * 　　</trim>
+   * </update>
+   * 注：假如说name和gender的值都不为null的话打印的SQL为：update user set name='xx' , gender='xx' where id='x'
+   *    那么上面三个属性的意思是：
+   *                          prefix：set前缀　　　
+   *                          suffix：后缀
+   *                          suffixOverrides：裁剪掉最后一个逗号（也可以是其他的标记，就像是上面前缀中的and一样）
+   *
+   *  3、insert,去掉最后一个逗号
+   *     省略
+   *
+   *
+   * @link "https://www.cnblogs.com/qiankun-site/p/5758924.html | "https://blog.csdn.net/wt_better/article/details/80992014
    */
   private class TrimHandler implements NodeHandler {
     public TrimHandler() {}
 
     @Override
     public void handleNode(XNode nodeToHandle, List<SqlNode> targetContents) {
+      // 1、拿到trim节点,把他扔到parseDynamicTags再解析一轮,获得所有子节点(一般trim下都是if节点)
       List<SqlNode> contents = parseDynamicTags(nodeToHandle);
       MixedSqlNode mixedSqlNode = new MixedSqlNode(contents);
+      // 2、获得prefix、prefixOverrides、suffix、suffixOverrides属性
       String prefix = nodeToHandle.getStringAttribute("prefix");
       String prefixOverrides = nodeToHandle.getStringAttribute("prefixOverrides");
       String suffix = nodeToHandle.getStringAttribute("suffix");
       String suffixOverrides = nodeToHandle.getStringAttribute("suffixOverrides");
+      // 3、构造TrimSqlNode
       TrimSqlNode trim = new TrimSqlNode(configuration, mixedSqlNode, prefix, prefixOverrides, suffix, suffixOverrides);
+      // 4、将构建好的TrimSqlNode添加进targetContents
       targetContents.add(trim);
     }
   }
