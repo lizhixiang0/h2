@@ -13,4 +13,17 @@
     <TT>
         <tt>tutu</tt>
     </TT>
+
+    <sql id="codeColumns">
+      	a.id AS "id",
+      	a.market_id AS "marketId",
+      	a.type AS "type",
+    </sql>
+
+    <select id="selectUsers" resultType="map">
+        select
+        <include refid="codeColumns"/>
+        from some_table a
+        where id = #{id}
+    </select>
 </web-app>

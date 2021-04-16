@@ -241,8 +241,8 @@ public class XMLScriptBuilder extends BaseBuilder {
    * </select>
    * 注：假如说name和gender的值都不为null的话打印的SQL为：select * from user where name = 'xx' and gender = 'xx'，是不存在第一个and的
    *    那么上面两个属性的意思是：
-   *                  prefix：WHERE前缀　　　
-   *                  prefixOverrides：裁剪掉第一个and或者是or　
+   *                  prefix：WHERE前缀
+   *                  prefixOverrides：裁剪掉第一个and或者是or
    *
    *
    * 2、使用trim标签代替set的功能
@@ -259,7 +259,7 @@ public class XMLScriptBuilder extends BaseBuilder {
    * </update>
    * 注：假如说name和gender的值都不为null的话打印的SQL为：update user set name='xx' , gender='xx' where id='x'
    *    那么上面三个属性的意思是：
-   *                          prefix：set前缀　　　
+   *                          prefix：set前缀
    *                          suffix：后缀
    *                          suffixOverrides：裁剪掉最后一个逗号（也可以是其他的标记，就像是上面前缀中的and一样）
    *

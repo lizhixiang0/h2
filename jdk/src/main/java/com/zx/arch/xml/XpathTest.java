@@ -106,8 +106,7 @@ public class XpathTest {
      * //web-app/servlet/servlet-name/
      */
     public static void getLevelElements() throws XPathExpressionException {
-        NodeList nodeList = (NodeList) xpath.evaluate("/web-app/servlet/*", doc,
-                XPathConstants.NODESET);
+        NodeList nodeList = (NodeList) xpath.evaluate("/web-app/servlet/*", doc, XPathConstants.NODESET);
         for (int i = 0; i < nodeList.getLength(); i++) {
             System.out.print(nodeList.item(i).getNodeName() + " = " + nodeList.item(i).getTextContent() + "\r\n");
         }
@@ -123,11 +122,38 @@ public class XpathTest {
         System.out.println(content);
     }
 
+    public static void testSqlFragmentAndInclude() throws XPathExpressionException {
+        NodeList nodeList = (NodeList) xpath.evaluate("/web-app/*", doc, XPathConstants.NODESET);
+        Node select = nodeList.item(5);
+
+        Node include = select.getChildNodes().item(1);
+        Node sql = nodeList.item(4);
+
+        // 判断俩个节点是否属同一个document
+        assert sql.getOwnerDocument()==include.getOwnerDocument();
+
+
+        // 拿到include的父节点select,然后用sql子节点替换include子节点
+        include.getParentNode().replaceChild(sql, include);
+
+        while(sql.hasChildNodes()){
+            sql.getParentNode().insertBefore(sql.getFirstChild(), sql);
+        }
+        sql.getParentNode().removeChild(sql);
+        System.out.println(select.getTextContent());
+    }
+
+    public static void testParseDynamicTags() throws XPathExpressionException {
+        NodeList nodeList = (NodeList) xpath.evaluate("/web-app/*", doc, XPathConstants.NODESET);
+        Node select = nodeList.item(5);
+        System.out.println(select.getNodeName());
+        System.out.println(select.getChildNodes().item(0).getTextContent());
+        System.out.println(select.getChildNodes().getLength());
+    }
+
 
     public static void main(String[] args) throws Exception {
         init();
-        getRootEle();
-        getLevelElements();
-        getLevelElementsText();
+        testSqlFragmentAndInclude();
     }
 }

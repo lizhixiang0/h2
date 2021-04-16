@@ -85,19 +85,19 @@ public class XMLStatementBuilder extends BaseBuilder {
     Integer timeout = context.getIntAttribute("timeout");
     // 6、引用外部 parameterMap,已废弃
     String parameterMap = context.getStringAttribute("parameterMap");
-    // 7、参数类型
+    // 7、参数类型(现在一般也不配置这个了)
     String parameterType = context.getStringAttribute("parameterType");
     Class<?> parameterTypeClass = resolveClass(parameterType);
     // 8、引用外部的 resultMap(高级功能)
     String resultMap = context.getStringAttribute("resultMap");
-    // 9、结果类型
+    // 9、结果类型 (resultType 和 resultMap 之间只能同时使用一个。)
     String resultType = context.getStringAttribute("resultType");
     Class<?> resultTypeClass = resolveClass(resultType);
     // 10、脚本语言,mybatis3.2的新功能
     String lang = context.getStringAttribute("lang");
     // 11、得到语言驱动,默认为 XMLLanguageDriver
     LanguageDriver langDriver = getLanguageDriver(lang);
-    // 12、结果集类型，FORWARD_ONLY|SCROLL_SENSITIVE|SCROLL_INSENSITIVE ,默认为unset
+    // 12、resultSet类型，FORWARD_ONLY|SCROLL_SENSITIVE|SCROLL_INSENSITIVE ,默认为unset
     String resultSetType = context.getStringAttribute("resultSetType");
     ResultSetType resultSetTypeEnum = resolveResultSetType(resultSetType);
     // 13、语句类型, STATEMENT|PREPARED|CALLABLE 的一种，,默认为prepared预处理语句

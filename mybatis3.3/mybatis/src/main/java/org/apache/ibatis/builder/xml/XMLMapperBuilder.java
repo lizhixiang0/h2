@@ -113,11 +113,11 @@ public class XMLMapperBuilder extends BaseBuilder {
       configurationElement(parser.evalNode("/mapper"));
       // 1.2 解析完记录下，下次就不解析了
       configuration.addLoadedResource(resource);
-      // 1.3、绑定映射器到namespace
+      // 1.3、注册dao接口 (按理来说其他地方应该注册过,这里在防什么？)
       bindMapperForNamespace();
     }
 
-    //还有没解析完的东东这里接着解析？
+    // 2、一些解析途中抛出异常的,再尝试解析一次
     parsePendingResultMaps();
     parsePendingChacheRefs();
     parsePendingStatements();
@@ -173,7 +173,7 @@ public class XMLMapperBuilder extends BaseBuilder {
       resultMapElements(context.evalNodes("/mapper/resultMap"));
       //6.配置sql(定义可重用的 SQL 代码段)
       sqlElement(context.evalNodes("/mapper/sql"));
-      //7.配置select|insert|update|delete TODO
+      //7.配置select|insert|update|delete
       buildStatementFromContext(context.evalNodes("select|insert|update|delete"));
     } catch (Exception e) {
       throw new BuilderException("Error parsing Mapper XML. Cause: " + e, e);
@@ -671,20 +671,20 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
   }
 
+  /**
+   * 在这个地方再次注册下dao接口
+   */
   private void bindMapperForNamespace() {
     String namespace = builderAssistant.getCurrentNamespace();
     if (namespace != null) {
       Class<?> boundType = null;
       try {
         boundType = Resources.classForName(namespace);
-      } catch (ClassNotFoundException e) {
-        //ignore, bound type is not required
+      } catch (ClassNotFoundException ignored) {
       }
       if (boundType != null) {
         if (!configuration.hasMapper(boundType)) {
-          // Spring may not know the real resource name so we set a flag
-          // to prevent loading again this resource from the mapper interface
-          // look at MapperAnnotationBuilder#loadXmlResource
+          // Spring可能不知道真正的资源名，所以我们设置了一个标志以防止再次从mapper接口加载此资源
           configuration.addLoadedResource("namespace:" + namespace);
           configuration.addMapper(boundType);
         }
@@ -700,8 +700,7 @@ public class XMLMapperBuilder extends BaseBuilder {
         try {
           iter.next().resolve();
           iter.remove();
-        } catch (IncompleteElementException e) {
-          // ResultMap is still missing a resource...
+        } catch (IncompleteElementException ignored) {
         }
       }
     }

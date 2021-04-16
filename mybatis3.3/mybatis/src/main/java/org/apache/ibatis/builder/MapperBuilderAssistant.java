@@ -55,7 +55,7 @@ import org.apache.ibatis.type.TypeHandler;
  */
 public class MapperBuilderAssistant extends BaseBuilder {
   /**
-   * 命名空间（接口全限定名）
+   * 命名空间（当前映射文件对应的dao接口全限定名）
    */
   private String currentNamespace;
   /**
@@ -93,7 +93,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
 
 
   /**
-   *
+   * 解析缓存引用
    * @param namespace 被引用的命名空间
    */
   public void useCacheRef(String namespace) {
@@ -326,7 +326,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
    * @param parameterType 参数类型
    * @param resultMap 结果映射ID
    * @param resultType 结果类型
-   * @param resultSetType 结果集类型，默认为unset
+   * @param resultSetType resultSet类型，默认为unset ,暂时不晓得这干嘛的
    * @param flushCache 是否清空缓存,如果是查询语句默认不清空,其他增删改则默认清空
    * @param useCache 是否缓存查询结果 ,默认为true
    * @param resultOrdered 只针对查询语句,加了这个自动分组。具体还得以后再看
@@ -386,26 +386,37 @@ public class MapperBuilderAssistant extends BaseBuilder {
     setStatementParameterMap(parameterMap, parameterType, statementBuilder);
     // c、结果映射
     setStatementResultMap(resultMap, resultType, resultSetType, statementBuilder);
+    // d、缓存
     setStatementCache(sqlCommandType == SqlCommandType.SELECT, flushCache, useCache, currentCache, statementBuilder);
 
     MappedStatement statement = statementBuilder.build();
-    //建造好调用configuration.addMappedStatement
+    // e、建造好调用configuration.addMappedStatement
     configuration.addMappedStatement(statement);
     return statement;
   }
 
-  private <T> T valueOrDefault(T value, T defaultValue) {
-    return value == null ? defaultValue : value;
+
+  /**
+   * 设置sql语句的超时时间
+   * @param timeout
+   * @param statementBuilder
+   */
+  private void setStatementTimeout(Integer timeout, MappedStatement.Builder statementBuilder) {
+    if (timeout == null) {
+      timeout = configuration.getDefaultStatementTimeout();
+    }
+    statementBuilder.timeout(timeout);
   }
 
-
-
-  private void setStatementParameterMap(
-      String parameterMap,
-      Class<?> parameterTypeClass,
-      MappedStatement.Builder statementBuilder) {
+  /**
+   * 设置sql语句的参数映射
+   * @param parameterMap sql节点中配置的parameterMap属性
+   * @param parameterTypeClass sql节点中配置的parameterType类
+   * @param statementBuilder   sql语句
+   */
+  private void setStatementParameterMap(String parameterMap, Class<?> parameterTypeClass, MappedStatement.Builder statementBuilder) {
     parameterMap = applyCurrentNamespace(parameterMap, true);
-
+    // 1、如果parameterMap不为null ,那直接从configuration里取出
     if (parameterMap != null) {
       try {
         statementBuilder.parameterMap(configuration.getParameterMap(parameterMap));
@@ -413,39 +424,25 @@ public class MapperBuilderAssistant extends BaseBuilder {
         throw new IncompleteElementException("Could not find parameter map " + parameterMap, e);
       }
     } else if (parameterTypeClass != null) {
-      List<ParameterMapping> parameterMappings = new ArrayList<ParameterMapping>();
-      ParameterMap.Builder inlineParameterMapBuilder = new ParameterMap.Builder(
-              statementBuilder.id() + "-Inline",
-          parameterTypeClass,
-          parameterMappings);
+      // 2、如果parameterMap为null,则根据parameterTypeClass生成ParameterMap
+      List<ParameterMapping> parameterMappings = new ArrayList<>();
+      ParameterMap.Builder inlineParameterMapBuilder = new ParameterMap.Builder(statementBuilder.id() + "-Inline", parameterTypeClass, parameterMappings);
       statementBuilder.parameterMap(inlineParameterMapBuilder.build());
     }
   }
 
-  private void setStatementCache(
-          boolean isSelect,
-          boolean flushCache,
-          boolean useCache,
-          Cache cache,
-          MappedStatement.Builder statementBuilder) {
-    flushCache = valueOrDefault(flushCache, !isSelect);
-    useCache = valueOrDefault(useCache, isSelect);
-    statementBuilder.flushCacheRequired(flushCache);
-    statementBuilder.useCache(useCache);
-    statementBuilder.cache(cache);
-  }
-
-  //2.result map
-  private void setStatementResultMap(
-      String resultMap,
-      Class<?> resultType,
-      ResultSetType resultSetType,
-      MappedStatement.Builder statementBuilder) {
+  /**
+   * 给sql语句配置结果映射
+   * @param resultMap 结果映射集id
+   * @param resultType 结果映射类型
+   * @param resultSetType resultSet类型，默认为unset
+   * @param statementBuilder sql语句
+   */
+  private void setStatementResultMap(String resultMap, Class<?> resultType, ResultSetType resultSetType, MappedStatement.Builder statementBuilder) {
     resultMap = applyCurrentNamespace(resultMap, true);
-
-    List<ResultMap> resultMaps = new ArrayList<ResultMap>();
+    List<ResultMap> resultMaps = new ArrayList<>();
     if (resultMap != null) {
-      //2.1 resultMap是高级功能
+      //2.1 resultMap,这里搞了个split不知道干嘛的
       String[] resultMapNames = resultMap.split(",");
       for (String resultMapName : resultMapNames) {
         try {
@@ -455,31 +452,28 @@ public class MapperBuilderAssistant extends BaseBuilder {
         }
       }
     } else if (resultType != null) {
-      //2.2 resultType,一般用这个足矣了
-      //<select id="selectUsers" resultType="User">
-      //这种情况下,MyBatis 会在幕后自动创建一个 ResultMap,基于属性名来映射列到 JavaBean 的属性上。
-      //如果列名没有精确匹配,你可以在列名上使用 select 字句的别名来匹配标签。
-      //创建一个inline result map, 把resultType设上就OK了，
-      //然后后面被DefaultResultSetHandler.createResultObject()使用
-      //DefaultResultSetHandler.getRowValue()使用
-      ResultMap.Builder inlineResultMapBuilder = new ResultMap.Builder(
-          configuration,
-          statementBuilder.id() + "-Inline",
-          resultType,
-          new ArrayList<ResultMapping>(),
-          null);
+      //2.2 resultType,基于属性名来映射列到JavaBean的属性,如果没有精确匹配,可以使用select字句的别名来匹配标签
+      ResultMap.Builder inlineResultMapBuilder = new ResultMap.Builder(configuration, statementBuilder.id() + "-Inline", resultType, new ArrayList<>(), null);
       resultMaps.add(inlineResultMapBuilder.build());
     }
     statementBuilder.resultMaps(resultMaps);
-
     statementBuilder.resultSetType(resultSetType);
   }
 
-  private void setStatementTimeout(Integer timeout, MappedStatement.Builder statementBuilder) {
-    if (timeout == null) {
-      timeout = configuration.getDefaultStatementTimeout();
-    }
-    statementBuilder.timeout(timeout);
+  /**
+   * 给sql语句配置缓存
+   * @param isSelect   是否为select语句
+   * @param flushCache 是否清空一二级缓存，增删改默认为true
+   * @param useCache 是否要缓存结果,select 默认为true
+   * @param cache 表示当前xml的缓存
+   * @param statementBuilder sql语句
+   */
+  private void setStatementCache(boolean isSelect, boolean flushCache, boolean useCache, Cache cache, MappedStatement.Builder statementBuilder) {
+    flushCache = valueOrDefault(flushCache, !isSelect);
+    useCache = valueOrDefault(useCache, isSelect);
+    statementBuilder.flushCacheRequired(flushCache);
+    statementBuilder.useCache(useCache);
+    statementBuilder.cache(cache);
   }
 
   /**
@@ -700,6 +694,11 @@ public class MapperBuilderAssistant extends BaseBuilder {
       parameterMap, parameterType, resultMap, resultType, resultSetType,
       flushCache, useCache, resultOrdered, keyGenerator, keyProperty,
       keyColumn, databaseId, lang, null);
+  }
+
+
+  private <T> T valueOrDefault(T value, T defaultValue) {
+    return value == null ? defaultValue : value;
   }
 
 }
