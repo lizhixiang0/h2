@@ -87,7 +87,7 @@ public class SqlSessionFactoryBuilder {
   }
 
   /**
-   * 第3种方法,
+   * 第3种方法, 核心方法
    * 这是最重要的方法,既被方法1和方法2调用，同时也可以直接由用户调用，入参是Configuration，所以从这里看出来上面两个方法是为了生成Configuration
    * 返回的是默认的会话工厂DefaultSqlSessionFactory
    * @return SqlSessionFactory

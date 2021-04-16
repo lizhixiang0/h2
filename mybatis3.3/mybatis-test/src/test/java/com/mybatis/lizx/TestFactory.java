@@ -3,10 +3,7 @@ package com.mybatis.lizx;
 import com.mybatis.lizx.dao.PersonDao;
 import com.mybatis.lizx.model.Person;
 import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.session.RowBounds;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.apache.ibatis.session.*;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -43,9 +40,11 @@ public class TestFactory {
         Reader reader = Resources.getResourceAsReader(path);
         Properties properties = Resources.getResourceAsProperties(path1);
         // 2、通过构造器解析配置文件生成会话工厂
+
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader,properties);
+        SqlSessionManager sqlSessionManager = SqlSessionManager.newInstance(sqlSessionFactory);
         // 3、SqlSession是数据库的C、R、U、D及事务处理接口
-        SqlSession sqlSession = sqlSessionFactory.openSession();
+        SqlSession sqlSession = sqlSessionManager.openSession();
         PersonDao personDao =  sqlSession.getMapper(PersonDao.class);
 
         /**

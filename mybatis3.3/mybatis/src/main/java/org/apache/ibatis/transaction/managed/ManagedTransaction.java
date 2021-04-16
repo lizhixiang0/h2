@@ -40,7 +40,6 @@ public class ManagedTransaction implements Transaction {
   private boolean closeConnection;
 
   /**
-   *
    * @param connection 数据库连接
    * @param closeConnection 是否关闭连接
    */

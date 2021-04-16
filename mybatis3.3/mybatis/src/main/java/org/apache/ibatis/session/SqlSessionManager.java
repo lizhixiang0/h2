@@ -29,25 +29,36 @@ import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.reflection.ExceptionUtil;
 
 /**
+ * SqlSession管理器
+ * 即是对DefaultSqlSessionFactory的一个封装,同时实现了SqlSession接口,具备执行sql语句的能力
  * @author Larry Meadors
- */
-/**
- * SqlSession管理员,可参考SqlSessionManagerTest
- *
+ * @note "https://blog.csdn.net/teamlet/article/details/52173731
  */
 public class SqlSessionManager implements SqlSessionFactory, SqlSession {
-
+  /**
+   * 维护了一个sqlSessionFactory
+   */
   private final SqlSessionFactory sqlSessionFactory;
+
+  /**
+   * 代理类,代理(拦截)了SqlSessionFactory实现的所有SqlSession方法
+   */
   private final SqlSession sqlSessionProxy;
 
-  private ThreadLocal<SqlSession> localSqlSession = new ThreadLocal<SqlSession>();
+  /**
+   * 维护了一个本地ThreadLocal,这意味同一个线程不同的sql操作可以复用session
+   */
+  private ThreadLocal<SqlSession> localSqlSession = new ThreadLocal<>();
 
+  /**
+   * 私有构造方法,在调用newInstance生成SqlSessionManager的核心方法
+   * @param sqlSessionFactory
+   */
   private SqlSessionManager(SqlSessionFactory sqlSessionFactory) {
+    // 1、这个sqlSessionFactory一般就是DefaultSqlSessionFactory
     this.sqlSessionFactory = sqlSessionFactory;
-    this.sqlSessionProxy = (SqlSession) Proxy.newProxyInstance(
-        SqlSessionFactory.class.getClassLoader(),
-        new Class[]{SqlSession.class},
-        new SqlSessionInterceptor());
+    // 2、创建SqlSessionFactory的代理类
+    this.sqlSessionProxy = (SqlSession) Proxy.newProxyInstance(SqlSessionFactory.class.getClassLoader(), new Class[]{SqlSession.class}, new SqlSessionInterceptor());
   }
 
   public static SqlSessionManager newInstance(Reader reader) {
@@ -78,6 +89,10 @@ public class SqlSessionManager implements SqlSessionFactory, SqlSession {
     return new SqlSessionManager(sqlSessionFactory);
   }
 
+  /**
+   * 创建SqlSession,并将其存入ThreadLocal  （所有的startManagedSession都是这个作用）
+   * 注意：如果要复用session,则必须先调用startManagedSession将SqlSession存到ThreadLocal里
+   */
   public void startManagedSession() {
     this.localSqlSession.set(openSession());
   }
@@ -161,42 +176,42 @@ public class SqlSessionManager implements SqlSessionFactory, SqlSession {
 
   @Override
   public <T> T selectOne(String statement) {
-    return sqlSessionProxy.<T> selectOne(statement);
+    return sqlSessionProxy.selectOne(statement);
   }
 
   @Override
   public <T> T selectOne(String statement, Object parameter) {
-    return sqlSessionProxy.<T> selectOne(statement, parameter);
+    return sqlSessionProxy.selectOne(statement, parameter);
   }
 
   @Override
   public <K, V> Map<K, V> selectMap(String statement, String mapKey) {
-    return sqlSessionProxy.<K, V> selectMap(statement, mapKey);
+    return sqlSessionProxy.selectMap(statement, mapKey);
   }
 
   @Override
   public <K, V> Map<K, V> selectMap(String statement, Object parameter, String mapKey) {
-    return sqlSessionProxy.<K, V> selectMap(statement, parameter, mapKey);
+    return sqlSessionProxy.selectMap(statement, parameter, mapKey);
   }
 
   @Override
   public <K, V> Map<K, V> selectMap(String statement, Object parameter, String mapKey, RowBounds rowBounds) {
-    return sqlSessionProxy.<K, V> selectMap(statement, parameter, mapKey, rowBounds);
+    return sqlSessionProxy.selectMap(statement, parameter, mapKey, rowBounds);
   }
 
   @Override
   public <E> List<E> selectList(String statement) {
-    return sqlSessionProxy.<E> selectList(statement);
+    return sqlSessionProxy.selectList(statement);
   }
 
   @Override
   public <E> List<E> selectList(String statement, Object parameter) {
-    return sqlSessionProxy.<E> selectList(statement, parameter);
+    return sqlSessionProxy.selectList(statement, parameter);
   }
 
   @Override
   public <E> List<E> selectList(String statement, Object parameter, RowBounds rowBounds) {
-    return sqlSessionProxy.<E> selectList(statement, parameter, rowBounds);
+    return sqlSessionProxy.selectList(statement, parameter, rowBounds);
   }
 
   @Override
@@ -325,24 +340,24 @@ public class SqlSessionManager implements SqlSessionFactory, SqlSession {
     }
   }
 
-  //代理模式
+  /**
+   * 使用代理模式实现拦截效果
+   */
   private class SqlSessionInterceptor implements InvocationHandler {
-    public SqlSessionInterceptor() {
-        // Prevent Synthetic Access
-    }
+    public SqlSessionInterceptor() {}
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
       final SqlSession sqlSession = SqlSessionManager.this.localSqlSession.get();
       if (sqlSession != null) {
-          //如果当前线程已经有SqlSession了，则直接调用
+          // 1、如果当前ThreadLocal已经有SqlSession了，则直接调用
         try {
           return method.invoke(sqlSession, args);
         } catch (Throwable t) {
           throw ExceptionUtil.unwrapThrowable(t);
         }
       } else {
-          //如果当前线程没有SqlSession，先打开session，再调用,最后提交
+          // 2、如果当前ThreadLocal没有SqlSession，则创建新的session,此时和DefaultSqlSessionFactor就没区别了
         final SqlSession autoSqlSession = openSession();
         try {
           final Object result = method.invoke(autoSqlSession, args);

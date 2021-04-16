@@ -32,7 +32,7 @@ import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.managed.ManagedTransactionFactory;
 
 /**
- * 默认的事务工厂,用来生产事务管理器
+ * 默认的SqlSession工厂
  * @author Clinton Begin
  */
 public class DefaultSqlSessionFactory implements SqlSessionFactory {
@@ -43,8 +43,6 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
     this.configuration = configuration;
   }
 
-  //最终都会调用2种方法：openSessionFromDataSource,openSessionFromConnection
-  //以下6个方法都会调用openSessionFromDataSource
   @Override
   public SqlSession openSession() {
     return openSessionFromDataSource(configuration.getDefaultExecutorType(), null, false);
@@ -75,7 +73,6 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
     return openSessionFromDataSource(execType, null, autoCommit);
   }
 
-  //以下2个方法都会调用openSessionFromConnection
   @Override
   public SqlSession openSession(Connection connection) {
     return openSessionFromConnection(configuration.getDefaultExecutorType(), connection);
@@ -91,35 +88,47 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
     return configuration;
   }
 
+  /**
+   * 核心方法一、创建openSession  （使用数据源创建事务）
+   * @param execType
+   * @param level
+   * @param autoCommit
+   * @return
+   */
   private SqlSession openSessionFromDataSource(ExecutorType execType, TransactionIsolationLevel level, boolean autoCommit) {
     Transaction tx = null;
     try {
       final Environment environment = configuration.getEnvironment();
       final TransactionFactory transactionFactory = getTransactionFactoryFromEnvironment(environment);
-      //通过事务工厂来产生一个事务
+      // 1、创建事务对象（使用连接池）
       tx = transactionFactory.newTransaction(environment.getDataSource(), level, autoCommit);
-      //生成一个执行器(事务包含在执行器里)
+      // 2、创建执行器对象
       final Executor executor = configuration.newExecutor(tx, execType);
-      //然后产生一个DefaultSqlSession
+      // 3、最后创建一个DefaultSqlSession
       return new DefaultSqlSession(configuration, executor, autoCommit);
     } catch (Exception e) {
-      //如果打开事务出错，则关闭它
-      closeTransaction(tx); // may have fetched a connection so lets call close()
+      // 4、如果抛出异常,则关闭数据库连接
+      closeTransaction(tx);
       throw ExceptionFactory.wrapException("Error opening session.  Cause: " + e, e);
     } finally {
-      //最后清空错误上下文
+      // 5、最后清空错误上下文
       ErrorContext.instance().reset();
     }
   }
 
+  /**
+   * 核心方法二 创建openSession (使用数据库连接创建事务）
+   * @param execType
+   * @param connection
+   * @return
+   */
   private SqlSession openSessionFromConnection(ExecutorType execType, Connection connection) {
     try {
       boolean autoCommit;
       try {
         autoCommit = connection.getAutoCommit();
       } catch (SQLException e) {
-        // Failover to true, as most poor drivers
-        // or databases won't support transactions
+        // 1、如果抛出异常,则说明该数据库不支持事务,所以设置为自动提交
         autoCommit = true;
       }
       final Environment environment = configuration.getEnvironment();
@@ -134,20 +143,28 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
     }
   }
 
+  /**
+   * 从environment中获取事务管理工厂
+   * @param environment
+   * @return
+   */
   private TransactionFactory getTransactionFactoryFromEnvironment(Environment environment) {
-    //如果没有配置事务工厂，则返回托管事务工厂
     if (environment == null || environment.getTransactionFactory() == null) {
+      // 如果没有配置事务管理工厂,就使用托管事务工厂
       return new ManagedTransactionFactory();
     }
     return environment.getTransactionFactory();
   }
 
+  /**
+   * 关闭数据库连接
+   * @param tx
+   */
   private void closeTransaction(Transaction tx) {
     if (tx != null) {
       try {
         tx.close();
       } catch (SQLException ignore) {
-        // Intentionally ignore. Prefer previous error.
       }
     }
   }

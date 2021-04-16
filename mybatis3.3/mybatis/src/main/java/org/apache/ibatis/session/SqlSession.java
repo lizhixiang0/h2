@@ -23,7 +23,7 @@ import java.util.Map;
 import org.apache.ibatis.executor.BatchResult;
 
 /**
- * MyBatis最核心的接口,定义了执行sql的方法、管理事务的方法、还有几个特定方法如获取配置类、获取映射器
+ * MyBatis最核心的接口,定义了执行sql语句的方法、管理事务的方法、还有几个特定方法如获取配置类、获取映射器
  * @author Clinton Begin
  */
 public interface SqlSession extends Closeable {

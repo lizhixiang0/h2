@@ -39,6 +39,7 @@ import org.apache.ibatis.session.SqlSession;
 /**
  * mybatis提供的默认SqlSession实现
  * @author Clinton Begin
+ * @note 为什么说DefaultSqlSession不是线程安全的？
  */
 public class DefaultSqlSession implements SqlSession {
 
@@ -49,6 +50,9 @@ public class DefaultSqlSession implements SqlSession {
    * 是否自动提交
    */
   private boolean autoCommit;
+  /**
+   * ??
+   */
   private boolean dirty;
 
   /**

@@ -18,21 +18,35 @@ package org.apache.ibatis.session;
 import java.sql.Connection;
 
 /**
- * 构建SqlSession的工厂
+ * SqlSession工厂,创建SqlSession
  * @author Clinton Begin
  */
 public interface SqlSessionFactory {
-
-  //8个方法可以用来创建SqlSession实例
+  /**
+   * 1、最普通的
+   */
   SqlSession openSession();
 
-  //1、自动提交
+  /**
+   * 2、配置是否自动提交
+   * @param autoCommit
+   * @return
+   */
   SqlSession openSession(boolean autoCommit);
-  //2、连接
+
+  /**
+   * 3、配置数据库连接
+   * @param connection 数据库连接
+   * @return
+   */
   SqlSession openSession(Connection connection);
-  //3、事务隔离级别
+
+  /**
+   * 4、配置事务隔离级别
+   * @param level 事务隔离级别
+   */
   SqlSession openSession(TransactionIsolationLevel level);
-  //4、执行器的类型
+
   SqlSession openSession(ExecutorType execType);
   SqlSession openSession(ExecutorType execType, boolean autoCommit);
   SqlSession openSession(ExecutorType execType, TransactionIsolationLevel level);
