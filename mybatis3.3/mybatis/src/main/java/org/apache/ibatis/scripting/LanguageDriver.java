@@ -40,7 +40,7 @@ public interface LanguageDriver {
   ParameterHandler createParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql);
 
   /**
-   * 创建SQL源码(mapper xml方式)
+   * 创建SQL源(mapper xml方式)
    * @param configuration 核心配置类
    * @param script sql语句节点
    * @param parameterType 参数类型
@@ -49,7 +49,7 @@ public interface LanguageDriver {
   SqlSource createSqlSource(Configuration configuration, XNode script, Class<?> parameterType);
 
   /**
-   * 创建SQL源码(注解方式)
+   * 创建SQL源(注解方式)
    * @param configuration 核心配置类
    * @param script 注解内容
    * @param parameterType 参数类型

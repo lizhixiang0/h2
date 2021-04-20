@@ -40,25 +40,40 @@ public class SimpleExecutor extends BaseExecutor {
     super(configuration, transaction);
   }
 
-  //update
+  /**
+   * update  (增删改最终都调用这个方法)
+   * @param ms  sql映射语句
+   * @param parameter  参数
+   * @return
+   * @throws SQLException
+   */
   @Override
   public int doUpdate(MappedStatement ms, Object parameter) throws SQLException {
     Statement stmt = null;
     try {
       Configuration configuration = ms.getConfiguration();
-      //新建一个StatementHandler
-      //这里看到ResultHandler传入的是null
+      // 1、新建一个StatementHandler   (这里看到很多传入的是null)
       StatementHandler handler = configuration.newStatementHandler(this, ms, parameter, RowBounds.DEFAULT, null, null);
-      //准备语句
+      // 2、准备语句,得到Statement
       stmt = prepareStatement(handler, ms.getStatementLog());
-      //StatementHandler.update
+      // 3、执行语句
       return handler.update(stmt);
     } finally {
       closeStatement(stmt);
     }
   }
 
-  //select
+  /**
+   * 查询
+   * @param ms
+   * @param parameter
+   * @param rowBounds
+   * @param resultHandler
+   * @param boundSql
+   * @param <E>
+   * @return
+   * @throws SQLException
+   */
   @Override
   public <E> List<E> doQuery(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
     Statement stmt = null;
@@ -77,18 +92,27 @@ public class SimpleExecutor extends BaseExecutor {
   }
 
   @Override
-  public List<BatchResult> doFlushStatements(boolean isRollback) throws SQLException {
-	//doFlushStatements只是给batch用的，所以这里返回空
+  public List<BatchResult> doFlushStatements(boolean isRollback) {
+	//doFlushStatements只是给BatchExecutor用的,所以这里返回空(返回null更好了)
     return Collections.emptyList();
   }
 
+  /**
+   * 预处理语句,得到Statement
+   * @param handler
+   * @param statementLog
+   * @return
+   * @throws SQLException
+   */
   private Statement prepareStatement(StatementHandler handler, Log statementLog) throws SQLException {
     Statement stmt;
+    // 1、获得数据库连接
     Connection connection = getConnection(statementLog);
-    //调用StatementHandler.prepare
+    // 2、生成Statement
     stmt = handler.prepare(connection);
-    //调用StatementHandler.parameterize
+    // 3、参数化 ？？
     handler.parameterize(stmt);
+    // 4、返回Statement
     return stmt;
   }
 

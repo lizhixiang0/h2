@@ -27,26 +27,25 @@ import java.util.StringTokenizer;
 import org.apache.ibatis.logging.Log;
 
 /**
- * Base class for proxies to do logging
- *
+ * 用于执行日志记录的代理的基类
  * @author Clinton Begin
  * @author Eduardo Macarron
  */
 public abstract class BaseJdbcLogger {
 
-  protected static final Set<String> SET_METHODS = new HashSet<String>();
-  protected static final Set<String> EXECUTE_METHODS = new HashSet<String>();
+  protected static final Set<String> SET_METHODS = new HashSet<>();
+  protected static final Set<String> EXECUTE_METHODS = new HashSet<>();
 
-  private Map<Object, Object> columnMap = new HashMap<Object, Object>();
+  private Map<Object, Object> columnMap = new HashMap<>();
 
-  private List<Object> columnNames = new ArrayList<Object>();
-  private List<Object> columnValues = new ArrayList<Object>();
+  private List<Object> columnNames = new ArrayList<>();
+  private List<Object> columnValues = new ArrayList<>();
 
   protected Log statementLog;
   protected int queryStack;
 
-  /*
-   * Default constructor
+  /**
+   * 默认构造器
    */
   public BaseJdbcLogger(Log log, int queryStack) {
     this.statementLog = log;
@@ -97,7 +96,7 @@ public abstract class BaseJdbcLogger {
   }
 
   protected String getParameterValueString() {
-    List<Object> typeList = new ArrayList<Object>(columnValues.size());
+    List<Object> typeList = new ArrayList<>(columnValues.size());
     for (Object value : columnValues) {
       if (value == null) {
         typeList.add("null");
@@ -119,6 +118,11 @@ public abstract class BaseJdbcLogger {
     columnValues.clear();
   }
 
+  /**
+   * 清理字符串中的换行符
+   * @param original
+   * @return
+   */
   protected String removeBreakingWhitespace(String original) {
     StringTokenizer whitespaceStripper = new StringTokenizer(original);
     StringBuilder builder = new StringBuilder();

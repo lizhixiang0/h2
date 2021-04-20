@@ -39,13 +39,21 @@ public final class MappedStatement {
   private String id;
   private Integer fetchSize;
   private Integer timeout;
+  /**
+   * sql语句类型
+   */
   private StatementType statementType;
   private ResultSetType resultSetType;
-  //SQL源码
+  /**
+   * SQL源
+   */
   private SqlSource sqlSource;
   private Cache cache;
   private ParameterMap parameterMap;
   private List<ResultMap> resultMaps;
+  /**
+   * 是否清空一二级缓存，增删改默认为true
+   */
   private boolean flushCacheRequired;
   private boolean useCache;
   private boolean resultOrdered;
@@ -53,17 +61,23 @@ public final class MappedStatement {
   private KeyGenerator keyGenerator;
   private String[] keyProperties;
   private String[] keyColumns;
+  /**
+   * 是否存在嵌套的结果映射
+   */
   private boolean hasNestedResultMaps;
   private String databaseId;
+  /**
+   * 用statementID创建的log对象
+   */
   private Log statementLog;
   private LanguageDriver lang;
   private String[] resultSets;
 
-  MappedStatement() {
-    // constructor disabled
-  }
+  private MappedStatement() {}
 
-  //静态内部类，建造者模式
+  /**
+   * 静态内部类，建造者模式
+   */
   public static class Builder {
     private MappedStatement mappedStatement = new MappedStatement();
 
@@ -279,29 +293,41 @@ public final class MappedStatement {
     return resultSets;
   }
 
+  /**
+   * 根据参数对象,获得BoundSql
+   * @param parameterObject
+   * @return
+   */
   public BoundSql getBoundSql(Object parameterObject) {
-	//其实就是调用sqlSource.getBoundSql
+	// 1、调用sqlSource.getBoundSql
     BoundSql boundSql = sqlSource.getBoundSql(parameterObject);
-    //剩下的可以暂时忽略
+    // 2、获得该sql语句的参数映射,若为空则重新构造
     List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
     if (parameterMappings == null || parameterMappings.isEmpty()) {
       boundSql = new BoundSql(configuration, boundSql.getSql(), parameterMap.getParameterMappings(), parameterObject);
     }
 
-    // check for nested result maps in parameter mappings (issue #30)
+
+    // 3、在参数映射中检查嵌套的结果映射
     for (ParameterMapping pm : boundSql.getParameterMappings()) {
       String rmId = pm.getResultMapId();
       if (rmId != null) {
         ResultMap rm = configuration.getResultMap(rmId);
         if (rm != null) {
+          // 4、只要有一个参数映射对象存在内嵌的结果映射,则当前SQL映射语句就存在内嵌结果映射
           hasNestedResultMaps |= rm.hasNestedResultMaps();
         }
       }
     }
-
+    // 5、返回绑定sql
     return boundSql;
   }
 
+  /**
+   * 将带","的字符串分割成字符串数组
+   * @param in  ","
+   * @return
+   */
   private static String[] delimitedStringtoArray(String in) {
     if (in == null || in.trim().length() == 0) {
       return null;

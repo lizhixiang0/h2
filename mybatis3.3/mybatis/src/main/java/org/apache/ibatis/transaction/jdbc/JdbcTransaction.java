@@ -117,7 +117,7 @@ public class JdbcTransaction implements Transaction {
 
   @Override
   public void rollback() throws SQLException {
-    // 1、自动提交时忽略回滚请求
+    // 1、自动提交则忽略回滚请求
     if (connection != null && !connection.getAutoCommit()) {
       if (log.isDebugEnabled()) {
         log.debug("Rolling back JDBC Connection [" + connection + "]");

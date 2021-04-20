@@ -19,7 +19,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 作用2个: 分页和 list 查询时控制最多返回数
+ * 分页控制器
+ * 作用2个: 分页和 list查询时控制最多返回数
  * @author Clinton Begin
  * @description limit和offset用法
  * @note   mysql里分页一般用limit来实现
@@ -46,6 +47,9 @@ public class RowBounds {
 
   public static final int NO_ROW_OFFSET = 0;
   public static final int NO_ROW_LIMIT = Integer.MAX_VALUE;
+    /**
+     * 默认从头取到尾
+     */
   public static final RowBounds DEFAULT = new RowBounds();
 
   public RowBounds() {

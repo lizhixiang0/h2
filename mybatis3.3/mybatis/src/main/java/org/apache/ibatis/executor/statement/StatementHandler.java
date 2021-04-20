@@ -25,38 +25,61 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.session.ResultHandler;
 
 /**
- * @author Clinton Begin
- */
-/**
  * 语句处理器
- *
+ * @author Clinton Begin
  */
 public interface StatementHandler {
 
-  //准备语句
-  Statement prepare(Connection connection)
-      throws SQLException;
+  /**
+   * 准备语句
+   * @param connection
+   * @return
+   * @throws SQLException
+   */
+  Statement prepare(Connection connection) throws SQLException;
 
-  //参数化
-  void parameterize(Statement statement)
-      throws SQLException;
+  /**
+   * 参数化
+   * @param statement
+   * @throws SQLException
+   */
+  void parameterize(Statement statement) throws SQLException;
 
-  //批处理
-  void batch(Statement statement)
-      throws SQLException;
+  /**
+   * 批处理
+   * @param statement
+   * @throws SQLException
+   */
+  void batch(Statement statement) throws SQLException;
 
-  //update
-  int update(Statement statement)
-      throws SQLException;
+  /**
+   * update  (增删改)
+   * @param statement
+   * @return
+   * @throws SQLException
+   */
+  int update(Statement statement) throws SQLException;
 
-  //select-->结果给ResultHandler
-  <E> List<E> query(Statement statement, ResultHandler resultHandler)
-      throws SQLException;
+  /**
+   * select-->结果给ResultHandler
+   * @param statement
+   * @param resultHandler
+   * @param <E>
+   * @return
+   * @throws SQLException
+   */
+  <E> List<E> query(Statement statement, ResultHandler resultHandler) throws SQLException;
 
-  //得到绑定sql
+  /**
+   * 得到绑定sql
+   * @return
+   */
   BoundSql getBoundSql();
 
-  //得到参数处理器
+  /**
+   * 得到参数处理器
+   * @return
+   */
   ParameterHandler getParameterHandler();
 
 }

@@ -534,26 +534,23 @@ public class Configuration {
     return resultSetHandler;
   }
 
-  //创建语句处理器
-  public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
-    //创建路由选择语句处理器
-    StatementHandler statementHandler = new RoutingStatementHandler(executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql);
-    //插件在这里插入
-    statementHandler = (StatementHandler) interceptorChain.pluginAll(statementHandler);
-    return statementHandler;
-  }
 
   public Executor newExecutor(Transaction transaction) {
     return newExecutor(transaction, defaultExecutorType);
   }
 
-  //产生执行器
+  /**
+   * 创建执行器 ,创建SqlSession时调用
+   * @param transaction 事务管理器
+   * @param executorType  执行类型,默认为ExecutorType.SIMPLE
+   * @return 执行器
+   */
   public Executor newExecutor(Transaction transaction, ExecutorType executorType) {
+    // 1、确定执行器类型（默认使用简单执行器）
     executorType = executorType == null ? defaultExecutorType : executorType;
-    //这句再做一下保护,囧,防止粗心大意的人将defaultExecutorType设成null?
     executorType = executorType == null ? ExecutorType.SIMPLE : executorType;
     Executor executor;
-    //然后就是简单的3个分支，产生3种执行器BatchExecutor/ReuseExecutor/SimpleExecutor
+    // 2、根据类型创建执行器   一共3种执行器：BatchExecutor/ReuseExecutor/SimpleExecutor
     if (ExecutorType.BATCH == executorType) {
       executor = new BatchExecutor(this, transaction);
     } else if (ExecutorType.REUSE == executorType) {
@@ -561,13 +558,34 @@ public class Configuration {
     } else {
       executor = new SimpleExecutor(this, transaction);
     }
-    //如果要求缓存，生成另一种CachingExecutor(默认就是有缓存),装饰者模式,所以默认都是返回CachingExecutor
+    // 3、如果开启了二级缓存,则创建缓存包装器去包装执行器
     if (cacheEnabled) {
       executor = new CachingExecutor(executor);
     }
-    //此处调用插件,通过插件可以改变Executor行为
+    // 4、调用拦截器责任链去包装执行器
     executor = (Executor) interceptorChain.pluginAll(executor);
+
+    // 5、返回
     return executor;
+  }
+
+  /**
+   * 创建语句处理器 ,在执行器中被调用
+   * @param executor   执行器
+   * @param mappedStatement
+   * @param parameterObject
+   * @param rowBounds
+   * @param resultHandler
+   * @param boundSql
+   * @return
+   */
+  public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
+    // 1、创建语句处理路由器
+    StatementHandler statementHandler = new RoutingStatementHandler(executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql);
+    // 2、调用拦截器责任链去包装
+    statementHandler = (StatementHandler) interceptorChain.pluginAll(statementHandler);
+    // 3、返回语句处理器
+    return statementHandler;
   }
 
   /**

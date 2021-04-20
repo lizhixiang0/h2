@@ -31,11 +31,8 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
 /**
- * @author Clinton Begin
- */
-/**
  * 简单语句处理器(STATEMENT)
- *
+ * @author Clinton Begin
  */
 public class SimpleStatementHandler extends BaseStatementHandler {
 
@@ -72,7 +69,14 @@ public class SimpleStatementHandler extends BaseStatementHandler {
     statement.addBatch(sql);
   }
 
-  //select-->结果给ResultHandler
+  /**
+   * select-->结果给ResultHandler
+   * @param statement
+   * @param resultHandler
+   * @param <E>
+   * @return
+   * @throws SQLException
+   */
   @Override
   public <E> List<E> query(Statement statement, ResultHandler resultHandler) throws SQLException {
     String sql = boundSql.getSql();
@@ -92,8 +96,7 @@ public class SimpleStatementHandler extends BaseStatementHandler {
   }
 
   @Override
-  public void parameterize(Statement statement) throws SQLException {
-    // N/A
+  public void parameterize(Statement statement) {
   }
 
 }

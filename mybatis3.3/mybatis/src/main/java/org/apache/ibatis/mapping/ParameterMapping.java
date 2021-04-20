@@ -52,11 +52,11 @@ public class ParameterMapping {
   private Configuration configuration;
 
   /**
-   * 属性
+   * 属性名
    */
   private String property;
   /**
-   * 参数模式
+   * 参数模式,默认为ParameterMode.IN
    */
   private ParameterMode mode;
   /**

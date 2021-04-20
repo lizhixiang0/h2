@@ -27,6 +27,7 @@ public class TryCatchFinally {
         } finally {
             System.out.println("6 outer finally");
         }
+        System.out.println("7 ssss ");
     }
 
     /**
@@ -102,6 +103,6 @@ public class TryCatchFinally {
 
 
     public static void main(String[] args) {
-        System.out.println(getInt1());
+       test();
     }
 }

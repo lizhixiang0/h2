@@ -29,19 +29,25 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
 /**
+ * 路由选择语句处理器,有点像代理模式
  * @author Clinton Begin
  */
-/**
- * 路由选择语句处理器,有点像代理模式
- *
- */
 public class RoutingStatementHandler implements StatementHandler {
-
+  /**
+   * 内部维护了一个StatementHandler （真正的执行者）
+   */
   private final StatementHandler delegate;
 
+  /**
+   * 构造方法,里面使用了简单工厂模式,根据不同的语句处理器类型。创建语句处理器对象
+   * @param executor
+   * @param ms   sql语句类型
+   * @param parameter
+   * @param rowBounds
+   * @param resultHandler
+   * @param boundSql
+   */
   public RoutingStatementHandler(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
-
-    //根据语句类型，委派到不同的语句处理器(STATEMENT|PREPARED|CALLABLE)
     switch (ms.getStatementType()) {
       case STATEMENT:
         delegate = new SimpleStatementHandler(executor, ms, parameter, rowBounds, resultHandler, boundSql);

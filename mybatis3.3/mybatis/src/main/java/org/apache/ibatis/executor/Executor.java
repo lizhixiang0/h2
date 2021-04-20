@@ -27,7 +27,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.transaction.Transaction;
 
 /**
- * 执行器 接口
+ * 执行器
  * @author Clinton Begin
  */
 public interface Executor {
@@ -45,7 +45,7 @@ public interface Executor {
   int update(MappedStatement ms, Object parameter) throws SQLException;
 
   /**
-   * 查询
+   * 查询 ,缓存查询
    * @param ms 映射的sql语句
    * @param parameter 参数
    * @param rowBounds 分页
@@ -94,7 +94,7 @@ public interface Executor {
 
   /**
    * 延迟加载
-   * @param ms   映射的sql语句
+   * @param ms   嵌套的sql映射语句
    * @param resultObject  ??
    * @param property  ??
    * @param key  缓存key
@@ -118,9 +118,16 @@ public interface Executor {
    */
   void rollback(boolean required) throws SQLException;
 
-
+  /**
+   * 关闭连接
+   * @param forceRollback
+   */
   void close(boolean forceRollback);
 
+  /**
+   * ??
+   * @return
+   */
   boolean isClosed();
 
   /**

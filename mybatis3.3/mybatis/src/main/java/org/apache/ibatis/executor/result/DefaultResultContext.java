@@ -18,13 +18,23 @@ package org.apache.ibatis.executor.result;
 import org.apache.ibatis.session.ResultContext;
 
 /**
- * 默认结果上下文(未处理前的扫描结果)
+ * 默认结果上下文(处理查询结果)
+ *
  * @author Clinton Begin
  */
 public class DefaultResultContext implements ResultContext {
-
+  /**
+   * 记录当前记录
+   */
   private Object resultObject;
+  /**
+   * 记录处理到第几个记录
+   */
   private int resultCount;
+
+  /**
+   *
+   */
   private boolean stopped;
 
   /**

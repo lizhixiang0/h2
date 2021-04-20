@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.time.Period;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
@@ -47,6 +48,7 @@ public class TestFactory {
         SqlSession sqlSession = sqlSessionManager.openSession();
         PersonDao personDao =  sqlSession.getMapper(PersonDao.class);
 
+        Person pp = sqlSession.selectOne("getById",13L);
         /**
          * 第一次查询
          */

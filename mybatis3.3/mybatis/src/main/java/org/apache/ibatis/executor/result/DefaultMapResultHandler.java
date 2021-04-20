@@ -30,11 +30,13 @@ import org.apache.ibatis.session.ResultHandler;
 public class DefaultMapResultHandler<K, V> implements ResultHandler {
 
   /**
-   * 内部维护了一个Map集合,<k,v>中 key是指定的mapKey对应的值,value是该记录
+   * 内部维护了一个Map<k,v>集合
+   * key: 指定的mapKey对应的值,
+   * value: mapKey对应的记录
    */
   private final Map<K, V> mappedResults;
   /**
-   * 集合中的记录以那个字段为key,通常应该是属性名
+   * 集合中的记录以那个字段为key,通常是属性名
    */
   private final String mapKey;
   /**
@@ -50,26 +52,31 @@ public class DefaultMapResultHandler<K, V> implements ResultHandler {
   public DefaultMapResultHandler(String mapKey, ObjectFactory objectFactory, ObjectWrapperFactory objectWrapperFactory) {
     this.objectFactory = objectFactory;
     this.objectWrapperFactory = objectWrapperFactory;
-    // 默认的对象工厂是创建HashMap对象
+    // 利用对象工厂创建Map对象
     this.mappedResults = objectFactory.create(Map.class);
     this.mapKey = mapKey;
   }
 
   /**
-   * 核心方法, 主要目的是把得到的List转为Map
-   * @param context 结果上下文
+   * 核心方法, 把查询得到的List转为Map
+   * @param context 结果上下文  ,list结果集合中的某一条记录
    */
   @Override
   public void handleResult(ResultContext context) {
-    // 获取记录
+    // 1、获取记录
     final V value = (V) context.getResultObject();
-    // 用MetaObject.forObject,包装一下记录
+    // 2、用MetaObject包装下记录
     final MetaObject mo = MetaObject.forObject(value, objectFactory, objectWrapperFactory);
-    // 根据属性名获得该属性名对应的value
+    // 3、获得mapKey的value
     final K key = (K) mo.getValue(mapKey);
+    // 4、存入map集合
     mappedResults.put(key, value);
   }
 
+  /**
+   * 获得处理后的map结果集
+   * @return map
+   */
   public Map<K, V> getMappedResults() {
     return mappedResults;
   }

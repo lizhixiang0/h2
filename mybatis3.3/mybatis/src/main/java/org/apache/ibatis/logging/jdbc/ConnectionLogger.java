@@ -26,7 +26,7 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.reflection.ExceptionUtil;
 
 /**
- * Connection proxy to add logging
+ * 用来添加日志记录的连接代理
  *
  * @author Clinton Begin
  * @author Eduardo Macarron
@@ -45,9 +45,12 @@ public final class ConnectionLogger extends BaseJdbcLogger implements Invocation
   public Object invoke(Object proxy, Method method, Object[] params)
       throws Throwable {
     try {
+      // 1、如果是调用的Object的方法,那直接invoke并返回
       if (Object.class.equals(method.getDeclaringClass())) {
         return method.invoke(this, params);
       }
+      // 不是Object的方法,那就是connection的方法
+      // 2、如果方法名为prepareStatement,则返回PreparedStatement
       if ("prepareStatement".equals(method.getName())) {
         if (isDebugEnabled()) {
           debug(" Preparing: " + removeBreakingWhitespace((String) params[0]), true);
@@ -55,6 +58,7 @@ public final class ConnectionLogger extends BaseJdbcLogger implements Invocation
         PreparedStatement stmt = (PreparedStatement) method.invoke(connection, params);
         stmt = PreparedStatementLogger.newInstance(stmt, statementLog, queryStack);
         return stmt;
+      // 3、如果方法名为prepareCall,则返回PreparedStatement
       } else if ("prepareCall".equals(method.getName())) {
         if (isDebugEnabled()) {
           debug(" Preparing: " + removeBreakingWhitespace((String) params[0]), true);
@@ -62,11 +66,13 @@ public final class ConnectionLogger extends BaseJdbcLogger implements Invocation
         PreparedStatement stmt = (PreparedStatement) method.invoke(connection, params);
         stmt = PreparedStatementLogger.newInstance(stmt, statementLog, queryStack);
         return stmt;
+      //  4、如果方法名为createStatement,则返回Statement
       } else if ("createStatement".equals(method.getName())) {
         Statement stmt = (Statement) method.invoke(connection, params);
         stmt = StatementLogger.newInstance(stmt, statementLog, queryStack);
         return stmt;
       } else {
+      //  5、如果不是以上的方法,则直接执行并返回
         return method.invoke(connection, params);
       }
     } catch (Throwable t) {
@@ -74,11 +80,8 @@ public final class ConnectionLogger extends BaseJdbcLogger implements Invocation
     }
   }
 
-  /*
-   * Creates a logging version of a connection
-   *
-   * @param conn - the original connection
-   * @return - the connection with logging
+  /**
+   * 创建连接的日志版本
    */
   public static Connection newInstance(Connection conn, Log statementLog, int queryStack) {
     InvocationHandler handler = new ConnectionLogger(conn, statementLog, queryStack);
@@ -86,10 +89,8 @@ public final class ConnectionLogger extends BaseJdbcLogger implements Invocation
     return (Connection) Proxy.newProxyInstance(cl, new Class[]{Connection.class}, handler);
   }
 
-  /*
-   * return the wrapped connection
-   *
-   * @return the connection
+  /**
+   * 返回包装后的连接
    */
   public Connection getConnection() {
     return connection;

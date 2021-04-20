@@ -70,8 +70,10 @@ public class XMLScriptBuilder extends BaseBuilder {
     SqlSource sqlSource = null;
     // 3、创建sql源
     if (isDynamic) {
+      // a、如果是存在动态节点则创建DynamicSqlSource (这里会发现动态sql源没用到参数类型parameterType)
       sqlSource = new DynamicSqlSource(configuration, rootSqlNode);
     } else {
+      // b、如果不存在动态节点则创建RawSqlSource
       sqlSource = new RawSqlSource(configuration, rootSqlNode, parameterType);
     }
     return sqlSource;

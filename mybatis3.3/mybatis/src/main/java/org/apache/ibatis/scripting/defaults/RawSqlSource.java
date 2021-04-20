@@ -26,7 +26,7 @@ import org.apache.ibatis.scripting.xmltags.SqlNode;
 import org.apache.ibatis.session.Configuration;
 
 /**
- * 未加工的SQL源码,它比DynamicSqlSource快，因为映射是在启动期间计算
+ * 未加工的SQL源,它比DynamicSqlSource快，因为映射是在启动期间计算
  *
  * @since 3.2.0
  * @author Eduardo Macarron

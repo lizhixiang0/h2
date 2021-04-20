@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  *  缓存key
- *  一般缓存框架的数据结构基本上都是 Key-Value 方式存储,事实上mybatis就是存储在hashMap中
+ *  一般缓存框架的数据结构基本上都是以 Key-Value 方式存储在hashMap中
  *  MyBatis 对于其 Key 的生成采取规则为：[mappedStatementId + offset + limit + SQL + queryParams + environment]生成一个哈希码
  * @author Clinton Begin
  * @blog "https://blog.csdn.net/xl3379307903/article/details/80517841
@@ -108,7 +108,7 @@ public class CacheKey implements Cloneable, Serializable {
      * 那么得出的乘积会在一个很小的范围，很容易造成哈希值的冲突。
      * 而如果选择一个100以上的质数，得出的哈希值会超出int的最大范围，这两种都不合适。
      * 而如果对超过 50,000 个英文单词（由两个不同版本的 Unix 字典合并而成）进行 hash code 运算，
-     * 并使用常数 31, 33, 37, 39 和 41 作为乘子（cachekey使用37），每个常数算出的哈希值冲突数都小于7个（国外大神做的测试），
+     * 并使用常数 31, 33, 37, 39 和 41 作为乘子（CacheKey使用37），每个常数算出的哈希值冲突数都小于7个（国外大神做的测试），
      * 那么这几个数就被作为生成hashCode值得备选乘数了
      */
     hashcode = multiplier * hashcode + baseHashCode;

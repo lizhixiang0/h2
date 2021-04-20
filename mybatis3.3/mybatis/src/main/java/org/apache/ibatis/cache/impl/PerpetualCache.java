@@ -23,8 +23,7 @@ import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.cache.CacheException;
 
 /**
- *  base cache  基础版cache,提供了缓存的唯一标识和容器
- *  其他的装饰类都基于这个缓存
+ *  base cache  基础版cache,定义了缓存的唯一标识和容器,其他的装饰类都基于这个缓存
  *  Perpetual   /pəˈpetʃuəl/  永恒的,这应该是种美好的祝愿吧。
  * @author Clinton Begin
  */
