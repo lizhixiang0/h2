@@ -29,7 +29,7 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
 
 /**
- * SqlSource构建器,核心方法就是parse方法,构建StaticSqlSource对象
+ * SqlSource构建器,核心方法就是parse方法,替换sql中的#{xx}为"?"然后构建StaticSqlSource对象
  * @author Clinton Begin
  */
 public class SqlSourceBuilder extends BaseBuilder {
@@ -42,15 +42,15 @@ public class SqlSourceBuilder extends BaseBuilder {
 
   /**
    * 核心方法: 构建SqlSource对象
-   * @param originalSql 原始sql
+   * @param originalSql 原始sql  ,INSERT INTO person (phone) VALUES(#{phone ,jdbcType=VARCHAR})
    * @param parameterType 参数类型
-   * @param additionalParameters 额外的参数
+   * @param additionalParameters 参数值
    * @return StaticSqlSource
    */
   public SqlSource parse(String originalSql, Class<?> parameterType, Map<String, Object> additionalParameters) {
     // 1、创建一个映射记号处理器对象,实现handleToken方法
     ParameterMappingTokenHandler handler = new ParameterMappingTokenHandler(configuration, parameterType, additionalParameters);
-    // 2、替换#{xx}为"?"
+    // 2、找到#{xx},然后将其替换掉，具体替换成什么,看handler
     GenericTokenParser parser = new GenericTokenParser("#{", "}", handler);
     String sql = parser.parse(originalSql);
     // 3、返回静态SQL源码
@@ -62,7 +62,8 @@ public class SqlSourceBuilder extends BaseBuilder {
    */
   private static class ParameterMappingTokenHandler extends BaseBuilder implements TokenHandler {
     /**
-     * 参数映射容器
+     * 参数映射容器，INSERT INTO person (phone) VALUES(#{phone ,jdbcType=VARCHAR})
+     * 里面存储参数的各种信息
      */
     private List<ParameterMapping> parameterMappings = new ArrayList<>();
     /**
@@ -85,6 +86,12 @@ public class SqlSourceBuilder extends BaseBuilder {
       return parameterMappings;
     }
 
+    /**
+     * 将$#{xx}替换成 ？
+     * 不过在替换的同时,将其中内容存储到了parameterMappings中
+     * @param content
+     * @return
+     */
     @Override
     public String handleToken(String content) {
       // 1、根据参数名构建参数映射,然后存入parameterMappings供后续使用
@@ -95,16 +102,17 @@ public class SqlSourceBuilder extends BaseBuilder {
 
     /**
      * 根据参数名构建参数映射
+     *
      * @param content 参数表达式  propertyName,javaType=int,jdbcType=NUMERIC
      * @return ParameterMapping
      */
     private ParameterMapping buildParameterMapping(String content) {
       // 1、解析参数映射,就是转化成一个HashMap
       Map<String, String> propertiesMap = parseParameterMapping(content);
-      // 2、获得参数名
+      // 2、获得参数名,property表示的就是参数名
       String property = propertiesMap.get("property");
       Class<?> propertyType;
-      // 3、下面解析不下去了，下次来
+      // 3、找出参数类型
       if (metaParameters.hasGetter(property)) {
         propertyType = metaParameters.getGetterType(property);
       } else if (typeHandlerRegistry.hasTypeHandler(parameterType)) {
@@ -121,6 +129,7 @@ public class SqlSourceBuilder extends BaseBuilder {
       } else {
         propertyType = Object.class;
       }
+      // 4、构建ParameterMapping
       ParameterMapping.Builder builder = new ParameterMapping.Builder(configuration, property, propertyType);
       Class<?> javaType = propertyType;
       String typeHandlerAlias = null;

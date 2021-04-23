@@ -40,36 +40,33 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 public abstract class BaseStatementHandler implements StatementHandler {
 
   protected final Configuration configuration;
-  protected final ObjectFactory objectFactory;
-  protected final TypeHandlerRegistry typeHandlerRegistry;
-  protected final ResultSetHandler resultSetHandler;
-  protected final ParameterHandler parameterHandler;
-
   protected final Executor executor;
   protected final MappedStatement mappedStatement;
   protected final RowBounds rowBounds;
-
+  protected final TypeHandlerRegistry typeHandlerRegistry;
+  protected final ObjectFactory objectFactory;
   protected BoundSql boundSql;
+  protected final ResultSetHandler resultSetHandler;
+  protected final ParameterHandler parameterHandler;
+
+
 
   protected BaseStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
     this.configuration = mappedStatement.getConfiguration();
     this.executor = executor;
     this.mappedStatement = mappedStatement;
     this.rowBounds = rowBounds;
-
     this.typeHandlerRegistry = configuration.getTypeHandlerRegistry();
     this.objectFactory = configuration.getObjectFactory();
-
-    if (boundSql == null) { // issue #435, get the key before calculating the statement
+    // 1、如果boundSql为null则生成
+    if (boundSql == null) {
       generateKeys(parameterObject);
       boundSql = mappedStatement.getBoundSql(parameterObject);
     }
-
     this.boundSql = boundSql;
-
-    //生成parameterHandler
+    // 2、生成parameterHandler
     this.parameterHandler = configuration.newParameterHandler(mappedStatement, parameterObject, boundSql);
-    //生成resultSetHandler
+    // 3、生成resultSetHandler
     this.resultSetHandler = configuration.newResultSetHandler(executor, mappedStatement, rowBounds, parameterHandler, resultHandler, boundSql);
   }
 
@@ -83,18 +80,23 @@ public abstract class BaseStatementHandler implements StatementHandler {
     return parameterHandler;
   }
 
-  //准备语句
+  /**
+   * 准备语句
+   * @param connection
+   * @return statement
+   */
   @Override
   public Statement prepare(Connection connection) throws SQLException {
     ErrorContext.instance().sql(boundSql.getSql());
     Statement statement = null;
     try {
-      //实例化Statement
+      // 1、实例化Statement
       statement = instantiateStatement(connection);
-      //设置超时
+      // 2、设置超时
       setStatementTimeout(statement);
-      //设置读取条数
+      // 3、设置读取的限制条数
       setFetchSize(statement);
+      // 4、返回
       return statement;
     } catch (SQLException e) {
       closeStatement(statement);
@@ -105,13 +107,22 @@ public abstract class BaseStatementHandler implements StatementHandler {
     }
   }
 
-  //如何实例化Statement，交给子类做
+  /**
+   * 如何实例化Statement，交给子类实现
+   */
   protected abstract Statement instantiateStatement(Connection connection) throws SQLException;
 
-  //设置超时,其实就是调用Statement.setQueryTimeout
+  /**
+   * 设置超时,其实就是调用Statement.setQueryTimeout
+   * @param stmt
+   * @throws SQLException
+   */
   protected void setStatementTimeout(Statement stmt) throws SQLException {
+    // 1、读出sql映射语句中的超时设置
     Integer timeout = mappedStatement.getTimeout();
+    // 2、读出核心配置类中的默认超时设置
     Integer defaultTimeout = configuration.getDefaultStatementTimeout();
+    // 3、优先存sql映射语句的超时设置
     if (timeout != null) {
       stmt.setQueryTimeout(timeout);
     } else if (defaultTimeout != null) {
@@ -119,7 +130,11 @@ public abstract class BaseStatementHandler implements StatementHandler {
     }
   }
 
-  //设置读取条数,其实就是调用Statement.setFetchSize
+  /**
+   * 设置读取条数  （如果没设置）
+   * @param stmt
+   * @throws SQLException
+   */
   protected void setFetchSize(Statement stmt) throws SQLException {
     Integer fetchSize = mappedStatement.getFetchSize();
     if (fetchSize != null) {
@@ -138,10 +153,16 @@ public abstract class BaseStatementHandler implements StatementHandler {
     }
   }
 
-  //生成key
+  /**
+   * 生成主键
+   * @param parameter
+   */
   protected void generateKeys(Object parameter) {
+    // 1、取的KeyGenerator对象,一般我们使用Jdbc3KeyGenerator
     KeyGenerator keyGenerator = mappedStatement.getKeyGenerator();
+    // 2、将线程日志收起来,防止被污染,然后执行完processBefore再召回
     ErrorContext.instance().store();
+    // 3、执行processBefore (Jdbc3KeyGenerator的这个方法啥也不干,SelectKeyGenerator会将主键值查出然后赋值给parameter)
     keyGenerator.processBefore(executor, mappedStatement, null, parameter);
     ErrorContext.instance().recall();
   }

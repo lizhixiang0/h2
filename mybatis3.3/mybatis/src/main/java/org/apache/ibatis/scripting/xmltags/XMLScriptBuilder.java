@@ -63,9 +63,9 @@ public class XMLScriptBuilder extends BaseBuilder {
    * @return SqlSource
    */
   public SqlSource parseScriptNode() {
-    // 1、解析动态标记,得到所有的SqlNode
+    // 1、解析动态标记,得到所有涉及到的SqlNode
     List<SqlNode> contents = parseDynamicTags(context);
-    // 2、将解析后的List<SqlNode>放到MixedSqlNode,这应该就是责任链模式,这个MixedSqlNode的apply方法会循环调用所有SqlNode的apply,最后拼接出sql语句
+    // 2、将解析后的List<SqlNode>放到MixedSqlNode（责任链模式,这个MixedSqlNode的apply方法会循环调用所有SqlNode的apply,最后拼接出sql语句
     MixedSqlNode rootSqlNode = new MixedSqlNode(contents);
     SqlSource sqlSource = null;
     // 3、创建sql源
@@ -124,7 +124,7 @@ public class XMLScriptBuilder extends BaseBuilder {
    * @link "https://mybatis.org/mybatis-3/zh/dynamic-sql.html
    */
   List<SqlNode> parseDynamicTags(XNode node) {
-    // 1、创建SqlNode集合容器
+    // 1、每调用一次都创建一个SqlNode集合容器  (这是树形结构?)
     List<SqlNode> contents = new ArrayList<>();
     // 2、获取当前sql语句节点的所有子节点（包括文本、元素）
     NodeList children = node.getNode().getChildNodes();
@@ -136,11 +136,11 @@ public class XMLScriptBuilder extends BaseBuilder {
       if (child.getNode().getNodeType() == Node.CDATA_SECTION_NODE || child.getNode().getNodeType() == Node.TEXT_NODE) {
         // b1、取出文本内容
         String data = child.getStringBody("");
-        // b1、将文本内容用TextSqlNode包装起来
+        // b1、将文本内容用文本节点TextSqlNode包装起来
         TextSqlNode textSqlNode = new TextSqlNode(data);
-        // b1、判断是否是动态的文本,
+        // b1、判断是否是动态的文本(根据文本中是否存在${})
         // 如果是则将TextSqlNode添加进contents且isDynamic设置为true
-        // 不是则将文本用StaticTextSqlNode包装起来添加进contents
+        // 不是则将文本用静态文本节点StaticTextSqlNode包装起来添加进contents
         if (textSqlNode.isDynamic()) {
           contents.add(textSqlNode);
           isDynamic = true;
@@ -150,17 +150,18 @@ public class XMLScriptBuilder extends BaseBuilder {
       } else if (child.getNode().getNodeType() == Node.ELEMENT_NODE) {
         // b2、取出元素节点名  (出现元素节点代表肯定是动态sql了)
         String nodeName = child.getNode().getNodeName();
-        // b3、根据节点名获取对应的动态节点处理器，拿不到直接报错
+        // b3、根据节点名获取对应的动态节点处理器,拿不到直接报错
         NodeHandler handler = nodeHandlers(nodeName);
         if (handler == null) {
           throw new BuilderException("Unknown element <" + nodeName + "> in SQL statement.");
         }
-        // b4、解析动态节点
+        // b4、解析动态节点,注意此时将contents传递过去了,content里既包含了之前解析出来的静态文本
         handler.handleNode(child, contents);
         // b5、isDynamic设置为true
         isDynamic = true;
       }
     }
+
     return contents;
   }
 
@@ -199,8 +200,7 @@ public class XMLScriptBuilder extends BaseBuilder {
 
   /**
    * if处理器
-   * <select id="findActiveBlogWithTitleLike"
-   *      resultType="Blog">
+   * <select id="findActiveBlogWithTitleLike" resultType="Blog">
    *   SELECT * FROM BLOG
    *   WHERE state = ‘ACTIVE’
    *   <if test="title != null">

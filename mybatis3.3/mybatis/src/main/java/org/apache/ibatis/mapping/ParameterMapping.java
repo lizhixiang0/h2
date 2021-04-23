@@ -84,7 +84,7 @@ public class ParameterMapping {
    */
   private String resultMapId;
   /**
-   * 表达式？？
+   * 目前还不支持基于表达式的参数
    */
   private String expression;
 
@@ -113,8 +113,8 @@ public class ParameterMapping {
     /**
      * 第二个构造器
      * @param configuration 核心配置类
-     * @param property 属性
-     * @param javaType java类型
+     * @param property 属性名
+     * @param javaType 属性类型
      */
     public Builder(Configuration configuration, String property, Class<?> javaType) {
       parameterMapping.configuration = configuration;

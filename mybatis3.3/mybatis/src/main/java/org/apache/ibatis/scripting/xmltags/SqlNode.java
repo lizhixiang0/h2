@@ -22,7 +22,7 @@ package org.apache.ibatis.scripting.xmltags;
 public interface SqlNode {
   /**
    * 定义不同节点的处理逻辑   "choose、forEach、if、set、where"
-   * @param context DynamicContext
+   * @param context DynamicContext,为各个动态sql节点实现类(诸如ChooseSqlNode等)提供进行判断的上下信息.确保判断等操作的完整实现.(小黑板)
    * @return true || false
    */
   boolean apply(DynamicContext context);

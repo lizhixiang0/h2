@@ -95,8 +95,7 @@ public class TextSqlNode implements SqlNode {
   }
 
   /**
-   * 判断是否是动态sql
-   * 只要text中包含了'${}'就属于动态sql
+   * 判断是否是动态sql,只要text中包含了'${}'就属于动态sql
    */
   public boolean isDynamic() {
     DynamicCheckerTokenParser checker = new DynamicCheckerTokenParser();

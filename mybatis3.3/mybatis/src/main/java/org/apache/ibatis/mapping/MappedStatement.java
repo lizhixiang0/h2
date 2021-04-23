@@ -37,12 +37,18 @@ public final class MappedStatement {
   private String resource;
   private Configuration configuration;
   private String id;
+  /**
+   * 限制批量返回的结果行数
+   */
   private Integer fetchSize;
   private Integer timeout;
   /**
    * sql语句类型
    */
   private StatementType statementType;
+  /**
+   * 结果集类型
+   */
   private ResultSetType resultSetType;
   /**
    * SQL源
@@ -58,8 +64,17 @@ public final class MappedStatement {
   private boolean useCache;
   private boolean resultOrdered;
   private SqlCommandType sqlCommandType;
+  /**
+   * 键值生成器
+   */
   private KeyGenerator keyGenerator;
+  /**
+   * 标记一个属性,MyBatis会通过getGeneratedKeys或者通过insert语句的selectKey子元素设置它的值 (仅对 insert 有用)
+   */
   private String[] keyProperties;
+  /**
+   *
+   */
   private String[] keyColumns;
   /**
    * 是否存在嵌套的结果映射
@@ -85,11 +100,13 @@ public final class MappedStatement {
       mappedStatement.configuration = configuration;
       mappedStatement.id = id;
       mappedStatement.sqlSource = sqlSource;
+      // statementType默认为PREPARED
       mappedStatement.statementType = StatementType.PREPARED;
-      mappedStatement.parameterMap = new ParameterMap.Builder("defaultParameterMap", null, new ArrayList<ParameterMapping>()).build();
+      mappedStatement.parameterMap = new ParameterMap.Builder("defaultParameterMap", null, new ArrayList<>()).build();
       mappedStatement.resultMaps = new ArrayList<>();
       mappedStatement.timeout = configuration.getDefaultStatementTimeout();
       mappedStatement.sqlCommandType = sqlCommandType;
+      // 若配置了useGeneratedKeys=true且为insert语句,则配置Jdbc3KeyGenerator,否则配置NoKeyGenerator
       mappedStatement.keyGenerator = configuration.isUseGeneratedKeys() && SqlCommandType.INSERT.equals(sqlCommandType) ? new Jdbc3KeyGenerator() : new NoKeyGenerator();
       String logId = id;
       if (configuration.getLogPrefix() != null) {
@@ -295,20 +312,18 @@ public final class MappedStatement {
 
   /**
    * 根据参数对象,获得BoundSql
-   * @param parameterObject
+   * @param parameterObject  传入的参数
    * @return
    */
   public BoundSql getBoundSql(Object parameterObject) {
 	// 1、调用sqlSource.getBoundSql
     BoundSql boundSql = sqlSource.getBoundSql(parameterObject);
-    // 2、获得该sql语句的参数映射,若为空则重新构造
+    // 2、获得该sql语句的参数映射,若为空则重新构造boundSql
     List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
     if (parameterMappings == null || parameterMappings.isEmpty()) {
       boundSql = new BoundSql(configuration, boundSql.getSql(), parameterMap.getParameterMappings(), parameterObject);
     }
-
-
-    // 3、在参数映射中检查嵌套的结果映射
+    // 3、在参数映射中检查是否存在嵌套的结果映射
     for (ParameterMapping pm : boundSql.getParameterMappings()) {
       String rmId = pm.getResultMapId();
       if (rmId != null) {

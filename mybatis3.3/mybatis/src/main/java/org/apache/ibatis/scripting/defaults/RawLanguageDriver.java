@@ -22,7 +22,7 @@ import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
 import org.apache.ibatis.session.Configuration;
 
 /**
- * 从3.2.4开始，默认的XML语言能够识别静态语句并创建一个RawSqlSource。所以没有必要用RAW，除非需要确保无论任何条件下都没有动态标签。
+ * 严格化的语言驱动实现类，要求SqlSource必须是RawSqlSource
  * @since 3.2.0
  * @author Eduardo Macarron
  */
@@ -43,7 +43,7 @@ public class RawLanguageDriver extends XMLLanguageDriver {
   }
 
   private void checkIsNotDynamic(SqlSource source) {
-    // 如果SqlSource不是未加工的SQL源,则抛出异常
+    // 如果不是RawSqlSource就抛出异常
     if (!RawSqlSource.class.equals(source.getClass())) {
       throw new BuilderException("Dynamic content is not allowed when using RAW language");
     }

@@ -18,13 +18,14 @@ package org.apache.ibatis.mapping;
 import java.sql.ResultSet;
 
 /**
- * 结果集类型,
- * ResultSet,表示数据库结果集的数据表 通常是通过执行查询数据库的语句生成的。
- *
+ * 结果集类型
+ * 创建使用数据库连接创建Statement的时候可以传递结果集类型,默认是FORWARD_ONLY
  * @author Clinton Begin
+ * @description  "https://www.cnblogs.com/catkins/p/5604686.html
  */
 public enum ResultSetType {
   /**
+   * 默认的
    * The constant indicating the type for a ResultSet object whose cursor may move only forward.
    * 结果集的游标只能向下滚动。
    */

@@ -16,13 +16,12 @@
 package org.apache.ibatis.mapping;
 
 /**
- * 表示从XML文件或注释读取的映射语句的内容
+ * SqlSource对象的责任，就是根据传入的参数对象，动态计算出BoundSql
  * @author Clinton Begin
  */
 public interface SqlSource {
   /**
-   *  创建真正的sql语句
-   * It creates the SQL that will be passed to the database out of the input parameter received from the user.
+   * 根据传入的参数对象，动态计算出这个BoundSql (一个BoundSql对象，代表了一次sql语句的实际执行)
    * @param parameterObject 参数对象
    * @return BoundSql
    */

@@ -23,7 +23,7 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
 
 /**
- * BoundSql像一个中转站,里面存储了mybatis在执行crud时的中间数据,没做什么处理
+ * BoundSql封装mybatis最终产生sql的类，包括sql语句，参数，参数源数据等参数：
  * 其中包含sql语句(该sql语句中可能包含 ? 这样的占位符), 以及一组parameter mapping(ParameterMapping类的实例)
  * @author admin
  */
@@ -40,7 +40,9 @@ public class BoundSql {
    * 用户传入的数据
    */
   private Object parameterObject;
-  // ?
+  /**
+   * 这里面也是用户传递的一些数据
+   */
   private Map<String, Object> additionalParameters;
   // ?
   private MetaObject metaParameters;

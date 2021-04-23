@@ -118,7 +118,7 @@ public class XMLStatementBuilder extends BaseBuilder {
     includeParser.applyIncludes(context.getNode());
     // 20、解析<selectKey>,若存在,则将其解析成key映射语句存储到configuration中
     processSelectKeyNodes(id, parameterTypeClass, langDriver);
-    // 21、将sql解析SqlSource,此时已经将sql片段拼接进去了（一般是DynamicSqlSource)
+    // 21、将sql解析SqlSource(此时已经将Include片段拼接进去了)
     SqlSource sqlSource = langDriver.createSqlSource(configuration, context, parameterTypeClass);
     // 22、获取结果集
     String resultSets = context.getStringAttribute("resultSets");
@@ -201,15 +201,9 @@ public class XMLStatementBuilder extends BaseBuilder {
 
   /**
    * 20.3、解析<selectKey>节点
-   *  <insert id="insertAuthor">
    *       <selectKey keyProperty="id" resultType="int" order="BEFORE" databaseId="" keyColumn="" statementType="">
    *         select CAST(RANDOM()*1000000 as INTEGER) a from SYSIBM.SYSDUMMY1
    *       </selectKey>
-   *       insert into Author
-   *         (id, username, password, email,bio, favourite_section)
-   *       values
-   *         (#{id}, #{username}, #{password}, #{email}, #{bio}, #{favouriteSection,jdbcType=VARCHAR})
-   *   </insert>
    * @param id 当前sql语句的id标识+=键值生成器前缀
    * @param nodeToHandle  当前<selectKey>节点
    * @param parameterTypeClass 参数类型
@@ -237,9 +231,9 @@ public class XMLStatementBuilder extends BaseBuilder {
     SqlSource sqlSource = langDriver.createSqlSource(configuration, nodeToHandle, parameterTypeClass);
     // 8、构建映射语句,并将其添加到configuration
     builderAssistant.addMappedStatement(id, sqlSource, statementType, SqlCommandType.SELECT, null, null, null, parameterTypeClass, null, resultTypeClass, null, false, false, false, keyGenerator, keyProperty, keyColumn, databaseId, langDriver, null);
-    // 9、根据id从configuration里拿到构建好的key映射语句
+    // 9、根据id从configuration里拿到构建好的MappedStatement
     MappedStatement keyStatement = configuration.getMappedStatement(builderAssistant.applyCurrentNamespace(id, false), false);
-    // 10、将这条key映射语句包装下添加到configuration的KeyGenerator容器中
+    // 10、根据MappedStatement创建SelectKeyGenerator然后添加到configuration的KeyGenerator容器中
     configuration.addKeyGenerator(id, new SelectKeyGenerator(keyStatement, executeBefore));
   }
 

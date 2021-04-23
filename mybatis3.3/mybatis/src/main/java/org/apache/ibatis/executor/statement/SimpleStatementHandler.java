@@ -82,13 +82,18 @@ public class SimpleStatementHandler extends BaseStatementHandler {
     String sql = boundSql.getSql();
     statement.execute(sql);
     //先执行Statement.execute，然后交给ResultSetHandler.handleResultSets
-    return resultSetHandler.<E>handleResultSets(statement);
+    return resultSetHandler.handleResultSets(statement);
   }
 
+  /**
+   * 创建Statement (调用Connection.createStatement)
+   * @param connection
+   * @throws SQLException
+   */
   @Override
   protected Statement instantiateStatement(Connection connection) throws SQLException {
-    //调用Connection.createStatement
     if (mappedStatement.getResultSetType() != null) {
+      // 如果结果集类型不为null,则按要求创建对应的Statement,ResultSet.CONCUR_READ_ONLY表示只读,即对结果集的操作不影响数据库
       return connection.createStatement(mappedStatement.getResultSetType().getValue(), ResultSet.CONCUR_READ_ONLY);
     } else {
       return connection.createStatement();
