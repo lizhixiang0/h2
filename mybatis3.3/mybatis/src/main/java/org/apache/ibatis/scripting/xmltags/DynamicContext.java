@@ -39,14 +39,21 @@ public class DynamicContext {
   public static final String PARAMETER_OBJECT_KEY = "_parameter";
   public static final String DATABASE_ID_KEY = "_databaseId";
   /**
-   * 这里面存储了参数值,可以直接通过get(参数名)的方式取出用户传递的参数值
+   * 这里面存储了参数值,拼接动态sql时需要根据用户传递的参数进行判断
+   * 可以直接通过get(参数名)的方式取出用户传递的参数值
    */
   private final ContextMap bindings;
+  /**
+   * 拼接的sql
+   */
   private final StringBuilder sqlBuilder = new StringBuilder();
+  /**
+   * ?
+   */
   private int uniqueNumber = 0;
 
   static {
-    // Ognl运行时环境在动态计算sql语句时,会按照ContextAccessor中描述的Map接口的方式来访问和读取ContextMap对象
+    // 当从ContextMap取值的时候，会执行ContextAccessor中的getProperty方法
     OgnlRuntime.setPropertyAccessor(ContextMap.class, new ContextAccessor());
   }
 

@@ -219,7 +219,7 @@ public class XMLScriptBuilder extends BaseBuilder {
       MixedSqlNode mixedSqlNode = new MixedSqlNode(contents);
       // 3、获得test属性值
       String test = nodeToHandle.getStringAttribute("test");
-      // 4、构建IfSqlNode
+      // 4、构建IfSqlNode,里面存放了if节点下的文本元素以及if节点的判断条件
       IfSqlNode ifSqlNode = new IfSqlNode(mixedSqlNode, test);
       // 5、将构建好的IfSqlNode添加进targetContents
       targetContents.add(ifSqlNode);
@@ -311,7 +311,7 @@ public class XMLScriptBuilder extends BaseBuilder {
    *   </where>
    * </select>
    *
-   * where处理器
+   *where 元素只会在子元素返回任何内容的情况下才插入子句。而且，若子句的开头为 “AND” 或 “OR”，where 元素也会将它们去除。
    */
   private class WhereHandler implements NodeHandler {
     public WhereHandler() {}
@@ -326,7 +326,7 @@ public class XMLScriptBuilder extends BaseBuilder {
   }
 
   /**
-   *bing绑定处理器,允许你在 OGNL 表达式以外创建一个变量，并将其绑定到当前的上下文
+   *bing绑定处理器,允许在OGNL表达式以外创建一个变量，并将其绑定到当前的上下文
    * <select id="selectBlogsLike" resultType="Blog">
    *   <bind name="pattern" value="'%' + _parameter.getTitle() + '%'" />
    *   SELECT *
@@ -360,6 +360,9 @@ public class XMLScriptBuilder extends BaseBuilder {
    *     </set>
    *   where id=#{id}
    * </update>
+   *
+   * set 元素会动态地在行首插入 SET 关键字，并会删掉额外的逗号（这些逗号是在使用条件语句给列赋值时引入的）。
+   *
    */
   private class SetHandler implements NodeHandler {
     public SetHandler() {}
@@ -384,6 +387,10 @@ public class XMLScriptBuilder extends BaseBuilder {
    *         #{item}
    *   </foreach>
    * </select>
+   *
+   * 可以将任何可迭代对象（如 List、Set 等）、Map 对象或者数组对象作为集合参数传递给 foreach。
+   * 当使用可迭代对象或者数组时，index 是当前迭代的序号，item 的值是本次迭代获取到的元素。
+   * 当使用 Map 对象（或者 Map.Entry 对象的集合）时，index 是键，item 是值
    */
   private class ForEachHandler implements NodeHandler {
     public ForEachHandler() {}
