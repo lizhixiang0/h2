@@ -515,21 +515,35 @@ public class Configuration {
     languageRegistry.register(RawLanguageDriver.class);
   }
 
-  //创建参数处理器
+  /**
+   * 创建参数处理器
+   * @param mappedStatement  sql映射
+   * @param parameterObject  参数对象
+   * @param boundSql sql
+   * @return
+   */
   public ParameterHandler newParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
-    //创建ParameterHandler
+    // 1、创建ParameterHandler
     ParameterHandler parameterHandler = mappedStatement.getLang().createParameterHandler(mappedStatement, parameterObject, boundSql);
-    //插件在这里插入
+    // 2、插件在这里插入
     parameterHandler = (ParameterHandler) interceptorChain.pluginAll(parameterHandler);
     return parameterHandler;
   }
 
-  //创建结果集处理器
-  public ResultSetHandler newResultSetHandler(Executor executor, MappedStatement mappedStatement, RowBounds rowBounds, ParameterHandler parameterHandler,
-      ResultHandler resultHandler, BoundSql boundSql) {
-    //创建DefaultResultSetHandler(稍老一点的版本3.1是创建NestedResultSetHandler或者FastResultSetHandler)
+  /**
+   * 创建结果集处理器
+   * @param executor  执行器
+   * @param mappedStatement  sql映射语句
+   * @param rowBounds   控制行数
+   * @param parameterHandler     参数处理器
+   * @param resultHandler  结果处理器
+   * @param boundSql  sql
+   * @return
+   */
+  public ResultSetHandler newResultSetHandler(Executor executor, MappedStatement mappedStatement, RowBounds rowBounds, ParameterHandler parameterHandler, ResultHandler resultHandler, BoundSql boundSql) {
+    // 1、创建DefaultResultSetHandler
     ResultSetHandler resultSetHandler = new DefaultResultSetHandler(executor, mappedStatement, parameterHandler, resultHandler, boundSql, rowBounds);
-    //插件在这里插入
+    // 2、插件在这里插入
     resultSetHandler = (ResultSetHandler) interceptorChain.pluginAll(resultSetHandler);
     return resultSetHandler;
   }

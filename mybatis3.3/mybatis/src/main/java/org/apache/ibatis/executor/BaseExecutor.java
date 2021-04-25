@@ -200,7 +200,7 @@ public abstract class BaseExecutor implements Executor {
     try {
       // 3、查询堆+1
       queryStack++;
-      // 4、如果resultHandler为null,则根据CacheKey从localCache去查
+      // 4、如果resultHandler为null,则根据CacheKey从localCache去查，如果不为null ,则设置为null ?
       list = resultHandler == null ? (List<E>) localCache.getObject(key) : null;
       if (list != null) {
         // 5、若查到localCache缓存,则处理下parameter对象

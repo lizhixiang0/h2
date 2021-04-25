@@ -56,6 +56,9 @@ public final class MappedStatement {
   private SqlSource sqlSource;
   private Cache cache;
   private ParameterMap parameterMap;
+  /**
+   *
+   */
   private List<ResultMap> resultMaps;
   /**
    * 是否清空一二级缓存，增删改默认为true

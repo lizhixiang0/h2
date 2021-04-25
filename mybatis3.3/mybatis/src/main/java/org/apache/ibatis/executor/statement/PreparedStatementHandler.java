@@ -32,6 +32,8 @@ import org.apache.ibatis.session.RowBounds;
 
 /**
  * 预处理语句处理器(PREPARED)
+ * 调用PreparedStatement来执行SQL语句,虽然初次创建PrepareStatement时开销比较大
+ * 但第一次执行sql语句时会进行预编译，在接下来执行相同的SQL语句时会提高数据库性能
  * @author Clinton Begin
  */
 public class PreparedStatementHandler extends BaseStatementHandler {

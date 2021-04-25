@@ -56,14 +56,13 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
- * 默认Map结果处理器
+ * 核心类,默认结果集处理器
  * @author Clinton Begin
  * @author Eduardo Macarron
  */
 public class DefaultResultSetHandler implements ResultSetHandler {
 
   private static final Object NO_VALUE = new Object();
-
   private final Executor executor;
   private final Configuration configuration;
   private final MappedStatement mappedStatement;
@@ -75,21 +74,20 @@ public class DefaultResultSetHandler implements ResultSetHandler {
   private final ObjectFactory objectFactory;
 
   // nested resultmaps
-  private final Map<CacheKey, Object> nestedResultObjects = new HashMap<CacheKey, Object>();
-  private final Map<CacheKey, Object> ancestorObjects = new HashMap<CacheKey, Object>();
-  private final Map<String, String> ancestorColumnPrefix = new HashMap<String, String>();
+  private final Map<CacheKey, Object> nestedResultObjects = new HashMap<>();
+  private final Map<CacheKey, Object> ancestorObjects = new HashMap<>();
+  private final Map<String, String> ancestorColumnPrefix = new HashMap<>();
 
   // multiple resultsets
-  private final Map<String, ResultMapping> nextResultMaps = new HashMap<String, ResultMapping>();
-  private final Map<CacheKey, List<PendingRelation>> pendingRelations = new HashMap<CacheKey, List<PendingRelation>>();
+  private final Map<String, ResultMapping> nextResultMaps = new HashMap<>();
+  private final Map<CacheKey, List<PendingRelation>> pendingRelations = new HashMap<>();
 
   private static class PendingRelation {
     public MetaObject metaObject;
     public ResultMapping propertyMapping;
   }
 
-  public DefaultResultSetHandler(Executor executor, MappedStatement mappedStatement, ParameterHandler parameterHandler, ResultHandler resultHandler, BoundSql boundSql,
-      RowBounds rowBounds) {
+  public DefaultResultSetHandler(Executor executor, MappedStatement mappedStatement, ParameterHandler parameterHandler, ResultHandler resultHandler, BoundSql boundSql, RowBounds rowBounds) {
     this.executor = executor;
     this.configuration = mappedStatement.getConfiguration();
     this.mappedStatement = mappedStatement;
@@ -100,10 +98,6 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     this.objectFactory = configuration.getObjectFactory();
     this.resultHandler = resultHandler;
   }
-
-  //
-  // HANDLE OUTPUT PARAMETER
-  //
 
   @Override
   public void handleOutputParameters(CallableStatement cs) throws SQLException {
@@ -145,24 +139,27 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     }
   }
 
-  //
-  // HANDLE RESULT SETS
-  //
+  /**
+   * 1、处理resultSet  (核心方法)
+   * @param stmt
+   * @return
+   * @throws SQLException
+   */
   @Override
   public List<Object> handleResultSets(Statement stmt) throws SQLException {
     ErrorContext.instance().activity("handling results").object(mappedStatement.getId());
-
-    final List<Object> multipleResults = new ArrayList<Object>();
-
+    final List<Object> multipleResults = new ArrayList<>();
     int resultSetCount = 0;
+    // 1、将ResultSet用包装器包装器来,里面会对ResultSet进行第一步的处理
     ResultSetWrapper rsw = getFirstResultSet(stmt);
-
+    // 2、获得resultMap,resultMaps里至少需要一个resultMap,需要验证下
     List<ResultMap> resultMaps = mappedStatement.getResultMaps();
-    //一般resultMaps里只有一个元素
     int resultMapCount = resultMaps.size();
     validateResultMapsCount(rsw, resultMapCount);
+    // 3、遍历resultMaps
     while (rsw != null && resultMapCount > resultSetCount) {
       ResultMap resultMap = resultMaps.get(resultSetCount);
+      // a、处理ResultSet
       handleResultSet(rsw, resultMap, multipleResults, null);
       rsw = getNextResultSet(stmt);
       cleanUpAfterHandlingResultSet();
@@ -187,23 +184,314 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     return collapseSingleResultList(multipleResults);
   }
 
+  /**
+   * 2、从Statement中获得ResultSet后用ResultSetWrapper包装器起来返回
+   * @param stmt
+   * @return
+   * @throws SQLException
+   */
   private ResultSetWrapper getFirstResultSet(Statement stmt) throws SQLException {
+    // 1、获取结果集
     ResultSet rs = stmt.getResultSet();
-    //HSQLDB2.1特殊情况处理
     while (rs == null) {
-      // move forward to get the first resultset in case the driver
-      // doesn't return the resultset as the first result (HSQLDB 2.1)
+      // a、如果驱动程序没有将结果集作为第一个结果返回，则继续获取第一个结果集  （HSQL数据库2.1特殊情况处理）
       if (stmt.getMoreResults()) {
         rs = stmt.getResultSet();
       } else {
+        // b、么得结果集就break
         if (stmt.getUpdateCount() == -1) {
-          // no more results. Must be no resultset
           break;
         }
       }
     }
+    // 2、将结果集用ResultSetWrapper包装器起来返回
     return rs != null ? new ResultSetWrapper(rs, configuration) : null;
   }
+
+  /**
+   * 3、验证是否配置了ResultMap
+   * 如果该sql语句配置了ResultMap最好,没配置就看有没有配置resultType,mybatis会根据这个创建一个ResultMap
+   * @param rsw
+   * @param resultMapCount
+   */
+  private void validateResultMapsCount(ResultSetWrapper rsw, int resultMapCount) {
+    if (rsw != null && resultMapCount < 1) {
+      throw new ExecutorException("A query was run and no Result Maps were found for the Mapped Statement '" + mappedStatement.getId() + "'.  It's likely that neither a Result Type nor a Result Map was specified.");
+    }
+  }
+
+  /**
+   * 4、处理结果集
+   * @param rsw  resultSet包装类
+   * @param resultMap  结果集映射表
+   * @param multipleResults  存储所有结果的容器
+   * @param parentMapping ？
+   * @throws SQLException
+   */
+  private void handleResultSet(ResultSetWrapper rsw, ResultMap resultMap, List<Object> multipleResults, ResultMapping parentMapping) throws SQLException {
+    try {
+      // ??
+      if (parentMapping != null) {
+        handleRowValues(rsw, resultMap, null, RowBounds.DEFAULT, parentMapping);
+      } else {
+        if (resultHandler == null) {
+          // 1、如果没有resultHandler (事实上传的就是null),创建默认处理器DefaultResultHandler
+          DefaultResultHandler defaultResultHandler = new DefaultResultHandler(objectFactory);
+          // 2、调用自己的handleRowValues
+          handleRowValues(rsw, resultMap, defaultResultHandler, rowBounds, null);
+          //得到记录的list
+          multipleResults.add(defaultResultHandler.getResultList());
+        } else {
+          //如果有resultHandler
+          handleRowValues(rsw, resultMap, resultHandler, rowBounds, null);
+        }
+      }
+    } finally {
+      //最后别忘了关闭结果集
+      closeResultSet(rsw.getResultSet());
+    }
+  }
+
+  /**
+   * 5、处理一行数据
+   * @param rsw   结果集
+   * @param resultMap   结果集映射表
+   * @param resultHandler   结果处理器
+   * @param rowBounds   list查询时控制最多返回数
+   * @param parentMapping  ？？
+   * @throws SQLException
+   */
+  private void handleRowValues(ResultSetWrapper rsw, ResultMap resultMap, ResultHandler resultHandler, RowBounds rowBounds, ResultMapping parentMapping) throws SQLException {
+    if (resultMap.hasNestedResultMaps()) {
+      ensureNoRowBounds();
+      checkResultHandler();
+      handleRowValuesForNestedResultMap(rsw, resultMap, resultHandler, rowBounds, parentMapping);
+    } else {
+      handleRowValuesForSimpleResultMap(rsw, resultMap, resultHandler, rowBounds, parentMapping);
+    }
+  }
+
+  /**
+   * 6、处理一行数据
+   * @param rsw  结果集
+   * @param resultMap  结果集映射表
+   * @param resultHandler   结果集处理器
+   * @param rowBounds  list查询时控制最多返回数
+   * @param parentMapping
+   * @throws SQLException
+   */
+  private void handleRowValuesForSimpleResultMap(ResultSetWrapper rsw, ResultMap resultMap, ResultHandler resultHandler, RowBounds rowBounds, ResultMapping parentMapping) throws SQLException {
+    DefaultResultContext resultContext = new DefaultResultContext();
+    // 1、跳过偏移量
+    skipRows(rsw.getResultSet(), rowBounds);
+    // 2、在允许读取的最大行数内进行while循环,同时进行数据的处理
+    while (shouldProcessMoreRows(resultContext, rowBounds) && rsw.getResultSet().next()) {
+      // a、获取鉴别器中适配的resultMap （这里和我想象的不一样）
+      ResultMap discriminatedResultMap = resolveDiscriminatedResultMap(rsw.getResultSet(), resultMap, null);
+      // b、
+      Object rowValue = getRowValue(rsw, discriminatedResultMap);
+      storeObject(resultHandler, resultContext, rowValue, parentMapping, rsw.getResultSet());
+    }
+  }
+
+  /**
+   * 7、跳过偏移量
+   * @param rs
+   * @param rowBounds
+   * @throws SQLException
+   */
+  private void skipRows(ResultSet rs, RowBounds rowBounds) throws SQLException {
+    // 1、如果ResultSet的游标可以上下滚动,jdk1的时候只支持向下next()滚动,但到了jdk2的时候就支持向上滚动previous()和直接跑到第一行first()和最后一行last()
+    if (rs.getType() != ResultSet.TYPE_FORWARD_ONLY) {
+      if (rowBounds.getOffset() != RowBounds.NO_ROW_OFFSET) {
+        // 同时也支持直接将光标移到给定的行号absolute()
+        rs.absolute(rowBounds.getOffset());
+      }
+    } else {
+      // 2、如果ResultSet的游标只能向下滚动,那就直接跳过设置的数量
+      for (int i = 0; i < rowBounds.getOffset(); i++) {
+        rs.next();
+      }
+    }
+  }
+
+  /**
+   * 8、控制读取的数据量
+   * @param context
+   * @param rowBounds
+   * @return
+   */
+  private boolean shouldProcessMoreRows(ResultContext context, RowBounds rowBounds) {
+    return !context.isStopped() && context.getResultCount() < rowBounds.getLimit();
+  }
+
+  /**
+   * 9、处理resultMap中的鉴别器（返回鉴别器中适配到的resultMap）
+   * @param rs   结果集
+   * @param resultMap   结果映射表
+   * @param columnPrefix
+   * @return
+   * @throws SQLException
+   */
+  public ResultMap resolveDiscriminatedResultMap(ResultSet rs, ResultMap resultMap, String columnPrefix) throws SQLException {
+    // 1、创建无序不重复Hash集合
+    Set<String> pastDiscriminators = new HashSet<>();
+    // 2、获取当前resultMap的鉴别器
+    Discriminator discriminator = resultMap.getDiscriminator();
+
+    while (discriminator != null) {
+      // a、获得鉴别器中匹配到的resultMap
+      final Object value = getDiscriminatorValue(rs, discriminator, columnPrefix);
+      final String discriminatedMapId = discriminator.getMapIdFor(String.valueOf(value));
+      // b、查看configuration中是否存在此resultMap,存在则处理，不存在则跳过循环
+      if (configuration.hasResultMap(discriminatedMapId)) {
+        // c、取出鉴别器内部的resultMap赋值给resultMap
+        resultMap = configuration.getResultMap(discriminatedMapId);
+        // d、将鉴别器赋值给新创建的lastDiscriminator
+        Discriminator lastDiscriminator = discriminator;
+        // c、尝试获取鉴别器中匹配到的resultMap内部鉴别器（拿不到则为null）
+        discriminator = resultMap.getDiscriminator();
+        // d、当获得的鉴别器和外面包围的鉴别器是同一个则跳出循环,或者当pastDiscriminators出现了重复的resultMap也跳出循环
+        if (discriminator == lastDiscriminator || !pastDiscriminators.add(discriminatedMapId)) {
+          break;
+        }
+      } else {
+        break;
+      }
+    }
+    // 3、没配置鉴别器,不做任何处理，配置了鉴别器就返回适配到的resultMap
+    return resultMap;
+  }
+
+  /**
+   * 10、从ResultSet取出当前鉴别器的value值
+   * @param rs   结果集
+   * @param discriminator   鉴别器
+   * @param columnPrefix
+   * @return
+   * @throws SQLException
+   */
+  private Object getDiscriminatorValue(ResultSet rs, Discriminator discriminator, String columnPrefix) throws SQLException {
+    final ResultMapping resultMapping = discriminator.getResultMapping();
+    final TypeHandler<?> typeHandler = resultMapping.getTypeHandler();
+    return typeHandler.getResult(rs, prependPrefix(resultMapping.getColumn(), columnPrefix));
+  }
+
+  /**
+   * 11、给字段名加上前缀
+   * @param columnName
+   * @param prefix
+   * @return
+   */
+  private String prependPrefix(String columnName, String prefix) {
+    if (columnName == null || columnName.length() == 0 || prefix == null || prefix.length() == 0) {
+      return columnName;
+    }
+    return prefix + columnName;
+  }
+
+  /**
+   * 12、核心，取得一行的值
+   * @param rsw ResultSet
+   * @param resultMap resultMap
+   * @return
+   * @throws SQLException
+   */
+  private Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap) throws SQLException {
+    // 1、实例化ResultLoaderMap(延迟加载器)
+    final ResultLoaderMap lazyLoader = new ResultLoaderMap();
+    // 2、调用自己的createResultObject,内部就是new一个对象(如果是简单类型，new完也把值赋进去)
+    Object resultObject = createResultObject(rsw, resultMap, lazyLoader, null);
+    if (resultObject != null && !typeHandlerRegistry.hasTypeHandler(resultMap.getType())) {
+      //一般不是简单类型不会有typehandler,这个if会进来
+      final MetaObject metaObject = configuration.newMetaObject(resultObject);
+      boolean foundValues = !resultMap.getConstructorResultMappings().isEmpty();
+      if (shouldApplyAutomaticMappings(resultMap, false)) {
+        //自动映射咯
+        //这里把每个列的值都赋到相应的字段里去了
+        foundValues = applyAutomaticMappings(rsw, resultMap, metaObject, null) || foundValues;
+      }
+      // 这里会处理,如果需要懒加载的属性，会放在懒加载器里
+      foundValues = applyPropertyMappings(rsw, resultMap, metaObject, lazyLoader, null) || foundValues;
+      foundValues = lazyLoader.size() > 0 || foundValues;
+      resultObject = foundValues ? resultObject : null;
+      return resultObject;
+    }
+    return resultObject;
+  }
+
+  /**
+   * 13、创建结果对象
+   * @param rsw
+   * @param resultMap
+   * @param lazyLoader
+   * @param columnPrefix
+   * @return
+   * @throws SQLException
+   */
+  private Object createResultObject(ResultSetWrapper rsw, ResultMap resultMap, ResultLoaderMap lazyLoader, String columnPrefix) throws SQLException {
+    final List<Class<?>> constructorArgTypes = new ArrayList<>();
+    final List<Object> constructorArgs = new ArrayList<>();
+    final Object resultObject = createResultObject(rsw, resultMap, constructorArgTypes, constructorArgs, columnPrefix);
+    if (resultObject != null && !typeHandlerRegistry.hasTypeHandler(resultMap.getType())) {
+      final List<ResultMapping> propertyMappings = resultMap.getPropertyResultMappings();
+      for (ResultMapping propertyMapping : propertyMappings) {
+        // issue gcode #109 && issue #149
+        if (propertyMapping.getNestedQueryId() != null && propertyMapping.isLazy()) {
+          //TODO 使用代理(cglib/javaassist)
+          return configuration.getProxyFactory().createProxy(resultObject, lazyLoader, configuration, objectFactory, constructorArgTypes, constructorArgs);
+        }
+      }
+    }
+    return resultObject;
+  }
+
+  /**
+   * 14、创建结果对象
+   * @param rsw
+   * @param resultMap
+   * @param constructorArgTypes
+   * @param constructorArgs
+   * @param columnPrefix
+   * @return
+   * @throws SQLException
+   */
+  private Object createResultObject(ResultSetWrapper rsw, ResultMap resultMap, List<Class<?>> constructorArgTypes, List<Object> constructorArgs, String columnPrefix)
+          throws SQLException {
+    //得到result type
+    final Class<?> resultType = resultMap.getType();
+    final MetaClass metaType = MetaClass.forClass(resultType);
+    final List<ResultMapping> constructorMappings = resultMap.getConstructorResultMappings();
+    if (typeHandlerRegistry.hasTypeHandler(resultType)) {
+      //基本型
+      return createPrimitiveResultObject(rsw, resultMap, columnPrefix);
+    } else if (!constructorMappings.isEmpty()) {
+      //有参数的构造函数
+      return createParameterizedResultObject(rsw, resultType, constructorMappings, constructorArgTypes, constructorArgs, columnPrefix);
+    } else if (resultType.isInterface() || metaType.hasDefaultConstructor()) {
+      //普通bean类型
+      return objectFactory.create(resultType);
+    } else if (shouldApplyAutomaticMappings(resultMap, false)) {
+      //自动映射
+      return createByConstructorSignature(rsw, resultType, constructorArgTypes, constructorArgs, columnPrefix);
+    }
+    throw new ExecutorException("Do not know how to create an instance of " + resultType);
+  }
+
+
+
+  /**
+   * 关闭resultSet
+   * @param rs
+   */
+  private void closeResultSet(ResultSet rs) {
+    try {
+      if (rs != null) {
+        rs.close();
+      }
+    } catch (SQLException e) {}
+  }
+
 
   private ResultSetWrapper getNextResultSet(Statement stmt) throws SQLException {
     // Making this method tolerant of bad JDBC drivers
@@ -221,52 +509,10 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     return null;
   }
 
-  private void closeResultSet(ResultSet rs) {
-    try {
-      if (rs != null) {
-        rs.close();
-      }
-    } catch (SQLException e) {
-      // ignore
-    }
-  }
 
   private void cleanUpAfterHandlingResultSet() {
     nestedResultObjects.clear();
     ancestorColumnPrefix.clear();
-  }
-
-  private void validateResultMapsCount(ResultSetWrapper rsw, int resultMapCount) {
-    if (rsw != null && resultMapCount < 1) {
-      throw new ExecutorException("A query was run and no Result Maps were found for the Mapped Statement '" + mappedStatement.getId()
-          + "'.  It's likely that neither a Result Type nor a Result Map was specified.");
-    }
-  }
-
-  //处理结果集
-  private void handleResultSet(ResultSetWrapper rsw, ResultMap resultMap, List<Object> multipleResults, ResultMapping parentMapping) throws SQLException {
-    try {
-      if (parentMapping != null) {
-        handleRowValues(rsw, resultMap, null, RowBounds.DEFAULT, parentMapping);
-      } else {
-        if (resultHandler == null) {
-          //如果没有resultHandler
-          //新建DefaultResultHandler
-          DefaultResultHandler defaultResultHandler = new DefaultResultHandler(objectFactory);
-          //调用自己的handleRowValues
-          handleRowValues(rsw, resultMap, defaultResultHandler, rowBounds, null);
-          //得到记录的list
-          multipleResults.add(defaultResultHandler.getResultList());
-        } else {
-          //如果有resultHandler
-          handleRowValues(rsw, resultMap, resultHandler, rowBounds, null);
-        }
-      }
-    } finally {
-      //最后别忘了关闭结果集，这个居然出bug了
-      // issue #228 (close resultsets)
-      closeResultSet(rsw.getResultSet());
-    }
   }
 
   @SuppressWarnings("unchecked")
@@ -277,16 +523,6 @@ public class DefaultResultSetHandler implements ResultSetHandler {
   //
   // HANDLE ROWS FOR SIMPLE RESULTMAP
   //
-
-  private void handleRowValues(ResultSetWrapper rsw, ResultMap resultMap, ResultHandler resultHandler, RowBounds rowBounds, ResultMapping parentMapping) throws SQLException {
-    if (resultMap.hasNestedResultMaps()) {
-      ensureNoRowBounds();
-      checkResultHandler();
-      handleRowValuesForNestedResultMap(rsw, resultMap, resultHandler, rowBounds, parentMapping);
-    } else {
-      handleRowValuesForSimpleResultMap(rsw, resultMap, resultHandler, rowBounds, parentMapping);
-    }
-  }
 
   private void ensureNoRowBounds() {
     if (configuration.isSafeRowBoundsEnabled() && rowBounds != null && (rowBounds.getLimit() < RowBounds.NO_ROW_LIMIT || rowBounds.getOffset() > RowBounds.NO_ROW_OFFSET)) {
@@ -303,16 +539,6 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     }
   }
 
-  private void handleRowValuesForSimpleResultMap(ResultSetWrapper rsw, ResultMap resultMap, ResultHandler resultHandler, RowBounds rowBounds, ResultMapping parentMapping)
-      throws SQLException {
-    DefaultResultContext resultContext = new DefaultResultContext();
-    skipRows(rsw.getResultSet(), rowBounds);
-    while (shouldProcessMoreRows(resultContext, rowBounds) && rsw.getResultSet().next()) {
-      ResultMap discriminatedResultMap = resolveDiscriminatedResultMap(rsw.getResultSet(), resultMap, null);
-      Object rowValue = getRowValue(rsw, discriminatedResultMap);
-      storeObject(resultHandler, resultContext, rowValue, parentMapping, rsw.getResultSet());
-    }
-  }
 
   private void storeObject(ResultHandler resultHandler, DefaultResultContext resultContext, Object rowValue, ResultMapping parentMapping, ResultSet rs) throws SQLException {
     if (parentMapping != null) {
@@ -327,49 +553,6 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     resultHandler.handleResult(resultContext);
   }
 
-  private boolean shouldProcessMoreRows(ResultContext context, RowBounds rowBounds) throws SQLException {
-    return !context.isStopped() && context.getResultCount() < rowBounds.getLimit();
-  }
-
-  private void skipRows(ResultSet rs, RowBounds rowBounds) throws SQLException {
-    if (rs.getType() != ResultSet.TYPE_FORWARD_ONLY) {
-      if (rowBounds.getOffset() != RowBounds.NO_ROW_OFFSET) {
-        rs.absolute(rowBounds.getOffset());
-      }
-    } else {
-      for (int i = 0; i < rowBounds.getOffset(); i++) {
-        rs.next();
-      }
-    }
-  }
-
-  //
-  // GET VALUE FROM ROW FOR SIMPLE RESULT MAP
-  //
-
-  //核心，取得一行的值
-  private Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap) throws SQLException {
-    //实例化ResultLoaderMap(延迟加载器)
-    final ResultLoaderMap lazyLoader = new ResultLoaderMap();
-    //调用自己的createResultObject,内部就是new一个对象(如果是简单类型，new完也把值赋进去)
-    Object resultObject = createResultObject(rsw, resultMap, lazyLoader, null);
-    if (resultObject != null && !typeHandlerRegistry.hasTypeHandler(resultMap.getType())) {
-      //一般不是简单类型不会有typehandler,这个if会进来
-      final MetaObject metaObject = configuration.newMetaObject(resultObject);
-      boolean foundValues = !resultMap.getConstructorResultMappings().isEmpty();
-      if (shouldApplyAutomaticMappings(resultMap, false)) {
-        //自动映射咯
-        //这里把每个列的值都赋到相应的字段里去了
-    	foundValues = applyAutomaticMappings(rsw, resultMap, metaObject, null) || foundValues;
-      }
-      // 这里会处理,如果需要懒加载的属性，会放在懒加载器里
-      foundValues = applyPropertyMappings(rsw, resultMap, metaObject, lazyLoader, null) || foundValues;
-      foundValues = lazyLoader.size() > 0 || foundValues;
-      resultObject = foundValues ? resultObject : null;
-      return resultObject;
-    }
-    return resultObject;
-  }
 
   private boolean shouldApplyAutomaticMappings(ResultMap resultMap, boolean isNested) {
     if (resultMap.getAutoMapping() != null) {
@@ -551,45 +734,6 @@ public class DefaultResultSetHandler implements ResultSetHandler {
   // INSTANTIATION & CONSTRUCTOR MAPPING
   //
 
-  private Object createResultObject(ResultSetWrapper rsw, ResultMap resultMap, ResultLoaderMap lazyLoader, String columnPrefix) throws SQLException {
-    final List<Class<?>> constructorArgTypes = new ArrayList<Class<?>>();
-    final List<Object> constructorArgs = new ArrayList<Object>();
-    final Object resultObject = createResultObject(rsw, resultMap, constructorArgTypes, constructorArgs, columnPrefix);
-    if (resultObject != null && !typeHandlerRegistry.hasTypeHandler(resultMap.getType())) {
-      final List<ResultMapping> propertyMappings = resultMap.getPropertyResultMappings();
-      for (ResultMapping propertyMapping : propertyMappings) {
-        // issue gcode #109 && issue #149
-        if (propertyMapping.getNestedQueryId() != null && propertyMapping.isLazy()) {
-          //TODO 使用代理(cglib/javaassist)
-          return configuration.getProxyFactory().createProxy(resultObject, lazyLoader, configuration, objectFactory, constructorArgTypes, constructorArgs);
-        }
-      }
-    }
-    return resultObject;
-  }
-
-  //创建结果对象
-  private Object createResultObject(ResultSetWrapper rsw, ResultMap resultMap, List<Class<?>> constructorArgTypes, List<Object> constructorArgs, String columnPrefix)
-      throws SQLException {
-	//得到result type
-    final Class<?> resultType = resultMap.getType();
-    final MetaClass metaType = MetaClass.forClass(resultType);
-    final List<ResultMapping> constructorMappings = resultMap.getConstructorResultMappings();
-    if (typeHandlerRegistry.hasTypeHandler(resultType)) {
-      //基本型
-      return createPrimitiveResultObject(rsw, resultMap, columnPrefix);
-    } else if (!constructorMappings.isEmpty()) {
-      //有参数的构造函数
-      return createParameterizedResultObject(rsw, resultType, constructorMappings, constructorArgTypes, constructorArgs, columnPrefix);
-    } else if (resultType.isInterface() || metaType.hasDefaultConstructor()) {
-      //普通bean类型
-      return objectFactory.create(resultType);
-    } else if (shouldApplyAutomaticMappings(resultMap, false)) {
-      //自动映射
-      return createByConstructorSignature(rsw, resultType, constructorArgTypes, constructorArgs, columnPrefix);
-    }
-    throw new ExecutorException("Do not know how to create an instance of " + resultType);
-  }
 
   private Object createParameterizedResultObject(ResultSetWrapper rsw, Class<?> resultType, List<ResultMapping> constructorMappings,
       List<Class<?>> constructorArgTypes, List<Object> constructorArgs, String columnPrefix) throws SQLException {
@@ -755,40 +899,6 @@ public class DefaultResultSetHandler implements ResultSetHandler {
   //
   // DISCRIMINATOR
   //
-
-  public ResultMap resolveDiscriminatedResultMap(ResultSet rs, ResultMap resultMap, String columnPrefix) throws SQLException {
-    Set<String> pastDiscriminators = new HashSet<String>();
-    Discriminator discriminator = resultMap.getDiscriminator();
-    while (discriminator != null) {
-      final Object value = getDiscriminatorValue(rs, discriminator, columnPrefix);
-      final String discriminatedMapId = discriminator.getMapIdFor(String.valueOf(value));
-      if (configuration.hasResultMap(discriminatedMapId)) {
-        resultMap = configuration.getResultMap(discriminatedMapId);
-        Discriminator lastDiscriminator = discriminator;
-        discriminator = resultMap.getDiscriminator();
-        if (discriminator == lastDiscriminator || !pastDiscriminators.add(discriminatedMapId)) {
-          break;
-        }
-      } else {
-        break;
-      }
-    }
-    return resultMap;
-  }
-
-  private Object getDiscriminatorValue(ResultSet rs, Discriminator discriminator, String columnPrefix) throws SQLException {
-    final ResultMapping resultMapping = discriminator.getResultMapping();
-    final TypeHandler<?> typeHandler = resultMapping.getTypeHandler();
-    return typeHandler.getResult(rs, prependPrefix(resultMapping.getColumn(), columnPrefix));
-  }
-
-  private String prependPrefix(String columnName, String prefix) {
-    if (columnName == null || columnName.length() == 0 || prefix == null || prefix.length() == 0) {
-      return columnName;
-    }
-    return prefix + columnName;
-  }
-
   //
   // HANDLE NESTED RESULT MAPS
   //

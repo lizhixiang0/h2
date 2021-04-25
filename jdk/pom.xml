@@ -25,6 +25,7 @@
         </plugins>
     </build>
     <dependencies>
+
         <!-- https://mvnrepository.com/artifact/cglib/cglib -->
         <dependency>
             <groupId>cglib</groupId>
@@ -61,6 +62,21 @@
             <artifactId>commons-collections4</artifactId>
             <version>4.4</version>
             <scope>compile</scope>
+        </dependency>
+        <!--ognl测试-->
+        <dependency>
+            <groupId>ognl</groupId>
+            <artifactId>ognl</artifactId>
+            <version>3.0.8</version>
+            <!--不把这个注释掉，找不到-->
+           <!-- <scope>provided</scope>-->
+            <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>javassist</groupId>
+                    <artifactId>javassist</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 </project>

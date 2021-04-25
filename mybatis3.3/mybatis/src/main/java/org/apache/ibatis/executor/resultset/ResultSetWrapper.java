@@ -42,19 +42,42 @@ class ResultSetWrapper {
 
   private final ResultSet resultSet;
   private final TypeHandlerRegistry typeHandlerRegistry;
-  private final List<String> columnNames = new ArrayList<String>();
-  private final List<String> classNames = new ArrayList<String>();
-  private final List<JdbcType> jdbcTypes = new ArrayList<JdbcType>();
-  private final Map<String, Map<Class<?>, TypeHandler<?>>> typeHandlerMap = new HashMap<String, Map<Class<?>, TypeHandler<?>>>();
-  private Map<String, List<String>> mappedColumnNamesMap = new HashMap<String, List<String>>();
-  private Map<String, List<String>> unMappedColumnNamesMap = new HashMap<String, List<String>>();
+  /**
+   * 存储字段名
+   */
+  private final List<String> columnNames = new ArrayList<>();
+  /**
+   * 存储字段的JdbcType类型
+   */
+  private final List<JdbcType> jdbcTypes = new ArrayList<>();
+  /**
+   * 存储字段对应的Java类的完全限定名称
+   */
+  private final List<String> classNames = new ArrayList<>();
 
+  /**
+   * 记录了Java类型向指定的JdbcType转换时，需要使用的TypeHandler对象。
+   * 例如：Java类型中的String可能转换成数据库的char、varchar等多种类型，所以存在一对多的关系，所以值要用Map来存储
+   */
+  private final Map<String, Map<Class<?>, TypeHandler<?>>> typeHandlerMap = new HashMap<>();
+  private Map<String, List<String>> mappedColumnNamesMap = new HashMap<>();
+  private Map<String, List<String>> unMappedColumnNamesMap = new HashMap<>();
+
+  /**
+   * 构造方法
+   * @param rs  结果集
+   * @param configuration   核心配置类
+   * @throws SQLException
+   */
   public ResultSetWrapper(ResultSet rs, Configuration configuration) throws SQLException {
     super();
     this.typeHandlerRegistry = configuration.getTypeHandlerRegistry();
     this.resultSet = rs;
+    // 1、检索此ResultSet对象的列的数量、类型和属性
     final ResultSetMetaData metaData = rs.getMetaData();
+    // 2、获得此ResultSet对象的列的数量
     final int columnCount = metaData.getColumnCount();
+    // 3、遍历处理ResultSet的数据结构(此时并没有处理数据)
     for (int i = 1; i <= columnCount; i++) {
       columnNames.add(configuration.isUseColumnLabel() ? metaData.getColumnLabel(i) : metaData.getColumnName(i));
       jdbcTypes.add(JdbcType.forCode(metaData.getColumnType(i)));
@@ -75,19 +98,17 @@ class ResultSetWrapper {
   }
 
   /**
-   * Gets the type handler to use when reading the result set.
-   * Tries to get from the TypeHandlerRegistry by searching for the property type.
-   * If not found it gets the column JDBC type and tries to get a handler for it.
-   *
-   * @param propertyType
-   * @param columnName
+   * 获取读取结果集时要使用的类型处理程序,尝试通过搜索属性类型从TypeHandlerRegistry获取。
+   * 如果没有找到，它将获取列JDBC类型并尝试获取其处理程序。
+   * @param propertyType   字段对应的java类型
+   * @param columnName 字段名
    * @return
    */
   public TypeHandler<?> getTypeHandler(Class<?> propertyType, String columnName) {
     TypeHandler<?> handler = null;
     Map<Class<?>, TypeHandler<?>> columnHandlers = typeHandlerMap.get(columnName);
     if (columnHandlers == null) {
-      columnHandlers = new HashMap<Class<?>, TypeHandler<?>>();
+      columnHandlers = new HashMap<>(16);
       typeHandlerMap.put(columnName, columnHandlers);
     } else {
       handler = columnHandlers.get(propertyType);
@@ -124,9 +145,9 @@ class ResultSetWrapper {
     }
   }
 
-  private void loadMappedAndUnmappedColumnNames(ResultMap resultMap, String columnPrefix) throws SQLException {
-    List<String> mappedColumnNames = new ArrayList<String>();
-    List<String> unmappedColumnNames = new ArrayList<String>();
+  private void loadMappedAndUnmappedColumnNames(ResultMap resultMap, String columnPrefix) {
+    List<String> mappedColumnNames = new ArrayList<>();
+    List<String> unmappedColumnNames = new ArrayList<>();
     final String upperColumnPrefix = columnPrefix == null ? null : columnPrefix.toUpperCase(Locale.ENGLISH);
     final Set<String> mappedColumns = prependPrefixes(resultMap.getMappedColumns(), upperColumnPrefix);
     for (String columnName : columnNames) {
@@ -167,7 +188,7 @@ class ResultSetWrapper {
     if (columnNames == null || columnNames.isEmpty() || prefix == null || prefix.length() == 0) {
       return columnNames;
     }
-    final Set<String> prefixed = new HashSet<String>();
+    final Set<String> prefixed = new HashSet<>();
     for (String columnName : columnNames) {
       prefixed.add(prefix + columnName);
     }

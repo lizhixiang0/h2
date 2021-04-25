@@ -296,7 +296,7 @@ public class XMLMapperBuilder extends BaseBuilder {
   /**
    *  4、解析所有resultMap节点 ,将查询的结果映射到具体的对象中
    *
-   *      <resultMap id="peopleResultMap" type="org.sang.bean.User">
+   *      <resultMap id="peopleResultMap" type="org.sang.bean.User" autoMapping= "">
    *         <id property="id" column="id"/>
    *         <result property="id" column="id"/>
    *      </resultMap>

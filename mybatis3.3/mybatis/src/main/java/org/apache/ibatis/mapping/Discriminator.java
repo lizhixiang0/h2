@@ -23,11 +23,20 @@ import org.apache.ibatis.session.Configuration;
 /**
  * 鉴别器
  * 有时一个查询也许返回很多不同数据类型的结果集。鉴别器的表现很像 Java 语言中的 switch 语句。
+ * <discriminator javaType="int" column="draft" jdbcType="" typeHandler="">
+ *    <case value="1" resultMap="DraftPost"/>
+ * </discriminator>
  * @author Clinton Begin
  */
 public class Discriminator {
-
+  /**
+   *  Discriminator结果自身的结果映射
+   */
   private ResultMapping resultMapping;
+
+  /**
+   * <name,resultMap>容器
+   */
   private Map<String, String> discriminatorMap;
 
   private Discriminator() {

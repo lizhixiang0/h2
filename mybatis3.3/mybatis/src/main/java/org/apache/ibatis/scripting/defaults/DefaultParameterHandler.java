@@ -58,7 +58,11 @@ public class DefaultParameterHandler implements ParameterHandler {
     return parameterObject;
   }
 
-  //设置参数
+  /**
+   * 核心方法,设置参数
+   * @param ps PreparedStatement
+   * @throws SQLException
+   */
   @Override
   public void setParameters(PreparedStatement ps) throws SQLException {
     ErrorContext.instance().activity("setting parameters").object(mappedStatement.getParameterMap().getId());

@@ -45,7 +45,13 @@ public class RowBounds {
    */
   private int limit;
 
+  /**
+   * 表示无偏移量
+   */
   public static final int NO_ROW_OFFSET = 0;
+  /**
+   * 表示不限制最大能取出的数值
+   */
   public static final int NO_ROW_LIMIT = Integer.MAX_VALUE;
     /**
      * 默认从头取到尾

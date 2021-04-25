@@ -17,7 +17,7 @@ package org.apache.ibatis.session;
 
 /**
  * 结果处理器
- * StatementHandler在处理查询结果的时候,会调用ResultSetHandler对查询结果处理,所以说,只有select方法才有ResultHandler参数
+ * StatementHandler在处理select查询结果的时候,会调用ResultSetHandler对查询结果处理,所以说,只有select方法才有ResultHandler参数
  * @author Clinton Begin
  * @note 有一种场景，导出文件100万条数据，如果直接mybatis把整个数据查询到list中。那么，就有一个问题，如果数据量大的话，就会导致大对象，内存溢出（OOM）。
  *       这个时候我们就可以利用Mybatis中的ResultHandler来处理。

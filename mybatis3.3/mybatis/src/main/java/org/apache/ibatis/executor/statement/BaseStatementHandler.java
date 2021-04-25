@@ -64,9 +64,9 @@ public abstract class BaseStatementHandler implements StatementHandler {
       boundSql = mappedStatement.getBoundSql(parameterObject);
     }
     this.boundSql = boundSql;
-    // 2、生成parameterHandler
+    // 2、生成parameterHandler,好像除了用来生成resultSetHandler之外,没啥用了
     this.parameterHandler = configuration.newParameterHandler(mappedStatement, parameterObject, boundSql);
-    // 3、生成resultSetHandler
+    // 3、生成resultSetHandler,用来处理查询结果
     this.resultSetHandler = configuration.newResultSetHandler(executor, mappedStatement, rowBounds, parameterHandler, resultHandler, boundSql);
   }
 
@@ -142,15 +142,16 @@ public abstract class BaseStatementHandler implements StatementHandler {
     }
   }
 
-  //关闭语句
+  /**
+   * 关闭语句
+   * @param statement
+   */
   protected void closeStatement(Statement statement) {
     try {
       if (statement != null) {
         statement.close();
       }
-    } catch (SQLException e) {
-      //ignore
-    }
+    } catch (SQLException e) {}
   }
 
   /**

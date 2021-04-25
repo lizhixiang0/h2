@@ -43,7 +43,7 @@ public class ResultMapResolver {
    */
   private String extend;
   /**
-   * 当前ResultMap内的辨别器
+   * 当前ResultMap内的鉴别器,使用它我们可以在不同的条件下为查询结果匹配不同的映射
    */
   private Discriminator discriminator;
   /**

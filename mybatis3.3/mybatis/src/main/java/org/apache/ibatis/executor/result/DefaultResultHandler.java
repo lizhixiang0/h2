@@ -35,23 +35,24 @@ public class DefaultResultHandler implements ResultHandler {
 
   /**
    * 构造方法 1
+   * 自己初始化了个ArrayList集合容器
    */
   public DefaultResultHandler() {
-    // 创建对象的时候初始化了个ArrayList集合容器
     list = new ArrayList<>();
   }
 
   /**
    * 构造方法 2
+   * 由对象工厂来创建集合容器(还是创建的ArrayList)
    */
   @SuppressWarnings("unchecked")
   public DefaultResultHandler(ObjectFactory objectFactory) {
-    // 或者由对象工厂来创建集合容器,默认的对象工厂还是创建的ArrayList
     list = objectFactory.create(List.class);
   }
 
   /**
-   * 核心方法  ，//啥都没干,就是把结果从ResultContext拿出来然后add进handler的容器里去
+   * 核心方法
+   * 啥都没干,就是把结果从ResultContext拿出来然后add进handler的容器里去
    */
   @Override
   public void handleResult(ResultContext context) {

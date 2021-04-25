@@ -149,7 +149,7 @@ public class DefaultSqlSession implements SqlSession {
     try {
       // 1、根据statement id找到对应的MappedStatement
       MappedStatement ms = configuration.getMappedStatement(statement);
-      // 2、转而用执行器来查询结果（这里的ResultHandler其实就是null)
+      // 2、转而用执行器来查询结果（这里的ResultHandler是null)
       return executor.query(ms, wrapCollection(parameter), rowBounds, Executor.NO_RESULT_HANDLER);
     } catch (Exception e) {
       throw ExceptionFactory.wrapException("Error querying database.  Cause: " + e, e);

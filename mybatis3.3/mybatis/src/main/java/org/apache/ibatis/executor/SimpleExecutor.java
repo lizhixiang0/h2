@@ -59,6 +59,7 @@ public class SimpleExecutor extends BaseExecutor {
       // 3、执行语句
       return handler.update(stmt);
     } finally {
+      // 4、关闭statement (一般最好是先关闭resultSet（如果有），在关闭statement，最后才关闭connection)
       closeStatement(stmt);
     }
   }
@@ -97,7 +98,7 @@ public class SimpleExecutor extends BaseExecutor {
   }
 
   /**
-   * 预处理语句,得到Statement
+   * 通过数据库连接创建Statement
    * @param handler
    * @param statementLog
    * @return
@@ -107,9 +108,9 @@ public class SimpleExecutor extends BaseExecutor {
     Statement stmt;
     // 1、获得数据库连接
     Connection connection = getConnection(statementLog);
-    // 2、生成Statement
+    // 2、生成Statement  (jdbc也是这么干的)
     stmt = handler.prepare(connection);
-    // 3、参数化 ？？
+    // 3、参数化 (SimpleStatementHandler啥也没干)
     handler.parameterize(stmt);
     // 4、返回Statement
     return stmt;

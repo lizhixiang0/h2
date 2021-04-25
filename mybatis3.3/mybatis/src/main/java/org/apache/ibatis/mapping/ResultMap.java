@@ -44,7 +44,13 @@ public class ResultMap {
    * 映射的列名集合
    */
   private Set<String> mappedColumns;
+  /**
+   * 鉴别器（默认为null）,控制结果映射器向不同的结果映射
+   */
   private Discriminator discriminator;
+  /**
+   * 判断当前ResultMap是否存在内嵌的ResultMap
+   */
   private boolean hasNestedResultMaps;
   private boolean hasNestedQueries;
   private Boolean autoMapping;
@@ -116,7 +122,7 @@ public class ResultMap {
       for (ResultMapping resultMapping : resultMap.resultMappings) {
         // a、只要有一条resultMapping内嵌查询语句，就设置该ResultMapping内嵌了查询语句
         resultMap.hasNestedQueries = resultMap.hasNestedQueries || resultMapping.getNestedQueryId() != null;
-        // b、只要有一条resultMapping内嵌ResultMap，设置该ResultMapping是否内嵌了ResultMap
+        // b、只要有一条resultMapping内嵌ResultMap,设置该ResultMapping内嵌了ResultMap
         resultMap.hasNestedResultMaps = resultMap.hasNestedResultMaps || (resultMapping.getNestedResultMapId() != null && resultMapping.getResultSet() == null);
         // c、获得列名,将映射的列名存到映射列名集合容器
         final String column = resultMapping.getColumn();

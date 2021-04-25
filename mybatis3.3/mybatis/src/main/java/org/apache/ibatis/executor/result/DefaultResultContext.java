@@ -18,7 +18,7 @@ package org.apache.ibatis.executor.result;
 import org.apache.ibatis.session.ResultContext;
 
 /**
- * 默认结果上下文(处理查询结果)
+ * 默认结果上下文(辅助处理查询结果)
  *
  * @author Clinton Begin
  */
