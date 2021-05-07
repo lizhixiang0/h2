@@ -35,15 +35,27 @@ import org.apache.ibatis.reflection.factory.ObjectFactory;
 
 /**
  * 抽象串行状态保持器
- * @author Eduardo Macarron
- * @author Franta Mejta
+ * 通过实现IO包下的Externalizable接口来对序列化过程进行控制
+ * writeExternal()和readExternal()。
+ * 这两个方法会在序列化和反序列化还原的过程中被自动调用，以便执行一些特殊的操作。
+ *
+ * @author admin
+ * @link "https://www.cnblogs.com/chenfei0801/archive/2013/04/06/3002146.html
  */
 public abstract class AbstractSerialStateHolder implements Externalizable {
 
   private static final long serialVersionUID = 8940388717901644661L;
-  private static final ThreadLocal<ObjectOutputStream> stream = new ThreadLocal<ObjectOutputStream>();
+
+  private static final ThreadLocal<ObjectOutputStream> stream = new ThreadLocal<>();
+
   private byte[] userBeanBytes = new byte[0];
+  /**
+   * 原始对象
+   */
   private Object userBean;
+  /**
+   * 存储未加载的属性
+   */
   private Map<String, ResultLoaderMap.LoadPair> unloadedProperties;
   private ObjectFactory objectFactory;
   private Class<?>[] constructorArgTypes;
@@ -52,14 +64,9 @@ public abstract class AbstractSerialStateHolder implements Externalizable {
   public AbstractSerialStateHolder() {
   }
 
-  public AbstractSerialStateHolder(
-          final Object userBean,
-          final Map<String, ResultLoaderMap.LoadPair> unloadedProperties,
-          final ObjectFactory objectFactory,
-          List<Class<?>> constructorArgTypes,
-          List<Object> constructorArgs) {
+  public AbstractSerialStateHolder(final Object userBean, final Map<String, ResultLoaderMap.LoadPair> unloadedProperties, final ObjectFactory objectFactory, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
     this.userBean = userBean;
-    this.unloadedProperties = new HashMap<String, ResultLoaderMap.LoadPair>(unloadedProperties);
+    this.unloadedProperties = new HashMap<>(unloadedProperties);
     this.objectFactory = objectFactory;
     this.constructorArgTypes = constructorArgTypes.toArray(new Class<?>[constructorArgTypes.size()]);
     this.constructorArgs = constructorArgs.toArray(new Object[constructorArgs.size()]);
@@ -75,16 +82,13 @@ public abstract class AbstractSerialStateHolder implements Externalizable {
       firstRound = true;
       stream.set(os);
     }
-
     os.writeObject(this.userBean);
     os.writeObject(this.unloadedProperties);
     os.writeObject(this.objectFactory);
     os.writeObject(this.constructorArgTypes);
     os.writeObject(this.constructorArgs);
-
     final byte[] bytes = baos.toByteArray();
     out.writeObject(bytes);
-
     if (firstRound) {
       stream.remove();
     }
@@ -121,13 +125,12 @@ public abstract class AbstractSerialStateHolder implements Externalizable {
       throw (ObjectStreamException) new InvalidClassException(ex.getLocalizedMessage()).initCause(ex);
     }
 
-    final Map<String, ResultLoaderMap.LoadPair> arrayProps = new HashMap<String, ResultLoaderMap.LoadPair>(this.unloadedProperties);
+    final Map<String, ResultLoaderMap.LoadPair> arrayProps = new HashMap<>(this.unloadedProperties);
     final List<Class<?>> arrayTypes = Arrays.asList(this.constructorArgTypes);
     final List<Object> arrayValues = Arrays.asList(this.constructorArgs);
 
     return this.createDeserializationProxy(userBean, arrayProps, objectFactory, arrayTypes, arrayValues);
   }
 
-  protected abstract Object createDeserializationProxy(Object target, Map<String, ResultLoaderMap.LoadPair> unloadedProperties, ObjectFactory objectFactory,
-          List<Class<?>> constructorArgTypes, List<Object> constructorArgs);
+  protected abstract Object createDeserializationProxy(Object target, Map<String, ResultLoaderMap.LoadPair> unloadedProperties, ObjectFactory objectFactory, List<Class<?>> constructorArgTypes, List<Object> constructorArgs);
 }

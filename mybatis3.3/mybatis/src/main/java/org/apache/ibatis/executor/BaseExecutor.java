@@ -231,23 +231,24 @@ public abstract class BaseExecutor implements Executor {
 
   /**
    * 延迟加载，DefaultResultSetHandler.getNestedQueryMappingValue调用.属于嵌套查询，比较高级.
-   * @param ms   映射的sql语句
-   * @param resultObject  ??
-   * @param property  ??
+   * @param ms   嵌套的sql映射语句
+   * @param resultObject  根据resultMap的resultType创建的对象的元对象
+   * @param property  resultType创建的对象中需要延迟加载的属性
    * @param key  缓存key
-   * @param targetType ??
+   * @param targetType propertyMapping.getJavaType();
    */
   @Override
   public void deferLoad(MappedStatement ms, MetaObject resultObject, String property, CacheKey key, Class<?> targetType) {
     if (closed) {
       throw new ExecutorException("Executor was closed.");
     }
+    // 1、创建延迟加载对象
     DeferredLoad deferredLoad = new DeferredLoad(resultObject, property, key, localCache, configuration, targetType);
-    //如果能加载，则立刻加载，否则加入到延迟加载队列中
+    // 2、如果直接查询过,那就直接加载
     if (deferredLoad.canLoad()) {
       deferredLoad.load();
     } else {
-      //这里怎么又new了一个新的，性能有点问题
+      // 3、不能加载？？这里怎么又new了一个新的，性能有点问题
       deferredLoads.add(new DeferredLoad(resultObject, property, key, localCache, configuration, targetType));
     }
   }
@@ -356,7 +357,17 @@ public abstract class BaseExecutor implements Executor {
 
   protected abstract List<BatchResult> doFlushStatements(boolean isRollback) throws SQLException;
 
-  //query-->queryFromDatabase-->doQuery
+  /**
+   * query-->queryFromDatabase-->doQuery
+   * @param ms
+   * @param parameter
+   * @param rowBounds
+   * @param resultHandler
+   * @param boundSql
+   * @param <E>
+   * @return
+   * @throws SQLException
+   */
   protected abstract <E> List<E> doQuery(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException;
 
   protected void closeStatement(Statement statement) {
@@ -439,7 +450,7 @@ public abstract class BaseExecutor implements Executor {
   }
 
   /**
-   * 静态内部类：延迟加载
+   * 静态内部类：控制延迟加载
    */
   private static class DeferredLoad {
 
@@ -462,7 +473,7 @@ public abstract class BaseExecutor implements Executor {
     }
 
     /**
-     * 缓存中找到，且不为占位符，代表可以加载
+     * 判断能否直接加载的条件：之前查询过,且存储在缓存中
      */
     public boolean canLoad() {
       return localCache.getObject(key) != null && localCache.getObject(key) != EXECUTION_PLACEHOLDER;
@@ -473,9 +484,9 @@ public abstract class BaseExecutor implements Executor {
      */
     public void load() {
       @SuppressWarnings( "unchecked" )
-      // 我们假设我们得到了一个列表
+      // 1、从缓存中查询list
       List<Object> list = (List<Object>) localCache.getObject(key);
-      // 调用ResultExtractor.extractObjectFromList
+      // 2、使用结果提取器提取结果
       Object value = resultExtractor.extractObjectFromList(list, targetType);
       resultObject.setValue(property, value);
     }

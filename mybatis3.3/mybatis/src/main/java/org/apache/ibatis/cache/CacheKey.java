@@ -80,20 +80,20 @@ public class CacheKey implements Cloneable, Serializable {
 
   public void update(Object object) {
     if (object != null && object.getClass().isArray()) {
-        //如果是数组，则循环调用doUpdate
+      // 1、如果是数组，则循环调用doUpdate
       int length = Array.getLength(object);
       for (int i = 0; i < length; i++) {
         Object element = Array.get(object, i);
         doUpdate(element);
       }
     } else {
-        //否则，doUpdate
+      // 2、否则，doUpdate
       doUpdate(object);
     }
   }
 
   /**
-   * 重新计算count、checksum、hashcode，并把object对象添加到updateList集合中
+   * 重新计算count、checksum、hashcode,并把object对象添加到updateList集合中
    * @param object
    */
   private void doUpdate(Object object) {

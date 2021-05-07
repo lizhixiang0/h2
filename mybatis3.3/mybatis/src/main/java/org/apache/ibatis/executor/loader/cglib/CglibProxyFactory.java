@@ -48,6 +48,12 @@ public class CglibProxyFactory implements ProxyFactory {
 
   private static final Log log = LogFactory.getLog(CglibProxyFactory.class);
   private static final String FINALIZE_METHOD = "finalize";
+  /**
+   * 懒加载与序列化问题
+   * https://blog.csdn.net/qq_33762302/article/details/115364535
+   * 文中的解释逻辑不清晰,我觉得从代码角度看是因为,如果延迟加载的属性全部加载完了，那此时直接序列化原始类即可
+   * 如果该对象还存在某些属性未加载，那么应该序列化代理对象！那就要稍微复杂一点。
+   */
   private static final String WRITE_REPLACE_METHOD = "writeReplace";
 
   public CglibProxyFactory() {
@@ -110,7 +116,7 @@ public class CglibProxyFactory implements ProxyFactory {
       type.getDeclaredMethod(WRITE_REPLACE_METHOD);
       log.debug(WRITE_REPLACE_METHOD + " method was found on bean " + type + ", make sure it returns this");
     } catch (NoSuchMethodException e) {
-      // 4.1 、原始对象没声明writeReplace方法，则给代理对象增加一个WriteReplaceInterface接口
+      // 4.1 、原始对象没声明writeReplace方法,则给代理对象增加一个WriteReplaceInterface接口
       enhancer.setInterfaces(new Class[]{WriteReplaceInterface.class});
     } catch (SecurityException ignored) {
     }
@@ -138,7 +144,7 @@ public class CglibProxyFactory implements ProxyFactory {
     private Class<?> type;
     // 这是干啥？？
     private ResultLoaderMap lazyLoader;
-    // 如果aggressiveLazyLoading=true，只要触发到对象任何的方法，就会立即加载所有属性的加载
+    // 如果aggressiveLazyLoading=true,只要触发到对象任何的方法，就会立即加载所有属性的加载
     private boolean aggressive;
     // 指定调用对象的哪些方法前触发一次数据加载
     private Set<String> lazyLoadTriggerMethods;
@@ -182,7 +188,7 @@ public class CglibProxyFactory implements ProxyFactory {
       try {
         // 2、这里用了个线程锁,强制排队
         synchronized (lazyLoader) {
-          // 3、如果是执行writeReplace方法(序列化写出）
+          // 3、如果是执行writeReplace方法(什么时候会执行这个方法？）
           if (WRITE_REPLACE_METHOD.equals(methodName)) {
             // 3.1、创建原始类对象,分有参和无参
             Object original = null;
@@ -193,20 +199,21 @@ public class CglibProxyFactory implements ProxyFactory {
             }
             // 将增强后的类属性赋值给原始对象
             PropertyCopier.copyBeanProperties(type, enhanced, original);
-            // 下面在搞什么？？？
+            // 假如该对象中存在某些属性是懒加载属性,会构建并返回返回CglibSerialStateHolder对象
             if (lazyLoader.size() > 0) {
               return new CglibSerialStateHolder(original, lazyLoader.getProperties(), objectFactory, constructorArgTypes, constructorArgs);
             } else {
               return original;
             }
           } else {
-            //4、不是writeReplace方法,且延迟加载长度大于0
+            //4、不是writeReplace方法和finalize方法,且存在属性需要延迟加载
             if (lazyLoader.size() > 0 && !FINALIZE_METHOD.equals(methodName)) {
-              // 4.1、如果配置类里配置了积极加载或者该方法是指定必触发数据加载的方法
+              // 4.1、如果配置类里配置了积极加载或者该方法是指定必触发数据全部加载的方法
               if (aggressive || lazyLoadTriggerMethods.contains(methodName)) {
                 // 4.1.1、触发数据加载,加载所有属性
                 lazyLoader.loadAll();
-                // 4.2、如果是getter、setter、isBoolean,那有可能是访问指定属性
+
+                // 4.2、如果未配置积极加载,且未配置成必触发数据全部加载的方法,则判断是否是getter、setter、isBoolean之类的方法
               } else if (PropertyNamer.isProperty(methodName)) {
               	// 4.3、getName , setName  ,去掉前缀
                 final String property = PropertyNamer.methodToProperty(methodName);
@@ -218,7 +225,7 @@ public class CglibProxyFactory implements ProxyFactory {
             }
           }
         }
-        // 最后才调用真实对象的方法
+        // 加载完,才调用真实对象的方法
         return methodProxy.invokeSuper(enhanced, args);
       } catch (Throwable t) {
         throw ExceptionUtil.unwrapThrowable(t);
@@ -233,7 +240,7 @@ public class CglibProxyFactory implements ProxyFactory {
       final Class<?> type = target.getClass();
       // 2、创建代理角色
       EnhancedResultObjectProxyImpl callback = new EnhancedResultObjectProxyImpl(type, lazyLoader, configuration, objectFactory, constructorArgTypes, constructorArgs);
-      // 3、通过cglib的Enhancer来创建代理类,作者又把创建代理对象的方法写到了CglibProxyFactory里,不能理解他写这么乱干啥
+      // 3、通过cglib的Enhancer来创建代理类
       Object enhanced = crateProxy(type, callback, constructorArgTypes, constructorArgs);
       // 4、将target中的属性都赋值给代理类
       PropertyCopier.copyBeanProperties(type, target, enhanced);

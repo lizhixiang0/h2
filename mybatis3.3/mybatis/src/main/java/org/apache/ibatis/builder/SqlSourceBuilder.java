@@ -50,7 +50,7 @@ public class SqlSourceBuilder extends BaseBuilder {
   public SqlSource parse(String originalSql, Class<?> parameterType, Map<String, Object> additionalParameters) {
     // 1、创建一个映射记号处理器对象,实现handleToken方法
     ParameterMappingTokenHandler handler = new ParameterMappingTokenHandler(configuration, parameterType, additionalParameters);
-    // 2、找到#{xx},然后将其替换掉，具体替换成什么,看handler
+    // 2、找到#{xx},然后将其替换掉，具体替换成？,看handler
     GenericTokenParser parser = new GenericTokenParser("#{", "}", handler);
     String sql = parser.parse(originalSql);
     // 3、返回静态SQL源码

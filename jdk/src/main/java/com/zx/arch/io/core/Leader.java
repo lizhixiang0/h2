@@ -1,11 +1,13 @@
 package com.zx.arch.io.core;
 
 import com.google.common.collect.Maps;
+import com.zx.arch.io.core.toAnalysis.Demo01;
 import com.zx.arch.stream.toAnalysis.StreamTest;
 import com.zx.arch.stream.toUse.BaseStreamTest;
 import com.zx.arch.stream.toUse.CreateStream;
 import com.zx.arch.stream.toUse.ParallelStreamTest;
 import com.zx.arch.stream.toUse.UpdateStream;
+import com.zx.arch.threads.studyOne.Demo02;
 
 import java.util.HashMap;
 
@@ -33,6 +35,6 @@ public interface Leader {
         // 一、简单入门
 
         // 二、核心分析
-
+        To_Analysis_IO_logs.put("序列化和反序列化", Demo01.class);
     }
 }

@@ -40,7 +40,7 @@ public interface TypeHandler<T> {
   void setParameter(PreparedStatement ps, int i, T parameter, JdbcType jdbcType) throws SQLException;
 
   /**
-   * 根据columnName取出结果集中当前行的数据
+   * 根据columnName取出结果集中当前字段的数据
    * @param rs 结果集
    * @param columnName 字段名
    * @return

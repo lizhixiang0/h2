@@ -46,7 +46,7 @@ public final class OgnlCache {
   private OgnlCache() {}
 
   /**
-   * 这个方法供外部调用
+   * 利用表达式从root中提取值
    * @param expression 表达式
    * @param root 被解析的对象
    * @return 解析结果

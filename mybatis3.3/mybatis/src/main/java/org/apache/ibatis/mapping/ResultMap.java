@@ -31,14 +31,25 @@ import org.apache.ibatis.session.Configuration;
  */
 public class ResultMap {
   private String id;
+  /**
+   *
+   */
   private Class<?> type;
   /**
-   * 外面构建好传递进来的
+   * 总的属性映射容器,外面构建好传递进来的
    */
   private List<ResultMapping> resultMappings;
-
+  /**
+   * 存放id相关的属性映射容器
+   */
   private List<ResultMapping> idResultMappings;
+  /**
+   * 存在类的构造器属性映射容器 （区别在于此类属性可以通过创建对象时进行复制）
+   */
   private List<ResultMapping> constructorResultMappings;
+  /**
+   * 存放类的普通属性映射容器
+   */
   private List<ResultMapping> propertyResultMappings;
   /**
    * 映射的列名集合
@@ -52,7 +63,11 @@ public class ResultMap {
    * 判断当前ResultMap是否存在内嵌的ResultMap
    */
   private boolean hasNestedResultMaps;
+
   private boolean hasNestedQueries;
+  /**
+   * 自动映射
+   */
   private Boolean autoMapping;
 
   /**
@@ -138,13 +153,13 @@ public class ResultMap {
             }
           }
         }
-        // d、如果某个resultMapping存在CONSTRUCTOR,将其添加到构造器结果映射容器里,如果不存在，就将其添加到属性结果映射容器里
+        // d、如果resultMapping存在CONSTRUCTOR,将其添加到构造器结果映射容器里,如果不存在，就将其添加到属性结果映射容器里
         if (resultMapping.getFlags().contains(ResultFlag.CONSTRUCTOR)) {
           resultMap.constructorResultMappings.add(resultMapping);
         } else {
           resultMap.propertyResultMappings.add(resultMapping);
         }
-        // e、如果某个resultMapping存在ID,将其将其添加到ID结果映射容器里
+        // e、如果resultMapping存在ID,将其将其添加到ID结果映射容器里
         if (resultMapping.getFlags().contains(ResultFlag.ID)) {
           resultMap.idResultMappings.add(resultMapping);
         }

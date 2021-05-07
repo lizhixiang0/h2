@@ -18,6 +18,7 @@ package org.apache.ibatis.executor.loader;
 import java.io.ObjectStreamException;
 
 /**
+ * Mybatis定义的接口，专门用来进行序列化
  * @author Eduardo Macarron
  */
 public interface WriteReplaceInterface {

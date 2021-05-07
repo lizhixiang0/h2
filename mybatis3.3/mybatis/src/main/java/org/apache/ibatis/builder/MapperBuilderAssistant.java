@@ -452,7 +452,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
         }
       }
     } else if (resultType != null) {
-      //2.2 如果resultMap为null,就看resultType,基于属性名来映射列到JavaBean的属性,如果没有精确匹配,可以使用select字句的别名来匹配标签
+      //2.2 如果resultMap为null,创建默认的ResultMap,就看resultType,基于属性名来映射列到JavaBean的属性,如果没有精确匹配,可以使用select字句的别名来匹配标签
       ResultMap.Builder inlineResultMapBuilder = new ResultMap.Builder(configuration, statementBuilder.id() + "-Inline", resultType, new ArrayList<>(), null);
       resultMaps.add(inlineResultMapBuilder.build());
     }

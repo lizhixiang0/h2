@@ -20,7 +20,7 @@ import lombok.Setter;
 
 /**
  * 分页控制器
- * 作用2个: 分页和 list查询时控制最多返回数
+ * 作用2个: 分页和 list查询时控制最多返回数（默认最大Integer.MAX_VALUE）
  * @author Clinton Begin
  * @description limit和offset用法
  * @note   mysql里分页一般用limit来实现

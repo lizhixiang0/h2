@@ -27,12 +27,38 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
  * 结果映射,代表了一个属性和列名的对应关系
+ * <id property="id" column="id"/>
+ * <result property="title" column="title"/>
+ * <association property="author" javaType="Author" resultSet="authors" column="author_id" foreignColumn="id">
+ * <collection property="posts" ofType="Post">
+ *
+ *
+ *     <select id="selectBlog" resultSets="blogs,authors" resultMap="blogResult" statementType="CALLABLE">
+ *      {call getBlogsAndAuthors(#{id,jdbcType=INTEGER,mode=IN})}
+ *     </select>
+ *
+ *     <resultMap id="blogResult" type="Blog">
+ *      <id property="id" column="id" />
+ *      <result property="title" column="title"/>
+ *
+ *    ` <association property="author" javaType="Author" resultSet="authors" column="author_id" foreignColumn="id">
+ *       <id property="id" column="id"/>
+ *       <result property="username" column="username"/>
+ *       <result property="password" column="password"/>
+ *       <result property="email" column="email"/>
+ *       <result property="bio" column="bio"/>
+ *      </association>
+ *     </resultMap>
+ *
  * @author Clinton Begin
  */
 public class ResultMapping {
 
   private Configuration configuration;
   private String property;
+  /**
+   * 配置的列名
+   */
   private String column;
   private Class<?> javaType;
   private JdbcType jdbcType;
@@ -60,11 +86,13 @@ public class ResultMapping {
    */
   private List<ResultFlag> flags;
   /**
-   * 如过当前节点存在复合列名,则根据复合列名的对应关系,生成List<ResultMapping>
+   * 可以使用 column="{prop1=col1,prop2=col2}" 这样的语法来传递多个参数给内嵌Select查询语句
+   * 如果当前节点存在复合列名,则根据复合列名的对应关系,生成List<ResultMapping>
    */
   private List<ResultMapping> composites;
   /**
    * 当前节点指定的结果集
+   * 如果存在多个结果集,先在映射语句中通过resultSets属性为每个结果集指定一个名字,然后在关联节点里指定对应的结果集
    */
   private String resultSet;
   /**
@@ -72,7 +100,7 @@ public class ResultMapping {
    */
   private String foreignColumn;
   /**
-   * 是否懒加载
+   * 是否懒加载,单个的ResultMapping配置拦加载？？
    */
   private boolean lazy;
 

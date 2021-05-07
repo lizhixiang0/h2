@@ -23,7 +23,7 @@ import org.apache.ibatis.executor.loader.ResultLoaderMap;
 import org.apache.ibatis.reflection.factory.ObjectFactory;
 
 /**
- * Cglib串行状态保持器
+ * Cglib串行状态保持器,用来保证某些具有懒加载属性的类顺利序列化和反序列化
  * @author Eduardo Macarron
  */
 class CglibSerialStateHolder extends AbstractSerialStateHolder {
@@ -33,18 +33,12 @@ class CglibSerialStateHolder extends AbstractSerialStateHolder {
   public CglibSerialStateHolder() {
   }
 
-  public CglibSerialStateHolder(
-          final Object userBean,
-          final Map<String, ResultLoaderMap.LoadPair> unloadedProperties,
-          final ObjectFactory objectFactory,
-          List<Class<?>> constructorArgTypes,
-          List<Object> constructorArgs) {
+  public CglibSerialStateHolder(final Object userBean, final Map<String, ResultLoaderMap.LoadPair> unloadedProperties, final ObjectFactory objectFactory, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
     super(userBean, unloadedProperties, objectFactory, constructorArgTypes, constructorArgs);
   }
 
   @Override
-  protected Object createDeserializationProxy(Object target, Map<String, ResultLoaderMap.LoadPair> unloadedProperties, ObjectFactory objectFactory,
-          List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
+  protected Object createDeserializationProxy(Object target, Map<String, ResultLoaderMap.LoadPair> unloadedProperties, ObjectFactory objectFactory, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
     return new CglibProxyFactory().createDeserializationProxy(target, unloadedProperties, objectFactory, constructorArgTypes, constructorArgs);
   }
 }

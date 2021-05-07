@@ -99,19 +99,19 @@ public class Configuration {
   }
 
   /**
-   *  2、允许在嵌套语句中使用分页（RowBounds）。如果允许使用则设置为false。 todo 没懂啥意思
+   *  2、在嵌套ResultMap中安全得使用分页（RowBounds）。强调安全,如果设置为true,那么不允许使用定制化的RowBounds
    */
   protected boolean safeRowBoundsEnabled = false;
 
 
   /**
-   *  3、是否允许在嵌套语句中使用结果处理器（ResultHandler）。如果允许使用则设置为 false  todo
+   *  3、在嵌套ResultMap中安全得使用结果处理器（ResultHandler）。强调安全,如果设置为true,那么不允许使用定制化的ResultHandler
    */
   protected boolean safeResultHandlerEnabled = true;
 
   /**
    *  4、驼峰转换  设为true表示开启
-   * 作用:可以将数据库中user_name转化成userName与实体类属性对应,配置后无需写resultMapper将数据库字段和实体类属性对应
+   * 作用:可以将数据库中user_name转化成userName与实体类属性对应,与自动映射配合使用
    */
   protected boolean mapUnderscoreToCamelCase = false;
 
@@ -157,7 +157,7 @@ public class Configuration {
   protected boolean useColumnLabel = true;
 
   /**
-   * 10、当结果集中某字段为null值时是否执行映射。true为执行  。此设置只对resultType为集合类型有效
+   * 10、当结果集中某字段为null值时是否执行映射。true为执行。
    * @blog "https://www.cnblogs.com/Oliver-rebirth/p/mybatis_2018-3-24.html
    * @use "https://www.cnblogs.com/shamo89/p/7807955.html
    *      "https://www.cnblogs.com/libin6505/p/10036898.html
@@ -231,6 +231,7 @@ public class Configuration {
   /**
    * 19、自动映射全局配置
    * @blog "https://www.jb51.net/article/198342.htm
+   * @blog "https://blog.csdn.net/likun557/article/details/103825881
    * @note mybatis中自动映射主要有2种配置，
    *       一种是全局的配置，对应用中所有的resultMap起效，这个是在mybatis配置文件中进行设置的；
    *       另外一种是通过resultMap的autoMapping属性进行配置
@@ -361,7 +362,7 @@ public class Configuration {
   }
 
   /**
-   * 配置类工厂,Used to create Configuration for loading deserialized unread properties.
+   * 配置类工厂,用于创建用于加载反序列化未读属性的Configuration。
    * @see <a href='https://code.google.com/p/mybatis/issues/detail?id=300'>Issue 300</a> (google code)
    */
   protected Class<?> configurationFactory;

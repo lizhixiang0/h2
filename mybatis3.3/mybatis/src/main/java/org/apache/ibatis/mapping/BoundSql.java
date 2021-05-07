@@ -41,7 +41,7 @@ public class BoundSql {
    */
   private Object parameterObject;
   /**
-   * 这里面也是用户传递的一些数据
+   * 这里面也是用户传递的一些数据，用来进行动态语句拼接用到的一些数据
    */
   private Map<String, Object> additionalParameters;
   // ?

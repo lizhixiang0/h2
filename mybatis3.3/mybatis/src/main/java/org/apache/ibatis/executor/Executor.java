@@ -95,10 +95,10 @@ public interface Executor {
   /**
    * 延迟加载
    * @param ms   嵌套的sql映射语句
-   * @param resultObject  ??
-   * @param property  ??
+   * @param resultObject  根据resultMap的resultType创建的对象的元对象
+   * @param property  resultType创建的对象中需要延迟加载的属性
    * @param key  缓存key
-   * @param targetType ??
+   * @param targetType propertyMapping.getJavaType();
    */
   void deferLoad(MappedStatement ms, MetaObject resultObject, String property, CacheKey key, Class<?> targetType);
 

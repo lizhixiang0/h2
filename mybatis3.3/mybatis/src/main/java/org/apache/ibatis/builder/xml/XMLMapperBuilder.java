@@ -516,7 +516,7 @@ public class XMLMapperBuilder extends BaseBuilder {
 
 
   /**
-   * 4.5 从当前节点体内取的配置的信息,构建ResultMapping
+   * 4.5 从当前节点（可能是id,result,association,collection）体内取的配置的信息,构建ResultMapping
    *
    * @param context  当前节点,其父节点可能是resultMap节点也可能是constructor节点
    * @param resultType  当前resultMap的type类型

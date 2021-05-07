@@ -57,7 +57,7 @@ public final class MappedStatement {
   private Cache cache;
   private ParameterMap parameterMap;
   /**
-   *
+   * 一个sql语句配置了多个resultMap
    */
   private List<ResultMap> resultMaps;
   /**
@@ -65,7 +65,12 @@ public final class MappedStatement {
    */
   private boolean flushCacheRequired;
   private boolean useCache;
+  /**
+   * 结果有序
+   * https://blog.csdn.net/weixin_40240756/article/details/108889127
+   */
   private boolean resultOrdered;
+
   private SqlCommandType sqlCommandType;
   /**
    * 键值生成器

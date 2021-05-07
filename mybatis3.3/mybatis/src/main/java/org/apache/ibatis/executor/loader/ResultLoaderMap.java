@@ -41,7 +41,7 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
 /**
- * 延迟加载器,用来存储需要懒加载的属性，本质是一个HashMap
+ * 延迟加载容器,用来存储需要懒加载的属性，本质是一个HashMap
  * @author Clinton Begin
  * @author Franta Mejta
  */
@@ -55,14 +55,15 @@ public class ResultLoaderMap {
    * 把要延迟加载的属性记到loaderMap里
    * @param property 属性
    * @param metaResultObject 结果元对象
-   * @param resultLoader 延迟加载器
+   * @param resultLoader 内置sql加载器
    */
   public void addLoader(String property, MetaObject metaResultObject, ResultLoader resultLoader) {
     String upperFirst = getUppercaseFirstProperty(property);
+    // 1、已经添加过的不允许再添加
     if (!upperFirst.equalsIgnoreCase(property) && loaderMap.containsKey(upperFirst)) {
       throw new ExecutorException("Nested lazy loaded result property '" + property +"' for query id '" + resultLoader.mappedStatement.getId() +" already exists in the result map. The leftmost property of all lazy loaded properties must be unique within a result map.");
     }
-    // 存入loaderMap集合,key是upperFirst,value是LoadPair
+    // 2、构建LoadPair,存入loaderMap集合,key是upperFirst,value是LoadPair
     loaderMap.put(upperFirst, new LoadPair(property, metaResultObject, resultLoader));
   }
 
@@ -86,16 +87,20 @@ public class ResultLoaderMap {
   }
 
   public boolean load(String property) throws SQLException {
-	//先删除key，防止第二次又去查数据库就不对了
+	// 1、取出后从删除  (加载过的就不是延迟加载属性了)
     LoadPair pair = loaderMap.remove(property.toUpperCase(Locale.ENGLISH));
     if (pair != null) {
-      //去数据库查
+      // 2、去数据库查
       pair.load();
       return true;
     }
     return false;
   }
 
+  /**
+   * 加载所有属性
+   * @throws SQLException
+   */
   public void loadAll() throws SQLException {
     final Set<String> methodNameSet = loaderMap.keySet();
     String[] methodNames = methodNameSet.toArray(new String[methodNameSet.size()]);
@@ -104,13 +109,19 @@ public class ResultLoaderMap {
     }
   }
 
+  /**
+   * 获取大写第一属性
+   * person.name ----> PERSON
+   * @param property
+   * @return
+   */
   private static String getUppercaseFirstProperty(String property) {
     String[] parts = property.split("\\.");
     return parts[0].toUpperCase(Locale.ENGLISH);
   }
 
   /**
-   * 静态内部类,用来包装延迟加载的属性
+   * 静态内部类,用来包装延迟加载的属性,load方法提供访问数据库的能力
    */
   public static class LoadPair implements Serializable {
 
@@ -146,7 +157,7 @@ public class ResultLoaderMap {
     private Class<?> configurationFactory;
 
     /**
-     * SQL语句的ID
+     * SQL映射语句的ID
      */
     private String mappedStatement;
     /**
@@ -154,56 +165,61 @@ public class ResultLoaderMap {
      */
     private Serializable mappedParameter;
 
+
+    /**
+     * 私有构造方法,只能供本类使用
+     * @param property   属性名
+     * @param metaResultObject   结果元对象
+     * @param resultLoader  内置sql加载器
+     */
     private LoadPair(final String property, MetaObject metaResultObject, ResultLoader resultLoader) {
       this.property = property;
       this.metaResultObject = metaResultObject;
       this.resultLoader = resultLoader;
 
-      /* Save required information only if original object can be serialized. */
+      // 1、原始对象需要实现序列化
       if (metaResultObject != null && metaResultObject.getOriginalObject() instanceof Serializable) {
         final Object mappedStatementParameter = resultLoader.parameterObject;
-
-        /* @todo May the parameter be null? */
+        // 参数对象需要实现序列化  (这里提一下,String这种包装类型是实现了序列化的)
         if (mappedStatementParameter instanceof Serializable) {
           this.mappedStatement = resultLoader.mappedStatement.getId();
           this.mappedParameter = (Serializable) mappedStatementParameter;
-
           this.configurationFactory = resultLoader.configuration.getConfigurationFactory();
         } else {
-          this.getLogger().debug("Property [" + this.property + "] of ["
-                  + metaResultObject.getOriginalObject().getClass() + "] cannot be loaded "
-                  + "after deserialization. Make sure it's loaded before serializing "
-                  + "forenamed object.");
+          this.getLogger().debug("Property [" + this.property + "] of [" + metaResultObject.getOriginalObject().getClass() + "] cannot be loaded " + "after deserialization. Make sure it's loaded before serializing " + "forenamed object.");
         }
       }
     }
 
+    /**
+     * 验证下
+     * @throws SQLException
+     */
     public void load() throws SQLException {
-      /* These field should not be null unless the loadpair was serialized.
-       * Yet in that case this method should not be called. */
       if (this.metaResultObject == null) {
         throw new IllegalArgumentException("metaResultObject is null");
       }
       if (this.resultLoader == null) {
         throw new IllegalArgumentException("resultLoader is null");
       }
-
       this.load(null);
     }
 
+
     public void load(final Object userObject) throws SQLException {
       if (this.metaResultObject == null || this.resultLoader == null) {
+        // 1、如果参数对象不实现序列化,这里就gg
         if (this.mappedParameter == null) {
           throw new ExecutorException("Property [" + this.property + "] cannot be loaded because " + "required parameter of mapped statement ["+ this.mappedStatement + "] is not serializable.");
         }
-
+        // 2、获取Configuration
         final Configuration config = this.getConfiguration();
         final MappedStatement ms = config.getMappedStatement(this.mappedStatement);
         if (ms == null) {
           throw new ExecutorException("Cannot lazy load property [" + this.property+ "] of deserialized object [" + userObject.getClass()+ "] because configuration does not contain statement ["+ this.mappedStatement + "]");
         }
-
         this.metaResultObject = config.newMetaObject(userObject);
+        // 2、这里又创建了一个resultLoader
         this.resultLoader = new ResultLoader(config, new ClosedExecutor(), ms, this.mappedParameter,metaResultObject.getSetterType(this.property), null, null);
       }
 
@@ -219,11 +235,15 @@ public class ResultLoaderMap {
       this.metaResultObject.setValue(property, this.resultLoader.loadResult());
     }
 
+    /**
+     * 获取Configuration核心配置类
+     * @return
+     */
     private Configuration getConfiguration() {
+      // 1、配置文件里必须设置configurationFactory
       if (this.configurationFactory == null) {
         throw new ExecutorException("Cannot get Configuration as configuration factory was not set.");
       }
-
       Object configurationObject = null;
       try {
         final Method factoryMethod = this.configurationFactory.getDeclaredMethod(FACTORY_METHOD);
@@ -232,15 +252,12 @@ public class ResultLoaderMap {
         }
 
         if (!factoryMethod.isAccessible()) {
-          configurationObject = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-            @Override
-            public Object run() throws Exception {
-              try {
-                factoryMethod.setAccessible(true);
-                return factoryMethod.invoke(null);
-              } finally {
-                factoryMethod.setAccessible(false);
-              }
+          configurationObject = AccessController.doPrivileged((PrivilegedExceptionAction<Object>) () -> {
+            try {
+              factoryMethod.setAccessible(true);
+              return factoryMethod.invoke(null);
+            } finally {
+              factoryMethod.setAccessible(false);
             }
           });
         } else {
@@ -253,11 +270,9 @@ public class ResultLoaderMap {
       } catch (final Exception ex) {
         throw new ExecutorException("Cannot get Configuration as factory method ["+ this.configurationFactory + "]#["+ FACTORY_METHOD + "] threw an exception.", ex);
       }
-
       if (!(configurationObject instanceof Configuration)) {
         throw new ExecutorException("Cannot get Configuration as factory method ["+ this.configurationFactory + "]#["+ FACTORY_METHOD + "] didn't return [" + Configuration.class + "] but ["+ (configurationObject == null ? "null" : configurationObject.getClass()) + "].");
       }
-
       return Configuration.class.cast(configurationObject);
     }
 

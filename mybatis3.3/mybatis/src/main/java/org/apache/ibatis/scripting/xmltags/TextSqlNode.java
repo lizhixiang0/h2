@@ -56,13 +56,13 @@ public class TextSqlNode implements SqlNode {
 
 
   /**
-   * 绑定记号解析器，这个会对包含${}的动态文本进行处理
+   * 绑定记号解析器，这个会对包含${}的动态文本进行处理  (有个面试题目是,什么时候用${},什么时候用#{})
    */
   private static class BindingTokenParser implements TokenHandler {
 
     private DynamicContext context;
     /**
-     * 通常为null
+     * 通常为null,这个可以帮助我们检查是否有注入
      */
     private Pattern injectionFilter;
 
@@ -71,22 +71,39 @@ public class TextSqlNode implements SqlNode {
       this.injectionFilter = injectionFilter;
     }
 
+    /**
+     * 对包含${}的动态文本进行处理  (有个面试题目是,什么时候用${},什么时候用#{})
+     * @link "https://blog.csdn.net/siwuxie095/article/details/79190856
+     * @note
+     *       非要用${}的时候那都是数据库的限制!!!能用 #{} 的地方就用 #{},少用 ${} !
+     *       sql语句里面,如果涉及到动态表名,那必须使用${}
+     *       如果涉及到orderBy查询,那也必须使用${},因为order by后边必须跟字段名，这个字段名不能带引号,带引号会被识别会字符串，而不是字段
+     * @param content
+     * @return
+     */
     @Override
     public String handleToken(String content) {
       Object parameter = context.getBindings().get("_parameter");
+      // 1、可以看到提取出_parameter值之后,又以value为健名放入了容器,这意味着如果传入基本类型如字符串时就写${value}才能够成功取值。
       if (parameter == null) {
         context.getBindings().put("value", null);
       } else if (SimpleTypeRegistry.isSimpleType(parameter.getClass())) {
         context.getBindings().put("value", parameter);
       }
-      //从缓存里取得值
+      // 2、利用表达式（content）和ognl从上下文提取值
       Object value = OgnlCache.getValue(content, context.getBindings());
-      String srtValue = (value == null ? "" : String.valueOf(value)); // issue #274 return "" instead of "null"
+      // 3、将值转化为String类型,如果是null就转化为空字符串 (所以说${}转化后没有'')
+      String srtValue = (value == null ? "" : String.valueOf(value));
+      // 4、因为${}有注入的危险,这个是可以写正则去检测的  （但是没有提供接口去设置）
       checkInjection(srtValue);
+      // 5、最次是个""
       return srtValue;
     }
 
-    //检查是否匹配正则表达式
+    /**
+     * 检查是否有注入
+     * @param value
+     */
     private void checkInjection(String value) {
       if (injectionFilter != null && !injectionFilter.matcher(value).matches()) {
         throw new ScriptingException("Invalid input. Please conform to regex" + injectionFilter.pattern());
