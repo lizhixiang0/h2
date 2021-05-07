@@ -28,6 +28,6 @@ public class StrategyLeader {
         develop.add("2、对猫的体重进行排序");
         develop.add("3、对狗的体重进行排序");
         develop.add("4、如果想对猫的身高进行排序呢？");
-        develop.add("5、应用场景:https://www.jianshu.com/p/3ea48ecd7178");
+        develop.add("5、测试:https://www.jianshu.com/p/3ea48ecd7178");
     }
 }
