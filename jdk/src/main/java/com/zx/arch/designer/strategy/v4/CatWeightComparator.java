@@ -5,7 +5,7 @@ import com.zx.arch.designer.strategy.v2.Cat;
 import java.util.Comparator;
 
 /**
- * 先比重量
+ * 比重量
  * @author admin
  */
 public class CatWeightComparator implements Comparator<Cat> {

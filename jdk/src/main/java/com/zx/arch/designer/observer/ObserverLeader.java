@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * @author lizx
  * @since 1.0.0
- * @descripiton 观察者模式分析,
+ * @descripiton 观察者模式分析,对象间存在一对多关系，一个对象的状态发生改变会影响其他对象
  * @link "https://www.bilibili.com/video/BV1RC4y1H7ok?p=14
  *       "http://c.biancheng.net/view/1390.html
  * @note 在很多系统中,Observer模式往往和责任链共同负责对于事件的处理,其中的某一个observer负责是否将事件进一步传递
