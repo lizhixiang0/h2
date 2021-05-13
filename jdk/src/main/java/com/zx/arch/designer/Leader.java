@@ -25,6 +25,6 @@ public class Leader {
         // 二、核心分析
         To_Analysis_Designer_logs.put("观察者模式", ObserverLeader.class);
         To_Analysis_Designer_logs.put("策略模式", StrategyLeader.class);
-        To_Analysis_Designer_logs.put("状态模式", ObserverLeader.class);
+        To_Analysis_Designer_logs.put("状态模式", StrategyLeader.class);
     }
 }
