@@ -22,6 +22,8 @@ import java.io.IOException;
  * @author lizx
  * @date 2020/08/06
  * @description 全局处理异常
+ * @note 了解spring的异常处理机制 https://blog.csdn.net/yehongzhi1994/article/details/106797360
+ *                              https://www.jianshu.com/p/f976ec4f1014
  **/
 public class CustomHandlerExceptionResolver implements HandlerExceptionResolver , AccessDeniedHandler {
     private static final Logger logger = LoggerFactory.getLogger(CustomHandlerExceptionResolver.class);

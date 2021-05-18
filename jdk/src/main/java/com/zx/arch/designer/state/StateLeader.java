@@ -7,6 +7,6 @@ package com.zx.arch.designer.state;
  * @link "https://www.bilibili.com/video/BV1RC4y1H7ok?p=52
  *       "http://c.biancheng.net/view/1388.html
  **/
-public class Leader {
+public class StateLeader {
 
 }

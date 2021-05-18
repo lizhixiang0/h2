@@ -4,7 +4,9 @@ import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.zx.arch.handler.CustomHandlerExceptionResolver;
 import com.zx.arch.il8.AppScanApiLocaleResolver;
+import com.zx.arch.spring.filter.FilterTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -27,6 +29,7 @@ import java.util.List;
 /**
  * @author lizx
  * @date 2020/07/01
+ * @description spring mvc 配置
  **/
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
@@ -122,5 +125,17 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return new AppScanApiLocaleResolver();
     }
 
+    /**
+     * 注册filter
+     * @return
+     */
+    /*@Bean
+    public FilterRegistrationBean myFilterRegistrationBean(){
+        //注册过滤器
+        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean(new FilterTest());
+        //添加过滤路径
+        filterRegistrationBean.addUrlPatterns("/*");
+        return filterRegistrationBean;
+    }*/
 
 }

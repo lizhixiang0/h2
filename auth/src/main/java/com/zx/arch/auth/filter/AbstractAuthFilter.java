@@ -27,6 +27,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
  * @author admin
+ * @note "https://www.freesion.com/article/7691642390/
  */
 public abstract class AbstractAuthFilter extends OncePerRequestFilter {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
