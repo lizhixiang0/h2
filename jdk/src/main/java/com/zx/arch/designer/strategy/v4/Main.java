@@ -37,7 +37,7 @@ public class Main {
         Cat[] a = {new Cat(3, 3), new Cat(5, 5), new Cat(1, 1)};
         Sorter<Cat> sorter = new Sorter<>();
         sorter.sort(a,new CatHeightComparator());
-        /*可以使用lambda表达式
+        /*其实可以使用lambda表达式
         sorter.sort(a, (o1, o2)->{
             if(o1.weight < o2.weight) {
                 return -1;

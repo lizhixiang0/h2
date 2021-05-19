@@ -6,7 +6,7 @@ import com.zx.arch.designer.strategy.v2.Cat;
 import java.util.Comparator;
 
 /**
- * 比高度
+ * 第一种策略，比高度
  * @author admin
  */
 public class CatHeightComparator implements Comparator<Cat> {
