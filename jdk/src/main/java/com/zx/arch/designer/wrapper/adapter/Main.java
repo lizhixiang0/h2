@@ -8,7 +8,9 @@ import java.io.InputStreamReader;
  * @description 适配器模式的用意是要改变原有的接口，以便于适应目标接口。
  * @link   "https://blog.csdn.net/wwwdc1012/article/details/82780560
  *        通常会有一个适配类，核心作用在于将一个类转化成另一个，转化的同时改变原方法。最后的表现形式为改变了接口
- *        方式比较多,可以通过继承或者组合
+ *        方式比较多,可以通过继承或者组合。
+ *        另外，通常一个原类对应一个adapter,说到底就是包装器！
+ *        spring中包含adapter名字类，实际就是根据特定参数返回特定对象。
  */
 public class Main {
     public static void main(String[] args) throws Exception {
