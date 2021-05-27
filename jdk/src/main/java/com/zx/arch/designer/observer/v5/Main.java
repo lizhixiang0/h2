@@ -10,6 +10,7 @@ import java.util.Objects;
 
 class Child {
     private boolean cry = false;
+
     private List<Observer> observers = new ArrayList<>();
 
     {
@@ -25,10 +26,11 @@ class Child {
     }
 
     public void wakeUp() {
-        cry = true;
-        // 这里和责任链模式有点像,通常观察者模式会和责任链模式一起用
-        for(Observer o : observers) {
-            o.actionOnWakeUp();
+        if(cry){
+            // 这里和责任链模式有点像,通常观察者模式会和责任链模式一起用
+            for(Observer o : observers) {
+                o.actionOnWakeUp();
+            }
         }
     }
 }

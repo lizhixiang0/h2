@@ -6,6 +6,9 @@ package com.zx.arch.designer.observer.v3;
 
 class Child {
     private boolean cry = false;
+    /**
+     * 观察者放到被观察者里面
+     */
     private Dad d = new Dad();
 
     public boolean isCry() {
@@ -13,9 +16,10 @@ class Child {
     }
 
     public void wakeUp() {
-        cry = true;
-        // 将处理方法直接放在wakeUp里,哭了就喂食 （观察者放到被观察者里面）
-        d.feed();
+        // 将处理方法直接放在wakeUp里,哭了就喂食
+        if(cry) {
+            d.feed();
+        }
     }
 }
 
@@ -28,7 +32,7 @@ class Dad {
 public class Main {
     public static void main(String[] args) {
         Child c = new Child();
-        //do sth
+        // 对小孩做一些操作
         c.wakeUp();
     }
 }

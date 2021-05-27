@@ -6,6 +6,9 @@ package com.zx.arch.designer.observer.v4;
 
 class Child {
     private boolean cry = false;
+    /**
+     * 观察者放到被观察者里面
+     */
     private Dad dad = new Dad();
     private Mum mum = new Mum();
     private Dog dog = new Dog();
@@ -16,11 +19,12 @@ class Child {
     }
 
     public void wakeUp() {
-        cry = true;
-        // 这里不好,耦合度太高
-        dad.feed();
-        dog.wang();
-        mum.hug();
+        if(cry){
+            // 这里不好,耦合度太高
+            dad.feed();
+            dog.wang();
+            mum.hug();
+        }
     }
 }
 

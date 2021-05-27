@@ -11,7 +11,7 @@ import java.util.HashMap;
 /**
  * @author lizx
  * @since 1.0.0
- * @description  设计模式理解------马士兵的设计模式堪称全网最佳
+ * @description  设计模式理解------马士兵的设计模式还是不错的
  * @link "https://www.bilibili.com/video/BV1RC4y1H7ok
  **/
 public class Leader {

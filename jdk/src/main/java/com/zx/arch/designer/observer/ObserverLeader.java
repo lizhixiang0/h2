@@ -30,5 +30,6 @@ public class ObserverLeader {
         develop.add("7、大多数时候，我们处理事件的时候，需要事件源对象");
         develop.add("8、事件对象也可以形成继承体系");
         develop.add("9、测试");
+        develop.add("?? 如果有多种状态怎么办？那就是状态模式了,哈哈");
     }
 }

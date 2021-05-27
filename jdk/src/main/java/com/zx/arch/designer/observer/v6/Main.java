@@ -23,12 +23,12 @@ class Child {
     }
 
     public void wakeUp() {
-        cry = true;
-        // 通常来讲,被观察者会有多种状态,所以需要将其抽象出来,这里用一个事件类表示
-        wakeUpEvent event = new wakeUpEvent(System.currentTimeMillis(), "bed");
-
-        for(Observer o : observers) {
-            o.actionOnWakeUp(event);
+        if(cry){
+            // 通常来讲,被观察者会有多种状态,所以需要将其抽象出来,这里用一个事件类表示
+            wakeUpEvent event = new wakeUpEvent(System.currentTimeMillis(), "bed");
+            for(Observer o : observers) {
+                o.actionOnWakeUp(event);
+            }
         }
     }
 }

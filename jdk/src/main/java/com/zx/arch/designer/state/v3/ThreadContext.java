@@ -7,6 +7,7 @@ import lombok.Setter;
 /**
  * @author lizx
  * @since 1.0.0
+ * @note 借助线程的状态变化来学习状态模式，严格意义上不算是状态模式
  **/
 @Getter
 @Setter
