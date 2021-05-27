@@ -10,6 +10,7 @@ import java.util.List;
  * @description 责任链模式
  * @link spring中的filter "https://blog.csdn.net/lovejj1994/article/details/87457581
  * @vedio "https://www.bilibili.com/video/BV1RC4y1H7ok?p=40
+ *        http://c.biancheng.net/view/1383.html
  **/
 public class ChainLeader {
     /**

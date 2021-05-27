@@ -11,8 +11,10 @@ import java.util.HashMap;
 /**
  * @author lizx
  * @since 1.0.0
- * @description  设计模式理解------马士兵的设计模式还是不错的
+ * @description  设计模式理解------ 设计模式通常都是组合起来用的
+ *
  * @link "https://www.bilibili.com/video/BV1RC4y1H7ok
+ *        "http://c.biancheng.net/view/1378.html
  **/
 public class Leader {
     /**
@@ -25,9 +27,10 @@ public class Leader {
      */
     static void setBasicLogs() {
         // 二、核心分析
-        To_Analysis_Designer_logs.put("观察者模式", ObserverLeader.class);
-        To_Analysis_Designer_logs.put("策略模式", StrategyLeader.class);
+        To_Analysis_Designer_logs.put("观察者模式√", ObserverLeader.class);
+        To_Analysis_Designer_logs.put("策略模式√", StrategyLeader.class);
         To_Analysis_Designer_logs.put("状态模式", StateLeader.class);
         To_Analysis_Designer_logs.put("责任链模式", ChainLeader.class);
+        To_Analysis_Designer_logs.put("包装模式", ChainLeader.class);
     }
 }

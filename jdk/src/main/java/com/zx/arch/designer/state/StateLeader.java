@@ -11,6 +11,8 @@ import java.util.List;
  * @note        如果需要扩展行为(方法)，那不适合使用state模式
  * @link "https://www.bilibili.com/video/BV1RC4y1H7ok?p=52
  *       "http://c.biancheng.net/view/1388.html
+ * @note 状态模式和策略模式的异同点：
+ *      https://zhuanlan.zhihu.com/p/91912672
  **/
 public class StateLeader {
     /**
