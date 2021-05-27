@@ -5,6 +5,7 @@ import com.zx.arch.designer.chain.ChainLeader;
 import com.zx.arch.designer.observer.ObserverLeader;
 import com.zx.arch.designer.state.StateLeader;
 import com.zx.arch.designer.strategy.StrategyLeader;
+import com.zx.arch.designer.wrapper.WrapperLeader;
 
 import java.util.HashMap;
 
@@ -31,6 +32,6 @@ public class Leader {
         To_Analysis_Designer_logs.put("策略模式√", StrategyLeader.class);
         To_Analysis_Designer_logs.put("状态模式", StateLeader.class);
         To_Analysis_Designer_logs.put("责任链模式", ChainLeader.class);
-        To_Analysis_Designer_logs.put("包装模式", ChainLeader.class);
+        To_Analysis_Designer_logs.put("包装模式√", WrapperLeader.class);
     }
 }
