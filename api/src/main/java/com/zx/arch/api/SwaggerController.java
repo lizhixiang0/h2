@@ -80,6 +80,7 @@ public class SwaggerController {
         ImageIO.write(image, "png", os);
 
     }
+
 }
 final class ImageUtil {
 

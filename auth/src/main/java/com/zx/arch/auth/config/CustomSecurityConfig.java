@@ -80,7 +80,7 @@ public class CustomSecurityConfig extends WebSecurityConfigurerAdapter {
     };
 
     protected static final String[] PAXSTORE_REQUEST_URLS = new String[] {
-            "/api/test/**",
+           "/api/testd/**",
     };
 
     @Override
