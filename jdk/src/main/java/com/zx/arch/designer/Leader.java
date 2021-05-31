@@ -1,6 +1,7 @@
 package com.zx.arch.designer;
 
 import com.google.common.collect.Maps;
+import com.zx.arch.designer.bridge.BridgeLeader;
 import com.zx.arch.designer.chain.ChainLeader;
 import com.zx.arch.designer.observer.ObserverLeader;
 import com.zx.arch.designer.state.StateLeader;
@@ -16,6 +17,8 @@ import java.util.HashMap;
  *
  * @link "https://www.bilibili.com/video/BV1RC4y1H7ok
  *        "http://c.biancheng.net/view/1378.html
+ *
+ *        https://www.bilibili.com/video/BV1mc411h719?p=6
  **/
 public class Leader {
     /**
@@ -28,10 +31,14 @@ public class Leader {
      */
     static void setBasicLogs() {
         // 二、核心分析
+        // 1、行为型
         To_Analysis_Designer_logs.put("观察者模式√", ObserverLeader.class);
         To_Analysis_Designer_logs.put("策略模式√", StrategyLeader.class);
-        To_Analysis_Designer_logs.put("状态模式", StateLeader.class);
         To_Analysis_Designer_logs.put("责任链模式", ChainLeader.class);
+        To_Analysis_Designer_logs.put("状态模式", StateLeader.class);
+
+        // 2、结构性型
         To_Analysis_Designer_logs.put("包装模式√", WrapperLeader.class);
+        To_Analysis_Designer_logs.put("桥接模式", BridgeLeader.class);
     }
 }
