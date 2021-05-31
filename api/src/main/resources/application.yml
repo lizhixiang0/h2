@@ -20,6 +20,8 @@ spring:
     #问题一、不能直接输入db.migration，而正确的输入应该是db/migration。
     #问题二、文件必须是UTF-8编码，不然会报校验和错误
     locations: classpath:db/migration/common,classpath:db/migration/mysql,classpath:db/migration/java
+  thymeleaf:
+    prefix: classpath:/templates/
 
 kafka:
   broker:
@@ -69,3 +71,5 @@ vas-common:
 logging:
   # 用的SpringBoot自带的日志系统 https://www.cnblogs.com/sueyyyy/p/13721976.html
   config: classpath:logback-spring.xml
+
+

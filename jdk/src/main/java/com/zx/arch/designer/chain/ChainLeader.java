@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * @author lizx
  * @since 1.0.0
- * @description 责任链模式
+ * @description 责任链模式,一个事件需要经过多个对象来流程化处理，譬如采购审批流程，请假流程，软件开发中的异常处理流程，web请求处理流程等各种各样的流程，可以考虑使用责任链模式来实现。
  * @link spring中的filter "https://blog.csdn.net/lovejj1994/article/details/87457581
  * @vedio "https://www.bilibili.com/video/BV1RC4y1H7ok?p=40
  *        http://c.biancheng.net/view/1383.html
@@ -30,5 +30,6 @@ public class ChainLeader {
         // 下面是拓展
         develop.add("6、之前都是处理一个message,现在要求换成两个,一个request,一个response");
         develop.add("7、控制处理request和response的顺序，先处理request,再处理response");
+        develop.add("8、实例测试,https://blog.csdn.net/wwwdc1012/article/details/83592323");
     }
 }

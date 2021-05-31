@@ -59,7 +59,11 @@
              <artifactId>knife4j-spring-boot-starter</artifactId>
              <version>2.0.3</version>
          </dependency>-->
-
+        <!--支持跳转,springboot推荐使用thymeleaf模板引擎-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jdbc</artifactId>

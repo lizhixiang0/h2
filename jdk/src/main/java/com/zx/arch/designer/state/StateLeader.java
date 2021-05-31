@@ -8,8 +8,8 @@ import java.util.List;
  * @author lizx
  * @since 1.0.0
  * @description 状态模式,如果一个类的方法是根据不同的状态有不同的实现，则使用state模式
- * @note        如果需要扩展行为(方法)，那不适合使用state模式
- * @link "https://www.bilibili.com/video/BV1RC4y1H7ok?p=52
+ * @note        如果类中的方法将来可能会被扩展，那不适合使用state模式
+ * @link "马士兵这个讲的真不好！！！直接讲的错的！！！
  *       "http://c.biancheng.net/view/1388.html
  * @note 状态模式和策略模式的异同点：
  *      https://zhuanlan.zhihu.com/p/91912672

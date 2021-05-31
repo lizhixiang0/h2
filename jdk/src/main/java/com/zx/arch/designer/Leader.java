@@ -36,6 +36,7 @@ public class Leader {
         To_Analysis_Designer_logs.put("策略模式√", StrategyLeader.class);
         To_Analysis_Designer_logs.put("责任链模式", ChainLeader.class);
         To_Analysis_Designer_logs.put("状态模式", StateLeader.class);
+        To_Analysis_Designer_logs.put("模板方法模式", StateLeader.class);
 
         // 2、结构性型
         To_Analysis_Designer_logs.put("包装模式√", WrapperLeader.class);
