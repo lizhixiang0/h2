@@ -13,6 +13,8 @@ import java.util.List;
  *                                       https://blog.csdn.net/ljianhui/article/details/8280594;
  *                                       模板方法模式是建造者者模式有一定的相似性。
  *
+ *                                       都用到了个钩子函数,但建造者模式中使用的是组合的方式，而模板方法模式采用的是继承的方式
+ *
  **/
 public class TemplateLeader {
     /**

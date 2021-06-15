@@ -10,6 +10,8 @@ import java.io.InputStreamReader;
  *              例如spring中根据映射找不同的controller ,例如写appscan是根据identity找不同的引擎，都可以使用这个模式。
  *              https://www.cnblogs.com/tongkey/p/7919401.html
  *
+ *              可以参考mybatis中的日志模块。
+ *
  * @link   "https://blog.csdn.net/wwwdc1012/article/details/82780560
  *        通常会有一个适配类，核心作用在于将一个类转化成另一个，转化的同时改变原方法。最后的表现形式为改变了接口
  *        方式比较多,可以通过继承或者组合。

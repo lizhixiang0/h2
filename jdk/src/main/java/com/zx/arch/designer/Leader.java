@@ -2,6 +2,7 @@ package com.zx.arch.designer;
 
 import com.google.common.collect.Maps;
 import com.zx.arch.designer.bridge.BridgeLeader;
+import com.zx.arch.designer.builder.BuilderLeader;
 import com.zx.arch.designer.chain.ChainLeader;
 import com.zx.arch.designer.observer.ObserverLeader;
 import com.zx.arch.designer.state.StateLeader;
@@ -32,7 +33,7 @@ public class Leader {
      * study log
      */
     static void setBasicLogs() {
-        // 1、行为型
+        // 1、行为型,主要解决类或者对象直接互相通信的问题，共11个
         To_Analysis_Designer_logs.put("观察者模式√", ObserverLeader.class);
         To_Analysis_Designer_logs.put("策略模式√", StrategyLeader.class);
         To_Analysis_Designer_logs.put("责任链模式", ChainLeader.class);
@@ -40,12 +41,12 @@ public class Leader {
 
         To_Analysis_Designer_logs.put("模板方法模式", TemplateLeader.class);
 
-        // 2、结构性型
-        To_Analysis_Designer_logs.put("包装模式√", WrapperLeader.class);
+        // 2、结构性型,主要用于将类或对象进行组合从而构建灵活而高效的结构,共7个
+        To_Analysis_Designer_logs.put("包装模式", WrapperLeader.class);
         To_Analysis_Designer_logs.put("桥接模式", BridgeLeader.class);
 
-        // 3、创建型
-        To_Analysis_Designer_logs.put("建造者模式", BridgeLeader.class);
+        // 3、创建型,主要解决如何灵活创建对象或者类的问题,共5个
+        To_Analysis_Designer_logs.put("建造者模式", BuilderLeader.class);
     }
 
     /**
@@ -54,7 +55,6 @@ public class Leader {
     static void setAnalysisLogs() {
         /*
         * 1、最重要的原则就是单一原则,小到方法，大到一个类,都必须遵守这个原则。
-        *
         * */
 
     }

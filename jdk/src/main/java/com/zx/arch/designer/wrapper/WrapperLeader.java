@@ -8,6 +8,7 @@ import java.util.List;
  * @author lizx
  * @since 1.0.0
  * @description   包装器模式分为 1、适配器模式  2、装饰器模式
+ *                一般使用包装器模式来避免大量的if else ,通常结合工厂模式
  * @note 两者的区别 "https://blog.csdn.net/hao65103940/article/details/91393939
  *
  **/
