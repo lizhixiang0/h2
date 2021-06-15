@@ -18,6 +18,6 @@ public class BridgeLeader {
      * study log
      */
     static void setBasicLogs() {
-        develop.add("1、论坛发消息,后台需要经过信息处理才会允许存入数据库或者发表");
+        develop.add("");
     }
 }

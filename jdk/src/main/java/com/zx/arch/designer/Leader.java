@@ -6,6 +6,7 @@ import com.zx.arch.designer.chain.ChainLeader;
 import com.zx.arch.designer.observer.ObserverLeader;
 import com.zx.arch.designer.state.StateLeader;
 import com.zx.arch.designer.strategy.StrategyLeader;
+import com.zx.arch.designer.template.TemplateLeader;
 import com.zx.arch.designer.wrapper.WrapperLeader;
 
 import java.util.HashMap;
@@ -27,19 +28,34 @@ public class Leader {
     static HashMap To_Analysis_Designer_logs = Maps.newHashMap();
 
     /**
+     * 二、核心分析   https://blog.csdn.net/qq_29994609/article/details/51914046
      * study log
      */
     static void setBasicLogs() {
-        // 二、核心分析
         // 1、行为型
         To_Analysis_Designer_logs.put("观察者模式√", ObserverLeader.class);
         To_Analysis_Designer_logs.put("策略模式√", StrategyLeader.class);
         To_Analysis_Designer_logs.put("责任链模式", ChainLeader.class);
         To_Analysis_Designer_logs.put("状态模式", StateLeader.class);
-        To_Analysis_Designer_logs.put("模板方法模式", StateLeader.class);
+
+        To_Analysis_Designer_logs.put("模板方法模式", TemplateLeader.class);
 
         // 2、结构性型
         To_Analysis_Designer_logs.put("包装模式√", WrapperLeader.class);
         To_Analysis_Designer_logs.put("桥接模式", BridgeLeader.class);
+
+        // 3、创建型
+        To_Analysis_Designer_logs.put("建造者模式", BridgeLeader.class);
+    }
+
+    /**
+     * 七大原则
+     */
+    static void setAnalysisLogs() {
+        /*
+        * 1、最重要的原则就是单一原则,小到方法，大到一个类,都必须遵守这个原则。
+        *
+        * */
+
     }
 }

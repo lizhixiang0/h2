@@ -23,6 +23,7 @@ import java.util.Map;
 public class GetRulesFromWeb {
 
     public static void main(String[] args) {
+        // 1、一共85页
         for(int i = 1;i<85;i++){
             int finalI = i;
             new Thread(()->{
