@@ -16,28 +16,20 @@ import java.util.regex.PatternSyntaxException;
 
 /**
  * The {@code String} class represents character strings. All
- * string literals in Java programs, such as {@code "abc"}, are
+ * string literals 字面量 in Java programs, such as {@code "abc"}, are
  * implemented as instances of this class.
  * <p>
  * Strings are constant; their values cannot be changed after they
  * are created. String buffers support mutable strings.
- * Because String objects are immutable they can be shared. For example:
+ * Because String objects are immutable they can be shared. For example:  这句话没懂啥意思！
  * <blockquote><pre>
  *     String str = "abc";
  * </pre></blockquote><p>
- * is equivalent to:
+ * is equivalent to:   等效于,在字面量意义上等效！但是内存地址是不一样的哦
  * <blockquote><pre>
  *     char data[] = {'a', 'b', 'c'};
  *     String str = new String(data);
  * </pre></blockquote><p>
- * Here are some more examples of how strings can be used:
- * <blockquote><pre>
- *     System.out.println("abc");
- *     String cde = "cde";
- *     System.out.println("abc" + cde);
- *     String c = "abc".substring(2,3);
- *     String d = cde.substring(1, 2);
- * </pre></blockquote>
  * <p>
  * The class {@code String} includes methods for examining
  * individual characters of the sequence, for comparing strings, for
@@ -57,19 +49,14 @@ import java.util.regex.PatternSyntaxException;
  * string concatenation and conversion, see Gosling, Joy, and Steele,
  * <i>The Java Language Specification</i>.
  *
- * <p> Unless otherwise noted, passing a <tt>null</tt> argument to a constructor
- * or method in this class will cause a {@link NullPointerException} to be
- * thrown.
- *
- * <p>A {@code String} represents a string in the UTF-16 format
- * in which <em>supplementary characters</em> are represented by <em>surrogate
- * pairs</em> (see the section <a href="Character.html#unicode">Unicode
- * Character Representations</a> in the {@code Character} class for
+ * A String represents a string in the UTF-16 format
+ * in which supplementary characters are represented by surrogate
+ * pairs (see the section Unicode Character Representations in the Character class for
  * more information).
  * Index values refer to {@code char} code units, so a supplementary
  * character uses two positions in a {@code String}.
  * <p>The {@code String} class provides methods for dealing with
- * Unicode code points (i.e., characters), in addition to those for
+ * Unicode code points (i.e., characters), in addition to （除...之外） those for
  * dealing with Unicode code units (i.e., {@code char} values).
  *
  * @author  Lee Boynton
@@ -83,6 +70,9 @@ import java.util.regex.PatternSyntaxException;
  * @since   JDK1.0
  */
 public final class String implements java.io.Serializable, Comparable<String>, CharSequence {
+
+    private static final long serialVersionUID = -6849794470754667710L;
+
     /**
      * String底层是使用字符数组存储的
      */
@@ -92,8 +82,6 @@ public final class String implements java.io.Serializable, Comparable<String>, C
      * 用于缓存字符串的哈希值，默认为0
      */
     private int hash;
-
-    private static final long serialVersionUID = -6849794470754667710L;
 
     /**
      * Class String is special cased within the Serialization Stream Protocol.

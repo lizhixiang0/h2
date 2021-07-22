@@ -64,7 +64,7 @@ public class ArrayListTest {
      */
     public static void c(){
         int[] ints = {1,2,3,4,5};
-        // 1、基本类型不能作为 Arrays.asList方法的参数，否则会被当做一个参数
+        // 1、基本类型数组不能作为 Arrays.asList方法的参数，否则会被当做一个参数
         // T是个继承于Object的类，并非基本类型，所以int[]作为参数导入时，T 为int[]。也就是Arrays.asList(传入一个int[]) 返回的是ArrayList<int[]>类型
         List list = Arrays.asList(ints);
         System.out.println(list.size());

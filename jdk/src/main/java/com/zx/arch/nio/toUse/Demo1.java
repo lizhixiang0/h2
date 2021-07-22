@@ -52,10 +52,14 @@ public class Demo1 {
 
 
     public static void main(String[] args) throws IOException, URISyntaxException {
-        //可以通过System类找到java虚拟机启动目录的位置
+        /*//可以通过System类找到java虚拟机启动目录的位置
         System.out.println(System.getProperties().get("user.dir"));
         c();
-                a();
+                a();*/
+
+        Path of = Path.of("D:\\JetBrains\\workspace\\paxvas-app-scan-engine-v2\\engine\\python\\tools\\rules", "android_rules.yar");
+
+        //System.out.println(Files.is);
 
     }
 }
