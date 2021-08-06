@@ -31,11 +31,11 @@ public class H2Application {
         app.run(args);
     }
 
-    @Bean(initMethod = "myInitMethod", destroyMethod = "myDestroyMethod")
+    /*@Bean(initMethod = "myInitMethod", destroyMethod = "myDestroyMethod")
     public BeanLifeCycle1 setBeanLifeCycle(){
         BeanLifeCycle1 beanLifeCycle1 = new BeanLifeCycle1();
         beanLifeCycle1.setAge(1);
         return beanLifeCycle1;
     }
-
+*/
 }
