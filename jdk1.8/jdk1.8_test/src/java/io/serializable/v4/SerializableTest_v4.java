@@ -25,10 +25,8 @@ public class SerializableTest_v4  {
      */
     public static void main(String[] args) throws Exception {
         Girl girl  = new Girl("女","涂涂","18");
-
         SerializableUtils.serialize(girl,SerializableUtils.PATH);
         Object deserialize = SerializableUtils.deserialize(SerializableUtils.PATH);
-
         System.out.println(deserialize.toString());
     }
 
