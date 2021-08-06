@@ -19,7 +19,7 @@ import java.net.Socket;
 public class SerializableTest_v5 implements Serializable {
 
     /**
-     * 测试点1、实现RPC,简单试试,具体的看博客,这边只是单纯穿个对象
+     * 测试点1、实现RPC,简单试试,具体的看博客,这边只是单纯传个对象
      *                  https://blog.csdn.net/weixin_38405253/article/details/101805188
      *                  https://blog.csdn.net/ss123mlk/article/details/108555850
      * @param args

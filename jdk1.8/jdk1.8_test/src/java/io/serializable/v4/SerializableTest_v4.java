@@ -19,7 +19,6 @@ public class SerializableTest_v4  {
      * 测试点1、实现Externalizable,强制自定义序列化,相比于Serializable更高效
      * 注意: 当读取对象时，会调用被序列化类的无参构造器去创建一个新的对象，然后再将被保存对象的字段的值分别填充到新对象中
      *       所以必须得有无参构造器！
-     * https://www.tuicool.com/articles/2Q3M73
      * @param args
      * @throws Exception
      */
