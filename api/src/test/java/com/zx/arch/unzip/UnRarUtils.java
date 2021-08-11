@@ -20,7 +20,7 @@ import java.util.List;
  **/
 public class UnRarUtils {
 
-    private final  static String rarFileName = "D:\\JetBrains\\workspace\\h2\\api\\src\\test\\java\\com\\zx\\arch\\unzip\\test.rar";
+    private final  static String rarFileName = "D:\\JetBrains\\workspace\\h2\\api\\src\\test\\java\\com\\zx\\arch\\unzip\\Java.rar";
     private final  static String outFilePath = "D:\\JetBrains\\workspace\\h2\\api\\src\\test\\java\\com\\zx\\arch\\unzip\\";
 
     /**
@@ -141,7 +141,6 @@ public class UnRarUtils {
     private static void permutation(char[] c, int start, int end) throws Exception {
         if(start==end){
             //unRar(rarFileName,outFilePath,new String(c));
-            System.out.println(c);
             test2(new String(c));
         }
         else {
@@ -165,24 +164,37 @@ public class UnRarUtils {
 
 
     /**
-     * 列出字符串的所有子串
-     * abc
+     * 列出字符串中的字符串组成的所有子串
+     * abcd  -》  a、b、ab、bc
      * @param s
      * @throws Exception
      */
     public static void list(String s) throws Exception {
         for (int i=0;i<s.length();i++){
             for (int j = i+1;j<=s.length();j++){
+                System.out.println(s.substring(i, j));
                 fullPermutation(s.substring(i, j));
             }
         }
     }
 
+    /**
+     *
+     * @param s
+     * @throws Exception
+     */
+    public static void secret(String s) throws Exception {
+        for (int i=0;i<s.length();i++){
+            for (int j = i+1;j<=s.length();j++){
+                System.out.println(s.substring(i, j));
+                fullPermutation(s.substring(i, j));
+            }
+        }
+    }
     public static void main(String[] args) throws Exception {
         // test();
         //test2("123456");
-        list("0123456");
+        // list("0123456789");
+        list("abcd");
     }
-
-
 }
