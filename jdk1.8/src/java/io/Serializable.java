@@ -173,8 +173,6 @@ package java.io;
  * @see java.io.ObjectInput
  * @see java.io.Externalizable
  * @since   JDK1.1
- * @link "https://blog.csdn.net/gao2175/article/details/104794213/
- * https://blog.csdn.net/yudiandemingzi/article/details/78704386
  */
 public interface Serializable {
 }
