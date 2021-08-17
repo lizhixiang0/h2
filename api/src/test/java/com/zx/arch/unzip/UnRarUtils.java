@@ -170,6 +170,7 @@ public class UnRarUtils {
      * @throws Exception
      */
     public static void list(String s) throws Exception {
+        // 算法有问题,会漏掉ac
         for (int i=0;i<s.length();i++){
             for (int j = i+1;j<=s.length();j++){
                 System.out.println(s.substring(i, j));
@@ -179,22 +180,21 @@ public class UnRarUtils {
     }
 
     /**
-     *
+     * 暴力破解,决定因素是字符和密码数量！所以生成密码这块，重点是密码数！比如密码为6位数！如果全是数字，有多少种情况？
+     * 100万 ,每个密码要0.18s ,要50个小时 ！每多一位,时间乘10 ！
      * @param s
      * @throws Exception
      */
     public static void secret(String s) throws Exception {
-        for (int i=0;i<s.length();i++){
-            for (int j = i+1;j<=s.length();j++){
-                System.out.println(s.substring(i, j));
-                fullPermutation(s.substring(i, j));
-            }
-        }
+
     }
-    public static void main(String[] args) throws Exception {
-        // test();
-        //test2("123456");
-        // list("0123456789");
-        list("abcd");
+    public static void main(String[] args) throws FileNotFoundException, SevenZipException {
+        long startTime = System.currentTimeMillis();
+
+        test2("111111");
+
+        long endTime = System.currentTimeMillis();
+
+        System.out.println(endTime-startTime);
     }
 }
