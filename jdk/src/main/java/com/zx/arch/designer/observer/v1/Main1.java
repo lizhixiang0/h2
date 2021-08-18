@@ -8,7 +8,9 @@ public class Main1 {
     public static void main(String[] args) {
         boolean cry = false;
         while(!cry) {
-            //进行处理
+            //爸爸进行处理
+            //妈妈进行处理
+            //小狗进行处理
         }
     }
 }

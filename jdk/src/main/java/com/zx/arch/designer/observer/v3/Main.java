@@ -1,7 +1,7 @@
 package com.zx.arch.designer.observer.v3;
 
 /**
- * 3、在小孩（被观察者）内部加入dad(观察者)
+ * 3、在小孩（被观察者）内部加入dad(观察者，观察者随着被观察者状态变化而采取行动)
  */
 
 class Child {

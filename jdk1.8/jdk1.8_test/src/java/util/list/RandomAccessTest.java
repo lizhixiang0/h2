@@ -1,16 +1,13 @@
 package util.list;
 
-import lombok.AllArgsConstructor;
-import sun.awt.image.ImageWatched;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
  * @author lizx
  * @date 2021/8/17
- * @description  得出结论。以后还是尽量使用for循环！如果是链表必须使用forEach ！
+ * @description  得出结论。以后遍历数组集合还是尽量使用for循环！如果是链表则必须使用forEach ！
  * @since
  **/
 public class RandomAccessTest {
@@ -18,7 +15,7 @@ public class RandomAccessTest {
         // 准备数据
         ArrayList arrayList = new ArrayList();
         LinkedList linkedList = new LinkedList();
-        for (int i = 0; i<500000; i++){
+        for (int i = 0; i<50000; i++){
             arrayList.add(i);
             linkedList.add(i);
         }

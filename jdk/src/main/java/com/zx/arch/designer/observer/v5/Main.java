@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * 5、使用多态,将观察者与被观察者解耦合
+ * 5、使用多态,将观察者与被观察者解耦合，不写死，在调用被观察者的同时，可以传入观察者
  */
 
 class Child {
