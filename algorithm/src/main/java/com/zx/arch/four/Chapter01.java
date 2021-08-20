@@ -1,4 +1,4 @@
-package com.zx.arch.arithmetic.four;
+package com.zx.arch.four;
 
 /**
  * @author lizx

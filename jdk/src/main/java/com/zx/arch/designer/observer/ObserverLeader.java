@@ -7,6 +7,7 @@ import java.util.List;
  * @author lizx
  * @since 1.0.0
  * @descripiton 观察者模式分析,对象间存在一对多关系，调用一个对象的方法会触发多种行为则使用观察者模式 (大佬是这么讲的，观察者其实是一种事件模式，例如登录)
+ *              观察者模式不强调事件的流通！而是强调一对多的关系！
  * @link "https://www.bilibili.com/video/BV1RC4y1H7ok?p=14
  *       "http://c.biancheng.net/view/1390.html
  * @note 在很多系统中,Observer模式往往和责任链共同负责对于事件的处理,其中的某一个observer负责是否将事件进一步传递

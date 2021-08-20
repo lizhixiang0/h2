@@ -1,7 +1,6 @@
-package com.zx.arch.arithmetic.four;
+package com.zx.arch.four;
 
 import com.google.common.collect.Maps;
-import com.zx.arch.arithmetic.four.Chapter01;
 
 import java.util.HashMap;
 

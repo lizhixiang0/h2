@@ -8,6 +8,8 @@ import java.util.List;
  * @author lizx
  * @since 1.0.0
  * @description 责任链模式,一个事件需要经过多个对象来流程化处理，譬如采购审批流程，请假流程，软件开发中的异常处理流程，web请求处理流程等各种各样的流程，可以考虑使用责任链模式来实现。
+ *                 注：责任链强调事件层层传递，最后传递到能处理的人那里去！处理完返回！中间的每一环都可以做判断是否采取行为！也可以控制链条是否停止！
+ *                     spring中的filter责任链就是这样的！并不是每个filter都会工作！而是根据条件！
  * @link spring中的filter "https://blog.csdn.net/lovejj1994/article/details/87457581
  * @vedio "https://www.bilibili.com/video/BV1RC4y1H7ok?p=40
  *        http://c.biancheng.net/view/1383.html

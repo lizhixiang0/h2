@@ -7,12 +7,9 @@ import java.util.List;
 /**
  * @author lizx
  * @since 1.0.0
- * @description 状态模式,如果一个类的方法是根据不同的状态有不同的实现，则使用state模式
- * @note        如果类中的方法将来可能会被扩展，那不适合使用state模式
- * @link "马士兵这个讲的真不好！！！直接讲的错的！！！
- *       "http://c.biancheng.net/view/1388.html
+ * @description
  * @note 状态模式和策略模式的异同点：
- *      https://zhuanlan.zhihu.com/p/91912672
+ *      http://c.biancheng.net/view/1388.html
  **/
 public class StateLeader {
     /**
@@ -24,8 +21,6 @@ public class StateLeader {
      * study log
      */
     static void setBasicLogs() {
-        develop.add("1、小女孩有两种状态,快乐和悲伤,不同的状态下,行为不同");
-        develop.add("2、将状态抽象出来,需要增加新的状态时，直接增加一个状态类即可");
-        develop.add("3、测试,模拟线程状态机来学习状态模式 https://blog.csdn.net/qq_44284002/article/details/104907326");
+
     }
 }

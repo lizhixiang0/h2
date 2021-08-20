@@ -1,5 +1,4 @@
-package com.zx.arch.arithmetic.java.chapter1;
-
+package com.zx.arch.java.chapter1;
 
 /**
  * @author lizx
