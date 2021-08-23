@@ -761,11 +761,12 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
 
     /**
      * 通用的迭代器实现
+     *
      */
     private class Itr implements Iterator<E> {
         int cursor;       //游标，下一个元素的索引，默认初始化为0
         int lastRet = -1; //上次访问的元素的位置
-        int expectedModCount = modCount;//迭代过程不运行修改数组，否则就抛出异常
+        int expectedModCount = modCount;//迭代过程不许修改数组，否则就抛出异常
 
         //是否还有下一个
         public boolean hasNext() {

@@ -34,6 +34,8 @@ import java.util.function.Consumer;
  * Implementing this interface allows an object to be the target of
  * the "for-each loop" statement.语句
  *
+ * 意思是支持foreach语法糖的对象必须得实现这个，可以把foreach语句反编译一下，还是调用的iterator()
+ *
  * For each (or foreach) is a computer language idiom 用语 for traversing 遍历 items in a collection. Foreach is usually used in place of a standard for statement.
  *
  * @param <T> the type of elements returned by the iterator
