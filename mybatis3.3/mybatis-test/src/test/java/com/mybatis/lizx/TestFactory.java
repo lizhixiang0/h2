@@ -9,6 +9,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.Reader;
 import java.time.Period;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
@@ -48,20 +49,20 @@ public class TestFactory {
         SqlSession sqlSession = sqlSessionManager.openSession();
         PersonDao personDao =  sqlSession.getMapper(PersonDao.class);
 
-        Person pp = sqlSession.selectOne("getById",13L);
+//        Person pp = sqlSession.selectOne("getById",13L);
         /**
          * 第一次查询
          */
-        Person person = personDao.getById(13L);
+        Person person = personDao.getById(4L);
 
-        /**
-         * 第二次查询
-         */
-        HashMap person1 = personDao.getPerson(43L);
+//        /**
+//         * 第二次查询
+//         */
+//        HashMap person1 = personDao.getPerson(43L);
 
 
         System.out.println(person);
-        System.out.println(person1);
+//        System.out.println(person1);
 
 
        /* // 使用RowBounds实现分页
@@ -98,9 +99,9 @@ public class TestFactory {
             System.out.println(user);
         }*/
 
-        Person p = new Person("chen",12,"111","157538651@qq.com","广东省");
-        personDao.insert(p);
-        System.out.println(p.toString());
+//        Person p = new Person("chen",12,"111","157538651@qq.com",new Date(),"上海");
+//        personDao.insert(p);
+//        System.out.println(p.toString());
 
         /**
          * 事务提交

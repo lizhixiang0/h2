@@ -20,7 +20,7 @@ public interface PersonDao {
      */
     int insert(Person p);
 
-    @Select("select p.person_name as name,p.age,p.phone,p.email,p.address from person p where p.id = #{id}")
+    @Select("select p.name,p.age,p.phone,p.email,p.create_time as createTime, p.address from person p where p.id = #{id}")
     Person getById(Long id);
 
     HashMap<String, Object> getPerson(Long i);

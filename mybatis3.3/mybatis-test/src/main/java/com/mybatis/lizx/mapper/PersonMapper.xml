@@ -8,8 +8,8 @@
     <cache eviction="FIFO" flushInterval="6000" size="512" readOnly="false"/>
 
     <insert id="insert" parameterType="person" keyProperty="id">
-        INSERT INTO person (person_name, age, phone, email, address)
-        VALUES(#{personName},#{age},#{phone ,jdbcType=VARCHAR},#{email},#{address})
+        INSERT INTO person (name, age, phone, email, create_time,address)
+        VALUES(#{name},#{age},#{phone ,jdbcType=VARCHAR},#{email},#{createTime},#{address})
     </insert>
 
     <select id="selectPersonByRowBounds" resultType="com.mybatis.lizx.model.Person">
@@ -18,7 +18,7 @@
 
     <select id="getPerson" resultType="java.util.HashMap">
         select
-            p.person_name as name,p.age,p.phone,p.email,p.address
+            p.name as name,p.age,p.phone,p.email,p.create_time as createTime,p.address
         from person p
         <where>
         /*这个版本是必须使用value来表示参数*/
