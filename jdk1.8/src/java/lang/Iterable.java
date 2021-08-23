@@ -32,10 +32,9 @@ import java.util.function.Consumer;
 
 /**
  * Implementing this interface allows an object to be the target of
- * the "for-each loop" statement. See
- * <strong>
- * <a href="{@docRoot}/../technotes/guides/language/foreach.html">For-each Loop</a>
- * </strong>
+ * the "for-each loop" statement.语句
+ *
+ * For each (or foreach) is a computer language idiom 用语 for traversing 遍历 items in a collection. Foreach is usually used in place of a standard for statement.
  *
  * @param <T> the type of elements returned by the iterator
  *
@@ -44,6 +43,7 @@ import java.util.function.Consumer;
  */
 public interface Iterable<T> {
     /**
+     * 返回T类型元素的迭代器
      * Returns an iterator over elements of type {@code T}.
      *
      * @return an Iterator.
@@ -53,9 +53,9 @@ public interface Iterable<T> {
     /**
      * Performs the given action for each element of the {@code Iterable}
      * until all elements have been processed or the action throws an
-     * exception.  Unless otherwise specified by the implementing class,
+     * exception.  Unless otherwise specified 除非另有规定 by the implementing class,
      * actions are performed in the order of iteration (if an iteration order
-     * is specified).  Exceptions thrown by the action are relayed to the
+     * is specified).  Exceptions thrown by the action are relayed 传送到 to the
      * caller.
      *
      * @implSpec

@@ -21,6 +21,7 @@ import java.util.HashMap;
  *        "http://c.biancheng.net/view/1378.html
  *
  *        https://www.bilibili.com/video/BV1mc411h719?p=6
+ *        https://www.cnblogs.com/cbf4life/tag/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/
  **/
 public class Leader {
     /**

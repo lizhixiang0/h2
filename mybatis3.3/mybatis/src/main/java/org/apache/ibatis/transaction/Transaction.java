@@ -22,6 +22,19 @@ import java.sql.SQLException;
  * 事务管理接口
  * 处理数据库连接的生命周期,包括它的创建、准备、提交、回滚、关闭。在 MyBatis 中有两种事务管理器类型(JDBC、MANAGED):
  *
+ * 比较好的关于事务的讲解：
+ *     https://zhuanlan.zhihu.com/p/133807626
+ *     https://my.oschina.net/zudajun?tab=newest&catalogId=3532897
+ *
+ *  spring中关于事务的传播机制
+ *    https://www.bilibili.com/video/BV1EE411p7dD?p=6
+ *
+ *  spring事务源码解读：
+ *    https://www.bilibili.com/video/BV1EE411p7dD?p=6
+ *
+ *  spring的只读事务:
+ *    https://blog.csdn.net/xiaokanfuchen86/article/details/117827267
+ *
  * @author Clinton Begin
  */
 public interface Transaction {

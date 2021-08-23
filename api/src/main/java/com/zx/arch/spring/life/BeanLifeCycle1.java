@@ -1,6 +1,7 @@
 package com.zx.arch.spring.life;
 
 import org.springframework.beans.factory.*;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -42,12 +43,19 @@ import javax.annotation.PreDestroy;
             destroyMethod
 
     * */
-//@Component
-public class BeanLifeCycle1 implements InitializingBean, DisposableBean{
+@Component
+public class BeanLifeCycle1 extends BeanLife implements InitializingBean, DisposableBean {
 
     private int age;
 
+    private static String name;
+
+    {
+        name = "sss";
+    }
+
     public BeanLifeCycle1(){
+        super(name);
         System.out.println("Construct");
     }
 
@@ -58,7 +66,7 @@ public class BeanLifeCycle1 implements InitializingBean, DisposableBean{
 
     @PostConstruct
     public void postConstruct() {
-
+        name = "s";
         System.out.println("postConstruct");
     }
 

@@ -23,16 +23,17 @@ import sun.security.util.SecurityConstants;
  * execution running concurrently.
  * <p>
  * Every thread has a priority. Threads with higher priority are
- * executed in preference to threads with lower priority. Each thread
+ * executed in preference to (优先于) threads with lower priority. Each thread
  * may or may not also be marked as a daemon. When code running in
  * some thread creates a new <code>Thread</code> object, the new
  * thread has its priority initially set equal to the priority of the
- * creating thread, and is a daemon thread if and only if the
+ * creating thread, and is a daemon thread if and only if (当且仅当) the
  * creating thread is a daemon.
+ * 守护(daemon /ˈdiːmən/)线程的定义和特点：  https://blog.csdn.net/weiwosuoai/article/details/89387280
  * <p>
  * When a Java Virtual Machine starts up, there is usually a single
- * non-daemon thread (which typically calls the method named
- * <code>main</code> of some designated class). The Java Virtual
+ * non-daemon thread (which typically calls 调用 the method named
+ * <code>main</code> of some designated 指定的 class). The Java Virtual
  * Machine continues to execute threads until either of the following
  * occurs:
  * <ul>
@@ -41,16 +42,16 @@ import sun.security.util.SecurityConstants;
  *     to take place.
  * <li>All threads that are not daemon threads have died, either by
  *     returning from the call to the <code>run</code> method or by
- *     throwing an exception that propagates beyond the <code>run</code>
- *     method.
+ *     throwing an exception that propagates beyond 传播出 the <code>run</code>
+ *     method.  ==》当 JVM 中不存在任何一个正在运行的非守护线程时，则 JVM 进程即会退出。
  * </ul>
  * <p>
  * There are two ways to create a new thread of execution. One is to
  * declare a class to be a subclass of <code>Thread</code>. This
  * subclass should override the <code>run</code> method of class
  * <code>Thread</code>. An instance of the subclass can then be
- * allocated and started. For example, a thread that computes primes
- * larger than a stated value could be written as follows:
+ * allocated and started. For example, a thread that computes primes 质数
+ * larger than a stated value 定值 could be written as follows:
  * <hr><blockquote><pre>
  *     class PrimeThread extends Thread {
  *         long minPrime;

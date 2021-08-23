@@ -28,53 +28,61 @@ package java.io;
 /**
  * Serializability of a class is enabled by the class implementing the
  * java.io.Serializable interface. Classes that do not implement this
- * interface will not have any of their state serialized or
- * deserialized.  All subtypes of a serializable class are themselves
+ * interface will not have any of their state serialized or deserialized.s
+ *
+ * All subtypes（子类）of a serializable class are themselves
  * serializable.  The serialization interface has no methods or fields
- * and serves only to identify the semantics of being serializable. <p>
+ * and serves only to identify the semantics (语意)of being serializable.
+ *
+ * 注：父类实现了serializable则子类也可序列化
  *
  * To allow subtypes of non-serializable classes to be serialized, the
- * subtype may assume responsibility for saving and restoring the
- * state of the supertype's public, protected, and (if accessible)
+ * subtype may assume（承担） responsibility for saving and restoring the
+ * state of the supertype's（父类的） public, protected, and (if accessible)
  * package fields.  The subtype may assume this responsibility only if
  * the class it extends has an accessible no-arg constructor to
  * initialize the class's state.  It is an error to declare a class
  * Serializable if this is not the case.  The error will be detected at
  * runtime. <p>
- *
  * During deserialization, the fields of non-serializable classes will
  * be initialized using the public or protected no-arg constructor of
  * the class.  A no-arg constructor must be accessible to the subclass
  * that is serializable.  The fields of serializable subclasses will
  * be restored from the stream. <p>
  *
- * When traversing a graph, an object may be encountered that does not
+ * 注：父类非序列化，其子类进行序列化时,子类需要访问父类的无参构造
+ *    此时即使子类继承了父类中可访问到的属性,也无法记录下父类对象的状态信息
+
+ * When traversing a graph （遍历图）, an object may be encountered （偶遇）that does not
  * support the Serializable interface. In this case the
  * NotSerializableException will be thrown and will identify the class
  * of the non-serializable object. <p>
+ *
+ * 注：当循环遍历一个数据结构图（数据结构图可理解为数据结构类型，比如二叉树）的时候，对象可能会遭遇到不支持实现序列化接口的情景。在这种情况下，将发生抛出NotSerializableException异常，并且该类被定义为不可序列化类。
  *
  * Classes that require special handling during the serialization and
  * deserialization process must implement special methods with these exact
  * signatures:
  *
+ * 注：在实现序列化和反序列化过程中,特殊处理的类需要实现这些特殊的方法：
+ * https://blog.csdn.net/iteye_14460/article/details/81770432
  * <PRE>
- * private void writeObject(java.io.ObjectOutputStream out)
- *     throws IOException
- * private void readObject(java.io.ObjectInputStream in)
- *     throws IOException, ClassNotFoundException;
- * private void readObjectNoData()
- *     throws ObjectStreamException;
+ * private void writeObject(java.io.ObjectOutputStream out) throws IOException // 序列化改写
+ * private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException; // 反序列化改写
+ * private void readObjectNoData() throws ObjectStreamException;
  * </PRE>
  *
  * <p>The writeObject method is responsible for writing the state of the
  * object for its particular class so that the corresponding
- * readObject method can restore it.  The default mechanism for saving
+ * readObject method can restore it.  The default mechanism （机制） for saving
  * the Object's fields can be invoked by calling
  * out.defaultWriteObject. The method does not need to concern
  * itself with the state belonging to its superclasses or subclasses.
- * State is saved by writing the individual fields to the
+ * State is saved by writing the individual（个别）fields to the
  * ObjectOutputStream using the writeObject method or by using the
- * methods for primitive data types supported by DataOutput.
+ * methods for primitive (原始类型) data types supported by DataOutput.
+ *
+ * 注：
  *
  * <p>The readObject method is responsible for reading from the stream and
  * restoring the classes fields. It may call in.defaultReadObject to invoke

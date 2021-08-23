@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 7、大多数时候，我们处理事件的时候，需要事件源对象
+ * 7、除了可以将被观察者的状态分装到事件对象中，还可以将被观察者本身也放进去
  */
 
 class Child {

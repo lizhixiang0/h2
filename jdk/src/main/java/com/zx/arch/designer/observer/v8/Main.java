@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 8、事件对象也可以形成继承体系
+ * 8、事件对象也可以形成继承体系并且泛型化，这样可以被其他被观察者使用
  */
 
 class Child {

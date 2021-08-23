@@ -1,6 +1,5 @@
 package com.zx.arch.io;
 
-import com.zx.arch.Json.jackson.entity.ManifestAnalyse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -22,7 +21,7 @@ import java.util.Map;
  **/
 public class GetRulesFromWeb {
 
-    public static void main(String[] args) {
+  /*  public static void main(String[] args) {
         // 1、一共85页
         for(int i = 1;i<85;i++){
             int finalI = i;
@@ -31,7 +30,7 @@ public class GetRulesFromWeb {
             }).start();
         }
 
-    }
+    }*/
 
     public static String connect(String url){
         RestTemplate restTemplate = RESTUtils.getNoneSingletonRestTemplate(10000, 10000, 10000, false, 3, 100, 20, null);
@@ -43,7 +42,7 @@ public class GetRulesFromWeb {
         return  res.getBody();
     }
 
-    public static void parse(String data){
+  /*  public static void parse(String data){
         Map<String, Object> jsonMap = JsonUtils.toMap(data);
         assert jsonMap != null;
         List<RuleInfo> manifestList =  JsonUtils.toJavaObjectList(jsonMap.get("results"), RuleInfo.class);
@@ -57,7 +56,7 @@ public class GetRulesFromWeb {
                 e.printStackTrace();
             }
         });
-    }
+    }*/
 
     public static  void write(String rule) throws IOException {
         Path destPath = Path.of("D:\\JetBrains\\workspace\\h2\\jdk\\src\\main\\resources\\static\\rulesets\\all_rules.yar");

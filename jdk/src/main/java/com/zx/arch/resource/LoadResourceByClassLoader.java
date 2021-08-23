@@ -14,9 +14,9 @@ import java.util.Collections;
 /**
  * @author lizx
  * @since 1.0.0
- * @description Í¨¹ıÀà¼ÓÔØÆ÷¼ÓÔØÏîÄ¿×ÊÔ´
- * @note ×ÊÔ´·ÅÈëstatic°üÖ®ºóÒª±àÒëÏÂ,ClassPathResource¼ÓÔØµÄÊÇÀàÂ·¾¶ÏÂµÄ×ÊÔ´,
- *       ×¢ÒâÒ»µãºÍÀà¼ÓÔØ×ÊÔ´µÄÇø±ğ£¬Í¨¹ıÀà¼ÓÔØÆ÷¼ÓÔØstaticÎÄ¼ş¼ĞÏÂÃæµÄ×ÊÔ´²»ÒªÔÚÇ°Ãæ¼ÓÉÏ"/"
+ * @description é€šè¿‡ç±»åŠ è½½å™¨åŠ è½½é¡¹ç›®èµ„æº
+ * @note èµ„æºæ”¾å…¥staticåŒ…ä¹‹åè¦ç¼–è¯‘ä¸‹,ClassPathResourceåŠ è½½çš„æ˜¯ç±»è·¯å¾„ä¸‹çš„èµ„æº,
+ *       æ³¨æ„ä¸€ç‚¹å’Œç±»åŠ è½½èµ„æºçš„åŒºåˆ«ï¼Œé€šè¿‡ç±»åŠ è½½å™¨åŠ è½½staticæ–‡ä»¶å¤¹ä¸‹é¢çš„èµ„æºä¸è¦åœ¨å‰é¢åŠ ä¸Š"/"
  **/
 @Log
 public class LoadResourceByClassLoader {
@@ -29,14 +29,14 @@ public class LoadResourceByClassLoader {
 
     private static void getImage() throws IOException, URISyntaxException {
         /**
-         * 1¡¢SpringµÄClassPathResourceÀà
+         * 1ã€Springçš„ClassPathResourceç±»
          */
         Resource imageRes = new ClassPathResource(path);
         log.info(String.valueOf(imageRes.getURI()));
 
         /**
-         * 2¡¢´¿jdk
-         * Í¨¹ıClassUtils»ñµÃÓ¦ÓÃ¼ÓÔØÀà ¼´AppClassLoader
+         * 2ã€çº¯jdk
+         * é€šè¿‡ClassUtilsè·å¾—åº”ç”¨åŠ è½½ç±» å³AppClassLoader
          */
         ClassLoader classLoader = ClassUtils.getDefaultClassLoader();
         URL images = classLoader.getResource(path);
@@ -44,7 +44,7 @@ public class LoadResourceByClassLoader {
     }
 
     /**
-     * ÎªÊ²Ã´Àà¼ÓÔØÆ÷½öÆ¾Ò»¸ö°üÃû¾Í¿ÉÒÔÕÒµ½ÀàÎÄ¼ş£¿
+     * ä¸ºä»€ä¹ˆç±»åŠ è½½å™¨ä»…å‡­ä¸€ä¸ªåŒ…åå°±å¯ä»¥æ‰¾åˆ°ç±»æ–‡ä»¶ï¼Ÿ
      * @blog "https://blog.csdn.net/u013412772/article/details/80837735
      */
     private static void classPath() throws IOException {

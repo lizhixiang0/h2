@@ -72,6 +72,13 @@ public class UpdateStream {
      *
      */
     public static void b(){
+
+        int a = Stream.of(2,1,4,5,3).max(Integer::compare).get();
+        int b = Stream.of(2,1,4,5,3).min(Integer::compare).get();
+
+        System.out.println(a);
+        System.out.println(b);
+
         OptionalInt optionalInt = IntStream.of(1,2,3,4,2,2).parallel().filter(i->i==2).findAny();
         System.out.println(optionalInt.getAsInt());
 
@@ -270,8 +277,25 @@ public class UpdateStream {
         System.out.println(count);
     }
 
+    @Data
+    @AllArgsConstructor
+    static
+    class Person{
+        String name;
+        int age;
+    }
+
     public static void main(String[] args) {
-       reduce();
+        ArrayList<Person> collect = Stream.of(
+                new Person("李白", 12),
+                new Person("杜甫", 13),
+                new Person("苏轼", 14),
+                new Person("王勃", 14)
+        ).collect(Collectors.toCollection(ArrayList::new));
+
+        collect.forEach(i->i.setAge(1));
+
+        collect.forEach(System.out::println);
     }
 
 }

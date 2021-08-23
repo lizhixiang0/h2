@@ -36,8 +36,7 @@ import java.util.function.UnaryOperator;
  * 默认情况下,对象的所有成员变量都将被持久化.在某些情况下,如果你想避免持久化对象的一些成员变量,你可以使用transient关键字来标记他们,transient也是java中的保留字(JDK 1.8)
  */
 
-public class ArrayList<E> extends AbstractList<E>
-        implements List<E>, RandomAccess, Cloneable, java.io.Serializable {
+public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAccess, Cloneable, java.io.Serializable {
     private static final long serialVersionUID = 8683452581122892189L;
 
     /**
@@ -75,7 +74,7 @@ public class ArrayList<E> extends AbstractList<E>
      * @throws IllegalArgumentException 如果指定容量为负
      */
     public ArrayList(int initialCapacity) {
-        // 如果初始化时ArrayList大小大于0
+        // 如果初始化时ArrayList大于0
         if (initialCapacity > 0) {
             // new一个该大小的object数组赋给elementData
             this.elementData = new Object[initialCapacity];
