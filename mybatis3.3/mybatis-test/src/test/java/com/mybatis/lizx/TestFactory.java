@@ -50,10 +50,11 @@ public class TestFactory {
         PersonDao personDao =  sqlSession.getMapper(PersonDao.class);
 
 //        Person pp = sqlSession.selectOne("getById",13L);
-        /**
-         * 第一次查询
-         */
-        Person person = personDao.getById(4L);
+//        /**
+//         * 第一次查询
+//         */
+        Person person = personDao.getById(11L);
+        System.out.println(person);
 
 //        /**
 //         * 第二次查询
@@ -61,7 +62,7 @@ public class TestFactory {
 //        HashMap person1 = personDao.getPerson(43L);
 
 
-        System.out.println(person);
+
 //        System.out.println(person1);
 
 
