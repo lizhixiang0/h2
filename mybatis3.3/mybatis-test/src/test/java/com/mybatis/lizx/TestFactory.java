@@ -55,6 +55,11 @@ public class TestFactory {
          */
 //        Person person = personDao.getById(1L);
 //        System.out.println(person);
+//        /**
+//         * 第一次查询
+//         */
+        Person person = personDao.getById(11L);
+        System.out.println(person);
 
 //        /**
 //         * 第二次查询

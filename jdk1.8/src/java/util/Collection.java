@@ -30,20 +30,20 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
- * The root interface in the <i>collection hierarchy</i>.  A collection
- * represents a group of objects, known as its <i>elements</i>.  Some
+ * The root interface in the <i>collection hierarchy</i>./?ha??rɑ?ki/  层级
+ * A collection represents a group of objects, known as its <i>elements</i>.  Some
  * collections allow duplicate elements and others do not.  Some are ordered
  * and others unordered.  The JDK does not provide any <i>direct</i>
  * implementations of this interface: it provides implementations of more
  * specific subinterfaces like <tt>Set</tt> and <tt>List</tt>.  This interface
- * is typically used to pass collections around and manipulate them where
- * maximum generality is desired.
+ * is typically used to pass collections around 传递 集合and manipulate them where
+ * maximum generality is desired. 需要最大的通用性
  *
- * <p><i>Bags</i> or <i>multisets</i> (unordered collections that may contain
+ * Bags or multisets (unordered collections that may contain
  * duplicate elements) should implement this interface directly.
  *
- * <p>All general-purpose <tt>Collection</tt> implementation classes (which
- * typically implement <tt>Collection</tt> indirectly through one of its
+ * All general-purpose 通用的  Collection implementation classes (which
+ * typically implement Collection indirectly through one of its
  * subinterfaces) should provide two "standard" constructors: a void (no
  * arguments) constructor, which creates an empty collection, and a
  * constructor with a single argument of type <tt>Collection</tt>, which
@@ -51,10 +51,10 @@ import java.util.stream.StreamSupport;
  * effect, the latter constructor allows the user to copy any collection,
  * producing an equivalent collection of the desired implementation type.
  * There is no way to enforce this convention (as interfaces cannot contain
- * constructors) but all of the general-purpose <tt>Collection</tt>
- * implementations in the Java platform libraries comply.
+ * constructors) but all of the general-purpose Collection>
+ * implementations in the Java platform libraries comply. /k?m?pla?/   顺从应允
  *
- * <p>The "destructive" methods contained in this interface, that is, the
+ * <p>The "destructive 破坏性" methods contained in this interface, that is, the
  * methods that modify the collection on which they operate, are specified to
  * throw <tt>UnsupportedOperationException</tt> if this collection does not
  * support the operation.  If this is the case, these methods may, but are not
@@ -66,20 +66,20 @@ import java.util.stream.StreamSupport;
  *
  * <p><a name="optional-restrictions">
  * Some collection implementations have restrictions on the elements that
- * they may contain.</a>  For example, some implementations prohibit null elements,
+ * they may contain.  For example, some implementations prohibit null elements,
  * and some have restrictions on the types of their elements.  Attempting to
- * add an ineligible element throws an unchecked exception, typically
+ * add an ineligible 不合格的 element throws an unchecked exception, typically
  * <tt>NullPointerException</tt> or <tt>ClassCastException</tt>.  Attempting
  * to query the presence of an ineligible element may throw an exception,
- * or it may simply return false; some implementations will exhibit the former
+ * or it may simply return false; some implementations will exhibit 表现 the former
  * behavior and some will exhibit the latter.  More generally, attempting an
  * operation on an ineligible element whose completion would not result in
- * the insertion of an ineligible element into the collection may throw an
+ * the insertion of 插入  an ineligible element into the collection may throw an
  * exception or it may succeed, at the option of the implementation.
  * Such exceptions are marked as "optional" in the specification for this
  * interface.
  *
- * <p>It is up to each collection to determine its own synchronization
+ * It is up to 取决于 each collection to determine its own synchronization
  * policy.  In the absence of a stronger guarantee by the
  * implementation, undefined behavior may result from the invocation
  * of any method on a collection that is being mutated by another
@@ -88,38 +88,33 @@ import java.util.stream.StreamSupport;
  * iterator to examine the collection.
  *
  * <p>Many methods in Collections Framework interfaces are defined in
- * terms of the {@link Object#equals(Object) equals} method.  For example,
- * the specification for the {@link #contains(Object) contains(Object o)}
- * method says: "returns <tt>true</tt> if and only if this collection
- * contains at least one element <tt>e</tt> such that
- * <tt>(o==null ? e==null : o.equals(e))</tt>."  This specification should
- * <i>not</i> be construed to imply that invoking <tt>Collection.contains</tt>
- * with a non-null argument <tt>o</tt> will cause <tt>o.equals(e)</tt> to be
- * invoked for any element <tt>e</tt>.  Implementations are free to implement
- * optimizations whereby the <tt>equals</tt> invocation is avoided, for
+ * terms of 依据 the {@link Object#equals(Object) equals} method.  For example,
+ * the specification 说明 for the contains(Object o) method says: "returns true if and only if
+ * this collection contains at least one element e such that (o==null ? e==null : o.equals(e))."
+ * This specification should not be construed to imply 被解释为暗指 that invoking Collection.contains
+ * with a non-null argument o will cause o.equals(e) to be
+ * invoked for any element e.  Implementations are free to implement
+ * optimizations 实现类可以进行优化 whereby 即 the equals invocation is avoided, for
  * example, by first comparing the hash codes of the two elements.  (The
  * {@link Object#hashCode()} specification guarantees that two objects with
  * unequal hash codes cannot be equal.)  More generally, implementations of
- * the various Collections Framework interfaces are free to take advantage of
+ * the various Collections Framework interfaces are free to take advantage of 利用
  * the specified behavior of underlying {@link Object} methods wherever the
- * implementor deems it appropriate.
+ * implementor deems it appropriate 认为适当.
  *
- * <p>Some collection operations which perform recursive traversal of the
- * collection may fail with an exception for self-referential instances where
+ * Some collection operations which perform recursive traversal 递归遍历 of the
+ * collection may fail with an exception for self-referential 自引用 instances where
  * the collection directly or indirectly contains itself. This includes the
- * {@code clone()}, {@code equals()}, {@code hashCode()} and {@code toString()}
- * methods. Implementations may optionally handle the self-referential scenario,
+ * clone(), equals(), hashCode() and toString() methods.
+ * Implementations may optionally 可选择地 handle the self-referential scenario 方案,
  * however most current implementations do not do so.
  *
- * <p>This interface is a member of the
- * <a href="{@docRoot}/../technotes/guides/collections/index.html">
- * Java Collections Framework</a>.
- *
- * @implSpec
  * The default method implementations (inherited or otherwise) do not apply any
- * synchronization protocol.  If a {@code Collection} implementation has a
+ * synchronization protocol.  If a Collection implementation has a
  * specific synchronization protocol, then it must override default
  * implementations to apply that protocol.
+ *
+ * 默认实现方法例如 removeIf ,没有应用任何同步协议，如果collection实现类指定了同步协议,那必须重写这些方法
  *
  * @param <E> the type of elements in this collection
  *

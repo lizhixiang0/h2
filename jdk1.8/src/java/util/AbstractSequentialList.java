@@ -26,17 +26,17 @@
 package java.util;
 
 /**
- * This class provides a skeletal implementation of the <tt>List</tt>
- * interface to minimize the effort required to implement this interface
- * backed by a "sequential access" data store (such as a linked list).  For
+ * This class provides a skeletal /?skel?tl/ 骨架 implementation of the <tt>List</tt>
+ * interface to minimize 最小化 the effort required to implement this interface
+ * backed by 被依靠 a "sequential access" data store (such as a linked list).  For
  * random access data (such as an array), <tt>AbstractList</tt> should be used
- * in preference to this class.<p>
+ * in preference to 优先于 this class.<p>
  *
- * This class is the opposite of the <tt>AbstractList</tt> class in the sense
+ * This class is the opposite of the <tt>AbstractList</tt> class in the sense  就。。而言
  * that it implements the "random access" methods (<tt>get(int index)</tt>,
  * <tt>set(int index, E element)</tt>, <tt>add(int index, E element)</tt> and
- * <tt>remove(int index)</tt>) on top of the list's list iterator, instead of
- * the other way around.<p>
+ * <tt>remove(int index)</tt>) on top of 基于 the list's list iterator, instead of
+ * the other way around. 而不是反道而行 （针对前面说的基于迭代器） <p>
  *
  * To implement a list the programmer needs only to extend this class and
  * provide implementations for the <tt>listIterator</tt> and <tt>size</tt>
@@ -45,12 +45,12 @@ package java.util;
  * <tt>previous</tt> and <tt>index</tt> methods.<p>
  *
  * For a modifiable list the programmer should additionally implement the list
- * iterator's <tt>set</tt> method.  For a variable-size list the programmer
+ * iterator's <tt>set</tt> method.  For a variable-size 可变大小 list the programmer
  * should additionally implement the list iterator's <tt>remove</tt> and
  * <tt>add</tt> methods.<p>
  *
  * The programmer should generally provide a void (no argument) and collection
- * constructor, as per the recommendation in the <tt>Collection</tt> interface
+ * constructor, as per the recommendation 推荐 in the <tt>Collection</tt> interface
  * specification.<p>
  *
  * This class is a member of the

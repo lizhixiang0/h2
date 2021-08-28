@@ -2,6 +2,7 @@ package util.list;
 
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
@@ -36,17 +37,21 @@ public class RandomAccessTest {
 
         System.out.println(endTime3-startTime3);
 
-        // 测试链表for循环取数
-        long startTime1 = System.currentTimeMillis();
-        for (int i = 0; i <linkedList.size();i++){
-            Object o = linkedList.get(i);
-        }
-        long endTime1 = System.currentTimeMillis();
-        System.out.println(endTime1-startTime1);
+//        // 测试链表for循环取数
+//        long startTime1 = System.currentTimeMillis();
+//        for (int i = 0; i <linkedList.size();i++){
+//            Object o = linkedList.get(i);
+//        }
+//        long endTime1 = System.currentTimeMillis();
+//        System.out.println(endTime1-startTime1);
 
         // 测试链表forEach取数
         long startTime2 = System.currentTimeMillis();
-        linkedList.forEach(i->{});
+        Iterator iterator = linkedList.iterator();
+        while (iterator.hasNext()){
+            iterator.next();
+        }
+        //linkedList.forEach(i->{}); //forEach是个语法糖，实际就是使用的迭代器
         long endTime2 = System.currentTimeMillis();
 
         System.out.println(endTime2-startTime2);

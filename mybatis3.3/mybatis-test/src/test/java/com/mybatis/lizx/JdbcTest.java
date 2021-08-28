@@ -12,12 +12,12 @@ import java.sql.*;
  * @blog "https://www.jianshu.com/p/e8571cba96d3
  **/
 public class JdbcTest {
-    protected String poolPingQuery = "NO PING QUERY SET";
+    protected String poolPingQuery = "SELECT *  FROM paxvas_appscan.ac_task where env_code = 'sit' and status = 'F' order by created_time desc limit 0,1;";
 
     @Test
     public void test() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.cj.jdbc.Driver") ;
-        String url = "jdbc:mysql://localhost:3306/db_mybatis?serverTimezone=GMT%2B8" ;
+        String url = "jdbc:mysql://localhost:3306/paxvas_appscan?serverTimezone=CST" ;
         String username = "root" ;
         String password = "root" ;
         DriverManager.setLoginTimeout(10);
@@ -29,6 +29,22 @@ public class JdbcTest {
         Statement statement = connection.createStatement();
         // c、传递参数
         ResultSet rs = statement.executeQuery(poolPingQuery);
+
+        ResultSetMetaData meta = rs.getMetaData();
+
+        Timestamp date = null;
+        while (rs.next()) {
+            int colcount = meta.getColumnCount();
+            for (int i=1;i<=colcount;i++){
+                String created_time = meta.getColumnLabel(i);
+                if (created_time.equals("created_time"))
+                date = rs.getTimestamp(i);
+            }
+        }
+
+        System.out.println(date);
+
+
         // d、关闭rs和statement
         rs.close();
         statement.close();

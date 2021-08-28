@@ -35,13 +35,9 @@ import java.util.function.Consumer;
  * <ul>
  *      <li> Iterators allow the caller to remove elements from the
  *           underlying collection during the iteration with well-defined
- *           semantics.
+ *           semantics.  定义良好的语义
  *      <li> Method names have been improved.
  * </ul>
- *
- * <p>This interface is a member of the
- * <a href="{@docRoot}/../technotes/guides/collections/index.html">
- * Java Collections Framework</a>.
  *
  * @param <E> the type of elements returned by this iterator
  *
@@ -49,6 +45,7 @@ import java.util.function.Consumer;
  * @see Collection
  * @see ListIterator
  * @see Iterable
+ * @blog "https://www.cnblogs.com/qlky/p/7367791.html
  * @since 1.2
  */
 public interface Iterator<E> {
@@ -74,7 +71,7 @@ public interface Iterator<E> {
      * by this iterator (optional operation).  This method can be called
      * only once per call to {@link #next}.  The behavior of an iterator
      * is unspecified if the underlying collection is modified while the
-     * iteration is in progress in any way other than by calling this
+     * iteration is in progress in any way other than 以任何方式，除了 by calling this
      * method.
      *
      * @implSpec
