@@ -3,68 +3,47 @@ package java.util;
 import java.util.function.UnaryOperator;
 
 /**
- * An ordered collection (also known as a <i>sequence</i>).  The user of this
- * interface has precise control over where in the list each element is
- * inserted.  The user can access elements by their integer index (position in
- * the list), and search for elements in the list.<p>
+ * An ordered collection (also known as a sequence).
+ * The user of this interface has precise control over where in the list each element is inserted.
+ * The user can access elements by their integer index (position in the list), and search for elements in the list.
  *
- * Unlike sets, lists typically allow duplicate elements.  More formally,
- * lists typically allow pairs of elements <tt>e1</tt> and <tt>e2</tt>
- * such that <tt>e1.equals(e2)</tt>, and they typically allow multiple
- * null elements if they allow null elements at all.  It is not inconceivable
- * that someone might wish to implement a list that prohibits duplicates, by
- * throwing runtime exceptions when the user attempts to insert them, but we
- * expect this usage to be rare.<p>
+ * Unlike sets, lists typically allow duplicate elements.  列表通常允许重复元素
+ * More formally,lists typically allow pairs of elements e1 and e2 such that e1.equals(e2), and they typically allow multiple null elements if they allow null elements at all.
+ * It is not inconceivable that someone might wish to implement a list that prohibits duplicates, by throwing runtime exceptions when the user attempts to insert them,
+ * but we expect this usage to be rare.  不难想象..., 但是我们希望这种情况很少发生
  *
- * The <tt>List</tt> interface places additional stipulations, beyond those
- * specified in the <tt>Collection</tt> interface, on the contracts of the
- * <tt>iterator</tt>, <tt>add</tt>, <tt>remove</tt>, <tt>equals</tt>, and
- * <tt>hashCode</tt> methods.  Declarations for other inherited methods are
- * also included here for convenience.<p>
+ * The List interface places additional stipulations 提出了额外的规定, beyond those specified in the Collection interface, on the contracts of the iterator, add, remove, equals, and hashCode methods.
+ * Declarations for other inherited methods are also included here for convenience.
  *
- * The <tt>List</tt> interface provides four methods for positional (indexed)
- * access to list elements.  Lists (like Java arrays) are zero based.  Note
- * that these operations may execute in time proportional to the index value
- * for some implementations (the <tt>LinkedList</tt> class, for
- * example). Thus, iterating over the elements in a list is typically
- * preferable to indexing through it if the caller does not know the
- * implementation.<p>
+ * The List interface provides four methods for positional (indexed) access to list elements.
+ * Lists (like Java arrays) are zero based.
+ * Note that these operations may execute in time proportional 按时间比例执行 to the index value for some implementations (the LinkedList class, for example).
+ * Thus, iterating over the elements in a list is typically preferable to indexing through it if the caller does not know the implementation.
  *
- * The <tt>List</tt> interface provides a special iterator, called a
- * <tt>ListIterator</tt>, that allows element insertion and replacement, and
- * bidirectional access in addition to the normal operations that the
- * <tt>Iterator</tt> interface provides.  A method is provided to obtain a
- * list iterator that starts at a specified position in the list.<p>
+ * The List interface provides a special iterator, called a ListIterator, that allows element insertion and replacement,
+ * and bidirectional 双向的 access in addition to 除了 the normal operations that the Iterator interface provides.
+ * A method is provided to obtain a list iterator that starts at a specified position in the list.
  *
- * The <tt>List</tt> interface provides two methods to search for a specified
- * object.  From a performance standpoint, these methods should be used with
- * caution.  In many implementations they will perform costly linear
- * searches.<p>
+ * The List interface provides two methods to search for a specified object.
+ * From a performance standpoint 立场, these methods should be used with caution.  从性能的角度来看，应该谨慎使用这些方法
+ * In many implementations they will perform costly linear searches. 在许多实现中，它们将执行耗费性能的线性搜索
  *
- * The <tt>List</tt> interface provides two methods to efficiently insert and
- * remove multiple elements at an arbitrary point in the list.<p>
+ * The List interface provides two methods to efficiently insert and remove multiple elements at an arbitrary point in the list.
+ * List接口提供了两种方法来有效地在列表中的任意点插入和删除多个元素。
  *
- * Note: While it is permissible for lists to contain themselves as elements,
- * extreme caution is advised: the <tt>equals</tt> and <tt>hashCode</tt>
- * methods are no longer well defined on such a list.
+ * Note: While it is permissible for lists to contain themselves as elements,extreme caution is advised: the equals and hashCode methods are no longer well defined on such a list.
+ * 注意:虽然允许列表将自身包含为元素，但还是要格外小心:在这样的列表上，equals和hashCode方法不方便定义。
  *
- * <p>Some list implementations have restrictions on the elements that
- * they may contain.  For example, some implementations prohibit null elements,
- * and some have restrictions on the types of their elements.  Attempting to
- * add an ineligible element throws an unchecked exception, typically
- * <tt>NullPointerException</tt> or <tt>ClassCastException</tt>.  Attempting
- * to query the presence of an ineligible element may throw an exception,
- * or it may simply return false; some implementations will exhibit the former
- * behavior and some will exhibit the latter.  More generally, attempting an
- * operation on an ineligible element whose completion would not result in
- * the insertion of an ineligible element into the list may throw an
- * exception or it may succeed, at the option of the implementation.
- * Such exceptions are marked as "optional" in the specification for this
- * interface.
+ * Some list implementations have restrictions on the elements that they may contain.
+ * For example, some implementations prohibit null elements,and some have restrictions on the types of their elements.
+ * Attempting to add an ineligible element throws an unchecked exception, typically NullPointerException or ClassCastException.
+ * Attempting to query the presence of an ineligible element may throw an exception,or it may simply return false;
+ * some implementations will exhibit the former behavior and some will exhibit the latter.
+ * More generally, attempting an operation on an ineligible element whose completion would not result in the insertion of an ineligible element into the list
+ * may throw an exception or it may succeed, at the option of the implementation.
+ * Such exceptions are marked as "optional" in the specification for this interface.
  *
- * <p>This interface is a member of the
- * <a href="{@docRoot}/../technotes/guides/collections/index.html">
- * Java Collections Framework</a>.
+ * 尝试操作一个不合规的元素，如果该操作的完成不会导致将不合格的元素插入到列表中,这个操作可能会抛出异常，也可能会成功，这取决于实现的选择。
  *
  * @param <E> the type of elements in this list
  *

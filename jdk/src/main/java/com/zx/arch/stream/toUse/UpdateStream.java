@@ -49,7 +49,7 @@ public class UpdateStream {
         Stream<String> stream3 = streamB.flatMap(str -> Arrays.stream(str));
         stream3.distinct().forEach(System.out::print);
 
-        // 最重要的一点是map可以改变返回值类型，而peek无法改变返回值类型，但peek可用来修改数据；
+        // 最重要的一点是map可以改变返回值类型，而peek无法改变返回值类型，但peek可用来修改数据;
         // 注意： map 和peek 都有返回值为Stream ,且注意两者执行函数的时机不同
         // @blog https://www.jianshu.com/p/4fabc8a7abca
         // 下面是不会执行的，因为这两个方法都是中间操作,不是终止操作 @blog https://blog.csdn.net/weixin_26969967/article/details/113015509

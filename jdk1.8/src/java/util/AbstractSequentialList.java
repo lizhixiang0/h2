@@ -26,36 +26,21 @@
 package java.util;
 
 /**
- * This class provides a skeletal /?skel?tl/ 骨架 implementation of the <tt>List</tt>
- * interface to minimize 最小化 the effort required to implement this interface
- * backed by 被依靠 a "sequential access" data store (such as a linked list).  For
- * random access data (such as an array), <tt>AbstractList</tt> should be used
- * in preference to 优先于 this class.<p>
+ * This class provides a skeletal /?skel?tl/ 骨架 implementation of the List interface to minimize 最小化 the effort required to implement this interface backed by 被依靠 a "sequential access" data store (such as a linked list).
+ * For random access data (such as an array), AbstractList should be used in preference to 优先于 this class.
  *
- * This class is the opposite of the <tt>AbstractList</tt> class in the sense  就。。而言
- * that it implements the "random access" methods (<tt>get(int index)</tt>,
- * <tt>set(int index, E element)</tt>, <tt>add(int index, E element)</tt> and
- * <tt>remove(int index)</tt>) on top of 基于 the list's list iterator, instead of
- * the other way around. 而不是反道而行 （针对前面说的基于迭代器） <p>
+ * This class is the opposite of the AbstractList class in the sense  就。。而言 that it implements the "random access" methods (get(int index),set(int index, E element), add(int index, E element)
+ * and remove(int index)) on top of 基于 the list's list iterator, instead of the other way around. 而是反道而行 （针对前面说的基于迭代器）
  *
- * To implement a list the programmer needs only to extend this class and
- * provide implementations for the <tt>listIterator</tt> and <tt>size</tt>
- * methods.  For an unmodifiable list, the programmer need only implement the
- * list iterator's <tt>hasNext</tt>, <tt>next</tt>, <tt>hasPrevious</tt>,
- * <tt>previous</tt> and <tt>index</tt> methods.<p>
+ * To implement a list the programmer needs only to extend this class and provide implementations for the listIterator and size methods.
+ * For an unmodifiable list, the programmer need only implement the list iterator's hasNext, next, hasPrevious,previous and index methods.
  *
- * For a modifiable list the programmer should additionally implement the list
- * iterator's <tt>set</tt> method.  For a variable-size 可变大小 list the programmer
- * should additionally implement the list iterator's <tt>remove</tt> and
- * <tt>add</tt> methods.<p>
+ * For a modifiable list the programmer should additionally implement the list iterator's set method.
+ * For a variable-size 可变大小 list the programmer should additionally implement the list iterator's remove and add methods.
  *
- * The programmer should generally provide a void (no argument) and collection
- * constructor, as per the recommendation 推荐 in the <tt>Collection</tt> interface
- * specification.<p>
+ * The programmer should generally provide a void (no argument) and collection constructor, as per the recommendation 推荐 in the Collection interface specification.
  *
- * This class is a member of the
- * <a href="{@docRoot}/../technotes/guides/collections/index.html">
- * Java Collections Framework</a>.
+ * This class is a member of the Java Collections Framework.
  *
  * @author  Josh Bloch
  * @author  Neal Gafter

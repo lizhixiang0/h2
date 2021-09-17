@@ -1,5 +1,4 @@
-package util.list;
-
+package util.interfaces.mark;
 
 import java.util.ArrayList;
 import java.util.Iterator;

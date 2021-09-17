@@ -26,31 +26,21 @@
 package java.util;
 
 /**
- * This class provides a skeletal implementation of the <tt>Collection</tt>
- * interface, to minimize the effort required to implement this interface. <p>
+ * This class provides a skeletal implementation of the Collection interface, to minimize the effort required to implement this interface.
+ * 该类提供了Collection接口的框架实现,来最小化实现该接口的工作。
  *
- * To implement an unmodifiable collection, the programmer needs only to
- * extend this class and provide implementations for the <tt>iterator</tt> and
- * <tt>size</tt> methods.  (The iterator returned by the <tt>iterator</tt>
- * method must implement <tt>hasNext</tt> and <tt>next</tt>.)<p>
+ * To implement an unmodifiable collection, the programmer needs only to extend this class and provide implementations for the iterator and size methods.
+ * (The iterator returned by the iterator method must implement hasNext and next.)
  *
- * To implement a modifiable collection, the programmer must additionally
- * override this class's <tt>add</tt> method (which otherwise throws an
- * <tt>UnsupportedOperationException</tt>), and the iterator returned by the
- * <tt>iterator</tt> method must additionally implement its <tt>remove</tt>
- * method.<p>
+ * To implement a modifiable collection, the programmer must additionally override this class's add method (which otherwise throws an UnsupportedOperationException),
+ * and the iterator returned by the iterator method must additionally implement its remove method.
  *
- * The programmer should generally provide a void (no argument) and
- * <tt>Collection</tt> constructor, as per the recommendation in the
- * <tt>Collection</tt> interface specification.<p>
+ * The programmer should generally provide a void (no argument) and Collection constructor, as per the recommendation in the Collection interface specification.
  *
- * The documentation for each non-abstract method in this class describes its
- * implementation in detail.  Each of these methods may be overridden if
- * the collection being implemented admits a more efficient implementation.<p>
+ * The documentation for each non-abstract method in this class describes its implementation in detail. 这个类中每个非抽象方法的文档都有对实现的详细描述。
+ * Each of these methods may be overridden if the collection being implemented admits a more efficient implementation.
  *
- * This class is a member of the
- * <a href="{@docRoot}/../technotes/guides/collections/index.html">
- * Java Collections Framework</a>.
+ * This class is a member of the Java Collections Framework.
  *
  * @author  Josh Bloch
  * @author  Neal Gafter
