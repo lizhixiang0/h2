@@ -26,29 +26,35 @@
 package java.util;
 
 /**
- * This class provides a skeletal /?skel?tl/ 骨架 implementation of the List interface to minimize 最小化 the effort required to implement this interface backed by 被依靠 a "sequential access" data store (such as a linked list).
- * For random access data (such as an array), AbstractList should be used in preference to 优先于 this class.
+ * This class provides a skeletal  implementation of the List interface to minimize the effort required to implement this interface backed by a "sequential access" data store (such as a linked list).
+ * 这个类提供了List接口的框架实现，以减少基于"顺序访问"数据存储(如链表)实现此接口所需的工作。
  *
- * This class is the opposite of the AbstractList class in the sense  就。。而言 that it implements the "random access" methods (get(int index),set(int index, E element), add(int index, E element)
- * and remove(int index)) on top of 基于 the list's list iterator, instead of the other way around. 而是反道而行 （针对前面说的基于迭代器）
+ * For random access data (such as an array), AbstractList should be used in preference to this class.
+ * 对于随机访问数据(比如数组)，应该优先使用AbstractList
+ *
+ * This class is the opposite of the AbstractList class in the sense that it implements the "random access" methods (get(int index),set(int index, E element), add(int index, E element) and remove(int index))
+ * 这个类与AbstractList类相反，就它基于列表迭代器实现的“随机访问”方法而言，如 (get(int index)、set(int index, E element)、add(int index, E element)和remove(int index))
+ *
+ * on top of  the list's list iterator, instead of the other way around. 而不是反过来。  （反过来的意思是,AbstractList是列表迭代器基于这些方法，而AbstractSequentialList是这些方法基于列表迭代器）
  *
  * To implement a list the programmer needs only to extend this class and provide implementations for the listIterator and size methods.
+ * 要实现列表，程序员只需要扩展这个类并提供listIterator和size方法的实现
+ *
  * For an unmodifiable list, the programmer need only implement the list iterator's hasNext, next, hasPrevious,previous and index methods.
+ * 对于不可修改的列表，程序员只需要实现列表迭代器的hasNext、next、hasPrevious、previous和index方法
  *
  * For a modifiable list the programmer should additionally implement the list iterator's set method.
- * For a variable-size 可变大小 list the programmer should additionally implement the list iterator's remove and add methods.
+ * 对于可修改列表，程序员应该另外实现列表迭代器的set方法
+ *
+ * For a variable-size list the programmer should additionally implement the list iterator's remove and add methods.
+ * 对于可变大小的列表，程序员应该额外实现列表迭代器的remove和add方法。
  *
  * The programmer should generally provide a void (no argument) and collection constructor, as per the recommendation 推荐 in the Collection interface specification.
  *
  * This class is a member of the Java Collections Framework.
  *
- * @author  Josh Bloch
- * @author  Neal Gafter
- * @see Collection
- * @see List
- * @see AbstractList
- * @see AbstractCollection
- * @since 1.2
+ * @blog " https://blog.csdn.net/qq_32440951/article/details/78399661
+ *
  */
 
 public abstract class AbstractSequentialList<E> extends AbstractList<E> {

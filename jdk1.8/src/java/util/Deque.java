@@ -36,75 +36,54 @@
 package java.util;
 
 /**
- * A linear collection that supports element insertion and removal at
- * both ends.  The name <i>deque</i> is short for "double ended queue"
- * and is usually pronounced "deck".  Most {@code Deque}
- * implementations place no fixed limits on the number of elements
- * they may contain, but this interface supports capacity-restricted
- * deques as well as those with no fixed size limit.
+ * deque 双端队列
  *
- * <p>This interface defines methods to access the elements at both
- * ends of the deque.  Methods are provided to insert, remove, and
- * examine the element.  Each of these methods exists in two forms:
- * one throws an exception if the operation fails, the other returns a
- * special value (either {@code null} or {@code false}, depending on
- * the operation).  The latter form of the insert operation is
- * designed specifically for use with capacity-restricted
- * {@code Deque} implementations; in most implementations, insert
- * operations cannot fail.
+ * A linear collection that supports element insertion and removal at both ends. 在两端支持元素插入和移除的线性集合。
  *
- * <p>The twelve methods described above are summarized in the
- * following table:
+ * The name deque is short for "double ended queue" and is usually pronounced "deck". deque是“双端队列”的缩写，通常发音为“deck”。
+ * Most Deque implementations place no fixed limits on the number of elements they may contain, but this interface supports capacity-restricted deques as well as those with no fixed size limit.
+ * 大多数Deque实现对可能包含的元素数量没有固定的限制，但是这个接口支持容量限制的Deque以及没有固定大小限制的Deque
  *
- * <table BORDER CELLPADDING=3 CELLSPACING=1>
- * <caption>Summary of Deque methods</caption>
- *  <tr>
- *    <td></td>
- *    <td ALIGN=CENTER COLSPAN = 2> <b>First Element (Head)</b></td>
- *    <td ALIGN=CENTER COLSPAN = 2> <b>Last Element (Tail)</b></td>
- *  </tr>
- *  <tr>
- *    <td></td>
- *    <td ALIGN=CENTER><em>Throws exception</em></td>
- *    <td ALIGN=CENTER><em>Special value</em></td>
- *    <td ALIGN=CENTER><em>Throws exception</em></td>
- *    <td ALIGN=CENTER><em>Special value</em></td>
- *  </tr>
- *  <tr>
+ * This interface defines methods to access the elements at both ends of the deque. 这个接口定义了访问deque容器两端元素的方法
+ * Methods are provided to insert, remove, and examine the element. 提供了插入、删除和检查元素的方法
+ * Each of these methods exists in two forms: one throws an exception if the operation fails, the other returns a special value (either null or false, depending on the operation).
+ * 这些方法都以两种形式存在:一个在操作失败时抛出异常，另一个返回一个特殊值(null或false，取决于操作)
+ *
+ * The latter form of the insert operation is designed specifically for use with capacity-rsestricted Deque implementations; 后一种形式的插入操作是专门为容量受限的Deque实现而设计的
+ *
+ * in most implementations, insert operations cannot fail. 在大多数实现中，插入操作不会失败
+ *
+ * The twelve methods described above are summarized in the following table:
+ * Summary of Deque methods
+ *
  *    <td><b>Insert</b></td>
+ *
  *    <td>{@link Deque#addFirst addFirst(e)}</td>
  *    <td>{@link Deque#offerFirst offerFirst(e)}</td>
  *    <td>{@link Deque#addLast addLast(e)}</td>
  *    <td>{@link Deque#offerLast offerLast(e)}</td>
- *  </tr>
- *  <tr>
+ *
  *    <td><b>Remove</b></td>
+ *
  *    <td>{@link Deque#removeFirst removeFirst()}</td>
  *    <td>{@link Deque#pollFirst pollFirst()}</td>
  *    <td>{@link Deque#removeLast removeLast()}</td>
  *    <td>{@link Deque#pollLast pollLast()}</td>
- *  </tr>
- *  <tr>
+ *
  *    <td><b>Examine</b></td>
+ *
  *    <td>{@link Deque#getFirst getFirst()}</td>
  *    <td>{@link Deque#peekFirst peekFirst()}</td>
  *    <td>{@link Deque#getLast getLast()}</td>
  *    <td>{@link Deque#peekLast peekLast()}</td>
- *  </tr>
- * </table>
  *
- * <p>This interface extends the {@link Queue} interface.  When a deque is
- * used as a queue, FIFO (First-In-First-Out) behavior results.  Elements are
- * added at the end of the deque and removed from the beginning.  The methods
- * inherited from the {@code Queue} interface are precisely equivalent to
- * {@code Deque} methods as indicated in the following table:
+ * This interface extends the Queue interface.
+ * When a deque is used as a queue, FIFO (First-In-First-Out) behavior results.
+ * Elements are added at the end of the deque and removed from the beginning.
+ * The methods inherited from the Queue interface are precisely equivalent to Deque methods as indicated in the following table:
+ * 继承自Queue接口的方法与Deque方法完全等价，如下表所示
  *
- * <table BORDER CELLPADDING=3 CELLSPACING=1>
- * <caption>Comparison of Queue and Deque methods</caption>
- *  <tr>
- *    <td ALIGN=CENTER> <b>{@code Queue} Method</b></td>
- *    <td ALIGN=CENTER> <b>Equivalent {@code Deque} Method</b></td>
- *  </tr>
+ * Comparison of Queue and Deque methods
  *  <tr>
  *    <td>{@link java.util.Queue#add add(e)}</td>
  *    <td>{@link #addLast addLast(e)}</td>
@@ -129,20 +108,13 @@ package java.util;
  *    <td>{@link java.util.Queue#peek peek()}</td>
  *    <td>{@link #peek peekFirst()}</td>
  *  </tr>
- * </table>
  *
- * <p>Deques can also be used as LIFO (Last-In-First-Out) stacks.  This
- * interface should be used in preference to the legacy {@link Stack} class.
- * When a deque is used as a stack, elements are pushed and popped from the
- * beginning of the deque.  Stack methods are precisely equivalent to
- * {@code Deque} methods as indicated in the table below:
+ * Deques can also be used as LIFO (Last-In-First-Out) stacks.
+ * This interface should be used in preference to the legacy Stack class.
+ * When a deque is used as a stack, elements are pushed and popped from the beginning of the deque.
+ * Stack methods are precisely equivalent to Deque methods as indicated in the table below:
  *
- * <table BORDER CELLPADDING=3 CELLSPACING=1>
- * <caption>Comparison of Stack and Deque methods</caption>
- *  <tr>
- *    <td ALIGN=CENTER> <b>Stack Method</b></td>
- *    <td ALIGN=CENTER> <b>Equivalent {@code Deque} Method</b></td>
- *  </tr>
+ * Comparison of Stack and Deque methods
  *  <tr>
  *    <td>{@link #push push(e)}</td>
  *    <td>{@link #addFirst addFirst(e)}</td>
@@ -155,35 +127,21 @@ package java.util;
  *    <td>{@link #peek peek()}</td>
  *    <td>{@link #peekFirst peekFirst()}</td>
  *  </tr>
- * </table>
  *
- * <p>Note that the {@link #peek peek} method works equally well when
- * a deque is used as a queue or a stack; in either case, elements are
- * drawn from the beginning of the deque.
+ * Note that the peek method works equally well when a deque is used as a queue or a stack;
+ * in either case, elements are drawn from the beginning of the deque.
  *
- * <p>This interface provides two methods to remove interior
- * elements, {@link #removeFirstOccurrence removeFirstOccurrence} and
- * {@link #removeLastOccurrence removeLastOccurrence}.
+ * This interface provides two methods to remove interior elements, removeFirstOccurrence and removeLastOccurrence.
  *
- * <p>Unlike the {@link List} interface, this interface does not
- * provide support for indexed access to elements.
+ * Unlike the List interface, this interface does not provide support for indexed access to elements.
  *
- * <p>While {@code Deque} implementations are not strictly required
- * to prohibit the insertion of null elements, they are strongly
- * encouraged to do so.  Users of any {@code Deque} implementations
- * that do allow null elements are strongly encouraged <i>not</i> to
- * take advantage of the ability to insert nulls.  This is so because
- * {@code null} is used as a special return value by various methods
- * to indicated that the deque is empty.
+ * While Deque implementations are not strictly required to prohibit the insertion of null elements, they are strongly encouraged to do so.
+ * Users of any e Deque implementations that do allow null elements are strongly encouraged not to take advantage of the ability to insert nulls.
+ * This is so because null is used as a special return value by various methods to indicated that the deque is empty.
  *
- * <p>{@code Deque} implementations generally do not define
- * element-based versions of the {@code equals} and {@code hashCode}
- * methods, but instead inherit the identity-based versions from class
- * {@code Object}.
+ * Deque implementations generally do not define element-based versions of the  equals and  hashCode methods, but instead inherit the identity-based versions from class Object.
  *
- * <p>This interface is a member of the <a
- * href="{@docRoot}/../technotes/guides/collections/index.html"> Java Collections
- * Framework</a>.
+ * This interface is a member of the Java Collections Framework.
  *
  * @author Doug Lea
  * @author Josh Bloch

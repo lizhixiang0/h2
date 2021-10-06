@@ -655,49 +655,29 @@ public class Proxy implements java.io.Serializable {
     }
 
     /**
-     * Returns an instance of a proxy class for the specified interfaces
-     * that dispatches method invocations to the specified invocation
-     * handler.
+     * Returns an instance of a proxy class for the specified interfaces that dispatches method invocations to the specified invocation handler.
+     * 返回指定接口的代理类的实例，该接口将方法调用分派给指定的调用处理程序
      *
-     * <p>{@code Proxy.newProxyInstance} throws
-     * {@code IllegalArgumentException} for the same reasons that
-     * {@code Proxy.getProxyClass} does.
+     * Proxy.newProxyInstance throws IllegalArgumentException for the same reasons that Proxy.getProxyClass does.
      *
-     * @param   loader the class loader to define the proxy class
-     * @param   interfaces the list of interfaces for the proxy class
-     *          to implement
-     * @param   h the invocation handler to dispatch method invocations to
-     * @return  a proxy instance with the specified invocation handler of a
-     *          proxy class that is defined by the specified class loader
-     *          and that implements the specified interfaces
-     * @throws  IllegalArgumentException if any of the restrictions on the
-     *          parameters that may be passed to {@code getProxyClass}
-     *          are violated
-     * @throws  SecurityException if a security manager, <em>s</em>, is present
-     *          and any of the following conditions is met:
-     *          <ul>
-     *          <li> the given {@code loader} is {@code null} and
-     *               the caller's class loader is not {@code null} and the
-     *               invocation of {@link SecurityManager#checkPermission
-     *               s.checkPermission} with
-     *               {@code RuntimePermission("getClassLoader")} permission
-     *               denies access;</li>
-     *          <li> for each proxy interface, {@code intf},
-     *               the caller's class loader is not the same as or an
-     *               ancestor of the class loader for {@code intf} and
-     *               invocation of {@link SecurityManager#checkPackageAccess
-     *               s.checkPackageAccess()} denies access to {@code intf};</li>
-     *          <li> any of the given proxy interfaces is non-public and the
-     *               caller class is not in the same {@linkplain Package runtime package}
-     *               as the non-public interface and the invocation of
-     *               {@link SecurityManager#checkPermission s.checkPermission} with
-     *               {@code ReflectPermission("newProxyInPackage.{package name}")}
-     *               permission denies access.</li>
-     *          </ul>
-     * @throws  NullPointerException if the {@code interfaces} array
-     *          argument or any of its elements are {@code null}, or
-     *          if the invocation handler, {@code h}, is
-     *          {@code null}
+     * @param   loader the class loader to define the proxy class   类加载器
+     * @param   interfaces the list of interfaces for the proxy class to implement  接口列表
+     * @param   h the invocation handler to dispatch method invocations to  分派接口内方法的调用处理程序
+     *
+     * @return  a proxy instance with the specified invocation handler of a proxy class that is defined by the specified class loader and that implements the specified interfaces
+     *          具有代理类的指定调用处理程序的代理实例，该代理类由指定的类加载器定义并实现指定的接口
+     *
+     * @throws  IllegalArgumentException if any of the restrictions on the parameters that may be passed to getProxyClass are violated  如果违反了对可能传递给getProxyClass的参数的任何限制
+     *
+     * @throws  SecurityException if a security manager, s, is present and any of the following conditions is met:  下面三种情况会抛出SecurityException
+     *
+     *          1、the given loader is null and the caller's class loader is not null and the invocation of SecurityManager checkPermission s.checkPermission with RuntimePermission("getClassLoader") permission denies access;
+     *
+     *          2、for each proxy interface, {@code intf},the caller's class loader is not the same as or an ancestor of the class loader for {@code intf} and invocation of SecurityManager.checkPackageAccess denies access to {@code intf};
+     *
+     *          3、any of the given proxy interfaces is non-public and the caller class is not in the same {@linkplain Package runtime package} as the non-public interface and the invocation of SecurityManager.checkPermission with ReflectPermission("newProxyInPackage.{package name}") permission denies access.
+     *
+     * @throws  NullPointerException if the interfaces array argument or any of its elements are null, or if the invocation handler h is null
      */
     @CallerSensitive
     public static Object newProxyInstance(ClassLoader loader,

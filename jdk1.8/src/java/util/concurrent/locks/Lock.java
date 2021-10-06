@@ -37,25 +37,24 @@ package java.util.concurrent.locks;
 import java.util.concurrent.TimeUnit;
 
 /**
- * {@code Lock} implementations provide more extensive locking
- * operations than can be obtained using {@code synchronized} methods
- * and statements.  They allow more flexible structuring, may have
- * quite different properties, and may support multiple associated
- * {@link Condition} objects.
+ * Lock implementations provide more extensive locking operations than can be obtained using synchronized methods and statements.
+ * 锁实现提供了比使用同步方法和语句获得的更广泛的锁操作
  *
- * <p>A lock is a tool for controlling access to a shared resource by
- * multiple threads. Commonly, a lock provides exclusive access to a
- * shared resource: only one thread at a time can acquire the lock and
- * all access to the shared resource requires that the lock be
- * acquired first. However, some locks may allow concurrent access to
- * a shared resource, such as the read lock of a {@link ReadWriteLock}.
+ * They allow more flexible structuring, may have quite different properties, and may support multiple associated {@link Condition} objects.
+ * 它们允许更灵活的结构，可能有非常不同的属性，并可能支持多个关联的Condition对象
  *
- * <p>The use of {@code synchronized} methods or statements provides
- * access to the implicit monitor lock associated with every object, but
- * forces all lock acquisition and release to occur in a block-structured way:
- * when multiple locks are acquired they must be released in the opposite
- * order, and all locks must be released in the same lexical scope in which
- * they were acquired.
+ * A lock is a tool for controlling access to a shared resource by multiple threads.  锁是一种工具，用于控制多线程对共享资源的访问
+ * Commonly, a lock provides exclusive access to a shared resource: only one thread at a time can acquire the lock and all access to the shared resource requires that the lock be acquired first.
+ * 通常，锁提供对共享资源的独占访问:一次只有一个线程可以获得锁，所有对共享资源的访问都需要先获得锁
+ * However, some locks may allow concurrent access to a shared resource, such as the read lock of a {@link ReadWriteLock}.
+ * 但是，有些锁可能允许并发访问共享资源，例如ReadWriteLock的读锁
+ *
+ * The use of synchronized methods or statements provides access to the implicit monitor lock associated with every object, but forces all lock acquisition and release to occur in a block-structured way:
+ * 同步方法或语句的使用提供了对与每个对象关联的隐式监视锁的访问，但强制以块结构的方式获取和释放所有锁
+ *
+ * when multiple locks are acquired they must be released in the opposite order, and all locks must be released in the same lexical scope in which they were acquired.
+ * 当获得多个锁时，必须以相反的顺序释放它们，并且所有锁必须在获得它们的相同词法作用域中释放
+ *
  *
  * <p>While the scoping mechanism for {@code synchronized} methods
  * and statements makes it much easier to program with monitor locks,

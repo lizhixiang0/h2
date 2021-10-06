@@ -37,16 +37,15 @@ package java.util.concurrent;
 import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 
 /**
- * A synchronization aid that allows one or more threads to wait until
- * a set of operations being performed in other threads completes.
+ * 闭闩
  *
- * <p>A {@code CountDownLatch} is initialized with a given <em>count</em>.
- * The {@link #await await} methods block until the current count reaches
- * zero due to invocations of the {@link #countDown} method, after which
- * all waiting threads are released and any subsequent invocations of
- * {@link #await await} return immediately.  This is a one-shot phenomenon
- * -- the count cannot be reset.  If you need a version that resets the
- * count, consider using a {@link CyclicBarrier}.
+ * A synchronization aid that allows one or more threads to wait until a set of operations being performed in other threads completes.
+ * 一种同步辅助，允许一个或多个线程等待一组正在其他线程中执行的操作完成
+ *
+ * A CountDownLatch is initialized with a given count.  CountDownLatch使用给定的计数进行初始化
+ * The await methods block until the current count reaches zero due to invocations of the countDown method, after which all waiting threads are released and any subsequent invocations of await return immediately.
+ * This is a one-shot phenomenon -- the count cannot be reset. 这是一种一次性现象——计数无法重置
+ * If you need a version that resets the count, consider using a CyclicBarrier. 如果需要重置计数的版本，可以考虑使用CyclicBarrier
  *
  * <p>A {@code CountDownLatch} is a versatile synchronization tool
  * and can be used for a number of purposes.  A
@@ -278,14 +277,13 @@ public class CountDownLatch {
     }
 
     /**
-     * Decrements the count of the latch, releasing all waiting threads if
-     * the count reaches zero.
+     * Decrements the count of the latch, releasing all waiting threads if the count reaches zero.
+     * 递减锁存的计数，如果计数为零，则释放所有等待的线程。
      *
-     * <p>If the current count is greater than zero then it is decremented.
-     * If the new count is zero then all waiting threads are re-enabled for
-     * thread scheduling purposes.
+     * If the current count is greater than zero then it is decremented. 如果当前计数大于零，则递减
+     * If the new count is zero then all waiting threads are re-enabled for thread scheduling purposes. 如果递减后计数为0，那么所有等待的线程都将重新启用，以实现线程调度目的
      *
-     * <p>If the current count equals zero then nothing happens.
+     * <p>If the current count equals zero then nothing happens. 如果当前计数已经等于零，那么什么也不会发生
      */
     public void countDown() {
         sync.releaseShared(1);

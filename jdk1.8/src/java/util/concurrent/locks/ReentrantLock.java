@@ -38,10 +38,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.Collection;
 
 /**
- * A reentrant mutual exclusion {@link Lock} with the same basic
- * behavior and semantics as the implicit monitor lock accessed using
- * {@code synchronized} methods and statements, but with extended
- * capabilities.
+ * A reentrant mutual exclusion Lock with the same basic behavior and semantics as the implicit monitor lock accessed using synchronized methods and statements, but with extended capabilities.
+ * 可重入互斥锁，具有与隐式监视锁相同的基本行为和语义，使用同步方法和语句访问，但具有扩展功能
  *
  * <p>A {@code ReentrantLock} is <em>owned</em> by the thread last
  * successfully locking, but not yet unlocking it. A thread invoking

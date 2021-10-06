@@ -41,12 +41,11 @@ import java.util.Date;
 import sun.misc.Unsafe;
 
 /**
- * Provides a framework for implementing blocking locks and related
- * synchronizers (semaphores, events, etc) that rely on
- * first-in-first-out (FIFO) wait queues.  This class is designed to
- * be a useful basis for most kinds of synchronizers that rely on a
- * single atomic {@code int} value to represent state. Subclasses
- * must define the protected methods that change this state, and which
+ * Provides a framework for implementing blocking locks and related synchronizers (semaphores, events, etc) that rely on first-in-first-out (FIFO) wait queues.
+ * 提供一个框架，用于实现依赖先进先出(FIFO)等待队列的阻塞锁和相关同步器(信号量、事件等)
+ *
+ * This class is designed to be a useful basis for most kinds of synchronizers that rely on a single atomic int value to represent state.
+ * Subclasses must define the protected methods that change this state, and which
  * define what that state means in terms of this object being acquired
  * or released.  Given these, the other methods in this class carry
  * out all queuing and blocking mechanics. Subclasses can maintain
