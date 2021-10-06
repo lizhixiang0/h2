@@ -50,6 +50,11 @@ public class TestFactory {
         PersonDao personDao =  sqlSession.getMapper(PersonDao.class);
 
 //        Person pp = sqlSession.selectOne("getById",13L);
+        /**
+         * 第一次查询
+         */
+//        Person person = personDao.getById(1L);
+//        System.out.println(person);
 //        /**
 //         * 第一次查询
 //         */
@@ -100,9 +105,9 @@ public class TestFactory {
             System.out.println(user);
         }*/
 
-//        Person p = new Person("chen",12,"111","157538651@qq.com",new Date(),"上海");
-//        personDao.insert(p);
-//        System.out.println(p.toString());
+        Person p = new Person("chen",12,"111","157538651@qq.com",new Date(),"上海");
+        personDao.insert(p);
+        System.out.println(p.toString());
 
         /**
          * 事务提交
