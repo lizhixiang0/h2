@@ -17,6 +17,10 @@ public class CountDownLatchTest {
 
     private CountDownLatch end;
 
+    /**
+     * 控制10个子线程一起执行完，再去执行主线程
+     * @throws InterruptedException
+     */
     public static void testCountDownLatch() throws InterruptedException {
         CountDownLatch begin = new CountDownLatch(1);  // 参数为1 ，则调用一次countDown会唤醒等待队列的线程
         CountDownLatch end = new CountDownLatch(2);   // 参数为2，则调用2次countDown会唤醒等待队列的线程
