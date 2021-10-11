@@ -7,6 +7,6 @@ import java.util.concurrent.locks.ReentrantLock;
  * @date 2021/9/30
  * @since
  **/
-public class LockTest {
+public class ReentrantLockTest {
     private ReentrantLock reentrantLock;
 }

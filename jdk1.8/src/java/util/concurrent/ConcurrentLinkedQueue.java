@@ -46,61 +46,44 @@ import java.util.Spliterators;
 import java.util.function.Consumer;
 
 /**
+ * 基于链接节点的无界线程安全队列
  * An unbounded thread-safe {@linkplain Queue queue} based on linked nodes.
- * This queue orders elements FIFO (first-in-first-out).
- * The <em>head</em> of the queue is that element that has been on the
- * queue the longest time.
- * The <em>tail</em> of the queue is that element that has been on the
- * queue the shortest time. New elements
- * are inserted at the tail of the queue, and the queue retrieval
- * operations obtain elements at the head of the queue.
- * A {@code ConcurrentLinkedQueue} is an appropriate choice when
- * many threads will share access to a common collection.
- * Like most other concurrent collection implementations, this class
- * does not permit the use of {@code null} elements.
+ * This queue orders elements FIFO (first-in-first-out).  这个队列对元素的顺序是FIFO
+ * The <em>head</em> of the queue is that element that has been on the queue the longest time. 队列的head是队列中存在时间最长的元素
+ * The <em>tail</em> of the queue is that element that has been on the queue the shortest time.
+ * New elements are inserted at the tail of the queue, and the queue retrieval operations obtain elements at the head of the queue. 在队列尾部插入新元素
+ * A ConcurrentLinkedQueue is an appropriate choice when many threads will share access to a common collection. 多线程将共享对公共集合的访问时，ConcurrentLinkedQueue是一个合适的选择
+ * Like most other concurrent collection implementations, this class does not permit the use of null elements. 元素不允许为 null
  *
- * <p>This implementation employs an efficient <em>non-blocking</em>
- * algorithm based on one described in <a
- * href="http://www.cs.rochester.edu/u/michael/PODC96.html"> Simple,
- * Fast, and Practical Non-Blocking and Blocking Concurrent Queue
- * Algorithms</a> by Maged M. Michael and Michael L. Scott.
+ * This implementation employs an efficient non-blocking algorithm based on one described in 该实现采用一种高效的非阻塞算法(wait－free)，基于Michael & Scott算法
+ * <a href="http://www.cs.rochester.edu/u/michael/PODC96.html"> Simple,Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms</a> by Maged M. Michael and Michael L. Scott.
  *
- * <p>Iterators are <i>weakly consistent</i>, returning elements
- * reflecting the state of the queue at some point at or since the
- * creation of the iterator.  They do <em>not</em> throw {@link
- * java.util.ConcurrentModificationException}, and may proceed concurrently
- * with other operations.  Elements contained in the queue since the creation
- * of the iterator will be returned exactly once.
+ * Iterators are weakly consistent, returning elements reflecting the state of the queue at some point at or since the creation of the iterator. 迭代器是弱一致的，返回的元素反映了队列在迭代器创建时或自创建以来的某个点的状态
+ * They do not throw ConcurrentModificationException, and may proceed concurrently with other operations. 它们不会抛出ConcurrentModificationException，并且可以与其他操作并发进行
+ * Elements contained in the queue since the creation of the iterator will be returned exactly once. 自迭代器创建以来队列中包含的元素只返回一次
  *
- * <p>Beware that, unlike in most collections, the {@code size} method
- * is <em>NOT</em> a constant-time operation. Because of the
- * asynchronous nature of these queues, determining the current number
- * of elements requires a traversal of the elements, and so may report
- * inaccurate results if this collection is modified during traversal.
- * Additionally, the bulk operations {@code addAll},
- * {@code removeAll}, {@code retainAll}, {@code containsAll},
- * {@code equals}, and {@code toArray} are <em>not</em> guaranteed
- * to be performed atomically. For example, an iterator operating
- * concurrently with an {@code addAll} operation might view only some
- * of the added elements.
+ * Beware that, unlike in most collections, the size method is not a constant-time operation.  注意，与大多数集合不同，size方法不是常数时间操作
+ * Because of the asynchronous nature of these queues, determining the current number of elements requires a traversal of the elements, and so may report inaccurate results if this collection is modified during traversal.
+ * 由于这些队列的异步特性，确定当前元素的数量需要遍历元素，因此如果在遍历期间修改此集合，可能会报告不准确的结果
  *
- * <p>This class and its iterator implement all of the <em>optional</em>
- * methods of the {@link Queue} and {@link Iterator} interfaces.
+ * Additionally, the bulk operations addAll,removeAll, retainAll, containsAll,equals, and toArray are not guaranteed to be performed atomically.
+ * 此外，批量操作addAll、removeAll、retainAll、containsAll、equals和toArray不能保证被原子地执行
  *
- * <p>Memory consistency effects: As with other concurrent
- * collections, actions in a thread prior to placing an object into a
- * {@code ConcurrentLinkedQueue}
- * <a href="package-summary.html#MemoryVisibility"><i>happen-before</i></a>
- * actions subsequent to the access or removal of that element from
- * the {@code ConcurrentLinkedQueue} in another thread.
+ * For example, an iterator operating concurrently with an addAll operation might view only some of the added elements.
+ * 例如，与addAll操作同时操作的迭代器可能只查看一些添加的元素
  *
- * <p>This class is a member of the
- * <a href="{@docRoot}/../technotes/guides/collections/index.html">
- * Java Collections Framework</a>.
+ * This class and its iterator implement all of the optional methods of the  Queue and  Iterator interfaces.
+ * 这个类及其迭代器实现了Queue和iterator接口的所有可选方法
+ *
+ * Memory consistency effects: As with other concurrent collections, actions in a thread prior to placing an object into a ConcurrentLinkedQueue
+ * happen-before actions subsequent to the access or removal of that element from the ConcurrentLinkedQueue in another thread.
+ * 内存一致性影响:与其他并发集合一样，线程中在将对象放入ConcurrentLinkedQueue的操作，发生在从另一个线程的ConcurrentLinkedQueue中访问或删除该元素的操作之前
  *
  * @since 1.5
  * @author Doug Lea
  * @param <E> the type of elements held in this collection
+ * @blog 'https://blog.csdn.net/qq_38293564/article/details/80798310
+ *       "https://www.zhihu.com/question/295904223
  */
 public class ConcurrentLinkedQueue<E> extends AbstractQueue<E>
         implements Queue<E>, java.io.Serializable {
@@ -396,14 +379,14 @@ public class ConcurrentLinkedQueue<E> extends AbstractQueue<E>
     }
 
     /**
+     * 返回列表上第一个活动(未删除)节点，如果没有则为空
      * Returns the first live (non-deleted) node on list, or null if none.
-     * This is yet another variant of poll/peek; here returning the
-     * first node, not element.  We could make peek() a wrapper around
-     * first(), but that would cost an extra volatile read of item,
-     * and the need to add a retry loop to deal with the possibility
-     * of losing a race to a concurrent poll().
+     * This is yet another variant of poll/peek;  这是poll/peek的另一种变体;
+     * here returning the first node, not element. 这里返回第一个节点，而不是元素
+     * We could make peek() a wrapper around first(), but that would cost an extra volatile read of item,and the need to add a retry loop to deal with the possibility of losing a race to a concurrent poll().
      */
     Node<E> first() {
+        // 为多重循环中方便的使用 break 和 continue 而设计   https://blog.csdn.net/newmemory/article/details/89334666
         restartFromHead:
         for (;;) {
             for (Node<E> h = head, p = h, q;;) {
