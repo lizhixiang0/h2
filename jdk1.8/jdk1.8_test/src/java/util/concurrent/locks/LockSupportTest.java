@@ -6,8 +6,9 @@ import java.util.concurrent.locks.LockSupport;
  * @author lizx
  * @date 2021/10/11
  * @since
- * @description  LockSupport是一个线程工具类，所有的方法都是静态方法，可以让线程在任意位置阻塞，也可以在任意位置唤醒
- *               有点类似wait/notify,但是有两点区别
+ * @description  wait/notify的替代品
+ * LockSupport是一个线程工具类，所有的方法都是静态方法，可以让线程在任意位置阻塞，也可以在任意位置唤醒
+ *               与wait/notify类似,但是有两点区别
  *               1、wait和notify都是Object中的方法,在调用这两个方法前必须先获得锁对象，但是park不需要获取某个对象的锁
  *               2、notify只能随机选择一个线程唤醒，无法唤醒指定的线程，unpark却可以唤醒一个指定的线程。
  *               3、都会响应interrupt中断，wait是抛出一个中断异常 InterruptedException，LockSupport是结束park,不会抛出异常
