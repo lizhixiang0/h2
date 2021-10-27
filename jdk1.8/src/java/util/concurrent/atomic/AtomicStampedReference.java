@@ -36,12 +36,13 @@
 package java.util.concurrent.atomic;
 
 /**
- * An {@code AtomicStampedReference} maintains an object reference
- * along with an integer "stamp", that can be updated atomically.
+ * An AtomicStampedReference maintains an object reference along with an integer "stamp", that can be updated atomically.
+ * AtomicStampedReference它内部不仅维护了对象值，还维护了一个版本号（使用整数来表示）。
+ * 当AtomicStampedReference对应的数值被修改时，除了更新数据本身外，还必须要更新时间戳。
+ * 当AtomicStampedReference设置对象值时，对象值以及时间戳都必须满足期望值，写入才会成功。
+ * 因此，即使对象值被反复读写，写回原值，只要时间戳发生变化，就能防止不恰当的写入。
  *
- * <p>Implementation note: This implementation maintains stamped
- * references by creating internal objects representing "boxed"
- * [reference, integer] pairs.
+ * <p>Implementation note: This implementation maintains stamped references by creating internal objects representing "boxed" [reference, integer] pairs.
  *
  * @since 1.5
  * @author Doug Lea

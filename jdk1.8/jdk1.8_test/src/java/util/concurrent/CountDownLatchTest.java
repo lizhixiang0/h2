@@ -7,7 +7,7 @@ import java.util.concurrent.CountDownLatch;
 /**
  * @author lizx
  * @date 2021/9/28
- * @since   CountDownLatch是一个同步工具类，用来协调多个线程之间的同步
+ * @since   CountDownLatch是一个同步工具类，用来协调多个线程之间的同步  栅栏zha lan
  *          可以把它想象成一个门闩,在那个线程调用await(),那个线程就被栓住！除非调用countDown()!
  * @description   "https://www.jianshu.com/p/3766c9ca5ca4
  **/

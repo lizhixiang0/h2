@@ -162,18 +162,16 @@ public class Executors {
     }
 
     /**
-     * Creates a thread pool that creates new threads as needed, but
-     * will reuse previously constructed threads when they are
-     * available.  These pools will typically improve the performance
-     * of programs that execute many short-lived asynchronous tasks.
-     * Calls to {@code execute} will reuse previously constructed
-     * threads if available. If no existing thread is available, a new
-     * thread will be created and added to the pool. Threads that have
-     * not been used for sixty seconds are terminated and removed from
-     * the cache. Thus, a pool that remains idle for long enough will
-     * not consume any resources. Note that pools with similar
-     * properties but different details (for example, timeout parameters)
-     * may be created using {@link ThreadPoolExecutor} constructors.
+     * Creates a thread pool that creates new threads as needed, but will reuse previously constructed threads when they are available.
+     * 创建一个线程池，该线程池根据需要创建新线程，但将在以前构造的线程可用时重用它们
+     * These pools will typically improve the performance of programs that execute many short-lived asynchronous tasks.
+     * 这些池通常会提高执行许多短期异步任务的程序的性能
+     *
+     * Calls to {@code execute} will reuse previously constructed  threads if available.
+     * If no existing thread is available, a new thread will be created and added to the pool.
+     * Threads that have not been used for sixty seconds are terminated and removed from the cache. 60秒内未使用的线程将被终止并从缓存中删除
+     * Thus, a pool that remains idle for long enough will not consume any resources. 因此，空闲时间足够长的池不会消耗任何资源
+     * Note that pools with similar properties but different details (for example, timeout parameters) may be created using {@link ThreadPoolExecutor} constructors.
      *
      * @return the newly created thread pool
      */

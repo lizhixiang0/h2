@@ -29,45 +29,36 @@ import java.io.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * The {@link ProcessBuilder#start()} and
- * {@link Runtime#exec(String[],String[],File) Runtime.exec}
- * methods create a native process and return an instance of a
- * subclass of {@code Process} that can be used to control the process
- * and obtain information about it.  The class {@code Process}
- * provides methods for performing input from the process, performing
- * output to the process, waiting for the process to complete,
- * checking the exit status of the process, and destroying (killing)
- * the process.
+ * The {@link ProcessBuilder#start()} and {@link Runtime#exec(String[],String[],File) Runtime.exec} methods create a native process and return an instance of a subclass of {@code Process} that can be used to control the process and obtain information about it.
+ * 使用ProcessBuilder.start() 和 Runtime.getRuntime().exec(strings)可以创建一个本地进程并返回一个process子类的实例可以用来控制过程并获得有关过程的信息
  *
- * <p>The methods that create processes may not work well for special
- * processes on certain native platforms, such as native windowing
- * processes, daemon processes, Win16/DOS processes on Microsoft
- * Windows, or shell scripts.
+ * The class {@code Process} provides methods for performing input from the process, performing output to the process, waiting for the process to complete,checking the exit status of the process, and destroying (killing) the process.
  *
- * <p>By default, the created subprocess does not have its own terminal
- * or console.  All its standard I/O (i.e. stdin, stdout, stderr)
- * operations will be redirected to the parent process, where they can
- * be accessed via the streams obtained using the methods
- * {@link #getOutputStream()},
- * {@link #getInputStream()}, and
- * {@link #getErrorStream()}.
- * The parent process uses these streams to feed input to and get output
- * from the subprocess.  Because some native platforms only provide
- * limited buffer size for standard input and output streams, failure
- * to promptly write the input stream or read the output stream of
- * the subprocess may cause the subprocess to block, or even deadlock.
+ * <p>The methods that create processes may not work well for special processes on certain native platforms, such as native windowing processes, daemon processes, Win16/DOS processes on Microsoft Windows, or shell scripts.
+ * 创建进程的方法可能不适用于某些本机平台上的特殊进程，例如本机窗口进程、守护进程、Microsoft Windows上的Win16/DOS进程或shell脚本
  *
- * <p>Where desired, <a href="ProcessBuilder.html#redirect-input">
- * subprocess I/O can also be redirected</a>
- * using methods of the {@link ProcessBuilder} class.
+ * <p>By default, the created subprocess does not have its own terminal or console.
+ * 默认情况下，创建的子进程没有自己的终端或控制台。
  *
- * <p>The subprocess is not killed when there are no more references to
- * the {@code Process} object, but rather the subprocess
- * continues executing asynchronously.
+ * All its standard I/O (i.e. stdin, stdout, stderr) operations will be redirected to the parent process, where they can be accessed via the streams obtained using the methods
+ * 它的所有标准I/O(即stdin, stdout, stderr)操作将被重定向到父进程，在父进程中，它们可以通过使用这些方法获得的流访问
+ * {@link #getOutputStream()},{@link #getInputStream()}, and {@link #getErrorStream()}.
  *
- * <p>There is no requirement that a process represented by a {@code
- * Process} object execute asynchronously or concurrently with respect
- * to the Java process that owns the {@code Process} object.
+ * The parent process uses these streams to feed input to and get output from the subprocess.
+ * 父流程使用这些流向子流程提供输入，并从子流程获得输出
+ *
+ * Because some native platforms only provide limited buffer size for standard input and output streams, failure to promptly write the input stream or read the output stream of the subprocess may cause the subprocess to block, or even deadlock.
+ *由于一些本机平台仅为标准输入和输出流提供有限的缓冲区大小，如果不能及时写入输入流或读取子进程的输出流，可能会导致子进程阻塞，甚至死锁
+ *
+ * <p>Where desired, <a href="ProcessBuilder.html#redirect-input"> subprocess I/O can also be redirected</a> using methods of the {@link ProcessBuilder} class.
+ * 在需要的地方，还可以使用ProcessBuilder类的方法重定向子进程I/O。
+ *
+ * <p>The subprocess is not killed when there are no more references to the {@code Process} object, but rather the subprocess continues executing asynchronously.
+ * 当没有更多对Process对象的引用时，子进程不会被终止，而是子进程继续异步执行
+ *
+ * <p>There is no requirement that a process represented by a {@code Process} object execute asynchronously or concurrently with respect to the Java process that owns the {@code Process} object.
+ *
+ * 对于拥有process对象的Java进程来说，并不要求由Process对象表示的进程异步或并发执行。
  *
  * <p>As of 1.5, {@link ProcessBuilder#start()} is the preferred way
  * to create a {@code Process}.

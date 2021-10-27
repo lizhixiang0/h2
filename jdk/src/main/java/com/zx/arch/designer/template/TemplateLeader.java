@@ -15,6 +15,9 @@ import java.util.List;
  *
  *                                       都用到了个钩子函数,但建造者模式中使用的是组合的方式，而模板方法模式采用的是继承的方式
  *
+ *          注：父类编写结构代码 (使用final)，子类实现实现细节(实现abstract方法)
+ *              很多filter认证是这么搞的！
+ *
  **/
 public class TemplateLeader {
     /**
