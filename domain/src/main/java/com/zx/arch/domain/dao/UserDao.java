@@ -22,4 +22,6 @@ public interface UserDao{
      * @return
      */
     User getUserById(Long id);
+
+    void updateUserById(User user);
 }

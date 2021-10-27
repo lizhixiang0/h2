@@ -2,6 +2,7 @@ package com.zx.arch.api;
 
 import com.zx.arch.domain.entity.User;
 import com.zx.arch.domain.service.UserService;
+import com.zx.arch.spring.transaction.TransactionTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,12 +22,14 @@ public class CommonController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    TransactionTest transactionTest;
+
     @GetMapping("/test")
     @ResponseBody
     //将请求精细化:https://www.cnblogs.com/lemonzhang/p/12925482.html
     public String a(){
-        User user = userService.getUserById(1L);
-        System.out.println(user);
+        transactionTest.a();
         return "s";
     }
 

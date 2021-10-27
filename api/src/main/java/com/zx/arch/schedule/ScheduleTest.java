@@ -46,15 +46,15 @@ public class ScheduleTest implements ApplicationListener<ContextRefreshedEvent> 
     *
     * */
 
-    @Scheduled(cron = "0 */1 * * * ?")
-    public void test1() throws InterruptedException {
-        System.out.println(Thread.currentThread().getName()+  "测试1"+  new Date());
-        Thread.sleep(1000*70); //沉睡70秒
-    }
-
-    @Scheduled(cron = "0 */1 * * * ?")
-    public void test2() throws InterruptedException {
-        System.out.println(Thread.currentThread().getName()+  "测试2"+  new Date());
-        Thread.sleep(1000*70);
-    }
+//    @Scheduled(cron = "0 */1 * * * ?")
+//    public void test1() throws InterruptedException {
+//        System.out.println(Thread.currentThread().getName()+  "测试1"+  new Date());
+//        Thread.sleep(1000*70); //沉睡70秒
+//    }
+//
+//    @Scheduled(cron = "0 */1 * * * ?")
+//    public void test2() throws InterruptedException {
+//        System.out.println(Thread.currentThread().getName()+  "测试2"+  new Date());
+//        Thread.sleep(1000*70);
+//    }
 }

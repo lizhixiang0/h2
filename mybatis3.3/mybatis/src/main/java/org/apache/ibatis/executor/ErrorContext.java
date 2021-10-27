@@ -68,6 +68,8 @@ public class ErrorContext {
             }
             return context;
           }
+
+    新版其实和老版本是一样的，但是写法就高级了一点！
    */
   public static ErrorContext instance() {
     return LOCAL.get();

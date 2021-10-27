@@ -11,20 +11,15 @@ public class DuplicatedStartThread
 {
     public static void main(String[] args) throws InterruptedException
     {
-        Thread thread = new Thread()
-        {
-            @Override
-            public void run()
+        Thread thread = new Thread(() -> {
+            try
             {
-                try
-                {
-                    TimeUnit.SECONDS.sleep(1);
-                } catch (InterruptedException e)
-                {
-                    e.printStackTrace();
-                }
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e)
+            {
+                e.printStackTrace();
             }
-        };
+        });
         thread.start();
         TimeUnit.SECONDS.sleep(2);
         thread.start();

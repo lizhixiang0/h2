@@ -15,6 +15,13 @@ import java.util.stream.IntStream;
  *              4、ThreadLocal内存泄漏问题?
  *               内存泄漏memory leak ：是指程序在申请内存后，无法释放已申请的内存空间，一次内存泄漏似乎不会有大的影响，但内存泄漏堆积后的后果就是内存溢出。
  *               内存溢出 out of memory ：没内存可以分配给新的对象了。
+ *
+ *               实战：
+ *                  1、我在病毒更新里用的这个，其实根本没用他的线程隔离特性，而是把它当成了一个数据库容器的角色，这样调用方法就可以不传参数了，但是这样应该是不对的！以后再补充！
+ *                      我不知道threadLocal中的数据到底安不安全，因为可能线程没结束， 但是此时发生gc了，那threadLocal中的数据还在吗？
+ *                      这个和jvm还有垃圾回收机制有关，下次研究到jvm时再去研究！
+ *
+ *                  2、mybatis的每个线程都在ThreadLocal维护了自己的一份ErrorContext
  **/
 public class ThreadLocalTest {
     /**
