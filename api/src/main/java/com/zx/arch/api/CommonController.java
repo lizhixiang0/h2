@@ -29,7 +29,7 @@ public class CommonController {
     @ResponseBody
     //将请求精细化:https://www.cnblogs.com/lemonzhang/p/12925482.html
     public String a(){
-        transactionTest.a();
+        transactionTest.test_select();
         return "s";
     }
 

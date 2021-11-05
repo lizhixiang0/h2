@@ -4,6 +4,7 @@ import com.zx.arch.domain.entity.User;
 import com.zx.arch.domain.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +30,7 @@ public class TransactionTest {
      *a方法加事务（传播机制为REQUIRES_NEW），b加事务( Propagation.NOT_SUPPORTED),a方法内调用 b方法,a事务还是传播给了b， 此时a事务的事务传播为REQUIRES_NEW,不管调用方有没有事务，都重新创建一个,b的传播机制是NOT_SUPPORTED，意思就是不支持事务,但是a中调用的是原对象b,要解决这个问题，只能将b方法取出，放到其他类中
      *
      */
-    @Transactional()
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void a(){
         User user = new User();
         user.setAge(18);
@@ -82,6 +83,25 @@ public class TransactionTest {
         userService.updateById(user);
 
         int i = 1/0;
+    }
+
+    /**
+     * 测试spring是怎么控制select的事物的 !
+     *
+     * 如果不加 @Transactional()，select查询都是自动提交的（使用mysql默认的autocommit）！然后单个select就是一个事务！所以如果两个相同select之间有另外的会话修改了，那两次查询结果是不一样的！
+     * 如果加了@Transactional(),Spring会设置autocommit=0 ，然后自己管理事务,该方法中的所有查询都是同一个事务！能够保证两次查询一致！
+     *
+     * 所以如果一个方法中进行两次select,可能需要加事务的！因为要保证前后两次读取一致！
+     * 比如对账！先查余额，再查订单，两次查询肯定是放到一个事务中去的,要不然可能不一致！
+     */
+    @Transactional
+    public void test_select(){
+        User userById = userService.getUserById(1L);
+
+        System.out.println(userById);
+        User userById1 = userService.getUserById(1L);
+
+        System.out.println(userById1);
     }
 
 
