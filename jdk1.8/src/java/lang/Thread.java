@@ -184,7 +184,7 @@ public class Thread implements Runnable {
     ThreadLocal.ThreadLocalMap inheritableThreadLocals = null;
 
     /**
-     * 此线程请求的堆栈大小
+     * 此线程请求的堆栈大小,越大代表此线程递归越深 ,默认为0,按照服务器设置来 ! 这个设置了也不一定生效，反正win10上没用
      */
     private long stackSize;
 
@@ -667,7 +667,7 @@ public class Thread implements Runnable {
      * @see #stop()
      */
     public synchronized void start() {
-        // 如果没有初始化，抛异常
+        // 刚 new Thread() 时,threadStatus默认为0,执行一次start之后,threadStatus会被修改掉，这意味着，不能执行两次start.同时，一个线程执行完一个周期后，不能再拿来使用
         if (threadStatus != 0)
             throw new IllegalThreadStateException();
 
@@ -702,7 +702,8 @@ public class Thread implements Runnable {
     private native void start0();
 
     /**
-     * 简单的运行，不会新起线程
+     * JNI中会调用这个方法，如果构造Thread时传递了Runnable,则会执行Runnable中实现的方法
+     * 如果是通过继承Thread创建新线程,则需要重写run方法！
      *
      * @see #start()
      * @see #stop()

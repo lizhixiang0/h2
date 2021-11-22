@@ -22,6 +22,8 @@ public class DuplicatedStartThread
         });
         thread.start();
         TimeUnit.SECONDS.sleep(2);
+        // 对一个Thread调用两次start会发生什么?
+        // 创建线程到底有几种方式？
         thread.start();
     }
 }

@@ -15,6 +15,9 @@ import java.util.List;
  * @link "https://www.bilibili.com/video/BV1RC4y1H7ok?p=3
  *              "http://c.biancheng.net/view/1378.html
  *
+ *        策略模式主要借助接口实现，将功能抽象成接口，然后不同的实现实现不同的类
+ *
+ *
  *
  **/
 public class StrategyLeader {

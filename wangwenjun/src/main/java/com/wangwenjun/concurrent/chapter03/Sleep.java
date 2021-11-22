@@ -1,13 +1,19 @@
 package com.wangwenjun.concurrent.chapter03;
 
-public class ThreadSleep
-{
-    public static void main(String[] args)
-    {
+public class Sleep {
+
+    private static void sleep(long ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+        }
+    }
+
+    public static void main(String[] args) {
         new Thread(() ->
         {
             long startTime = System.currentTimeMillis();
-            sleep(2_000L);
+            sleep(2_000L); // 沉睡当前线程，不会放弃cpu资源
             long endTime = System.currentTimeMillis();
             System.out.println(String.format("Total spend %d ms", (endTime - startTime)));
         }).start();
@@ -15,17 +21,9 @@ public class ThreadSleep
         long startTime = System.currentTimeMillis();
         sleep(3_000L);
         long endTime = System.currentTimeMillis();
+
         System.out.println(String.format("Main thread total spend %d ms", (endTime - startTime)));
 
     }
 
-    private static void sleep(long ms)
-    {
-        try
-        {
-            Thread.sleep(ms);
-        } catch (InterruptedException e)
-        {
-        }
-    }
 }

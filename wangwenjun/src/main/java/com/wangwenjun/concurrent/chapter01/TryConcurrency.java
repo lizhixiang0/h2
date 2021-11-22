@@ -2,6 +2,9 @@ package com.wangwenjun.concurrent.chapter01;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 注:通过这种方式并不会交替执行
+ */
 public class TryConcurrency
 {
     public static void main(String[] args)

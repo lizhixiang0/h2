@@ -1,4 +1,4 @@
-package com.wangwenjun.concurrent.chapter01;
+package com.zx.arch.designer.strategy.v5;
 
 import java.sql.ResultSet;
 
