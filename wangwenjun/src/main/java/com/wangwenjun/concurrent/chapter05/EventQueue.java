@@ -6,16 +6,21 @@ import static java.lang.Thread.currentThread;
 
 /**
  *
- * 同步阻塞和异步非阻塞的区别：
- *      同步阻塞：
- *      异步
+ * 同步阻塞和异步非阻塞的区别
+ * 
+ * 同步阻塞: 外宾访问,来一个外宾就得搞一个线程来接待， 不能让人家等着
+ * 
+ * 异步非阻塞:KFC,单线程负责接待(发号,检查号是否好)，后面配一个线程池 。 线程池如何知道有顾客需要解决,一般是两种方法，一种是轮询，一种是服务员去通知，
+ *           这里我们使用通知,从而引申出线程之间的通信
+ * 
  * @author admin
  */
 public class EventQueue {
 
     private final int max;
 
-    static class Event {}
+    static class Event {
+    }
 
     private final LinkedList<Event> eventQueue = new LinkedList<>();
 
@@ -56,7 +61,6 @@ public class EventQueue {
                     e.printStackTrace();
                 }
             }
-
 
             Event event = eventQueue.removeFirst();
             this.eventQueue.notifyAll();
