@@ -4,42 +4,38 @@ import java.util.LinkedList;
 
 import static java.lang.Thread.currentThread;
 
-public class EventQueue
-{
+/**
+ *
+ * 同步阻塞和异步非阻塞的区别：
+ *      同步阻塞：
+ *      异步
+ * @author admin
+ */
+public class EventQueue {
 
     private final int max;
 
-    static class Event
-    {
-    }
+    static class Event {}
 
-    private final LinkedList<Event> eventQueue
-            = new LinkedList<>();
+    private final LinkedList<Event> eventQueue = new LinkedList<>();
 
     private final static int DEFAULT_MAX_EVENT = 10;
 
-    public EventQueue()
-    {
+    public EventQueue() {
         this(DEFAULT_MAX_EVENT);
     }
 
-    public EventQueue(int max)
-    {
+    public EventQueue(int max) {
         this.max = max;
     }
 
-    public void offer(Event event)
-    {
-        synchronized (eventQueue)
-        {
-            while (eventQueue.size() >= max)
-            {
-                try
-                {
+    public void offer(Event event) {
+        synchronized (eventQueue) {
+            while (eventQueue.size() >= max) {
+                try {
                     console(" the queue is full.");
                     eventQueue.wait();
-                } catch (InterruptedException e)
-                {
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
@@ -50,18 +46,13 @@ public class EventQueue
         }
     }
 
-    public Event take()
-    {
-        synchronized (eventQueue)
-        {
-            while (eventQueue.isEmpty())
-            {
-                try
-                {
+    public Event take() {
+        synchronized (eventQueue) {
+            while (eventQueue.isEmpty()) {
+                try {
                     console(" the queue is empty.");
                     eventQueue.wait();
-                } catch (InterruptedException e)
-                {
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
@@ -74,8 +65,7 @@ public class EventQueue
         }
     }
 
-    private void console(String message)
-    {
+    private void console(String message) {
         System.out.printf("%s:%s\n", currentThread().getName(), message);
     }
 }

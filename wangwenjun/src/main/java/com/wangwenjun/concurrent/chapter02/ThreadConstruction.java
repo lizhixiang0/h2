@@ -35,6 +35,8 @@ public class ThreadConstruction {
 
     /**
      * 测试默认情况下jvm栈内存 支持创建多少线程
+     *
+     * 使用下 JVisualVM
      */
     public static void test_thread_count (){
         final  AtomicInteger counter = new AtomicInteger(0);
