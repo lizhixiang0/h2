@@ -1,4 +1,4 @@
-package com.wangwenjun.concurrent.chapter05;
+package com.wangwenjun.concurrent.chapter05.custom_lock;
 
 import java.util.List;
 import java.util.concurrent.TimeoutException;
