@@ -36,6 +36,7 @@ public class EventQueue {
 
     public void offer(Event event) {
         synchronized (eventQueue) {
+            // 这里使用while,线程被唤醒后可以继续运行
             while (eventQueue.size() >= max) {
                 try {
                     console(" the queue is full.");

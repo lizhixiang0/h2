@@ -4,13 +4,14 @@ package com.wangwenjun.concurrent.chapter05;
 import java.util.concurrent.TimeUnit;
 
 /**
+ *
  * @author admin
  */
-public class EventClient
-{
+public class EventClient {
 
     public static void main(String[] args) {
         final EventQueue eventQueue = new EventQueue();
+        // 创建三个生产者线程
         for (int i = 0; i < 3; i++) {
             new Thread(() ->
             {
@@ -20,7 +21,7 @@ public class EventClient
                 }
             }, "Producer").start();
         }
-
+        // 创建三个消费者线程
         for (int i = 0; i < 3; i++) {
             new Thread(() -> {
                 for (; ; )
