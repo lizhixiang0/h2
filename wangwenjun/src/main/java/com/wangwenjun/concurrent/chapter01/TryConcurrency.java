@@ -4,6 +4,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 注:通过这种方式并不会交替执行
+ * @author admin
  */
 public class TryConcurrency
 {

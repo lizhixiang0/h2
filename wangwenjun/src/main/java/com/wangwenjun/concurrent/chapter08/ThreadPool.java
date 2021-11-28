@@ -1,7 +1,9 @@
 package com.wangwenjun.concurrent.chapter08;
 
-public interface ThreadPool
-{
+/**
+ * @author admin
+ */
+public interface ThreadPool {
 
     void execute(Runnable runnable);
 

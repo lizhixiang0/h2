@@ -22,6 +22,8 @@ import java.util.HashMap;
  *
  *        https://www.bilibili.com/video/BV1mc411h719?p=6
  *        https://www.cnblogs.com/cbf4life/tag/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/
+ *
+ * @ java语言使用设计模式常用用法;https://mp.weixin.qq.com/s/1yxPeAgqaHlWL7FJvoX9xQ
  **/
 public class Leader {
     /**

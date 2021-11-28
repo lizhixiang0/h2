@@ -29,7 +29,7 @@ import java.lang.annotation.*;
 
 /**
  * An informative annotation type used to indicate that an interface type declaration is intended to be a functional interface as defined by the Java Language Specification.
- * 信息性注释类型, 用于指示接口是由Java语言规范定义的功能接口
+ * 信息性注释类型, 用于指示接口是由Java语言规范定义的功能接口! 功能接口因为只有一个抽象方法，所以都可以直接使用lambda表达式
  *
  * Conceptually, a functional interface has exactly one abstract method.  从概念上讲，功能接口明确只能有一个抽象方法,至于静态方法和默认方法不做要求
  * Since default methods have an implementation, they are not abstract.  默认方法不算是抽象方法, 判断是否是默认方法：{@linkplain java.lang.reflect.Method#isDefault()}

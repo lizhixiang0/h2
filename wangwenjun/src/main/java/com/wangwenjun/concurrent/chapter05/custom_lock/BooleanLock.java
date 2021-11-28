@@ -29,6 +29,9 @@ public class BooleanLock implements Lock {
      */
     private boolean locked = false;
 
+    /**
+     * 不一定需要这个容器,主要是定义了getBlockedThreads方法
+     */
     private final List<Thread> blockedList = new ArrayList<>();
 
     @Override
