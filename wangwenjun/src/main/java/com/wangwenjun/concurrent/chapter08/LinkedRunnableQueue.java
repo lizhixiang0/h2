@@ -2,6 +2,9 @@ package com.wangwenjun.concurrent.chapter08;
 
 import java.util.LinkedList;
 
+/**
+ * 這個LinkedRunnableQueue用的是生產者消費者模式
+ */
 public class LinkedRunnableQueue implements RunnableQueue
 {
 
