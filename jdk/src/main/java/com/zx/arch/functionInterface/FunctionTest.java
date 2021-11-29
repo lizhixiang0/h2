@@ -117,8 +117,12 @@ class VUtils{
         };
     }
 
-    public static PredicateFunction isParamUseful(){
-        return x -> x > 7;
+    /**
+     *
+     * @return 返回值是一个函数式对象
+     */
+    public static PredicateFunction isParamUseful(int s){
+        return x -> x+s > 7;
     }
 
     public static void main(String[] args) {
@@ -140,7 +144,7 @@ class VUtils{
                 }
         );
 
-        System.out.println(VUtils.isParamUseful().test(2));
+        System.out.println(VUtils.isParamUseful(1).test(2));
 
     }
 }

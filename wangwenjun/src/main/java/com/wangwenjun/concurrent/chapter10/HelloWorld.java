@@ -1,11 +1,14 @@
 package com.wangwenjun.concurrent.chapter10;
 
+
+/**
+ * 测试类,用来测试自定义的类加载器
+ * @author admin
+ */
 public class HelloWorld
 {
     static
     {
-        Test test = new Test();
-        System.out.println(test.getClass().getClassLoader());
         System.out.println("Hello World Class is Initialized.");
     }
 

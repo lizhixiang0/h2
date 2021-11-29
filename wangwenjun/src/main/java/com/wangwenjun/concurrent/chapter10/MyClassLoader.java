@@ -7,16 +7,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-/***************************************
- * @author:Alex Wang
- * @Date:2017/11/20
- * QQ: 532500648
- * QQ群:463962286
- ***************************************/
+/**
+ * 自定义加载器通过继承ClassLoader并实现findClass来实现 ！findClass是loadClass方法里面调用的,会遵守双亲加载，如果想把双亲加载破坏掉，那就直接改写loadClass方法
+ * @author admin
+ */
 public class MyClassLoader extends ClassLoader
 {
-
-    private final static Path DEFAULT_CLASS_DIR = Paths.get("G:", "classloader1");
+    // 定义默认的class存放路径
+    private final static Path DEFAULT_CLASS_DIR = Paths.get("D:\\JetBrains\\workspace\\h2\\wangwenjun\\target\\classes");
 
     private final Path classDir;
 
@@ -32,6 +30,11 @@ public class MyClassLoader extends ClassLoader
         this.classDir = Paths.get(classDir);
     }
 
+    /**
+     * 可以指定类路径和父类加载器
+     * @param classDir
+     * @param parent
+     */
     public MyClassLoader(String classDir, ClassLoader parent)
     {
         super(parent);
@@ -42,18 +45,20 @@ public class MyClassLoader extends ClassLoader
     protected Class<?> findClass(String name)
             throws ClassNotFoundException
     {
+        // 读取class的二进制流
         byte[] classBytes = this.readClassBytes(name);
         if (null == classBytes || classBytes.length == 0)
         {
             throw new ClassNotFoundException("Can not load the class " + name);
         }
-
+        // 调用defineClass定义class，可以看看defineClass的源码就知道为什么不能自定义java.lang.String
         return this.defineClass(name, classBytes, 0, classBytes.length);
     }
 
     private byte[] readClassBytes(String name)
             throws ClassNotFoundException
     {
+        // 将包名分隔符转换为文件路径分隔符
         String classPath = name.replace(".", "/");
         Path classFullPath = classDir.resolve(Paths.get(classPath + ".class"));
         if (!classFullPath.toFile().exists())

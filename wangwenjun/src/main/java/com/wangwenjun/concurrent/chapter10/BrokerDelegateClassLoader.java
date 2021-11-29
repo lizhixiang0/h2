@@ -7,16 +7,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-/***************************************
- * @author:Alex Wang
- * @Date:2017/11/20
- * QQ: 532500648
- * QQ群:463962286
- ***************************************/
+/**
+ * 除了绕过系统类加载器,我们也可以通过实现loadClass来破坏掉双亲加载机制！
+ * @author admin
+ */
 public class BrokerDelegateClassLoader extends ClassLoader
 {
 
-    private final static Path DEFAULT_CLASS_DIR = Paths.get("G:", "classloader1");
+    private final static Path DEFAULT_CLASS_DIR = Paths.get("D:\\JetBrains\\workspace\\h2\\wangwenjun\\target\\classes");
 
     private final Path classDir;
 
@@ -52,53 +50,39 @@ public class BrokerDelegateClassLoader extends ClassLoader
     }
 
     @Override
-    protected Class<?> loadClass(String name, boolean resolve)
-            throws ClassNotFoundException
-    {
-        synchronized (getClassLoadingLock(name))
-        {
+    protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+        // 根据类的全路径名进行加锁，保证多线程下只被加载一次
+        synchronized (getClassLoadingLock(name)) {
+            // 到已加载类的缓存中查看该类是否被加载
             Class<?> klass = findLoadedClass(name);
-            if (klass == null)
-            {
-                if (name.startsWith("java.") || name.startsWith("javax"))
-                {
-                    try
-                    {
+            if (klass == null) {
+                // 如果没加载则进行加载，如果是以java或者javax开头，则委托系统类加载器进行加载，如果不是则使用自定义加载器加载
+                if (name.startsWith("java.") || name.startsWith("javax")) {
+                    try {
                         klass = getSystemClassLoader().loadClass(name);
-                    } catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         //ignore
                     }
-                } else
-                {
-                    try
-                    {
+                } else {
+                    try {
                         klass = this.findClass(name);
-                    } catch (ClassNotFoundException e)
-                    {
+                    } catch (ClassNotFoundException e) {
                         //ignore
                     }
-
-                    if (klass == null)
-                    {
-                        if (getParent() != null)
-                        {
+                    // 如果自定义类加载器加载失败，则委托父类加载器进行加载或者还是让系统类进行加载
+                    if (klass == null) {
+                        if (getParent() != null) {
                             klass = getParent().loadClass(name);
-                        } else
-                        {
+                        } else {
                             klass = getSystemClassLoader().loadClass(name);
                         }
                     }
                 }
             }
-
-            if (null == klass)
-            {
+            if (klass == null) {
                 throw new ClassNotFoundException("The class " + name + " not found.");
             }
-
-            if (resolve)
-            {
+            if (resolve) {
                 resolveClass(klass);
             }
             return klass;
