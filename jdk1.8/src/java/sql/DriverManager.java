@@ -566,50 +566,45 @@ public class DriverManager {
     private static void loadInitialDrivers() {
         String drivers;
         try {
-            drivers = AccessController.doPrivileged(new PrivilegedAction<String>() {
-                public String run() {
-                    return System.getProperty("jdbc.drivers");
-                }
-            });
+            // 在系统属性中尝试获取驱动类的路径，但我们在代码中根本没有设置系统属性，显然获取不到
+            drivers = AccessController.doPrivileged((PrivilegedAction<String>) () -> System.getProperty("jdbc.drivers"));
         } catch (Exception ex) {
             drivers = null;
         }
+        // 通过SPI机制的工具类ServiceLoader去加载驱动类
         // If the driver is packaged as a Service Provider, load it.
         // Get all the drivers through the classloader
         // exposed as a java.sql.Driver.class service.
         // ServiceLoader.load() replaces the sun.misc.Providers()
+        AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
 
-        AccessController.doPrivileged(new PrivilegedAction<Void>() {
-            public Void run() {
+            ServiceLoader<Driver> loadedDrivers = ServiceLoader.load(Driver.class);
+            Iterator<Driver> driversIterator = loadedDrivers.iterator();
 
-                ServiceLoader<Driver> loadedDrivers = ServiceLoader.load(Driver.class);
-                Iterator<Driver> driversIterator = loadedDrivers.iterator();
-
-                /* Load these drivers, so that they can be instantiated.
-                 * It may be the case that the driver class may not be there
-                 * i.e. there may be a packaged driver with the service class
-                 * as implementation of java.sql.Driver but the actual class
-                 * may be missing. In that case a java.util.ServiceConfigurationError
-                 * will be thrown at runtime by the VM trying to locate
-                 * and load the service.
-                 *
-                 * Adding a try catch block to catch those runtime errors
-                 * if driver not available in classpath but it's
-                 * packaged as service and that service is there in classpath.
-                 */
-                try{
-                    while(driversIterator.hasNext()) {
-                        driversIterator.next();
-                    }
-                } catch(Throwable t) {
-                // Do nothing
+            /* Load these drivers, so that they can be instantiated.
+             * It may be the case that the driver class may not be there
+             * i.e. there may be a packaged driver with the service class
+             * as implementation of java.sql.Driver but the actual class
+             * may be missing. In that case a java.util.ServiceConfigurationError
+             * will be thrown at runtime by the VM trying to locate
+             * and load the service.
+             *
+             * Adding a try catch block to catch those runtime errors
+             * if driver not available in classpath but it's
+             * packaged as service and that service is there in classpath.
+             */
+            try{
+                while(driversIterator.hasNext()) {
+                    driversIterator.next();
                 }
-                return null;
+            } catch(Throwable t) {
+            // Do nothing
             }
+            return null;
         });
 
         println("DriverManager.initialize: jdbc.drivers = " + drivers);
-
+        // 如果系统属性不为空则继续尝试加载从系统属性中获得的驱动类
         if (drivers == null || drivers.equals("")) {
             return;
         }
@@ -617,9 +612,13 @@ public class DriverManager {
         println("number of Drivers:" + driversList.length);
         for (String aDriver : driversList) {
             try {
+                // 通过class.forName和驱动类路径加载驱动类,这里指定了类加载器为系统类加载器
+                // 为什么这里需要指定?而我们在程序中直接使用Class.forName时不需要?
+                // Class.forName()默认会用调用类的类加载器去加载给定的类！
+                // DirverManager的类加载器是启动类加载器,启动类加载器是没有第三方包的路径的!所以这里需要指定类加载器！
+                // 而我们在程序中使用的类默认类加载器就是系统类加载器,不需要指定。
                 println("DriverManager.Initialize: loading " + aDriver);
-                Class.forName(aDriver, true,
-                        ClassLoader.getSystemClassLoader());
+                Class.forName(aDriver, true, ClassLoader.getSystemClassLoader());
             } catch (Exception ex) {
                 println("DriverManager.Initialize: load failed: " + ex);
             }

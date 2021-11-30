@@ -418,9 +418,7 @@ public final class ServiceLoader<S>
             if (acc == null) {
                 return hasNextService();
             } else {
-                PrivilegedAction<Boolean> action = new PrivilegedAction<Boolean>() {
-                    public Boolean run() { return hasNextService(); }
-                };
+                PrivilegedAction<Boolean> action = () -> hasNextService();
                 return AccessController.doPrivileged(action, acc);
             }
         }
@@ -429,9 +427,7 @@ public final class ServiceLoader<S>
             if (acc == null) {
                 return nextService();
             } else {
-                PrivilegedAction<S> action = new PrivilegedAction<S>() {
-                    public S run() { return nextService(); }
-                };
+                PrivilegedAction<S> action = () -> nextService();
                 return AccessController.doPrivileged(action, acc);
             }
         }
@@ -503,7 +499,7 @@ public final class ServiceLoader<S>
                 //如果knownProviders存在元素，则直接返回true
                 if (knownProviders.hasNext())
                     return true;
-                // 返回延迟加载器是否存在元素
+                // 如果knownProviders没有元素,则执行lookupIterator.hasNext()并返回
                 return lookupIterator.hasNext();
             }
 

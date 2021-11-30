@@ -61,33 +61,17 @@ public class MyClassLoaderTest {
      * 因为在类的加载过程中,所有参与过的类加载器，即使没有亲自加载过该类，也都会标识为该类的初试类加载器 ！
      * 也就是说，String的确不是系统类加载器加载的，但是她是经过系统类加载器向上通过根加载器加载的！系统类加载器维护的class列表中也会有一份String ！
      *
+     * 比如 Driver接口是bootstrap加载的,它的实现类是ContextClassLoader加载的，那为啥他俩可以无缝衔接？
+     * 其实也可以解释,实现类是经过bootstrap向下通过ContextClassLoader加载的,所以bootstrap classLoader的class列表也维护了一份driver实现类
+     * 只不过这里使用ContextClassLoader破坏了父加载机制，但是运行时包依旧遵守。
+     *
      */
     public static void test_runtime_package(){
         // 如何打印类的运行时包？
     }
 
 
-    public static void main(String[] args) throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException, InterruptedException
-    {
+    public static void main(String[] args) throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException, InterruptedException {
         test_my_classLoader();
-
-
-
- /*       ClassLoader contextClassLoader = currentThread().getContextClassLoader();
-        System.out.println(contextClassLoader);
-
-        currentThread().setContextClassLoader(classLoader);
-        System.out.println(currentThread().getContextClassLoader());
-
-        Thread thread = new Thread(() ->
-        {
-            HelloWorld helloWorld = new HelloWorld();
-            System.out.println(helloWorld.getClass().getClassLoader());
-        });
-
-        thread.setContextClassLoader(classLoader);
-        thread.start();
-
-        Thread.currentThread().join();*/
     }
 }

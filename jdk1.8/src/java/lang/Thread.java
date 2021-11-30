@@ -1258,6 +1258,7 @@ public class Thread implements Runnable {
 
     /**
      * 获取当前线程上下文类加载器
+     * 如果没有通过 setContextClassLoader(ClassLoader cl)方法进行设置的话，线程将继承其父线程的上下文类加载器
      *
      * @return the context ClassLoader for this Thread, or {@code null}
      * indicating the system class loader (or, failing that, the
