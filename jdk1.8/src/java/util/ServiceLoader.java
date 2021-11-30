@@ -185,25 +185,27 @@ import java.util.NoSuchElementException;
 public final class ServiceLoader<S>
     implements Iterable<S>
 {
-
+    // 加载具体实现类信息的前缀，也就是以接口命名的文件需要放到Jar包中的META-INF/services/目录下
     private static final String PREFIX = "META-INF/services/";
 
-    // The class or interface representing the service being loaded
+    // 需要加载的接口
     private final Class<S> service;
 
-    // The class loader used to locate, load, and instantiate providers
+    // 类加载器，用于加载以接口命名的文件中配置的接口的实现类
     private final ClassLoader loader;
 
-    // The access control context taken when the ServiceLoader is created
+    // 创建ServiceLoader时采用的访问控制上下文环境
     private final AccessControlContext acc;
 
-    // Cached providers, in instantiation order
+    // 用来缓存已经加载的接口实现类，其中，Key是接口实现类的完整类名，Value为实现类对象
     private LinkedHashMap<String,S> providers = new LinkedHashMap<>();
 
-    // The current lazy-lookup iterator
+    // 用于延迟加载实现类的迭代器
     private LazyIterator lookupIterator;
 
     /**
+     *
+     * 重新加载
      * Clear this loader's provider cache so that all providers will be
      * reloaded.
      *
@@ -215,12 +217,21 @@ public final class ServiceLoader<S>
      * can be installed into a running Java virtual machine.
      */
     public void reload() {
+        // 清空保存加载的实现类的LinkedHashMap
         providers.clear();
+        // 构造延迟加载的迭代器
         lookupIterator = new LazyIterator(service, loader);
     }
 
+    /**
+     * 构造ServiceLoader对象
+     * @param svc
+     * @param cl
+     */
     private ServiceLoader(Class<S> svc, ClassLoader cl) {
+        // 如果传入的Class对象为空，则判处空指针异常
         service = Objects.requireNonNull(svc, "Service interface cannot be null");
+        // 如果传入的ClassLoader为空，则通过ClassLoader.getSystemClassLoader()获取，否则直接使用传入的ClassLoader
         loader = (cl == null) ? ClassLoader.getSystemClassLoader() : cl;
         acc = (System.getSecurityManager() != null) ? AccessController.getContext() : null;
         reload();
@@ -331,29 +342,41 @@ public final class ServiceLoader<S>
         String nextName = null;
 
         private LazyIterator(Class<S> service, ClassLoader loader) {
+            // 会将需要加载的接口的Class对象和类加载器赋值给LazyIterator的成员变量。
             this.service = service;
             this.loader = loader;
         }
 
+        /**
+         * 判断是否拥有下一个实例
+         * @return
+         */
         private boolean hasNextService() {
+            // 如果拥有下一个实例，直接返回true
             if (nextName != null) {
                 return true;
             }
+            //如果实现类的全名为null
             if (configs == null) {
                 try {
+                    //获取全文件名，文件相对路径+文件名称（包名+接口名）
                     String fullName = PREFIX + service.getName();
+                    //类加载器为空，则通过ClassLoader.getSystemResources()方法获取
                     if (loader == null)
                         configs = ClassLoader.getSystemResources(fullName);
                     else
+                        //类加载器不为空，则直接通过类加载器获取
                         configs = loader.getResources(fullName);
                 } catch (IOException x) {
                     fail(service, "Error locating configuration files", x);
                 }
             }
             while ((pending == null) || !pending.hasNext()) {
+                //如果configs中没有更过的元素，则直接返回false
                 if (!configs.hasMoreElements()) {
                     return false;
                 }
+                //解析包结构
                 pending = parse(service, configs.nextElement());
             }
             nextName = pending.next();
@@ -367,6 +390,7 @@ public final class ServiceLoader<S>
             nextName = null;
             Class<?> c = null;
             try {
+                //加载类对象
                 c = Class.forName(cn, false, loader);
             } catch (ClassNotFoundException x) {
                 fail(service,
@@ -377,7 +401,9 @@ public final class ServiceLoader<S>
                      "Provider " + cn  + " not a subtype");
             }
             try {
+                //通过c.newInstance()生成对象实例
                 S p = service.cast(c.newInstance());
+                //将生成的对象实例保存到缓存中（LinkedHashMap<String,S>）
                 providers.put(cn, p);
                 return p;
             } catch (Throwable x) {
@@ -417,6 +443,8 @@ public final class ServiceLoader<S>
     }
 
     /**
+     *
+     * 迭代获取对象实例
      * Lazily loads the available providers of this loader's service.
      *
      * <p> The iterator returned by this method first yields all of the
@@ -464,19 +492,30 @@ public final class ServiceLoader<S>
      */
     public Iterator<S> iterator() {
         return new Iterator<S>() {
+            //获取保存实现类的LinkedHashMap<String,S>的迭代器
+            Iterator<Map.Entry<String,S>> knownProviders = providers.entrySet().iterator();
 
-            Iterator<Map.Entry<String,S>> knownProviders
-                = providers.entrySet().iterator();
-
+            /**
+             * 判断是否有下一个元素
+             * @return
+             */
             public boolean hasNext() {
+                //如果knownProviders存在元素，则直接返回true
                 if (knownProviders.hasNext())
                     return true;
+                // 返回延迟加载器是否存在元素
                 return lookupIterator.hasNext();
             }
 
+            /**
+             * 获取下一个元素
+             * @return
+             */
             public S next() {
+                //如果knownProviders存在元素，则直接获取
                 if (knownProviders.hasNext())
                     return knownProviders.next().getValue();
+                //获取延迟迭代器lookupIterator中的元素
                 return lookupIterator.next();
             }
 
@@ -488,6 +527,7 @@ public final class ServiceLoader<S>
     }
 
     /**
+     * 通过ClassLoader加载指定类的Class，并将返回结果封装到ServiceLoader对象中
      * Creates a new service loader for the given service type and class
      * loader.
      *
@@ -511,6 +551,9 @@ public final class ServiceLoader<S>
     }
 
     /**
+     *
+     * 根据类的Class对象加载指定的类，返回ServiceLoader对象
+     *
      * Creates a new service loader for the given service type, using the
      * current thread's {@linkplain java.lang.Thread#getContextClassLoader
      * context class loader}.
@@ -534,7 +577,9 @@ public final class ServiceLoader<S>
      * @return A new service loader
      */
     public static <S> ServiceLoader<S> load(Class<S> service) {
+        // 获取当前线程的类加载器
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        // 动态加载指定的类，将类加载到ServiceLoader中
         return ServiceLoader.load(service, cl);
     }
 

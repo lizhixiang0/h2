@@ -29,10 +29,11 @@ public class MyClassLoaderTest {
         // loadClass属于类加载整个生命周期的加载阶段,不会触发类的初试化，换句话说加载类不会执行静态代码块中的方法
         Class<?> bClass = classLoader.loadClass("com.wangwenjun.concurrent.chapter10.HelloWorld");
         System.out.println(bClass.getClassLoader() == classLoader); // true
+        bClass.newInstance();
     }
 
     /**
-     * 类加载器的命名空间
+     * Java 虚拟机不仅要看类的全名是否相同，还要看加载此类的类加载器是否一样。只有两者都相同的情况，才认为两个类是相同的
      * 每个类加载器都有自己的命名空间！命名空间由该加载器以及所有父加载器构成
      * 我们通常说每个class实例在JVM中只有一份是不严谨的，准确来讲，应该是同一个class实例在同一个类加载器命名空间下是唯一的!
      *
@@ -56,7 +57,7 @@ public class MyClassLoaderTest {
      * 由同一类装载器装载的属于相同包的类组成了运行时包，只有属于同一运行时包的类才能互相访问包可见的类和成员！
      * 决定两个类是不是属于同一个运行时包，不仅要看它们的包名是否相同，还要看类装载器是否相同
      *
-     * 那么，为什么我们自己在自己定义额包下可以访问java.lang包里面的类或者方法？比如String ？？
+     * 那么，为什么我们自己在自己定义的包下可以访问java.lang包里面的类或者方法？比如String ？？
      * 因为在类的加载过程中,所有参与过的类加载器，即使没有亲自加载过该类，也都会标识为该类的初试类加载器 ！
      * 也就是说，String的确不是系统类加载器加载的，但是她是经过系统类加载器向上通过根加载器加载的！系统类加载器维护的class列表中也会有一份String ！
      *
@@ -68,7 +69,7 @@ public class MyClassLoaderTest {
 
     public static void main(String[] args) throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException, InterruptedException
     {
-        test_runtime_package();
+        test_my_classLoader();
 
 
 

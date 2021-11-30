@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 /**
  * 自定义加载器通过继承ClassLoader并实现findClass来实现 ！findClass是loadClass方法里面调用的,会遵守双亲加载，如果想把双亲加载破坏掉，那就直接改写loadClass方法
  * @author admin
+ * @自定义类加载器实例: “https://www.cnblogs.com/panxuejun/p/5885094.html
  */
 public class MyClassLoader extends ClassLoader
 {

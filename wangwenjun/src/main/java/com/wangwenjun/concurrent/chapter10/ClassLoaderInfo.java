@@ -5,6 +5,14 @@ package com.wangwenjun.concurrent.chapter10;
  *
  * 另外支持自定义类加载器！这个属于第四种吧！自定义加载器的父加载器是系统类加载器！
  *
+ * 在绝大多数情况下，系统默认提供的类加载器实现已经可以满足需求。但是在某些情况下，
+ * 还是需要为应用开发出自己的类加载器。
+ * 比如您的应用通过网络来传输Java类的字节代码，为了保证安全性，这些字节代码经过了加密处理。
+ * 这个时候您就需要自己的类加载器来从某个网络地址上读取加密后的字节代码，接着进行解密和验证，最后定义出要在Java虚拟机中运行的类来
+ *
+ * @blog  深入了解类加载器：https://blog.csdn.net/javazejian/article/details/73413292/
+ *                         https://blog.csdn.net/codehole_/article/details/100892463
+ *
  * @author admin
  */
 public class ClassLoaderInfo
