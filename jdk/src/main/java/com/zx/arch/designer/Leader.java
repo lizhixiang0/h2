@@ -43,10 +43,12 @@ public class Leader {
         To_Analysis_Designer_logs.put("状态模式", StateLeader.class);
 
         To_Analysis_Designer_logs.put("模板方法模式", TemplateLeader.class);
+        To_Analysis_Designer_logs.put("代理模式", com.zx.arch.proxy.Leader.class);
 
         // 2、结构性型,主要用于将类或对象进行组合从而构建灵活而高效的结构,共7个
         To_Analysis_Designer_logs.put("包装模式", WrapperLeader.class);
         To_Analysis_Designer_logs.put("桥接模式", BridgeLeader.class);
+        To_Analysis_Designer_logs.put("门面模式", "https://mp.weixin.qq.com/s/Vyl9SHHyOb0fow7ZHk_4nw");
 
         // 3、创建型,主要解决如何灵活创建对象或者类的问题,共5个
         To_Analysis_Designer_logs.put("建造者模式", BuilderLeader.class);
