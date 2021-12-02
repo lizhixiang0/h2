@@ -29,6 +29,8 @@ public interface Leader {
      * study log
      */
     default void setBasicLogs() {
+        TO_USE_PROXY.put("静态代理","写法类似装饰器模式 https://www.cnblogs.com/cC-Zhou/p/9525638.html ");
+
         TO_USE_PROXY.put("jdk动态代理是基于反射机制生成一个实现代理接口的匿名类","");
         TO_USE_PROXY.put("基于CGLib动态代理模式，原理是继承被代理类生成字代理类，不用实现接口，只需要被代理类是非final类即可。底层是asm字节码技术", CglibMain.class);
         TO_USE_PROXY.put("基于AspectJ实现动态代理。在程序编译的时候修改目标类的字节，织入代理的字节，不会生成全新的Class文件,但是spring只是借助aspect的注解,底层还是jdk和cglib","");
