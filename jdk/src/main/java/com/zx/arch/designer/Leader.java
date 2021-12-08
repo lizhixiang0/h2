@@ -44,6 +44,7 @@ public class Leader {
 
         To_Analysis_Designer_logs.put("模板方法模式", TemplateLeader.class);
         To_Analysis_Designer_logs.put("代理模式", com.zx.arch.proxy.Leader.class);
+        To_Analysis_Designer_logs.put("委派模式", "https://mp.weixin.qq.com/s/vDxsP9Vae32cGEod_TOt8A");
 
         // 2、结构性型,主要用于将类或对象进行组合从而构建灵活而高效的结构,共7个
         To_Analysis_Designer_logs.put("包装模式", WrapperLeader.class);
