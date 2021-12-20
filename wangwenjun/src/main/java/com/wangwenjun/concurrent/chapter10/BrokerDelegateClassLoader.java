@@ -13,41 +13,33 @@ import java.nio.file.Paths;
  * 其实之所以遵守双亲加载机制就是通过loadClass来实现的，子类加载器会调用父类的类加载器来加载！那么如果重写了loadClass，使其不去调用父类的类加载器，自然就不需要遵守双亲加载机智了
  * @author admin
  */
-public class BrokerDelegateClassLoader extends ClassLoader
-{
+public class BrokerDelegateClassLoader extends ClassLoader {
 
     private final static Path DEFAULT_CLASS_DIR = Paths.get("D:\\JetBrains\\workspace\\h2\\wangwenjun\\target\\classes");
 
     private final Path classDir;
 
-    public BrokerDelegateClassLoader()
-    {
+    public BrokerDelegateClassLoader() {
         super();
         this.classDir = DEFAULT_CLASS_DIR;
     }
 
-    public BrokerDelegateClassLoader(String classDir)
-    {
+    public BrokerDelegateClassLoader(String classDir) {
         super();
         this.classDir = Paths.get(classDir);
     }
 
-    public BrokerDelegateClassLoader(String classDir, ClassLoader parent)
-    {
+    public BrokerDelegateClassLoader(String classDir, ClassLoader parent) {
         super(parent);
         this.classDir = Paths.get(classDir);
     }
 
     @Override
-    protected Class<?> findClass(String name)
-            throws ClassNotFoundException
-    {
+    protected Class<?> findClass(String name) throws ClassNotFoundException {
         byte[] classBytes = this.readClassBytes(name);
-        if (null == classBytes || classBytes.length == 0)
-        {
+        if (null == classBytes || classBytes.length == 0) {
             throw new ClassNotFoundException("Can not load the class " + name);
         }
-
         return this.defineClass(name, classBytes, 0, classBytes.length);
     }
 
@@ -91,19 +83,16 @@ public class BrokerDelegateClassLoader extends ClassLoader
         }
     }
 
-    private byte[] readClassBytes(String name)
-            throws ClassNotFoundException
-    {
+    private byte[] readClassBytes(String name) throws ClassNotFoundException {
         String classPath = name.replace(".", "/");
         Path classFullPath = classDir.resolve(Paths.get(classPath + ".class"));
-        if (!classFullPath.toFile().exists())
+        if (!classFullPath.toFile().exists()) {
             throw new ClassNotFoundException("The class " + name + " not found.");
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream())
-        {
+        }
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             Files.copy(classFullPath, baos);
             return baos.toByteArray();
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new ClassNotFoundException("load the class " + name + " occur error.", e);
         }
     }

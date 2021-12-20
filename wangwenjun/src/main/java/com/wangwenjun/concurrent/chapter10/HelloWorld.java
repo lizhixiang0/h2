@@ -26,13 +26,10 @@ import java.sql.Driver;
  *
  * @author admin
  */
-public class HelloWorld
-{
-    static
-    {
-        // 这个未知的类是个什么意思？
+public class HelloWorld {
+    static {
         String str = new String();
-        System.out.println(str.getClass().getClassLoader()); // null
+        System.out.println(str.getClass().getClassLoader()); // null ，根加载器是c++实现,所以是null
         Test test = new Test();
         // 由于ClassLoader的传递性,谁加载了HelloWorld，就由谁加载Test
         System.out.println(test.getClass().getClassLoader()); // My ClassLoader

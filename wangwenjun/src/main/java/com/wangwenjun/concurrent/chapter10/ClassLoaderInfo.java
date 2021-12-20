@@ -15,8 +15,7 @@ package com.wangwenjun.concurrent.chapter10;
  *
  * @author admin
  */
-public class ClassLoaderInfo
-{
+public class ClassLoaderInfo {
     /**
      * 根加载器，由c++实现
      */

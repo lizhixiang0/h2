@@ -2,13 +2,14 @@ package com.wangwenjun.concurrent.chapter12;
 
 import java.util.concurrent.TimeUnit;
 
-public class VolatileFoo
-{
+/**
+ * @author admin
+ */
+public class VolatileFoo {
     final static int MAX = 5;
     static volatile int init_value = 0;
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         int x = 10;
         x = x++;
         System.out.println();

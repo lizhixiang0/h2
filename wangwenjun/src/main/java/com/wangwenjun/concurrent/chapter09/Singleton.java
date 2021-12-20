@@ -10,6 +10,8 @@ public class Singleton
 {
     /**
      * 在对这个属性进行new Singleton() 赋值时，类的记载已经进行了！也就说说，这里调用只会调用一下构造方法，不会再有其他动作
+     *
+     * 在生成的clinit方法里,instance和其他变量，例如 x、y没什么区别，都是按class中顺序进行赋值的
      */
     private static Singleton instance = new Singleton();
 
@@ -19,8 +21,7 @@ public class Singleton
 
 
 
-    public Singleton()
-    {
+    public Singleton() {
         x++;
         y++;
     }
