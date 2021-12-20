@@ -7,6 +7,7 @@ import java.util.stream.IntStream;
 import static java.util.stream.Collectors.toList;
 
 /**
+ * 测试Join方法，Join方法比yield方法要靠谱
  * @author admin
  */
 public class Join {

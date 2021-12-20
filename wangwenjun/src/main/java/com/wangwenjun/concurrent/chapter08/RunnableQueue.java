@@ -1,7 +1,10 @@
 package com.wangwenjun.concurrent.chapter08;
 
-public interface RunnableQueue
-{
+/**
+ * 任务容器
+ * @author admin
+ */
+public interface RunnableQueue {
 
     void offer(Runnable runnable);
 

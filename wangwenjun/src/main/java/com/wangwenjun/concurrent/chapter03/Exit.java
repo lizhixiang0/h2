@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * 线程关闭方法
  *          一般线程结束生命周期就会正常结束,需要我们控制关闭的线程都是体内有死循环,我们需要做的就是打断死循环
- *          我们可以利用中断标记或者volatile属性来打断循环！
+ *          比如可以利用中断标记或者volatile属性来打断循环！
  *
  *
  * @author admin

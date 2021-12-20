@@ -13,8 +13,7 @@ import java.util.concurrent.TimeUnit;
  * @author admin
  */
 public class EmptyExceptionHandler {
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         ThreadGroup mainGroup = Thread.currentThread().getThreadGroup();
         System.out.println(mainGroup.getParent());
         // 可以看到线程组没有父线程组，另外我也没设置全局UncaughtExceptionHandler

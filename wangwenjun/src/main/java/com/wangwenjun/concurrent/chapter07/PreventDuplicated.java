@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 钩子线程实战：防止程序被重复启动
+ * 钩子线程利用：防止程序被重复启动
  * 原理：服务启动时创建lock文件,服务关闭时删除lock文件,这样再次启动如果检测到有lock文件就说明是重复启动,不允许
  * @author admin
  */

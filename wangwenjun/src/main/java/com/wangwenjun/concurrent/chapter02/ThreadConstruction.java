@@ -4,6 +4,9 @@ package com.wangwenjun.concurrent.chapter02;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * @author admin
+ */
 public class ThreadConstruction {
 
     /**
@@ -22,6 +25,10 @@ public class ThreadConstruction {
                 recurse(i);
             }
 
+            /**
+             * 递归调用recurse,看看能调用多少层，这个不是很准确
+             * @param i
+             */
             private void recurse(int i) {
                 System.out.println(i);
                 if (i < MAX) {
@@ -39,6 +46,7 @@ public class ThreadConstruction {
      * 使用下 JVisualVM
      */
     public static void test_thread_count (){
+        // counter
         final  AtomicInteger counter = new AtomicInteger(0);
         try {
             while (true) {
@@ -64,8 +72,7 @@ public class ThreadConstruction {
      * @throws InterruptedException
      */
     public static void test_daemon_thread() throws InterruptedException {
-        Thread t = new Thread(() ->
-        {
+        Thread t = new Thread(() -> {
             Thread innerThread = new Thread(() -> {
                 // 持续运行
                 while (true) {

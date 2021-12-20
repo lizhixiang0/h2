@@ -1,13 +1,14 @@
 package com.wangwenjun.concurrent.chapter08;
 
-public interface DenyPolicy
-{
+/**
+ * @author admin
+ */
+public interface DenyPolicy {
 
     void reject(Runnable runnable, ThreadPool threadPool);
 
 
-    class DiscardDenyPolicy implements DenyPolicy
-    {
+    class DiscardDenyPolicy implements DenyPolicy {
 
         @Override
         public void reject(Runnable runnable, ThreadPool threadPool)
@@ -16,8 +17,7 @@ public interface DenyPolicy
         }
     }
 
-    class AbortDenyPolicy implements DenyPolicy
-    {
+    class AbortDenyPolicy implements DenyPolicy {
 
         @Override
         public void reject(Runnable runnable, ThreadPool threadPool)
@@ -26,8 +26,7 @@ public interface DenyPolicy
         }
     }
 
-    class RunnerDenyPolicy implements DenyPolicy
-    {
+    class RunnerDenyPolicy implements DenyPolicy {
 
         @Override
         public void reject(Runnable runnable, ThreadPool threadPool)

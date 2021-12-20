@@ -1,7 +1,10 @@
 package com.wangwenjun.concurrent.chapter08;
 
-public class InternalTask implements Runnable
-{
+/**
+ * 封裝的任务类
+ * @author admin
+ */
+public class InternalTask implements Runnable {
 
     private final RunnableQueue runnableQueue;
 
@@ -13,8 +16,7 @@ public class InternalTask implements Runnable
     }
 
     @Override
-    public void run()
-    {
+    public void run() {
         while (running && !Thread.currentThread().isInterrupted())
         {
             try
@@ -30,8 +32,7 @@ public class InternalTask implements Runnable
         }
     }
 
-    public void stop()
-    {
+    public void stop() {
         this.running = false;
     }
 }

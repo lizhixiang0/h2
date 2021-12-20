@@ -20,17 +20,12 @@ public class RecordQuery
         this.connection = connection;
     }
 
-    public <T> T query(RowHandler<T> handler, String sql, Object... params)
-            throws SQLException
-    {
-        try (PreparedStatement stmt = connection.prepareStatement(sql))
-        {
+    public <T> T query(RowHandler<T> handler, String sql, Object... params) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             int index = 1;
-            for (Object param : params)
-            {
+            for (Object param : params) {
                 stmt.setObject(index++, param);
             }
-
             ResultSet resultSet = stmt.executeQuery();
             return handler.handle(resultSet);
         }

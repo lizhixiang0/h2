@@ -48,7 +48,7 @@ public class Interrupt {
     }
 
     /**
-     * interrupted方法除了可以判断线程是否中断，还可以恢复interrupt标记位
+     * interrupted方法除了可以判断线程是否中断，并且恢复interrupt标记位
      */
     public static void test_interrupted() throws InterruptedException {
         Thread thread = new Thread(() -> {

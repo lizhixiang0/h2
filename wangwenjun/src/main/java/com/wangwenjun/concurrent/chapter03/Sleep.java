@@ -1,5 +1,8 @@
 package com.wangwenjun.concurrent.chapter03;
 
+/**
+ * @author admin
+ */
 public class Sleep {
 
     private static void sleep(long ms) {
@@ -10,8 +13,7 @@ public class Sleep {
     }
 
     public static void main(String[] args) {
-        new Thread(() ->
-        {
+        new Thread(() -> {
             long startTime = System.currentTimeMillis();
             sleep(2_000L); // 沉睡当前线程，不会放弃cpu资源
             long endTime = System.currentTimeMillis();

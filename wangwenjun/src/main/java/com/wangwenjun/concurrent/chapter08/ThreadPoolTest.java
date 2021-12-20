@@ -2,12 +2,13 @@ package com.wangwenjun.concurrent.chapter08;
 
 import java.util.concurrent.TimeUnit;
 
-public class ThreadPoolTest
-{
-    public static void main(String[] args) throws InterruptedException
-    {
+/**
+ * @author admin
+ */
+public class ThreadPoolTest {
+    public static void main(String[] args) throws InterruptedException {
         final ThreadPool threadPool = new BasicThreadPool(2, 6, 4, 1000);
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < 20; i++) {
             threadPool.execute(() ->
             {
                 try
@@ -19,6 +20,7 @@ public class ThreadPoolTest
                     e.printStackTrace();
                 }
             });
+        }
 
         for (; ; )
         {

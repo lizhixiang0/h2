@@ -3,10 +3,10 @@ package com.wangwenjun.concurrent.chapter08;
 import java.util.LinkedList;
 
 /**
- * 這個LinkedRunnableQueue用的是生產者消費者模式
+ * 生產者消費者模式
+ * @author admin
  */
-public class LinkedRunnableQueue implements RunnableQueue
-{
+public class LinkedRunnableQueue implements RunnableQueue {
 
     private final int limit;
 
@@ -16,8 +16,7 @@ public class LinkedRunnableQueue implements RunnableQueue
 
     private final ThreadPool threadPool;
 
-    public LinkedRunnableQueue(int limit, DenyPolicy denyPolicy, ThreadPool threadPool)
-    {
+    public LinkedRunnableQueue(int limit, DenyPolicy denyPolicy, ThreadPool threadPool) {
         this.limit = limit;
         this.denyPolicy = denyPolicy;
         this.threadPool = threadPool;
@@ -25,15 +24,12 @@ public class LinkedRunnableQueue implements RunnableQueue
 
 
     @Override
-    public void offer(Runnable runnable)
-    {
-        synchronized (runnableList)
-        {
-            if (runnableList.size() >= limit)
-            {
+    public void offer(Runnable runnable) {
+        synchronized (runnableList) {
+            if (runnableList.size() >= limit) {
+                // 放不下就执行拒绝策略 (之前放不下是wait)
                 denyPolicy.reject(runnable, threadPool);
-            } else
-            {
+            } else {
                 runnableList.addLast(runnable);
                 runnableList.notifyAll();
             }
@@ -41,21 +37,15 @@ public class LinkedRunnableQueue implements RunnableQueue
     }
 
     @Override
-    public Runnable take() throws InterruptedException
-    {
-        synchronized (runnableList)
-        {
-            while (runnableList.isEmpty())
-            {
-                try
-                {
+    public Runnable take() throws InterruptedException {
+        synchronized (runnableList) {
+            while (runnableList.isEmpty()) {
+                try {
                     runnableList.wait();
-                } catch (InterruptedException e)
-                {
+                } catch (InterruptedException e) {
                     throw e;
                 }
             }
-
             return runnableList.removeFirst();
         }
     }

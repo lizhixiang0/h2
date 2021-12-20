@@ -1,6 +1,7 @@
 package com.wangwenjun.concurrent.chapter08;
 
 /**
+ * 线程池接口
  * @author admin
  */
 public interface ThreadPool {
