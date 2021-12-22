@@ -4,24 +4,25 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 简单测试 volatile
+ *
  * @author admin
  */
 public class VolatileFoo {
 
-    private  static int init_value = 0;
+    private  static  int init_value = 0;
 
     /**
      * 测试可见性
-     * 因为cpu空闲时会从主存中读取,所以这里不行，即使init_value不加volatile,运行一段时间后,线程1还是能读到修改后的init_value
      */
     public static void test_volatile_one(){
         /**
-         * 线程 1 不断判断并打印 init_value
+         * 线程 1 检测init_value是否发生变化
          */
         new Thread(() -> {
             while (init_value == 0) {
-                System.out.printf("The init_value is updated to [%d]\n", init_value);
+                // 如果while循环中加上一句System.out.println() ,即使不给init_value加volatile也会检测到，因为System.out.println中有加锁操作，加锁会导致从主存读取数据
             }
+            System.out.printf("Detecting ! The init_value is updated to [%d]\n", init_value);
         }, "Reader").start();
 
 
@@ -34,7 +35,8 @@ public class VolatileFoo {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            System.out.printf("The init_value will be changed to [%d]\n", ++init_value);
+            ++init_value;
+            System.out.printf("The init_value has been changed to [%d]\n", init_value);
         }, "Updater").start();
     }
 
@@ -47,7 +49,6 @@ public class VolatileFoo {
             int localValue = init_value;
             while (localValue == 0) {
                 // 检测 init_value 的变化,这里检测不到，因为一直读的缓存中的init_value
-                // 但是如果while循环中加上一句System.out.println() ,则会检测到，因为System.out.println中有加锁操作，加锁会导致从主存读取数据
                 if (init_value != localValue) {
                     System.out.printf("The init_value is updated to %d\n", init_value);
                     localValue = init_value;
@@ -62,8 +63,8 @@ public class VolatileFoo {
                 // 第二步：localValue +1    必须在本地内存执行完 +1 操作
                 // 第三步：set localValue   写入主内存
                 ++localValue;
-                // 这里用了printf,线程1就检测不到,为什么?
-                 System.out.printf("The init_value will be changed to " + localValue + "\n");
+                // 这里用了printf,线程1就检测不到,为什么? 如果不加printf，无论如何线程1都能检测到init_value变了
+                // System.out.printf("The init_value will be changed to " + localValue + "\n");
                 // 第一步：get localValue (如果工作内存没有则从主内存获取)
                 // 第二步：在工作内存中修改init_value为localValue，最后将init_value写入主内存
                 init_value = localValue;
