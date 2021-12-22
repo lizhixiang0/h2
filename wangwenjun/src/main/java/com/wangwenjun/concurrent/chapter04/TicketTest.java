@@ -31,7 +31,7 @@ package com.wangwenjun.concurrent.chapter04;
  *
  * @author admin
  */
-public class TicketWindowRunnable implements Runnable {
+public class TicketTest implements Runnable {
 
     /**
      * 这里给index加上volatile可以解决并发问题吗？
@@ -70,7 +70,7 @@ public class TicketWindowRunnable implements Runnable {
     }
 
     public static void main(String[] args) {
-        final TicketWindowRunnable task = new TicketWindowRunnable();
+        final TicketTest task = new TicketTest();
 
         Thread windowThread1 = new Thread(task, "一号窗口");
         Thread windowThread2 = new Thread(task, "二号窗口");

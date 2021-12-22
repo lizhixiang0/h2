@@ -3,6 +3,7 @@ package com.wangwenjun.concurrent.chapter12;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 简单测试 volatile
  * @author admin
  */
 public class VolatileFoo {
@@ -10,6 +11,7 @@ public class VolatileFoo {
     private  static int init_value = 0;
 
     /**
+     * 测试可见性
      * 因为cpu空闲时会从主存中读取,所以这里不行，即使init_value不加volatile,运行一段时间后,线程1还是能读到修改后的init_value
      */
     public static void test_volatile_one(){
@@ -37,6 +39,7 @@ public class VolatileFoo {
     }
 
     /**
+     * 测试可见性
      * https://www.jianshu.com/p/ca5552befd2a
      */
     public static void test_volatile_two(){
@@ -59,8 +62,8 @@ public class VolatileFoo {
                 // 第二步：localValue +1    必须在本地内存执行完 +1 操作
                 // 第三步：set localValue   写入主内存
                 ++localValue;
-                // 这里用了printf,线程1就检测不到,用println就能检测到,为什么?
-                System.out.printf("The init_value will be changed to" + localValue + "\n");
+                // 这里用了printf,线程1就检测不到,为什么?
+                 System.out.printf("The init_value will be changed to " + localValue + "\n");
                 // 第一步：get localValue (如果工作内存没有则从主内存获取)
                 // 第二步：在工作内存中修改init_value为localValue，最后将init_value写入主内存
                 init_value = localValue;
