@@ -1,7 +1,9 @@
 package com.wangwenjun.concurrent.chapter16;
 
-public class Tableware
-{
+/**
+ * @author admin
+ */
+public class Tableware {
     private final String toolName;
 
     public Tableware(String toolName)

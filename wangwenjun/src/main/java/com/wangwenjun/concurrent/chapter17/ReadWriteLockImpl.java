@@ -6,18 +6,33 @@ package com.wangwenjun.concurrent.chapter17;
  * QQ: 532500648
  * QQ群:463962286
  ***************************************/
-class ReadWriteLockImpl implements ReadWriteLock
-{
+class ReadWriteLockImpl implements ReadWriteLock {
+
+    /**
+     * 锁,读锁和写锁要保证互斥,必须使用同一把锁！
+     */
     private final Object MUTEX = new Object();
 
+    /**
+     * 用来控制倾向,一般读写锁使用在读多写少的环境,所以这个参数用来保证一旦有线程尝试写操作,那就迅速执行这个操作！否则写操作线程不知道要等到什么时候！
+     */
+    private boolean preferWriter;
+    /**
+     * 记录正在写的线程数
+     */
     private int writingWriters = 0;
-
+    /**
+     * 记录正在等待写锁的线程数
+     */
     private int waitingWriters = 0;
-
+    /**
+     * 记录正在读的线程数
+     */
     private int readingReaders = 0;
 
-    private boolean preferWriter;
-
+    /**
+     * 默认写操作优先
+     */
     public ReadWriteLockImpl()
     {
         this(true);
@@ -28,19 +43,7 @@ class ReadWriteLockImpl implements ReadWriteLock
         this.preferWriter = preferWriter;
     }
 
-
-    public Lock readLock()
-    {
-        return new ReadLock(this);
-    }
-
-    public Lock writeLock()
-    {
-        return new WriteLock(this);
-    }
-
-    void incrementWritingWriters()
-    {
+    void incrementWritingWriters() {
         this.writingWriters++;
     }
 
@@ -69,21 +72,6 @@ class ReadWriteLockImpl implements ReadWriteLock
         this.readingReaders--;
     }
 
-    public int getWritingWriters()
-    {
-        return this.writingWriters;
-    }
-
-    public int getWaitingWriters()
-    {
-        return this.waitingWriters;
-    }
-
-    public int getReadingReaders()
-    {
-        return this.readingReaders;
-    }
-
     Object getMutex()
     {
         return this.MUTEX;
@@ -98,4 +86,29 @@ class ReadWriteLockImpl implements ReadWriteLock
     {
         this.preferWriter = preferWriter;
     }
+
+    @Override
+    public Lock readLock() { return new ReadLock(this); }
+
+    @Override
+    public Lock writeLock() {
+        return new WriteLock(this);
+    }
+
+    @Override
+    public int getWritingWriters() {
+        return this.writingWriters;
+    }
+
+    @Override
+    public int getWaitingWriters() {
+        return this.waitingWriters;
+    }
+
+    @Override
+    public int getReadingReaders() {
+        return this.readingReaders;
+    }
+
+
 }
